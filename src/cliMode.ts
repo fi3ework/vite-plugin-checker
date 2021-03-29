@@ -51,7 +51,7 @@ function createTscProcess() {
             err: {
               message: 'error msg',
               stack: 'a/b/c/d',
-              id: 'fork-ts-checker',
+              id: 'ts-checker',
               frame: 'frame',
               plugin: 'tsc',
               pluginCode: 'code',

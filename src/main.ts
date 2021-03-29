@@ -44,7 +44,7 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
   const mode = userOptions?.mode ?? 'api'
 
   return {
-    name: 'fork-ts-checker',
+    name: 'ts-checker',
     config: (config) => {
       if (mode === 'cli') {
         tscProcess.config(config)

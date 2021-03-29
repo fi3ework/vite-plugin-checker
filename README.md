@@ -1,4 +1,4 @@
-# vite-plugin-fork-ts-checker
+# vite-plugin-ts-checker
 
 ## **⚠ This project is still WIP, will be released recently**
 
@@ -16,17 +16,17 @@ Vite plugin that runs TypeScript type checker on a separate process.
 ### Install
 
 ```bash
-npm i vite-plugin-fork-ts-checker -D
+npm i vite-plugin-ts-checker -D
 
-# yarn add vite-plugin-fork-ts-checker -D
-# pnpm i vite-plugin-fork-ts-checker -D
+# yarn add vite-plugin-ts-checker -D
+# pnpm i vite-plugin-ts-checker -D
 ```
 
 ### Add to `vite.config.js`
 
 ```ts
 // vite.config.js
-import TsChecker from 'vite-plugin-fork-ts-checker'
+import TsChecker from 'vite-plugin-ts-checker'
 
 export default {
   plugins: [TsChecker()],

@@ -1,5 +1,5 @@
 {
-  "name": "vite-plugin-fork-ts-checker",
+  "name": "vite-plugin-ts-checker",
   "version": "0.0.1",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
   "main": "lib/main.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fi3ework/vite-plugin-fork-ts-checker.git"
+    "url": "git+https://github.com/fi3ework/vite-plugin-ts-checker.git"
   },
   "keywords": [
     "vite",
@@ -23,8 +23,8 @@
   ],
   "author": "fi3ework <fi3ework@gmail.com>",
   "license": "MIT",
-  "bugs": "https://github.com/fi3ework/vite-plugin-fork-ts-checker/issues",
-  "homepage": "https://github.com/fi3ework/vite-plugin-fork-ts-checker",
+  "bugs": "https://github.com/fi3ework/vite-plugin-ts-checker/issues",
+  "homepage": "https://github.com/fi3ework/vite-plugin-ts-checker",
   "dependencies": {
     "@babel/code-frame": "^7.12.13",
     "log-update": "^4.0.0",

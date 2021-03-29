@@ -48,7 +48,7 @@ function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
       ),
       stack: '',
       id: d.file?.fileName,
-      plugin: 'vite-plugin-fork-ts-checker',
+      plugin: 'vite-plugin-ts-checker',
       loc,
     }
   }
@@ -58,7 +58,7 @@ function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
     message: ts.flattenDiagnosticMessageText(d.messageText, formatHost.getNewLine()),
     stack: '',
     id: d.file?.fileName,
-    plugin: 'vite-plugin-fork-ts-checker',
+    plugin: 'vite-plugin-ts-checker',
     loc,
   }
 }
