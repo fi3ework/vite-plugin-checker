@@ -46,9 +46,6 @@
   "homepage": "https://github.com/fi3ework/vite-plugin-fork-ts-checker#readme",
   "dependencies": {
     "@babel/code-frame": "^7.12.13",
-    "commander": "^7.1.0",
-    "debug": "^4.3.1",
-    "esbuild": "^0.8.52",
     "log-update": "^4.0.0",
     "strip-ansi": "^6.0.0"
   }
