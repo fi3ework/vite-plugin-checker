@@ -62,7 +62,7 @@ function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
 export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
-  let overlay = true // Vite default to true
+  let overlay = true // Vite defaults to true
   let currErr: ErrorPayload['err'] | null = null
 
   return {
@@ -89,13 +89,10 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
         throw new Error("Could not find a valid 'tsconfig.json'.")
       }
 
+      // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
-        console.error(
-          'Error',
-          diagnostic.code,
-          ':',
-          ts.flattenDiagnosticMessageText(diagnostic.messageText, formatHost.getNewLine())
-        )
+        const originalDiagnostic = ts.formatDiagnosticsWithColorAndContext([diagnostic], formatHost)
+        ts.sys.write(originalDiagnostic)
 
         if (!currErr) {
           currErr = toViteError(diagnostic)
@@ -123,6 +120,8 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
                 err: currErr,
               })
             }
+
+            ts.sys.write(os.EOL + os.EOL + diagnostic.messageText.toString())
         }
       }
 

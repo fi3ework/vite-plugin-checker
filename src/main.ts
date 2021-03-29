@@ -1,36 +1,33 @@
-// import ts from 'typescript'
 import { Plugin } from 'vite'
-import { tscProcess } from './cliMode'
+
 import { diagnose } from './apiMode'
+import { tscProcess } from './cliMode'
 
 interface PluginOptions {
   /**
-   * Whether to use vue-tsc to check .vue file.
-   * @default !!import('vue-tsc')
+   * Use tsc or vue-tsc
+   * @default !!import.resolve('vue-tsc')
    */
-  vueTsc?: boolean
+  vueTsc: boolean
   /**
-   *
+   * Show TypeScript error overlay
+   * @default Vite config `server.hmr.overlay`, can be override by
    */
-  displayMode?: 'spawn' | 'exec'
+  overlay: boolean
   /**
-   *
+   * WIP
    */
-  errorOverlay?: boolean
-  /**
-   *
-   */
-  mode?: 'cli' | 'api'
+  mode: 'cli' | 'api'
 }
 
-export function plugin(userOptions?: PluginOptions): Plugin {
+export function plugin(userOptions?: Partial<PluginOptions>): Plugin {
   let hasVueTsc = false
   try {
     require.resolve('vue-tsc')
     hasVueTsc = true
   } catch {}
 
-  const mode = userOptions?.mode || 'api'
+  const mode = userOptions?.mode ?? 'api'
 
   return {
     name: 'fork-ts-checker',
@@ -38,7 +35,7 @@ export function plugin(userOptions?: PluginOptions): Plugin {
       if (mode === 'cli') {
         tscProcess.config(config)
       } else {
-        // diagnose.config(config)
+        diagnose.config(config)
       }
     },
     configureServer(server) {
