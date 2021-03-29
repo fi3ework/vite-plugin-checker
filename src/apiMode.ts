@@ -16,6 +16,12 @@ const formatHost: ts.FormatDiagnosticsHost = {
   getNewLine: () => ts.sys.newLine,
 }
 
+function ensureCall(callback: CallableFunction) {
+  setTimeout(() => {
+    callback()
+  })
+}
+
 function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
   const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition(d.start)
   let loc: ErrorPayload['err']['loc'] = undefined
@@ -92,11 +98,14 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
         const originalDiagnostic = ts.formatDiagnosticsWithColorAndContext([diagnostic], formatHost)
-        ts.sys.write(originalDiagnostic)
 
         if (!currErr) {
           currErr = toViteError(diagnostic)
         }
+
+        ensureCall(() => {
+          ts.sys.write(originalDiagnostic)
+        })
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
@@ -107,11 +116,11 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
       ) => {
         // https://github.com/microsoft/TypeScript/issues/32542
         switch (diagnostic.code) {
-          case 6031: // Initial build
           case 6032: // Incremental build
-            // clear current error and use the newer error from compiler
+            // clear current error and use the newer errors
             currErr = null
             break
+          case 6031: // Initial build
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
             if (currErr) {
@@ -121,7 +130,9 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
               })
             }
 
-            ts.sys.write(os.EOL + os.EOL + diagnostic.messageText.toString())
+            ensureCall(() => {
+              ts.sys.write(os.EOL + os.EOL + diagnostic.messageText.toString())
+            })
         }
       }
 
