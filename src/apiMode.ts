@@ -1,5 +1,8 @@
 import { ErrorPayload } from 'vite'
+import { createFrame } from './codeFrame'
 import ts from 'typescript'
+import os from 'os'
+import strip from 'strip-ansi'
 
 import type { UserConfig, ViteDevServer } from 'vite'
 interface DiagnoseOptions {
@@ -24,9 +27,29 @@ function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
     }
   }
 
+  // has detail message
+  if (d.file && typeof d.start === 'number' && typeof d.length === 'number') {
+    return {
+      message: strip(
+        ts.flattenDiagnosticMessageText(d.messageText, formatHost.getNewLine()) +
+          os.EOL +
+          os.EOL +
+          createFrame({
+            source: d.file!.text,
+            start: d.file?.getLineAndCharacterOfPosition(d.start),
+            end: d.file?.getLineAndCharacterOfPosition(d.start + d.length),
+          })
+      ),
+      stack: '',
+      id: d.file?.fileName,
+      plugin: 'vite-plugin-fork-ts-checker',
+      loc,
+    }
+  }
+
+  // no detail message
   return {
-    // message: ts.flattenDiagnosticMessageText(d.messageText, formatHost.getNewLine()),
-    message: d.messageText.toString() + d.file?.getText(),
+    message: ts.flattenDiagnosticMessageText(d.messageText, formatHost.getNewLine()),
     stack: '',
     id: d.file?.fileName,
     plugin: 'vite-plugin-fork-ts-checker',
@@ -38,7 +61,6 @@ function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
  * Prints a diagnostic every time the watch status changes.
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
-
 export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
   let overlay = true // Vite default to true
   let currErr: ErrorPayload['err'] | null = null
@@ -74,10 +96,8 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
           ':',
           ts.flattenDiagnosticMessageText(diagnostic.messageText, formatHost.getNewLine())
         )
-        // return toViteError(diagnostic)
 
         if (!currErr) {
-          console.log('🔥', diagnostic)
           currErr = toViteError(diagnostic)
         }
       }
@@ -96,12 +116,7 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
             currErr = null
             break
           case 6193: // 1 Error
-          // currErr = toViteError(diagnostic)
           case 6194: // 0 errors or 2+ errors
-            // if (errorCount !== 0 && !currErr) {
-            //   currErr = toViteError(diagnostic)
-            // }
-
             if (currErr) {
               server.ws.send({
                 type: 'error',
