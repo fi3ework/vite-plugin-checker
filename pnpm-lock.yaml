@@ -5,7 +5,7 @@ dependencies:
   esbuild: 0.8.57
   log-update: 4.0.0
 devDependencies:
-  '@types/babel-code-frame': 6.20.4
+  '@types/babel__code-frame': 7.0.2
   '@types/debug': 4.1.5
   '@types/jest': 26.0.22
   '@types/node': 14.14.37
@@ -581,10 +581,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-MZPUxrmFubI36XS1DI3qmI0YdN1gks62JtFZvxR67ljjSNCeK6U08Zx4msEWOXuofgqUt6zPHSi1H9fbjR/NRA==
-  /@types/babel-code-frame/6.20.4:
+  /@types/babel__code-frame/7.0.2:
     dev: true
     resolution:
-      integrity: sha512-rmfJeJpXiAoQTBeyamRBOe+qd3TATGe9YCnatPE6kkb03WNTNnUtTb8k+FRvgfe+RVLy968eaoxBYCeE1op+QQ==
+      integrity: sha512-imO+jT/yjOKOAS5GQZ8SDtwiIloAGGr6OaZDKB0V5JVaSfGZLat5K5/ZRtyKW6R60XHV3RHYPTFfhYb+wDKyKg==
   /@types/babel__core/7.1.14:
     dependencies:
       '@babel/parser': 7.13.13
@@ -4688,7 +4688,7 @@ packages:
       integrity: sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==
 specifiers:
   '@babel/code-frame': ^7.12.13
-  '@types/babel-code-frame': ^6.20.4
+  '@types/babel__code-frame': ^7.0.2
   '@types/debug': ^4.1.5
   '@types/jest': ^26.0.20
   '@types/node': ^14.14.31

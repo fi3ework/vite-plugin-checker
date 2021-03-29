@@ -13,19 +13,24 @@ const formatHost: ts.FormatDiagnosticsHost = {
   getNewLine: () => ts.sys.newLine,
 }
 
-function toViteError(diagnostic: ts.Diagnostic): ErrorPayload['err'] {
+function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
+  const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition(d.start)
+  let loc: ErrorPayload['err']['loc'] = undefined
+  if (pos) {
+    loc = {
+      file: d.file?.fileName,
+      line: pos.line + 1,
+      column: pos.character + 1,
+    }
+  }
+
   return {
-    message: 'string',
-    stack: 'a/b/c/d',
-    id: 'string',
-    frame: 'string',
-    plugin: 'string',
-    pluginCode: 'string',
-    // loc?: {
-    // file?: string
-    // line: number
-    // column: number
-    // }
+    // message: ts.flattenDiagnosticMessageText(d.messageText, formatHost.getNewLine()),
+    message: d.messageText.toString() + d.file?.getText(),
+    stack: '',
+    id: d.file?.fileName,
+    plugin: 'vite-plugin-fork-ts-checker',
+    loc,
   }
 }
 
@@ -63,14 +68,18 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
       }
 
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
-        const { file } = diagnostic
         console.error(
           'Error',
           diagnostic.code,
           ':',
           ts.flattenDiagnosticMessageText(diagnostic.messageText, formatHost.getNewLine())
         )
-        return toViteError(diagnostic)
+        // return toViteError(diagnostic)
+
+        if (!currErr) {
+          console.log('🔥', diagnostic)
+          currErr = toViteError(diagnostic)
+        }
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
@@ -80,7 +89,6 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
         errorCount
       ) => {
         // https://github.com/microsoft/TypeScript/issues/32542
-        console.log(diagnostic)
         switch (diagnostic.code) {
           case 6031: // Initial build
           case 6032: // Incremental build
@@ -88,12 +96,11 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
             currErr = null
             break
           case 6193: // 1 Error
-            currErr = toViteError(diagnostic)
+          // currErr = toViteError(diagnostic)
           case 6194: // 0 errors or 2+ errors
-            if (errorCount === 0 || errorCount === undefined) {
-            } else {
-              if (!currErr) currErr = toViteError(diagnostic)
-            }
+            // if (errorCount !== 0 && !currErr) {
+            //   currErr = toViteError(diagnostic)
+            // }
 
             if (currErr) {
               server.ws.send({
