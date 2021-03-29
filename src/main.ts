@@ -5,22 +5,36 @@ import { tscProcess } from './cliMode'
 
 interface PluginOptions {
   /**
-   * Use tsc or vue-tsc
-   * @default !!import.resolve('vue-tsc')
+   * [WIP] Use `tsc` or `vue-tsc`
+   * @default if vue-tsc is installed, then true, otherwise false
    */
   vueTsc: boolean
   /**
    * Show TypeScript error overlay
-   * @default Vite config `server.hmr.overlay`, can be override by
+   * @default Same as Vite config - `server.hmr.overlay`
    */
   overlay: boolean
   /**
-   * WIP
+   * [WIP]
+   * 'cli': use `tsc --noEmit` or `vue-tsc --noEmit`
+   *  - No overlay support
+   *  - Original console output
+   *
+   * 'api': use TypeScript programmatic API
+   *  - Support overlay
+   *  - Almost the same console output as original
+   *
+   * @default if `vueTsc` is true, then force set to 'cli', otherwise default to 'api'
    */
   mode: 'cli' | 'api'
+  /**
+   * Run in build mode ()
+   * @default true
+   */
+  build: boolean | {}
 }
 
-export function plugin(userOptions?: Partial<PluginOptions>): Plugin {
+export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
   let hasVueTsc = false
   try {
     require.resolve('vue-tsc')
