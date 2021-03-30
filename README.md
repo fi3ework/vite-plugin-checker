@@ -83,11 +83,11 @@ npm run dev
 ### Roadmap
 
 - [x] release alpha version
-- [ ] support build mode
+- [x] support build mode
 - [ ] custom command
 - [ ] custom tsconfig path
 - [ ] no tsconfig file error
-- [ ] examples (codesandbox?)
+- [x] examples (codesandbox?)
 - [ ] release stable version
 
 ## License

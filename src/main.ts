@@ -1,14 +1,23 @@
-import { Plugin } from 'vite'
+import { spawn, exec } from 'child_process'
+import npmRunPath from 'npm-run-path'
+import { ConfigEnv, Plugin } from 'vite'
 
 import { diagnose } from './apiMode'
 import { tscProcess } from './cliMode'
 
+const exitHook = require('async-exit-hook')
+
 interface PluginOptions {
   /**
-   * [WIP] Use `tsc` or `vue-tsc`
-   * @default if vue-tsc is installed, then true, otherwise false
+   * Use `tsc` or `vue-tsc`
+   * @default 'tcs'
    */
-  vueTsc: boolean
+  checker: 'tsc' | 'vue-tsc'
+  /**
+   * Throw error in build mode
+   * @default false
+   */
+  ignoreInBuild: boolean
   /**
    * Show TypeScript error overlay
    * @default Same as Vite config - `server.hmr.overlay`
@@ -27,29 +36,45 @@ interface PluginOptions {
    * @default if `vueTsc` is true, then force set to 'cli', otherwise default to 'api'
    */
   mode: 'cli' | 'api'
-  /**
-   * Run in build mode ()
-   * @default true
-   */
-  build: boolean | {}
 }
 
 export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
-  let hasVueTsc = false
-  try {
-    require.resolve('vue-tsc')
-    hasVueTsc = true
-  } catch {}
-
   const mode = userOptions?.mode ?? 'api'
+  const checker = userOptions?.checker ?? 'tsc'
+  const ignoreOnBuild = userOptions?.ignoreInBuild ?? false
+  let viteMode: ConfigEnv['command'] | undefined
 
   return {
     name: 'ts-checker',
-    config: (config) => {
+    config: (config, { command, mode }) => {
+      viteMode = command
       if (mode === 'cli') {
         tscProcess.config(config)
       } else {
         diagnose.config(config)
+      }
+    },
+    buildStart: (options) => {
+      if (viteMode === 'build') {
+        const localEnv = npmRunPath.env({
+          env: process.env,
+          cwd: process.cwd(),
+          execPath: process.execPath,
+        })
+
+        const proc = spawn(checker, ['--noEmit'], {
+          cwd: process.cwd(),
+          stdio: 'inherit',
+          env: localEnv,
+        })
+
+        if (!ignoreOnBuild) {
+          proc.on('exit', (code) => {
+            if (code !== null && code !== 0) {
+              process.exit(code)
+            }
+          })
+        }
       }
     },
     configureServer(server) {
@@ -58,7 +83,6 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
       } else {
         diagnose.configureServer(server)
       }
-
       return () => {
         server.middlewares.use((req, res, next) => {
           next()
