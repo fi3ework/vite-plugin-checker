@@ -82,9 +82,11 @@ vite
 
 ### Roadmap
 
-- [ ] release alpha version
+- [x] release alpha version
 - [ ] support build mode
 - [ ] custom command
+- [ ] custom tsconfig
+- [ ] no tsconfig hint
 - [ ] examples (codesandbox?)
 - [ ] release stable version
 
