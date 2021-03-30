@@ -77,7 +77,7 @@ See [./examples](./examples) to have a try.
 ```bash
 pnpm i
 cd ./examples/<ONE_EXAMPLE>
-vite
+npm run dev
 ```
 
 ### Roadmap
@@ -85,8 +85,8 @@ vite
 - [x] release alpha version
 - [ ] support build mode
 - [ ] custom command
-- [ ] custom tsconfig
-- [ ] no tsconfig hint
+- [ ] custom tsconfig path
+- [ ] no tsconfig file error
 - [ ] examples (codesandbox?)
 - [ ] release stable version
 
