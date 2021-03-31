@@ -1,15 +1,15 @@
 # vite-plugin-ts-checker
 
-## **⚠ This project is still WIP, will be released recently**
-
-Vite plugin that runs TypeScript type checker on a separate process.
-
 ## Features
 
 - ⚡️ Out of the box
-- 💚 Support Vue by [vue-tsc](https://github.com/johnsoncodehk/vue-tsc)
+- 💚 Support Vue by [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) (only build mode for now)
 - 🚥 Support overlay
 - 🎳 Support dev & build mode
+
+<p align="center">
+  <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/113175704-48cf1e80-927e-11eb-9bb5-43ab1b218cb2.png">
+</p>
 
 ## Usage
 
@@ -81,14 +81,8 @@ npm run dev
 
 ### Roadmap
 
-- [x] release alpha version
-- [x] support build mode
-- [x] custom tsconfig path
-- [x] no tsconfig file error
-- [x] examples
-- [ ] custom command
 - [ ] project references
-- [ ] release stable version
+- [ ] vue-tsc to support watch mode
 
 ## License
 
