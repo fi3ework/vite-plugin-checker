@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-ts-checker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
@@ -47,6 +47,7 @@
     "eslint": "^7.20.0",
     "eslint-config-alloy": "^3.10.0",
     "jest": "^26.6.3",
+    "release-it": "^14.5.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.5.2",
     "typescript": "^4.2.2",
