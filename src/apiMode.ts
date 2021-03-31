@@ -1,14 +1,12 @@
-import { ErrorPayload } from 'vite'
-import { createFrame } from './codeFrame'
-import ts from 'typescript'
 import os from 'os'
 import strip from 'strip-ansi'
+import ts from 'typescript'
+import { ErrorPayload } from 'vite'
+
+import { createFrame } from './codeFrame'
+import { PluginOptions } from './types'
 
 import type { UserConfig, ViteDevServer } from 'vite'
-interface DiagnoseOptions {
-  root: string
-  tsconfigPath: string
-}
 
 const formatHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (path) => path,
@@ -67,32 +65,33 @@ function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
  * Prints a diagnostic every time the watch status changes.
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
-export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
+export function createDiagnosis(userOptions: Partial<PluginOptions> = {}) {
   let overlay = true // Vite defaults to true
   let currErr: ErrorPayload['err'] | null = null
 
   return {
     config: (config: UserConfig) => {
       const hmr = config.server?.hmr
-      if (typeof hmr === 'object' && hmr.overlay === false) {
-        overlay = true
+      const viteOverlay = !(typeof hmr === 'object' && hmr.overlay === false)
+
+      if (userOptions.overlay === false || !viteOverlay) {
+        overlay = false
       }
     },
     configureServer(server: ViteDevServer) {
-      const finalConfig: DiagnoseOptions = {
-        root: process.cwd(),
-        tsconfigPath: 'tsconfig.json',
-        ...userOptions,
+      const finalConfig = {
+        root: userOptions.root ?? server.config.root,
+        tsconfigPath: userOptions.tsconfigPath ?? 'tsconfig.json',
       }
 
-      const configFile = ts.findConfigFile(
-        finalConfig.root,
-        ts.sys.fileExists,
-        finalConfig.tsconfigPath
-      )
+      let configFile: string | undefined
 
-      if (!configFile) {
-        throw new Error("Could not find a valid 'tsconfig.json'.")
+      configFile = ts.findConfigFile(finalConfig.root, ts.sys.fileExists, finalConfig.tsconfigPath)
+
+      if (configFile === undefined) {
+        throw Error(
+          `Failed to find a valid tsconfig.json: ${finalConfig.tsconfigPath} at ${finalConfig.root} is not a valid tsconfig`
+        )
       }
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
@@ -123,7 +122,7 @@ export function createDiagnosis(userOptions: Partial<DiagnoseOptions> = {}) {
           case 6031: // Initial build
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
-            if (currErr) {
+            if (currErr && overlay) {
               server.ws.send({
                 type: 'error',
                 err: currErr,

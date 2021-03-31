@@ -1,48 +1,19 @@
-import { spawn, exec } from 'child_process'
+import { spawn } from 'child_process'
 import npmRunPath from 'npm-run-path'
 import { ConfigEnv, Plugin } from 'vite'
+import { PluginOptions } from './types'
 
-import { diagnose } from './apiMode'
+import { createDiagnosis } from './apiMode'
 import { tscProcess } from './cliMode'
 
-const exitHook = require('async-exit-hook')
-
-interface PluginOptions {
-  /**
-   * Use `tsc` or `vue-tsc`
-   * @default 'tcs'
-   */
-  checker: 'tsc' | 'vue-tsc'
-  /**
-   * Throw error in build mode
-   * @default false
-   */
-  ignoreInBuild: boolean
-  /**
-   * Show TypeScript error overlay
-   * @default Same as Vite config - `server.hmr.overlay`
-   */
-  overlay: boolean
-  /**
-   * [WIP]
-   * 'cli': use `tsc --noEmit` or `vue-tsc --noEmit`
-   *  - No overlay support
-   *  - Original console output
-   *
-   * 'api': use TypeScript programmatic API
-   *  - Support overlay
-   *  - Almost the same console output as original
-   *
-   * @default if `vueTsc` is true, then force set to 'cli', otherwise default to 'api'
-   */
-  mode: 'cli' | 'api'
-}
+// const exitHook = require('async-exit-hook')
 
 export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
   const mode = userOptions?.mode ?? 'api'
   const checker = userOptions?.checker ?? 'tsc'
-  const ignoreOnBuild = userOptions?.ignoreInBuild ?? false
+  const enableBuild = userOptions?.enableBuild ?? true
   let viteMode: ConfigEnv['command'] | undefined
+  let diagnose: ReturnType<typeof createDiagnosis> | null = null
 
   return {
     name: 'ts-checker',
@@ -51,6 +22,11 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
       if (mode === 'cli') {
         tscProcess.config(config)
       } else {
+        diagnose = createDiagnosis({
+          root: userOptions?.root,
+          tsconfigPath: userOptions?.tsconfigPath,
+        })
+
         diagnose.config(config)
       }
     },
@@ -68,7 +44,7 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
           env: localEnv,
         })
 
-        if (!ignoreOnBuild) {
+        if (!enableBuild) {
           proc.on('exit', (code) => {
             if (code !== null && code !== 0) {
               process.exit(code)
@@ -81,7 +57,7 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
       if (mode === 'cli') {
         tscProcess.configureServer(server)
       } else {
-        diagnose.configureServer(server)
+        diagnose?.configureServer(server)
       }
       return () => {
         server.middlewares.use((req, res, next) => {

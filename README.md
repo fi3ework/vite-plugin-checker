@@ -38,15 +38,21 @@ export default {
 ## Options
 
 ```ts
-interface PluginOptions {
+export interface PluginOptions {
   /**
-   * [WIP] Use `tsc` or `vue-tsc`
-   * @default if vue-tsc is installed, then true, otherwise false
+   * Use `"tsc"` or `"vue-tsc"`
+   * @defaultValue `"tcs"`
    */
-  vueTsc: boolean
+  checker: 'tsc' | 'vue-tsc'
   /**
-   * Show TypeScript error overlay
-   * @default Same as Vite config - `server.hmr.overlay`
+   * Throw in build mode if has error
+   * @defaultValue `true`
+   */
+  enableBuild: boolean
+  /**
+   * Show overlay when has TypeScript error
+   * @defaultValue
+   * Same as [Vite config](https://vitejs.dev/config/#root)
    */
   overlay: boolean
   /**
@@ -59,14 +65,21 @@ interface PluginOptions {
    *  - Support overlay
    *  - Almost the same console output as original
    *
-   * @default if `vueTsc` is true, then force set to 'cli', otherwise default to 'api'
+   * @defaultValue
+   * if 'vueTsc' is true, then force set to 'cli', otherwise default to 'api'
    */
   mode: 'cli' | 'api'
   /**
-   * Run in build mode ()
-   * @default true
+   * Root path to find tsconfig file
+   * @defaultValue
+   * Same as Vite https://vitejs.dev/config/#root
    */
-  build: boolean | {}
+  root: string
+  /**
+   * Relative tsconfig path to {@link (PluginOptions:interface).root}
+   * @defaultValue `"tsconfig.json"`
+   */
+  tsconfigPath: string
 }
 ```
 
@@ -84,10 +97,11 @@ npm run dev
 
 - [x] release alpha version
 - [x] support build mode
+- [x] custom tsconfig path
+- [x] no tsconfig file error
+- [x] examples
 - [ ] custom command
-- [ ] custom tsconfig path
-- [ ] no tsconfig file error
-- [x] examples (codesandbox?)
+- [ ] project references
 - [ ] release stable version
 
 ## License
