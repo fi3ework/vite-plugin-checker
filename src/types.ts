@@ -28,7 +28,7 @@ export interface PluginOptions {
    * @defaultValue
    * if 'vueTsc' is true, then force set to 'cli', otherwise default to 'api'
    */
-  mode: 'cli' | 'api'
+  // mode: 'cli' | 'api'
   /**
    * Root path to find tsconfig file
    * @defaultValue
