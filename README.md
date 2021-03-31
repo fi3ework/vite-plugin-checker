@@ -1,5 +1,7 @@
 # vite-plugin-ts-checker
 
+Vite plugin that runs TypeScript type checker on a separate process.
+
 ## Features
 
 - ⚡️ Out of the box
