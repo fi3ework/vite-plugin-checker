@@ -3,15 +3,17 @@
 ## Features
 
 - ⚡️ Out of the box
-- 💚 Support Vue by [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) (only build mode for now)
-- 🚥 Support overlay
-- 🎳 Support dev & build mode
+- 💚 Support Vue with [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) (build mode only for now)
+- 🚥 Vite HMR overlay
+- 🎳 Serve & build mode (TypeScript)
 
 <p align="center">
   <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/113175704-48cf1e80-927e-11eb-9bb5-43ab1b218cb2.png">
 </p>
 
 ## Usage
+
+⚠️ Plugin requires TypeScript (`checker: 'tsc'`) or [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) (`checker: 'vue-tsc'`) to be installed as peer dependency.
 
 ### Install
 
@@ -30,7 +32,8 @@ import TsChecker from 'vite-plugin-ts-checker'
 
 export default {
   plugins: [TsChecker()],
-  // or use config
+
+  // or use options
   // plugins: [TsChecker({ ...options })], // see options
 }
 ```
@@ -71,7 +74,7 @@ export interface PluginOptions {
 
 ## Examples
 
-See [./examples](./examples) to have a try.
+Run projects in [`examples/*`](./examples) to try it out.
 
 ```bash
 pnpm i
@@ -81,8 +84,8 @@ npm run dev
 
 ### Roadmap
 
-- [ ] project references
-- [ ] vue-tsc to support watch mode
+- [ ] Support project reference
+- [ ] Wait for vue-tsc to support watch mode
 
 ## License
 

@@ -28,13 +28,8 @@
   "homepage": "https://github.com/fi3ework/vite-plugin-ts-checker",
   "dependencies": {
     "@babel/code-frame": "^7.12.13",
-    "async-exit-hook": "^2.0.1",
-    "log-update": "^4.0.0",
     "npm-run-path": "^4.0.1",
     "strip-ansi": "^6.0.0"
-  },
-  "peerDependencies": {
-    "typescript": "3.x || 4.x"
   },
   "devDependencies": {
     "@types/babel__code-frame": "^7.0.2",
