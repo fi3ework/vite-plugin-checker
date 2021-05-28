@@ -32,6 +32,7 @@
     "strip-ansi": "^6.0.0"
   },
   "devDependencies": {
+    "@release-it/conventional-changelog": "^2.0.1",
     "@types/babel__code-frame": "^7.0.2",
     "@types/debug": "^4.1.5",
     "@types/jest": "^26.0.20",

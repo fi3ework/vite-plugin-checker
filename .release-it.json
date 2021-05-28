@@ -1,7 +1,9 @@
 {
   "git": {
     "commitMessage": "chore(release): release v${version}",
-    "requireUpstream": false
+    "requireUpstream": false,
+    "addUntrackedFiles": true,
+    "push": false
   },
   "hooks": {
     "before:init": ["pnpm i", "rm -rf lib"],
@@ -11,5 +13,11 @@
   "github": {
     "release": true,
     "draft": true
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "angular",
+      "infile": "CHANGELOG.md"
+    }
   }
 }
