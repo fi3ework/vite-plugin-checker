@@ -22,7 +22,7 @@ function ensureCall(callback: CallableFunction) {
 
 function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
   const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition(d.start)
-  let loc: ErrorPayload['err']['loc'] = undefined
+  let loc: ErrorPayload['err']['loc']
   if (pos) {
     loc = {
       file: d.file?.fileName,
@@ -112,6 +112,7 @@ export function createDiagnosis(userOptions: Partial<PluginOptions> = {}) {
         newLine,
         options,
         errorCount
+        // eslint-disable-next-line max-params
       ) => {
         // https://github.com/microsoft/TypeScript/issues/32542
         switch (diagnostic.code) {
