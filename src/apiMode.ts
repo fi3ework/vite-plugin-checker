@@ -65,7 +65,7 @@ function toViteError(d: ts.Diagnostic): ErrorPayload['err'] {
  * Prints a diagnostic every time the watch status changes.
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
-export function createDiagnosis(userOptions: Partial<PluginOptions> = {}) {
+export function createDiagnostic(userOptions: Partial<PluginOptions> = {}) {
   let overlay = true // Vite defaults to true
   let currErr: ErrorPayload['err'] | null = null
 
@@ -173,4 +173,4 @@ export function createDiagnosis(userOptions: Partial<PluginOptions> = {}) {
   }
 }
 
-export const diagnose = createDiagnosis()
+export const diagnostic = createDiagnostic()

@@ -31,6 +31,9 @@
     "npm-run-path": "^4.0.1",
     "strip-ansi": "^6.0.0"
   },
+  "peerDependencies": {
+    "vite": "^2.0.0"
+  },
   "devDependencies": {
     "@release-it/conventional-changelog": "^2.0.1",
     "@types/babel__code-frame": "^7.0.2",
