@@ -1,9 +1,17 @@
+import type { Plugin } from 'vite'
+
+export type CheckerFactory<T = never> = (options?: T) => Checker
+
+export type Checker = Pick<Plugin, 'config' | 'buildStart' | 'configureServer'> & {
+  buildBin: [string, ReadonlyArray<string>]
+}
+
 export interface PluginOptions {
   /**
-   * Use `"tsc"` or `"vue-tsc"`
+   * Use `"tsc"` or `"vue-tsc"` or an custom checker
    * @defaultValue `"tcs"`
    */
-  checker: 'tsc' | 'vue-tsc'
+  checker: 'tsc' | 'vue-tsc' | Checker
   /**
    * Throw in build mode if has error
    * @defaultValue `true`
