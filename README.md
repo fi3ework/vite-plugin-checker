@@ -5,7 +5,7 @@ Vite plugin that runs TypeScript type checker on a separate process.
 ## Features
 
 - ⚡️ Out of the box
-- 💚 Support Vue with [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) (build mode only for now)
+- 💚 Support Vue3 with [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) (build mode only for now)
 - 🚥 Vite HMR overlay
 - 🎳 Serve & build mode (TypeScript)
 
@@ -15,9 +15,9 @@ Vite plugin that runs TypeScript type checker on a separate process.
 
 ## Usage
 
-⚠️ Plugin requires TypeScript (`checker: 'tsc'`) or [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) (`checker: 'vue-tsc'`) to be installed as peer dependency.
-
 ### Install
+
+#### Install plugin
 
 ```bash
 npm i vite-plugin-ts-checker -D
@@ -25,6 +25,15 @@ npm i vite-plugin-ts-checker -D
 # yarn add vite-plugin-ts-checker -D
 # pnpm i vite-plugin-ts-checker -D
 ```
+
+#### Install peer dependencies
+
+`vite-plugin-ts-checker` requires
+
+- [typescript](https://www.npmjs.com/package/typescript) (when `checker: 'tsc'`)
+- [vue-tsc](https://www.npmjs.com/package/vue-tsc) (when `checker: 'vue-tsc'`)
+
+to be installed as peer dependency.
 
 ### Add to `vite.config.js`
 
@@ -86,6 +95,7 @@ npm run dev
 
 ### Roadmap
 
+- [ ] Support Vue2 by [VLS](https://www.npmjs.com/package/vls) (WIP)
 - [ ] Support project reference
 - [ ] Wait for vue-tsc to support watch mode
 
