@@ -1,9 +1,13 @@
 import type { Plugin } from 'vite'
 
-export type CheckerFactory<T = never> = (options?: T) => Checker
+export type CheckerFactory<T = unknown> = (options?: T) => Checker<T>
+export type CreateDiagnostic<T = unknown> = (
+  config?: T
+) => Required<Pick<Plugin, 'config' | 'configureServer'>>
 
-export type Checker = Pick<Plugin, 'config' | 'buildStart' | 'configureServer'> & {
+export interface Checker<T = unknown> {
   buildBin: [string, ReadonlyArray<string>]
+  createDiagnostic: CreateDiagnostic<T>
 }
 
 export interface PluginOptions {

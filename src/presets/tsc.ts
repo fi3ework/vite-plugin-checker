@@ -2,16 +2,17 @@ import os from 'os'
 import ts from 'typescript'
 import { ErrorPayload } from 'vite'
 
-import { PluginOptions } from './types'
-import { ensureCall, formatHost, toViteError } from './utils'
+import { PluginOptions, CreateDiagnostic } from '../types'
+import { ensureCall, formatHost, toViteError } from '../utils'
 
+import type { CheckerFactory } from '../types'
 import type { UserConfig, ViteDevServer } from 'vite'
 
 /**
  * Prints a diagnostic every time the watch status changes.
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
-export function createDiagnostic(userOptions: Partial<PluginOptions> = {}) {
+export const createDiagnostic: CreateDiagnostic<Partial<PluginOptions>> = (userOptions = {}) => {
   let overlay = true // Vite defaults to true
   let currErr: ErrorPayload['err'] | null = null
 
@@ -54,10 +55,10 @@ export function createDiagnostic(userOptions: Partial<PluginOptions> = {}) {
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
-        diagnostic,
-        newLine,
-        options,
-        errorCount
+        diagnostic
+        // newLine,
+        // options,
+        // errorCount
         // eslint-disable-next-line max-params
       ) => {
         // https://github.com/microsoft/TypeScript/issues/32542
@@ -94,29 +95,14 @@ export function createDiagnostic(userOptions: Partial<PluginOptions> = {}) {
         reportWatchStatusChanged
       )
 
-      // You can technically override any given hook on the host, though you probably
-      // don't need to.
-      // Note that we're assuming `origCreateProgram` and `origPostProgramCreate`
-      // doesn't use `this` at all.
-      // const origCreateProgram = host.createProgram
-      // @ts-ignore
-      // host.createProgram = (rootNames: ReadonlyArray<string>, options, host, oldProgram) => {
-      //   console.log("** We're about to create the program! **")
-      //   return origCreateProgram(rootNames, options, host, oldProgram)
-      // }
-
-      // const origPostProgramCreate = host.afterProgramCreate
-
-      // host.afterProgramCreate = (program) => {
-      //   console.log('** We finished making the program! **')
-      //   origPostProgramCreate!(program)
-      // }
-
-      // `createWatchProgram` creates an initial program, watches files, and updates
-      // the program over time.
       ts.createWatchProgram(host)
     },
   }
 }
 
-export const diagnostic = createDiagnostic()
+export const tsCheckerFactory: CheckerFactory<any> = () => {
+  return {
+    buildBin: ['tsc', ['--noEmit']],
+    createDiagnostic: createDiagnostic,
+  }
+}
