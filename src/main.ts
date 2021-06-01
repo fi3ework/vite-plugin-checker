@@ -3,41 +3,49 @@ import npmRunPath from 'npm-run-path'
 import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
 
-import { createDiagnostic } from './apiMode'
-import { tscProcess } from './cliMode'
-import { Checker, PluginOptions } from './types'
+import { Checker, CreateDiagnostic, PluginOptions } from './types'
 
-function isCustomChecker(checker: PluginOptions['checker']): checker is Checker {
-  return typeof checker !== 'string'
+export * from './types'
+
+function makeChecker(
+  checker: PluginOptions['checker'],
+  userOptions?: Partial<PluginOptions>
+): Checker<any> {
+  if (checker === 'tsc') {
+    // TODO: better use import.meta.require
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const tscCheckerFactory = require('./presets/tsc').tsCheckerFactory
+    return tscCheckerFactory(userOptions)
+  } else if (checker === 'vue-tsc') {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const vueTscCheckerFactory = require('./presets/tsc').tsCheckerFactory
+    return vueTscCheckerFactory(userOptions)
+  } else {
+    return checker
+  }
 }
 
 export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
-  const checker = userOptions?.checker ?? 'tsc'
+  const checker = makeChecker(userOptions?.checker || 'tsc', userOptions)
   const enableBuild = userOptions?.enableBuild ?? true
   let viteMode: ConfigEnv['command'] | undefined
-  let diagnostic: ReturnType<typeof createDiagnostic> | null = null
+  let diagnostic: ReturnType<CreateDiagnostic> | null = null
 
   return {
     name: 'ts-checker',
-    config: (config, { command }) => {
-      viteMode = command
-      if (mode === 'cli') {
-        tscProcess.config(config)
-      } else {
-        diagnostic = createDiagnostic({
-          root: userOptions?.root,
-          tsconfigPath: userOptions?.tsconfigPath,
-        })
+    config: (config, env) => {
+      viteMode = env.command
+      if (viteMode !== 'serve') return
 
-        diagnostic.config(config)
-      }
+      diagnostic = checker.createDiagnostic({
+        root: userOptions?.root,
+        tsconfigPath: userOptions?.tsconfigPath,
+      })
+
+      diagnostic.config(config, env)
     },
-    buildStart: (options) => {
+    buildStart: () => {
       if (viteMode !== 'build') return
-
-      const defaultTsCheckArgs = ['--noEmit']
-      const finalChecker = isCustomChecker(checker) ? checker.buildBin[0] : checker
-      const finalCheckerArgs = isCustomChecker(checker) ? checker.buildBin[1] : defaultTsCheckArgs
 
       const localEnv = npmRunPath.env({
         env: process.env,
@@ -45,7 +53,7 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
         execPath: process.execPath,
       })
 
-      const proc = spawn(finalChecker, finalCheckerArgs, {
+      const proc = spawn(checker.buildBin[0], checker.buildBin[1], {
         cwd: process.cwd(),
         stdio: 'inherit',
         env: localEnv,
@@ -69,5 +77,3 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
     },
   }
 }
-
-export type { CheckerFactory, Checker } from './types'

@@ -5,7 +5,6 @@ import './App.css'
 function App() {
   // Try change <string> to <number> and the overlay will gone.
   const [count, setCount] = useState<string>(0)
-
   return (
     <div className="App">
       <header className="App-header">
