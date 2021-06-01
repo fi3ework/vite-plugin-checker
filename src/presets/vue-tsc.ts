@@ -103,8 +103,8 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
 export const tsCheckerFactory: CheckerFactory = () => {
   return {
     buildBin: ['tsc', ['--noEmit']],
-    createDiagnostic,
+    createDiagnostic: createDiagnostic,
   }
 }
 
-export type TscCheckerOptions = Record<string, never>
+export type VueTscCheckerOptions = Record<string, never>
