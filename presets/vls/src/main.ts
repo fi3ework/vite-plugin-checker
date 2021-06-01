@@ -1,7 +1,7 @@
 import type { UserConfig, ViteDevServer } from 'vite'
 import { CheckerFactory, CreateDiagnostic, PluginOptions } from 'vite-plugin-ts-checker'
 
-export const createDiagnostic: CreateDiagnostic<Partial<PluginOptions>> = (userOptions = {}) => {
+export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   return {
     config: (config: UserConfig) => {
       // TODO:
@@ -12,7 +12,7 @@ export const createDiagnostic: CreateDiagnostic<Partial<PluginOptions>> = (userO
   }
 }
 
-export const vlsCheckerFactory: CheckerFactory<any> = () => {
+export const vlsCheckerFactory: CheckerFactory = () => {
   return {
     buildBin: ['vite-plugin-ts-checker-preset-vls', ['diagnostics']],
     createDiagnostic: createDiagnostic,
