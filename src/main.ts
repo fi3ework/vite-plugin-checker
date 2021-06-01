@@ -6,10 +6,16 @@ import { Checker, CreateDiagnostic, PluginOptions } from './types'
 
 export * from './types'
 
+// type GetCheckerOptions<T extends PluginOptions['checker']> = T extends 'tsc'
+//   ? TscCheckerOptions
+//   : T extends 'vue-tsc'
+//   ? VueTscCheckerOptions
+//   : any
+
 function makeChecker(
   checker: PluginOptions['checker'],
   userOptions?: Partial<PluginOptions>
-): Checker<any> {
+): Checker {
   if (checker === 'tsc') {
     // TODO: better use import.meta.require
     // eslint-disable-next-line @typescript-eslint/no-require-imports
