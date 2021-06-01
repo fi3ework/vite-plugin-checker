@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import chokidar from 'chokidar'
 import fs from 'fs'
 import glob from 'glob'
 import path from 'path'
@@ -11,6 +12,7 @@ import {
   Diagnostic,
   DiagnosticSeverity,
   DidOpenTextDocumentNotification,
+  DidChangeTextDocumentNotification,
   InitializeParams,
   InitializeRequest,
   InitializeResult,
@@ -34,7 +36,7 @@ const logLevel2Severity = {
   HINT: DiagnosticSeverity.Hint,
 }
 
-export async function diagnostics(workspace: string | null, logLevel: LogLevel) {
+export async function diagnostics(workspace: string | null, logLevel: LogLevel, watch = false) {
   console.log('====================================')
   console.log('Getting Vetur diagnostics')
   let workspaceUri
@@ -48,15 +50,19 @@ export async function diagnostics(workspace: string | null, logLevel: LogLevel) 
     workspaceUri = URI.file(process.cwd())
   }
 
-  const errCount = await getDiagnostics(workspaceUri, logLevel2Severity[logLevel])
+  const errCount = await getDiagnostics(workspaceUri, logLevel2Severity[logLevel], watch)
   console.log('====================================')
 
   if (errCount === 0) {
     console.log(chalk.green(`VTI found no error`))
-    process.exit(0)
+    if (!watch) {
+      process.exit(0)
+    }
   } else {
     console.log(chalk.red(`VTI found ${errCount} ${errCount === 1 ? 'error' : 'errors'}`))
-    process.exit(1)
+    if (!watch) {
+      process.exit(1)
+    }
   }
 }
 
@@ -91,6 +97,13 @@ async function prepareClientConnection(workspaceUri: URI) {
     new StreamMessageReader(up),
     new StreamMessageWriter(down)
   )
+
+  // NOTE: hijack sendDiagnostics
+  serverConnection.sendDiagnostics = (diagnostic) => {
+    if (!diagnostic.diagnostics.length) return
+    console.log(chalk.red(JSON.stringify(diagnostic, null, 2)))
+  }
+
   const vls = new VLS(serverConnection as any)
 
   serverConnection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
@@ -127,7 +140,7 @@ function range2Location(range: Range): SourceLocation {
   }
 }
 
-async function getDiagnostics(workspaceUri: URI, severity: DiagnosticSeverity) {
+async function getDiagnostics(workspaceUri: URI, severity: DiagnosticSeverity, watch: boolean) {
   const clientConnection = await prepareClientConnection(workspaceUri)
 
   const files = glob.sync('**/*.vue', { cwd: workspaceUri.fsPath, ignore: ['node_modules/**'] })
@@ -143,6 +156,24 @@ async function getDiagnostics(workspaceUri: URI, severity: DiagnosticSeverity) {
   const absFilePaths = files.map((f) => path.resolve(workspaceUri.fsPath, f))
 
   let errCount = 0
+
+  if (watch) {
+    chokidar
+      .watch(workspaceUri.fsPath, {
+        ignored: (path: string) => path.includes('node_modules'),
+        ignoreInitial: true,
+      })
+      .on('all', (event, path) => {
+        if (!path.endsWith('.vue')) return
+        clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
+          textDocument: {
+            uri: URI.file(path).toString(),
+            version: Date.now(),
+          },
+          contentChanges: [{ text: fs.readFileSync(path, 'utf-8') }],
+        })
+      })
+  }
 
   for (const absFilePath of absFilePaths) {
     const fileText = fs.readFileSync(absFilePath, 'utf-8')
