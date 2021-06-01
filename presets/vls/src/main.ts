@@ -1,14 +1,22 @@
-import { diagnostics, LogLevel, logLevels } from './commands/diagnostics'
 import type { UserConfig, ViteDevServer } from 'vite'
-import { CheckerFactory } from 'vite-plugin-ts-checker'
+import { CheckerFactory, CreateDiagnostic, PluginOptions } from 'vite-plugin-ts-checker'
 
-const createDiagnostic: CheckerFactory = () => {
+export const createDiagnostic: CreateDiagnostic<Partial<PluginOptions>> = (userOptions = {}) => {
   return {
-    config: () => {},
-    configureServer: () => {},
-    buildStart: () => {},
-    buildBin: ['vite-plugin-ts-checker-preset-vls', ['diagnostics']],
+    config: (config: UserConfig) => {
+      // TODO:
+    },
+    configureServer(server: ViteDevServer) {
+      // TODO:
+    },
   }
 }
 
-export default createDiagnostic
+export const vlsCheckerFactory: CheckerFactory<any> = () => {
+  return {
+    buildBin: ['vite-plugin-ts-checker-preset-vls', ['diagnostics']],
+    createDiagnostic: createDiagnostic,
+  }
+}
+
+export default vlsCheckerFactory
