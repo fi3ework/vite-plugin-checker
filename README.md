@@ -95,7 +95,7 @@ npm run dev
 
 ### Roadmap
 
-- [ ] Support Vue2 by [VLS](https://www.npmjs.com/package/vls) (WIP)
+- [ ] Support Vue2 by [VLS](https://www.npmjs.com/package/vls) ([draft PR](https://github.com/fi3ework/vite-plugin-ts-checker/pull/2/files))
 - [ ] Support project reference
 - [ ] Wait for vue-tsc to support watch mode
 
