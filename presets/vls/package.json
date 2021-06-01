@@ -30,6 +30,7 @@
   "bugs": "https://github.com/fi3ework/vite-plugin-ts-checker/issues",
   "homepage": "https://github.com/fi3ework/vite-plugin-ts-checker",
   "dependencies": {
+    "chokidar": "^3.5.1",
     "commander": "^7.2.0",
     "vls": "^0.7.2"
   },
@@ -38,15 +39,15 @@
     "vite-plugin-ts-checker": "^0.1.3"
   },
   "devDependencies": {
-    "typescript": "^4.2.2",
-    "vite-plugin-ts-checker": "^0.1.3",
-    "vite": "^2.1.3",
     "@babel/code-frame": "^7.12.13",
     "@types/babel__code-frame": "^7.0.2",
     "@types/glob": "^7.1.3",
     "chalk": "^4.1.1",
     "glob": "^7.1.7",
     "rollup": "^2.47.0",
+    "typescript": "^4.2.2",
+    "vite": "^2.1.3",
+    "vite-plugin-ts-checker": "^0.1.3",
     "vscode-languageclient": "^7.0.0",
     "vscode-languageserver": "^7.0.0",
     "vscode-languageserver-protocol": "^3.16.0",

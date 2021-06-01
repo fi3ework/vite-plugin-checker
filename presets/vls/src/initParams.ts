@@ -29,7 +29,7 @@ export function getInitParams(workspaceUri: URI): InitializeParams {
   return init
 }
 
-function getDefaultVLSConfig() {
+export function getDefaultVLSConfig() {
   return {
     vetur: {
       useWorkspaceDependencies: false,

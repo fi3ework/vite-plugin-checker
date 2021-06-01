@@ -1,7 +1,9 @@
 import { Command, Option } from 'commander'
+
 import { diagnostics, LogLevel, logLevels } from './commands/diagnostics'
 
 function getVersion(): string {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { version }: { version: string } = require('../package.json')
   return `v${version}`
 }
@@ -28,9 +30,11 @@ function validateLogLevel(logLevelInput: unknown): logLevelInput is LogLevel {
     )
     .action(async (workspace, options) => {
       const logLevelOption: unknown = options.logLevel
+
       if (!validateLogLevel(logLevelOption)) {
         throw new Error(`Invalid log level: ${logLevelOption}`)
       }
+
       await diagnostics(workspace, logLevelOption)
     })
 
