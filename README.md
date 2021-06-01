@@ -5,9 +5,9 @@ Vite plugin that runs TypeScript type checker on a separate process.
 ## Features
 
 - ⚡️ Out of the box
-- 💚 Support Vue3 with [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) (build mode only for now)
+- 💚 Support Vue2/3 based on [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) and [VLS](https://github.com/vuejs/vetur/blob/master/server/README.md)
 - 🚥 Vite HMR overlay
-- 🎳 Serve & build mode (TypeScript)
+- 🛠 Serve & build mode
 
 <p align="center">
   <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/113175704-48cf1e80-927e-11eb-9bb5-43ab1b218cb2.png">
@@ -21,21 +21,11 @@ Vite plugin that runs TypeScript type checker on a separate process.
 
 ```bash
 npm i vite-plugin-ts-checker -D
-
-# yarn add vite-plugin-ts-checker -D
-# pnpm i vite-plugin-ts-checker -D
 ```
 
-#### Install peer dependencies
+### Config `vite.config.js`
 
-`vite-plugin-ts-checker` requires
-
-- [typescript](https://www.npmjs.com/package/typescript) (when `checker: 'tsc'`)
-- [vue-tsc](https://www.npmjs.com/package/vue-tsc) (when `checker: 'vue-tsc'`)
-
-to be installed as peer dependency.
-
-### Add to `vite.config.js`
+Add `vite-plugin-ts-checker` to plugin filed of Vite config:
 
 ```ts
 // vite.config.js
@@ -43,18 +33,66 @@ import TsChecker from 'vite-plugin-ts-checker'
 
 export default {
   plugins: [TsChecker()],
-
-  // or use options
-  // plugins: [TsChecker({ ...options })], // see options
+  // or with advanced options, see options for detail
+  // plugins: [TsChecker({ ...options })]
 }
 ```
 
-## Options
+#### React
+
+Make sure [typescript](https://www.npmjs.com/package/typescript) is installed as a peer dependency, and set `checker` to `'tsc'`.
+
+```js
+{
+  checker: 'tsc'
+  // ...
+}
+```
+
+#### Vue (Volar)
+
+> Only support check in build mode as `vue-tsc` doesn't support watch mode for now.
+
+Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) is installed as a peer dependency, and set `checker` to `'vue-tsc'`.
+
+The type check is powered by `vue-tsc` so it supports Vue2 according to the [documentation](https://github.com/johnsoncodehk/volar#using), you need to install `@vue/runtime-dom` by yourself.
+
+```js
+{
+  checker: 'vue-tsc'
+  // ...
+}
+```
+
+#### Vue (Vetur)
+
+Install check preset based on [VLS](https://www.npmjs.com/package/vls).
+
+```bash
+npm i vite-plugin-ts-checker-preset-vls -D
+```
+
+config file:
+
+```js
+import TsChecker from 'vite-plugin-ts-checker'
+import vlsChecker from 'vite-plugin-ts-checker-preset-vls'
+
+module.exports = {
+  plugins: [
+    TsChecker({
+      checker: vlsChecker(/** VLS options */),
+    }),
+  ],
+}
+```
+
+## Options interface
 
 ```ts
 export interface PluginOptions {
   /**
-   * Use `"tsc"` or `"vue-tsc"`
+   * Use `"tsc"` or `"vue-tsc"` or Checker
    * @defaultValue `"tcs"`
    */
   checker: 'tsc' | 'vue-tsc'
