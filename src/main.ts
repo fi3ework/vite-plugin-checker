@@ -6,12 +6,8 @@ import { ConfigEnv, Plugin } from 'vite'
 import { Checker, CreateDiagnostic, PluginOptions } from './types'
 
 export * from './types'
-
-// type GetCheckerOptions<T extends PluginOptions['checker']> = T extends 'tsc'
-//   ? TscCheckerOptions
-//   : T extends 'vue-tsc'
-//   ? VueTscCheckerOptions
-//   : any
+export * from './codeFrame'
+export * from './utils'
 
 function makeChecker(
   checker: PluginOptions['checker'],
