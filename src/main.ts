@@ -13,15 +13,10 @@ function makeChecker(
   checker: PluginOptions['checker'],
   userOptions?: Partial<PluginOptions>
 ): Checker {
-  if (checker === 'tsc') {
-    // TODO: better use import.meta.require
+  if (typeof checker === 'string') {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const tscCheckerFactory = require('./presets/tsc').tsCheckerFactory
+    const tscCheckerFactory = require(`./presets/${checker}`).checkerFactory
     return tscCheckerFactory(userOptions)
-  } else if (checker === 'vue-tsc') {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const vueTscCheckerFactory = require('./presets/tsc').tsCheckerFactory
-    return vueTscCheckerFactory(userOptions)
   } else {
     return checker
   }
