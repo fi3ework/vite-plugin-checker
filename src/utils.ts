@@ -88,17 +88,18 @@ export function lspDiagnosticToViteError(
   if (!diagnostics.diagnostics.length) return null
 
   const d = diagnostics.diagnostics[0]
+  const absPath = uriToAbsPath(diagnostics.uri)
   const range = d.range
   let loc: ErrorPayload['err']['loc']
   if (range) {
     loc = {
-      file: uriToAbsPath(diagnostics.uri),
+      file: absPath,
       line: range.start.line + 1,
       column: range.start.character + 1,
     }
   }
 
-  const fileText = readFileSync(uriToAbsPath(diagnostics.uri), 'utf-8')
+  const fileText = readFileSync(absPath, 'utf-8')
   const location = range2Location(d.range)
   const columns = codeFrameColumns(fileText, location)
 
@@ -112,7 +113,7 @@ export function lspDiagnosticToViteError(
           columns
       ),
       stack: '',
-      id: d.source,
+      id: absPath,
       plugin: 'vite-plugin-ts-checker',
       loc,
     }
@@ -122,7 +123,7 @@ export function lspDiagnosticToViteError(
   return {
     message: ts.flattenDiagnosticMessageText(d.message, formatHost.getNewLine()),
     stack: '',
-    id: 'dummy source',
+    id: absPath,
     plugin: 'vite-plugin-ts-checker',
     loc,
   }
