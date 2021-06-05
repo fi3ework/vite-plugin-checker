@@ -100,7 +100,7 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   }
 }
 
-export const tsCheckerFactory: CheckerFactory = () => {
+export const checkerFactory: CheckerFactory = () => {
   return {
     buildBin: ['tsc', ['--noEmit']],
     createDiagnostic,

@@ -29,11 +29,11 @@ Add `vite-plugin-ts-checker` to plugin filed of Vite config file.
 
 ```ts
 // vite.config.js
-import TsChecker from 'vite-plugin-ts-checker'
+import Checker from 'vite-plugin-ts-checker'
 
 export default {
-  plugins: [TsChecker()],
-  // or with advanced options `plugins: [TsChecker({ ...options })]`
+  plugins: [Checker()],
+  // or with advanced options `plugins: [Checker({ ...options })]`
   // see options for detail
 }
 ```
@@ -61,12 +61,12 @@ npm i vite-plugin-ts-checker-preset-vls -D
 2. Modify config file
 
 ```js
-import TsChecker from 'vite-plugin-ts-checker'
+import Checker from 'vite-plugin-ts-checker'
 import VlsChecker from 'vite-plugin-ts-checker-preset-vls'
 
 module.exports = {
   plugins: [
-    TsChecker({
+    Checker({
       checker: VlsChecker(/** VLS options */),
     }),
   ],
