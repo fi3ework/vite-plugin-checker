@@ -92,10 +92,10 @@ module.exports = {
 ```ts
 export interface PluginOptions {
   /**
-   * Use `"tsc"` or `"vue-tsc"` or Checker
+   * Use `"tsc"` or `"vue-tsc"` or custom checker instance
    * @defaultValue `"tcs"`
    */
-  checker: 'tsc' | 'vue-tsc'
+  checker: 'tsc' | 'vue-tsc' | Checker
   /**
    * Throw in build mode if has error
    * @defaultValue `true`
