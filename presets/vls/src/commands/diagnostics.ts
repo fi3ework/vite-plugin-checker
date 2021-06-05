@@ -4,15 +4,16 @@ import fs from 'fs'
 import glob from 'glob'
 import path from 'path'
 import { Duplex } from 'stream'
+import { range2Location } from 'vite-plugin-ts-checker'
 import { VLS } from 'vls'
-import { Range } from 'vscode-languageclient'
+import { PublishDiagnosticsParams } from 'vscode-languageclient/node'
 import {
   createConnection,
   createProtocolConnection,
   Diagnostic,
   DiagnosticSeverity,
-  DidOpenTextDocumentNotification,
   DidChangeTextDocumentNotification,
+  DidOpenTextDocumentNotification,
   InitializeParams,
   InitializeRequest,
   InitializeResult,
@@ -23,7 +24,7 @@ import {
 } from 'vscode-languageserver/node'
 import { URI } from 'vscode-uri'
 
-import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
+import { codeFrameColumns } from '@babel/code-frame'
 
 import { getInitParams } from '../initParams'
 
@@ -36,7 +37,17 @@ const logLevel2Severity = {
   HINT: DiagnosticSeverity.Hint,
 }
 
-export async function diagnostics(workspace: string | null, logLevel: LogLevel, watch = false) {
+export interface DiagnosticOptions {
+  watch: boolean
+  errorCallback?: (diagnostic: PublishDiagnosticsParams) => void
+}
+
+export async function diagnostics(
+  workspace: string | null,
+  logLevel: LogLevel,
+  options: DiagnosticOptions = { watch: false }
+) {
+  const { watch, errorCallback } = options
   console.log('====================================')
   console.log('Getting Vetur diagnostics')
   let workspaceUri
@@ -50,7 +61,7 @@ export async function diagnostics(workspace: string | null, logLevel: LogLevel, 
     workspaceUri = URI.file(process.cwd())
   }
 
-  const errCount = await getDiagnostics(workspaceUri, logLevel2Severity[logLevel], watch)
+  const errCount = await getDiagnostics(workspaceUri, logLevel2Severity[logLevel], options)
   console.log('====================================')
 
   if (errCount === 0) {
@@ -82,7 +93,7 @@ class TestStream extends Duplex {
   public _read(_size: number) {}
 }
 
-async function prepareClientConnection(workspaceUri: URI) {
+async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOptions) {
   const up = new TestStream()
   const down = new TestStream()
   const logger = new NullLogger()
@@ -100,8 +111,7 @@ async function prepareClientConnection(workspaceUri: URI) {
 
   // NOTE: hijack sendDiagnostics
   serverConnection.sendDiagnostics = (diagnostic) => {
-    if (!diagnostic.diagnostics.length) return
-    console.log(chalk.red(JSON.stringify(diagnostic, null, 2)))
+    options.errorCallback?.(diagnostic)
   }
 
   const vls = new VLS(serverConnection as any)
@@ -127,21 +137,12 @@ async function prepareClientConnection(workspaceUri: URI) {
   return clientConnection
 }
 
-function range2Location(range: Range): SourceLocation {
-  return {
-    start: {
-      line: range.start.line + 1,
-      column: range.start.character + 1,
-    },
-    end: {
-      line: range.end.line + 1,
-      column: range.end.character + 1,
-    },
-  }
-}
-
-async function getDiagnostics(workspaceUri: URI, severity: DiagnosticSeverity, watch: boolean) {
-  const clientConnection = await prepareClientConnection(workspaceUri)
+async function getDiagnostics(
+  workspaceUri: URI,
+  severity: DiagnosticSeverity,
+  options: DiagnosticOptions
+) {
+  const clientConnection = await prepareClientConnection(workspaceUri, options)
 
   const files = glob.sync('**/*.vue', { cwd: workspaceUri.fsPath, ignore: ['node_modules/**'] })
 
@@ -150,14 +151,15 @@ async function getDiagnostics(workspaceUri: URI, severity: DiagnosticSeverity, w
     return 0
   }
 
-  console.log('')
-  console.log('Getting diagnostics from: ', files, '\n')
+  // console.log('')
+  // console.log('Getting diagnostics from: ', files, '\n')
 
   const absFilePaths = files.map((f) => path.resolve(workspaceUri.fsPath, f))
 
   let errCount = 0
 
-  if (watch) {
+  // watched diagnostics
+  if (options.watch) {
     chokidar
       .watch(workspaceUri.fsPath, {
         ignored: (path: string) => path.includes('node_modules'),
@@ -175,6 +177,7 @@ async function getDiagnostics(workspaceUri: URI, severity: DiagnosticSeverity, w
       })
   }
 
+  // initial diagnostics
   for (const absFilePath of absFilePaths) {
     const fileText = fs.readFileSync(absFilePath, 'utf-8')
     clientConnection.sendNotification(DidOpenTextDocumentNotification.type, {

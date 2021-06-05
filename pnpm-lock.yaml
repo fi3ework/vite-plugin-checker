@@ -23,10 +23,12 @@ importers:
       ts-jest: ^26.5.2
       typescript: ^4.2.2
       vite: ^2.1.3
+      vscode-languageclient: ^7.0.0
     dependencies:
       '@babel/code-frame': 7.12.13
       npm-run-path: 4.0.1
       strip-ansi: 6.0.0
+      vscode-languageclient: 7.0.0
     devDependencies:
       '@release-it/conventional-changelog': 2.0.1_release-it@14.5.0
       '@types/babel__code-frame': 7.0.2
@@ -7880,7 +7882,6 @@ packages:
   /vscode-jsonrpc/6.0.0:
     resolution: {integrity: sha512-wnJA4BnEjOSyFMvjZdpiOwhSq9uDoK8e/kpRJDTaMYzwlkrhG1fwDIZI94CLsLzlCK5cIbMMtFlJlfR57Lavmg==}
     engines: {node: '>=8.0.0 || >=10.0.0'}
-    dev: true
 
   /vscode-languageclient/7.0.0:
     resolution: {integrity: sha512-P9AXdAPlsCgslpP9pRxYPqkNYV7Xq8300/aZDpO35j1fJm/ncize8iGswzYlcvFw5DQUx4eVk+KvfXdL0rehNg==}
@@ -7889,18 +7890,15 @@ packages:
       minimatch: 3.0.4
       semver: 7.3.5
       vscode-languageserver-protocol: 3.16.0
-    dev: true
 
   /vscode-languageserver-protocol/3.16.0:
     resolution: {integrity: sha512-sdeUoAawceQdgIfTI+sdcwkiK2KU+2cbEYA0agzM2uqaUy2UpnnGHtWTHVEtS0ES4zHU0eMFRGN+oQgDxlD66A==}
     dependencies:
       vscode-jsonrpc: 6.0.0
       vscode-languageserver-types: 3.16.0
-    dev: true
 
   /vscode-languageserver-types/3.16.0:
     resolution: {integrity: sha512-k8luDIWJWyenLc5ToFQQMaSrqCHiLwyKPHKPQZ5zz21vM+vIVUSvsRpcbiECH4WR88K2XZqc4ScRcZ7nk/jbeA==}
-    dev: true
 
   /vscode-languageserver/7.0.0:
     resolution: {integrity: sha512-60HTx5ID+fLRcgdHfmz0LDZAXYEV68fzwG0JWwEPBode9NuMYTIxuYXPg4ngO8i8+Ou0lM7y6GzaYWbiDL0drw==}

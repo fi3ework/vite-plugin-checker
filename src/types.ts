@@ -29,6 +29,17 @@ export interface PluginOptions {
    */
   overlay: boolean
   /**
+   * Root path to find tsconfig file
+   * @defaultValue
+   * Same as Vite https://vitejs.dev/config/#root
+   */
+  root: string
+  /**
+   * Relative tsconfig path to {@link (PluginOptions:interface).root}
+   * @defaultValue `"tsconfig.json"`
+   */
+  tsconfigPath: string
+  /**
    * [WIP]
    * 'cli': use `tsc --noEmit` or `vue-tsc --noEmit`
    *  - No overlay support
@@ -42,15 +53,4 @@ export interface PluginOptions {
    * if 'vueTsc' is true, then force set to 'cli', otherwise default to 'api'
    */
   // mode: 'cli' | 'api'
-  /**
-   * Root path to find tsconfig file
-   * @defaultValue
-   * Same as Vite https://vitejs.dev/config/#root
-   */
-  root: string
-  /**
-   * Relative tsconfig path to {@link (PluginOptions:interface).root}
-   * @defaultValue `"tsconfig.json"`
-   */
-  tsconfigPath: string
 }

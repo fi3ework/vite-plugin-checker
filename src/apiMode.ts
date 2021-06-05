@@ -3,7 +3,7 @@ import ts from 'typescript'
 import { ErrorPayload } from 'vite'
 
 import { PluginOptions } from './types'
-import { ensureCall, formatHost, toViteError } from './utils'
+import { ensureCall, formatHost, tsDiagnosticToViteError } from './utils'
 
 import type { UserConfig, ViteDevServer } from 'vite'
 
@@ -45,7 +45,7 @@ export function createDiagnostic(userOptions: Partial<PluginOptions> = {}) {
         const originalDiagnostic = ts.formatDiagnosticsWithColorAndContext([diagnostic], formatHost)
 
         if (!currErr) {
-          currErr = toViteError(diagnostic)
+          currErr = tsDiagnosticToViteError(diagnostic)
         }
 
         ensureCall(() => {
