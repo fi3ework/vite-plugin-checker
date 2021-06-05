@@ -98,7 +98,7 @@ export interface PluginOptions {
    */
   checker: 'tsc' | 'vue-tsc' | Checker
   /**
-   * Enabled in build mode
+   * Enable checking in build mode
    * @defaultValue `true`
    */
   enableBuild: boolean

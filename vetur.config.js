@@ -10,5 +10,5 @@ module.exports = {
   },
   // **optional** default: `[{ root: './' }]`
   // support monorepos
-  projects: ['./examples/vue2-ts'],
+  projects: ['./examples/vue2-vls'],
 }

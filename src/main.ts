@@ -17,9 +17,9 @@ function makeChecker(
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const tscCheckerFactory = require(`./presets/${checker}`).checkerFactory
     return tscCheckerFactory(userOptions)
-  } else {
-    return checker
   }
+
+  return checker
 }
 
 export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
