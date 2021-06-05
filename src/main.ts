@@ -35,6 +35,8 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
   return {
     name: 'ts-checker',
     config: (config, env) => {
+      // for dev mode (1/2)
+      // Initialize checker with config
       viteMode = env.command
       if (viteMode !== 'serve') return
 
@@ -46,6 +48,8 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
       diagnostic.config(config, env)
     },
     buildStart: () => {
+      // for build mode
+      // Run a bin command in a separated process
       if (viteMode !== 'build') return
 
       const localEnv = npmRunPath.env({
@@ -69,6 +73,8 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
       }
     },
     configureServer(server) {
+      // for dev mode (2/2)
+      // Get the server instance and keep reference in a closure
       diagnostic!.configureServer(server)
       return () => {
         server.middlewares.use((req, res, next) => {
