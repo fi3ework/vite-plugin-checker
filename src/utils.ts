@@ -84,7 +84,7 @@ export function range2Location(range: Range): SourceLocation {
 
 export function lspDiagnosticToViteError(
   diagnostics: PublishDiagnosticsParams
-): ErrorPayload['err'] | null {
+): (ErrorPayload['err'] & { fileText: string }) | null {
   if (!diagnostics.diagnostics.length) return null
 
   const d = diagnostics.diagnostics[0]
@@ -106,6 +106,7 @@ export function lspDiagnosticToViteError(
   // has detail message
   if (d.message && typeof d.range === 'object') {
     return {
+      fileText,
       message: strip(
         ts.flattenDiagnosticMessageText(d.message, formatHost.getNewLine()) +
           os.EOL +
@@ -121,6 +122,7 @@ export function lspDiagnosticToViteError(
 
   // no detail message
   return {
+    fileText,
     message: ts.flattenDiagnosticMessageText(d.message, formatHost.getNewLine()),
     stack: '',
     id: absPath,
