@@ -201,19 +201,15 @@ async function getDiagnostics(
         .filter((r) => r.severity && r.severity <= severity)
       if (res.length > 0) {
         res.forEach((d) => {
-          const location = range2Location(d.range)
-          console.log(
-            `${chalk.green('File')} : ${chalk.green(absFilePath)}:${location.start.line}:${
-              location.start.column
-            }`
-          )
+          prettyLspConsole({
+            d,
+            absFilePath,
+            fileText,
+          })
+
           if (d.severity === DiagnosticSeverity.Error) {
-            console.log(`${chalk.red('Error')}: ${d.message.trim()}`)
             errCount++
-          } else {
-            console.log(`${chalk.yellow('Warn')} : ${d.message.trim()}`)
           }
-          console.log(codeFrameColumns(fileText, location))
         })
         console.log('')
       }
@@ -223,4 +219,28 @@ async function getDiagnostics(
   }
 
   return errCount
+}
+
+export function prettyLspConsole({
+  d,
+  absFilePath,
+  fileText,
+}: {
+  d: Diagnostic
+  absFilePath: string
+  fileText: string
+}) {
+  const location = range2Location(d.range)
+  console.log(
+    `${chalk.green('File')} : ${chalk.green(absFilePath)}:${location.start.line}:${
+      location.start.column
+    }`
+  )
+  if (d.severity === DiagnosticSeverity.Error) {
+    console.log(`${chalk.red('Error')}: ${d.message.trim()}`)
+    // errCount++
+  } else {
+    console.log(`${chalk.yellow('Warn')} : ${d.message.trim()}`)
+  }
+  console.log(codeFrameColumns(fileText, location))
 }

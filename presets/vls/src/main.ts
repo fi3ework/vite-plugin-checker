@@ -1,9 +1,12 @@
 import type { UserConfig, ViteDevServer } from 'vite'
-import { CheckerFactory, CreateDiagnostic, lspDiagnosticToViteError } from 'vite-plugin-ts-checker'
+import {
+  CheckerFactory,
+  CreateDiagnostic,
+  lspDiagnosticToViteError,
+  uriToAbsPath,
+} from 'vite-plugin-ts-checker'
 
-import { codeFrameColumns } from '@babel/code-frame'
-
-import { DiagnosticOptions, diagnostics } from './commands/diagnostics'
+import { DiagnosticOptions, diagnostics, prettyLspConsole } from './commands/diagnostics'
 
 export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   let overlay = true // Vite defaults to true
@@ -19,22 +22,24 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
     },
     async configureServer(server: ViteDevServer) {
       const workDir: string = userOptions.root ?? server.config.root
-      const errorCallback: DiagnosticOptions['errorCallback'] = (d) => {
-        if (!d.diagnostics.length) return
-        const firstDiagnostic = d.diagnostics[0]
-
-        codeFrameColumns(firstDiagnostic.source || 'no code', {
-          start: { line: 1, column: 1 },
-          end: { line: 1, column: 1 },
-        })
-
-        const overlayErr = lspDiagnosticToViteError(d)
+      const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics) => {
+        if (!diagnostics.diagnostics.length) return
+        const overlayErr = lspDiagnosticToViteError(diagnostics)
         if (!overlayErr) return
+
         server.ws.send({
           type: 'error',
           err: overlayErr,
         })
+        diagnostics.diagnostics.forEach((d) => {
+          prettyLspConsole({
+            d,
+            absFilePath: uriToAbsPath(diagnostics.uri),
+            fileText: overlayErr.fileText,
+          })
+        })
       }
+
       await diagnostics(workDir, 'WARN', { watch: true, errorCallback })
     },
   }
