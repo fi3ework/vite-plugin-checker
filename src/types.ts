@@ -18,7 +18,7 @@ export interface PluginOptions {
    */
   checker: 'tsc' | 'vue-tsc' | Checker
   /**
-   * Throw in build mode if has error
+   * Enabled in build mode
    * @defaultValue `true`
    */
   enableBuild: boolean
@@ -31,7 +31,7 @@ export interface PluginOptions {
   /**
    * Root path to find tsconfig file
    * @defaultValue
-   * Same as Vite https://vitejs.dev/config/#root
+   * Same as [Vite config](https://vitejs.dev/config/#root)
    */
   root: string
   /**
@@ -39,18 +39,4 @@ export interface PluginOptions {
    * @defaultValue `"tsconfig.json"`
    */
   tsconfigPath: string
-  /**
-   * [WIP]
-   * 'cli': use `tsc --noEmit` or `vue-tsc --noEmit`
-   *  - No overlay support
-   *  - Original console output
-   *
-   * 'api': use TypeScript programmatic API
-   *  - Support overlay
-   *  - Almost the same console output as original
-   *
-   * @defaultValue
-   * if 'vueTsc' is true, then force set to 'cli', otherwise default to 'api'
-   */
-  // mode: 'cli' | 'api'
 }
