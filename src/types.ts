@@ -1,15 +1,60 @@
-import type { Plugin } from 'vite'
+import type { HMRPayload, ServerOptions, ConfigEnv } from 'vite'
+import type { Worker } from 'worker_threads'
 
 export type CheckerFactory = (options?: unknown) => Checker
 
+export type BuildCheckBin = [string, ReadonlyArray<string>]
+
 export interface Checker {
-  buildBin: [string, ReadonlyArray<string>]
   createDiagnostic: CreateDiagnostic
 }
 
-export type CreateDiagnostic = (
-  config?: Partial<PluginOptions>
-) => Required<Pick<Plugin, 'config' | 'configureServer'>>
+export interface DiagnosticOfCheck {
+  config: (options: Pick<ServerOptions, 'hmr'> & { env: ConfigEnv }) => unknown
+  configureServer: (options: { root: string }) => unknown
+}
+
+export type CreateDiagnostic = (config?: Partial<PluginOptions>) => DiagnosticOfCheck
+
+export interface CheckWorker {
+  worker: Worker
+  config: (config: ConfigAction['payload']) => void
+  configureServer: (serverConfig: ConfigureServerAction['payload']) => void
+}
+
+/* ----------------------------- worker actions ----------------------------- */
+
+export enum ACTION_TYPES {
+  overlayError = 'overlayError',
+  config = 'config',
+  configureServer = 'configureServer',
+}
+
+interface Action {
+  type: string
+  payload: unknown
+}
+
+export interface OverlayErrorAction extends Action {
+  type: ACTION_TYPES.overlayError
+  payload: HMRPayload
+}
+
+export interface ConfigAction extends Action {
+  type: ACTION_TYPES.config
+  payload: Pick<ServerOptions, 'hmr'> & { env: ConfigEnv }
+}
+
+export interface ConfigureServerAction extends Action {
+  type: ACTION_TYPES.configureServer
+  payload: {
+    root: string
+  }
+}
+
+export type Actions = OverlayErrorAction | ConfigAction | ConfigureServerAction
+
+/* ----------------------------- worker actions ----------------------------- */
 
 export interface PluginOptions {
   /**
