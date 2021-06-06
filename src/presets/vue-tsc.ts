@@ -7,6 +7,7 @@ import type { UserConfig, ViteDevServer } from 'vite'
  * Prints a diagnostic every time the watch status changes.
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
+// @ts-ignore
 export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   return {
     config: (config: UserConfig) => {
