@@ -3,30 +3,37 @@ import npmRunPath from 'npm-run-path'
 import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
 
-import { Checker, CreateDiagnostic, PluginOptions } from './types'
+import { BuildCheckBin, CheckWorker, OverlayErrorAction, PluginOptions } from './types'
 
 export * from './types'
 export * from './codeFrame'
 export * from './utils'
 
-function makeChecker(
+function createServeAndBuild(
   checker: PluginOptions['checker'],
   userOptions?: Partial<PluginOptions>
-): Checker {
+): { serve: CheckWorker; build: { buildBin: BuildCheckBin } } {
   if (typeof checker === 'string') {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const tscCheckerFactory = require(`./presets/${checker}`).checkerFactory
-    return tscCheckerFactory(userOptions)
+    const createWorker = require(`./presets/${checker}`).createWorker
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const buildBin = require(`./presets/${checker}`).buildBin
+    // const tscCheckerFactory = require(`./presets/${checker}`).checkerFactory
+    return { serve: createWorker(userOptions), build: { buildBin } }
   }
 
+  // @ts-ignore
   return checker
 }
 
 export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
-  const checker = makeChecker(userOptions?.checker || 'tsc', userOptions)
+  const {
+    serve: { worker, config: workerConfig, configureServer: workerConfigureServer },
+    build: { buildBin },
+  } = createServeAndBuild(userOptions?.checker || 'tsc', userOptions)
   const enableBuild = userOptions?.enableBuild ?? true
   let viteMode: ConfigEnv['command'] | undefined
-  let diagnostic: ReturnType<CreateDiagnostic> | null = null
+  // let diagnostic: ReturnType<CreateDiagnostic> | null = null
 
   return {
     name: 'ts-checker',
@@ -36,12 +43,16 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
       viteMode = env.command
       if (viteMode !== 'serve') return
 
-      diagnostic = checker.createDiagnostic({
-        root: userOptions?.root,
-        tsconfigPath: userOptions?.tsconfigPath,
+      workerConfig({
+        hmr: config.server?.hmr,
+        env,
       })
+      // diagnostic = checker.createDiagnostic({
+      //   root: userOptions?.root,
+      //   tsconfigPath: userOptions?.tsconfigPath,
+      // })
 
-      diagnostic.config(config, env)
+      // diagnostic.config(config, env)
     },
     buildStart: () => {
       // for build mode
@@ -54,7 +65,7 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
         execPath: process.execPath,
       })
 
-      const proc = spawn(checker.buildBin[0], checker.buildBin[1], {
+      const proc = spawn(buildBin[0], buildBin[1], {
         cwd: process.cwd(),
         stdio: 'inherit',
         env: localEnv,
@@ -71,7 +82,11 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
     configureServer(server) {
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
-      diagnostic!.configureServer(server)
+      workerConfigureServer({ root: server.config.root })
+      worker.on('message', (action: OverlayErrorAction) => {
+        server.ws.send(action.payload)
+      })
+
       return () => {
         server.middlewares.use((req, res, next) => {
           next()

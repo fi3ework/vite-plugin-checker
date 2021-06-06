@@ -1,33 +1,37 @@
 import os from 'os'
 import ts from 'typescript'
 import { ErrorPayload } from 'vite'
+import { isMainThread, parentPort, Worker, workerData } from 'worker_threads'
 
-import { CreateDiagnostic } from '../types'
+import {
+  ACTION_TYPES,
+  CheckWorker,
+  ConfigAction,
+  ConfigureServerAction,
+  CreateDiagnostic,
+} from '../types'
 import { ensureCall, formatHost, tsDiagnosticToViteError } from '../utils'
 
-import type { CheckerFactory } from '../types'
-import type { UserConfig, ViteDevServer } from 'vite'
-
+import type { CheckerFactory, DiagnosticOfCheck, BuildCheckBin } from '../types'
 /**
  * Prints a diagnostic every time the watch status changes.
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
-export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
+const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   let overlay = true // Vite defaults to true
   let currErr: ErrorPayload['err'] | null = null
 
   return {
-    config: (config: UserConfig) => {
-      const hmr = config.server?.hmr
+    config: ({ hmr }) => {
       const viteOverlay = !(typeof hmr === 'object' && hmr.overlay === false)
 
       if (userOptions.overlay === false || !viteOverlay) {
         overlay = false
       }
     },
-    configureServer(server: ViteDevServer) {
+    configureServer({ root }) {
       const finalConfig = {
-        root: userOptions.root ?? server.config.root,
+        root: userOptions.root ?? root,
         tsconfigPath: userOptions.tsconfigPath ?? 'tsconfig.json',
       }
 
@@ -71,10 +75,17 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
             if (currErr && overlay) {
-              server.ws.send({
-                type: 'error',
-                err: currErr,
+              parentPort?.postMessage({
+                type: 'ERROR',
+                payload: {
+                  type: 'error',
+                  err: currErr,
+                },
               })
+              // server.ws.send({
+              //   type: 'error',
+              //   err: currErr,
+              // })
             }
 
             ensureCall(() => {
@@ -100,11 +111,53 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   }
 }
 
-export const checkerFactory: CheckerFactory = () => {
+const checkerFactory: CheckerFactory = () => {
   return {
-    buildBin: ['tsc', ['--noEmit']],
     createDiagnostic,
   }
 }
 
-export type TscCheckerOptions = Record<string, never>
+export const buildBin: BuildCheckBin = ['tsc', ['--noEmit']]
+
+if (isMainThread) {
+  // initialized in main thread
+  const createWorker = (userConfigs?: Record<string, never>): CheckWorker => {
+    const worker = new Worker(__filename, {
+      workerData: userConfigs,
+    })
+
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return {
+      worker,
+      config: (config) => {
+        const configAction: ConfigAction = { type: ACTION_TYPES.config, payload: config }
+        worker.postMessage(configAction)
+      },
+      configureServer: (serverConfig) => {
+        const configureServerAction: ConfigureServerAction = {
+          type: ACTION_TYPES.configureServer,
+          payload: serverConfig,
+        }
+        worker.postMessage(configureServerAction)
+      },
+    }
+  }
+
+  module.exports.createWorker = createWorker
+} else {
+  // runs in worker thread
+  let diagnostic: DiagnosticOfCheck | null = null
+  if (!parentPort) throw Error('should have parentPort as file runs in worker thread')
+
+  parentPort.on('message', (action: ConfigAction | ConfigureServerAction) => {
+    if (action.type === ACTION_TYPES.config) {
+      const checker = checkerFactory()
+      const userConfigs = workerData
+      diagnostic = checker.createDiagnostic(userConfigs)
+      diagnostic.config(action.payload)
+    } else if (action.type === ACTION_TYPES.configureServer) {
+      if (!diagnostic) throw Error('diagnostic should be initialized in `config` hook of Vite')
+      diagnostic.configureServer(action.payload)
+    }
+  })
+}
