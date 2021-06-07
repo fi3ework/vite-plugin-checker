@@ -3,16 +3,18 @@ import ts from 'typescript'
 import { ErrorPayload } from 'vite'
 import { isMainThread, parentPort, Worker, workerData } from 'worker_threads'
 
-import {
-  ACTION_TYPES,
+import { ACTION_TYPES } from '../types'
+import { ensureCall, formatHost, tsDiagnosticToViteError } from '../utils'
+
+import type {
   CheckWorker,
   ConfigAction,
   ConfigureServerAction,
   CreateDiagnostic,
+  CheckerFactory,
+  DiagnosticOfCheck,
+  BuildCheckBin,
 } from '../types'
-import { ensureCall, formatHost, tsDiagnosticToViteError } from '../utils'
-
-import type { CheckerFactory, DiagnosticOfCheck, BuildCheckBin } from '../types'
 /**
  * Prints a diagnostic every time the watch status changes.
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
@@ -82,6 +84,7 @@ const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
                   err: currErr,
                 },
               })
+
               // server.ws.send({
               //   type: 'error',
               //   err: currErr,
@@ -116,8 +119,6 @@ const checkerFactory: CheckerFactory = () => {
     createDiagnostic,
   }
 }
-
-export const buildBin: BuildCheckBin = ['tsc', ['--noEmit']]
 
 if (isMainThread) {
   // initialized in main thread
@@ -161,3 +162,5 @@ if (isMainThread) {
     }
   })
 }
+
+export const buildBin: BuildCheckBin = ['tsc', ['--noEmit']]
