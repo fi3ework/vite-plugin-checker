@@ -56,7 +56,7 @@ importers:
       react-dom: ^17.0.0
       typescript: ^4.1.2
       vite: ^2.1.3
-      vite-plugin-ts-checker: workspace:*
+      vite-plugin-checker: workspace:*
     dependencies:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
@@ -66,7 +66,7 @@ importers:
       '@vitejs/plugin-react-refresh': 1.3.1
       typescript: 4.2.3
       vite: 2.1.3
-      vite-plugin-ts-checker: link:../..
+      vite-plugin-checker: link:../..
 
   examples/vue2-vls:
     specifiers:
@@ -82,9 +82,9 @@ importers:
       sass: ^1.32.7
       typescript: ~4.3.2
       vite: ^2.0.2
+      vite-plugin-checker: ^0.1.0
+      vite-plugin-checker-preset-vls: ^0.1.0
       vite-plugin-components: ^0.10.2
-      vite-plugin-ts-checker: ^0.1.3
-      vite-plugin-ts-checker-preset-vls: ^0.0.1
       vite-plugin-vue2: ^1.2.1
       vue: ^2.6.12
       vue-class-component: ^7.2.6
@@ -111,9 +111,9 @@ importers:
       sass: 1.34.0
       typescript: 4.3.2
       vite: 2.1.3
+      vite-plugin-checker: link:../..
+      vite-plugin-checker-preset-vls: link:../../presets/vls
       vite-plugin-components: 0.10.4_vite@2.1.3
-      vite-plugin-ts-checker: link:../..
-      vite-plugin-ts-checker-preset-vls: link:../../presets/vls
       vite-plugin-vue2: 1.5.2_45289af7d17b67ab040d28049df8ad23
       vue-template-compiler: 2.6.12
 
@@ -123,7 +123,7 @@ importers:
       '@vue/compiler-sfc': ^3.0.5
       typescript: ^4.1.3
       vite: ^2.1.3
-      vite-plugin-ts-checker: workspace:*
+      vite-plugin-checker: workspace:*
       vue: ^3.0.5
       vue-tsc: ^0.0.15
     dependencies:
@@ -133,7 +133,7 @@ importers:
       '@vue/compiler-sfc': 3.0.9_vue@3.0.9
       typescript: 4.3.2
       vite: 2.1.3
-      vite-plugin-ts-checker: link:../..
+      vite-plugin-checker: link:../..
       vue-tsc: 0.0.15
 
   presets/vls:
@@ -148,7 +148,7 @@ importers:
       rollup: ^2.47.0
       typescript: ^4.2.2
       vite: ^2.1.3
-      vite-plugin-ts-checker: ^0.1.3
+      vite-plugin-checker: ^0.1.0
       vls: ^0.7.2
       vscode-languageclient: ^7.0.0
       vscode-languageserver: ^7.0.0
@@ -168,7 +168,7 @@ importers:
       rollup: 2.50.5
       typescript: 4.3.2
       vite: 2.1.3
-      vite-plugin-ts-checker: link:../..
+      vite-plugin-checker: link:../..
       vscode-languageclient: 7.0.0
       vscode-languageserver: 7.0.0
       vscode-languageserver-protocol: 3.16.0

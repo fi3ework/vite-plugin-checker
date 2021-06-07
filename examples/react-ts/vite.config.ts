@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import reactRefresh from '@vitejs/plugin-react-refresh'
-import Checker from 'vite-plugin-ts-checker'
+import Checker from 'vite-plugin-checker'
 
 // https://vitejs.dev/config/
 export default defineConfig({
