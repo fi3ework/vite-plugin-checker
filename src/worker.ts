@@ -19,9 +19,9 @@ export function createScript({ absFilename, buildBin, checkerFactory }: WorkerSc
   return {
     mainScript: () => {
       // initialized in main thread
-      const createWorker = (userConfigs?: Record<string, never>): ConfigureChecker => {
+      const createWorker = (checkerConfigs?: Record<string, never>): ConfigureChecker => {
         const worker = new Worker(absFilename, {
-          workerData: userConfigs,
+          workerData: checkerConfigs,
         })
 
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -42,18 +42,11 @@ export function createScript({ absFilename, buildBin, checkerFactory }: WorkerSc
       }
 
       return {
-        createWorker,
-        serveAndBuild: (config: any) => ({
+        createServeAndBuild: (config: any) => ({
           serve: createWorker(config),
           build: buildBin,
         }),
       }
-
-      // module.exports.createWorker = createWorker
-      // module.exports.serveAndBuild = (config: any) => ({
-      //   serve: createWorker(config),
-      //   build: buildBin,
-      // })
     },
     workerScript: () => {
       // runs in worker thread
@@ -63,8 +56,8 @@ export function createScript({ absFilename, buildBin, checkerFactory }: WorkerSc
       parentPort.on('message', (action: ConfigAction | ConfigureServerAction) => {
         if (action.type === ACTION_TYPES.config) {
           const checker = checkerFactory()
-          const userConfigs = workerData
-          diagnostic = checker.createDiagnostic(userConfigs)
+          const checkerConfig = workerData
+          diagnostic = checker.createDiagnostic(checkerConfig)
           diagnostic.config(action.payload)
         } else if (action.type === ACTION_TYPES.configureServer) {
           if (!diagnostic) throw Error('diagnostic should be initialized in `config` hook of Vite')

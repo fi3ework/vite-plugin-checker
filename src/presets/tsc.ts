@@ -116,9 +116,8 @@ const { mainScript, workerScript } = createScript({
 })!
 
 if (isMainThread) {
-  const { createWorker, serveAndBuild } = mainScript()
-  module.exports.createWorker = createWorker
-  module.exports.serveAndBuild = serveAndBuild
+  const { createServeAndBuild } = mainScript()
+  module.exports.createServeAndBuild = createServeAndBuild
 } else {
   workerScript()
 }
