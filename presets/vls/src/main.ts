@@ -5,6 +5,7 @@ import {
   createScript,
   lspDiagnosticToViteError,
   uriToAbsPath,
+  ServeAndBuild,
 } from 'vite-plugin-checker'
 import { isMainThread, parentPort } from 'worker_threads'
 
@@ -64,12 +65,11 @@ const { mainScript, workerScript } = createScript({
 })!
 
 if (isMainThread) {
-  const { createWorker, serveAndBuild } = mainScript()
-  module.exports.createWorker = createWorker
-  module.exports.serveAndBuild = serveAndBuild
+  const { createServeAndBuild } = mainScript()
+  module.exports.VlsChecker = module.exports.createServeAndBuild = createServeAndBuild
 } else {
   workerScript()
 }
 
-declare const serveAndBuild: any
-export { serveAndBuild }
+declare const VlsChecker: (options?: { volar?: boolean }) => ServeAndBuild
+export { VlsChecker }

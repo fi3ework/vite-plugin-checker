@@ -1,31 +1,44 @@
 import type { HMRPayload, ServerOptions, ConfigEnv } from 'vite'
 import type { Worker } from 'worker_threads'
 
-export type ServeCheckerFactory = (options?: unknown) => ServeChecker
+/* ----------------------------- userland plugin options ----------------------------- */
 
-export interface ServeChecker {
-  createDiagnostic: CreateDiagnostic
+type TscConfig = boolean | Partial<{ tsconfigPath: string; root: string }>
+type VueTscConfig = boolean | Partial<{ root: string }>
+type VlsConfig = ServeAndBuild
+
+export interface PluginOptions {
+  tsc: TscConfig
+  vueTsc: VueTscConfig
+  vls: VlsConfig
+  /**
+   * Use `"tsc"` or `"vue-tsc"` or an custom checker
+   * @defaultValue `"tcs"`
+   */
+  // checker: 'tsc' | 'vue-tsc' | ServeAndBuild
+  /**
+   * Enable checking in build mode
+   * @defaultValue `true`
+   */
+  enableBuild: boolean
+  /**
+   * Show overlay when has TypeScript error
+   * @defaultValue
+   * Same as [Vite config](https://vitejs.dev/config/#root)
+   */
+  overlay: boolean
+  /**
+   * Root path to find tsconfig file
+   * @defaultValue
+   * Same as [Vite config](https://vitejs.dev/config/#root)
+   */
+  root: string
+  /**
+   * Relative tsconfig path to {@link (PluginOptions:interface).root}
+   * @defaultValue `"tsconfig.json"`
+   */
+  tsconfigPath: string
 }
-
-export type BuildCheckBin = [string, ReadonlyArray<string>]
-
-export interface ConfigureChecker {
-  worker: Worker
-  config: (config: ConfigAction['payload']) => void
-  configureServer: (serverConfig: ConfigureServerAction['payload']) => void
-}
-
-export interface ServeAndBuild {
-  serve: ConfigureChecker
-  build: { buildBin: BuildCheckBin }
-}
-
-export interface DiagnosticOfCheck {
-  config: (options: Pick<ServerOptions, 'hmr'> & { env: ConfigEnv }) => unknown
-  configureServer: (options: { root: string }) => unknown
-}
-
-export type CreateDiagnostic = (config?: Partial<PluginOptions>) => DiagnosticOfCheck
 
 /* ----------------------------- worker actions ----------------------------- */
 
@@ -59,34 +72,30 @@ export interface ConfigureServerAction extends Action {
 
 export type Actions = OverlayErrorAction | ConfigAction | ConfigureServerAction
 
-/* ----------------------------- worker actions ----------------------------- */
+/* ----------------------------- internal types ----------------------------- */
 
-export interface PluginOptions {
-  /**
-   * Use `"tsc"` or `"vue-tsc"` or an custom checker
-   * @defaultValue `"tcs"`
-   */
-  checker: 'tsc' | 'vue-tsc' | ServeAndBuild
-  /**
-   * Enable checking in build mode
-   * @defaultValue `true`
-   */
-  enableBuild: boolean
-  /**
-   * Show overlay when has TypeScript error
-   * @defaultValue
-   * Same as [Vite config](https://vitejs.dev/config/#root)
-   */
-  overlay: boolean
-  /**
-   * Root path to find tsconfig file
-   * @defaultValue
-   * Same as [Vite config](https://vitejs.dev/config/#root)
-   */
-  root: string
-  /**
-   * Relative tsconfig path to {@link (PluginOptions:interface).root}
-   * @defaultValue `"tsconfig.json"`
-   */
-  tsconfigPath: string
+export type ServeCheckerFactory = (options?: unknown) => ServeChecker
+
+export interface ServeChecker {
+  createDiagnostic: CreateDiagnostic
 }
+
+export type BuildCheckBin = [string, ReadonlyArray<string>]
+
+export interface ConfigureChecker {
+  worker: Worker
+  config: (config: ConfigAction['payload']) => void
+  configureServer: (serverConfig: ConfigureServerAction['payload']) => void
+}
+
+export interface ServeAndBuild {
+  serve: ConfigureChecker
+  build: { buildBin: BuildCheckBin }
+}
+
+export interface DiagnosticOfCheck {
+  config: (options: Pick<ServerOptions, 'hmr'> & { env: ConfigEnv }) => unknown
+  configureServer: (options: { root: string }) => unknown
+}
+
+export type CreateDiagnostic = (config?: Partial<PluginOptions>) => DiagnosticOfCheck
