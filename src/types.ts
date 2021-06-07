@@ -1,17 +1,23 @@
 import type { HMRPayload, ServerOptions, ConfigEnv } from 'vite'
 import type { Worker } from 'worker_threads'
 
-export type CheckerFactory = (options?: unknown) => ServeChecker
-
-export type BuildCheckBin = [string, ReadonlyArray<string>]
-
-export interface ServeAndBuild {
-  serve: CheckWorker
-  build: { buildBin: BuildCheckBin }
-}
+export type ServeCheckerFactory = (options?: unknown) => ServeChecker
 
 export interface ServeChecker {
   createDiagnostic: CreateDiagnostic
+}
+
+export type BuildCheckBin = [string, ReadonlyArray<string>]
+
+export interface ConfigureChecker {
+  worker: Worker
+  config: (config: ConfigAction['payload']) => void
+  configureServer: (serverConfig: ConfigureServerAction['payload']) => void
+}
+
+export interface ServeAndBuild {
+  serve: ConfigureChecker
+  build: { buildBin: BuildCheckBin }
 }
 
 export interface DiagnosticOfCheck {
@@ -20,12 +26,6 @@ export interface DiagnosticOfCheck {
 }
 
 export type CreateDiagnostic = (config?: Partial<PluginOptions>) => DiagnosticOfCheck
-
-export interface CheckWorker {
-  worker: Worker
-  config: (config: ConfigAction['payload']) => void
-  configureServer: (serverConfig: ConfigureServerAction['payload']) => void
-}
 
 /* ----------------------------- worker actions ----------------------------- */
 

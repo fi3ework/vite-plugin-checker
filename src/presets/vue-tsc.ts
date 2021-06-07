@@ -1,18 +1,12 @@
-import { isMainThread, parentPort, Worker, workerData } from 'worker_threads'
+import { isMainThread } from 'worker_threads'
+import { createScript } from '../worker'
 
-import { ACTION_TYPES } from '../types'
-
-import type {
-  CheckerFactory,
-  CheckWorker,
-  ConfigAction,
-  ConfigureServerAction,
-  CreateDiagnostic,
-  BuildCheckBin,
-} from '../types'
+import type { ServeCheckerFactory, CreateDiagnostic, BuildCheckBin } from '../types'
 import type { UserConfig, ViteDevServer } from 'vite'
 
-//  TODO: watch mode is note supported
+// TODO: watch mode is not supported for now
+// we will wait for vue-tsc
+
 /**
  * Prints a diagnostic every time the watch status changes.
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
@@ -32,39 +26,23 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
 
 export const buildBin: BuildCheckBin = ['vue-tsc', ['--noEmit']]
 
-export const checkerFactory: CheckerFactory = () => {
+export const checkerFactory: ServeCheckerFactory = () => {
   return {
     buildBin: ['vue-tsc', ['--noEmit']],
     createDiagnostic: createDiagnostic,
   }
 }
 
-// TODO: watch mode is note supported
-// Nothing will happened, just satisfy type check
+const { mainScript, workerScript } = createScript({
+  absFilename: __filename,
+  buildBin,
+  checkerFactory,
+})!
+
 if (isMainThread) {
-  // initialized in main thread
-  const createWorker = (userConfigs?: Record<string, never>): CheckWorker => {
-    const worker = new Worker(__filename, {
-      workerData: userConfigs,
-    })
-
-    return {
-      worker,
-      config: (config) => {
-        const configAction: ConfigAction = { type: ACTION_TYPES.config, payload: config }
-        worker.postMessage(configAction)
-      },
-      configureServer: (serverConfig) => {
-        const configureServerAction: ConfigureServerAction = {
-          type: ACTION_TYPES.configureServer,
-          payload: serverConfig,
-        }
-        worker.postMessage(configureServerAction)
-      },
-    }
-  }
-
+  const { createWorker, serveAndBuild } = mainScript()
   module.exports.createWorker = createWorker
+  module.exports.serveAndBuild = serveAndBuild
 } else {
-  //
+  workerScript()
 }
