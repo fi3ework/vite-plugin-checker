@@ -46,7 +46,7 @@ export function tsDiagnosticToViteError(d: ts.Diagnostic): ErrorPayload['err'] {
       ),
       stack: '',
       id: d.file?.fileName,
-      plugin: 'vite-plugin-ts-checker',
+      plugin: 'vite-plugin-checker',
       loc,
     }
   }
@@ -56,7 +56,7 @@ export function tsDiagnosticToViteError(d: ts.Diagnostic): ErrorPayload['err'] {
     message: ts.flattenDiagnosticMessageText(d.messageText, formatHost.getNewLine()),
     stack: '',
     id: d.file?.fileName,
-    plugin: 'vite-plugin-ts-checker',
+    plugin: 'vite-plugin-checker',
     loc,
   }
 }
@@ -115,7 +115,7 @@ export function lspDiagnosticToViteError(
       ),
       stack: '',
       id: absPath,
-      plugin: 'vite-plugin-ts-checker',
+      plugin: 'vite-plugin-checker',
       loc,
     }
   }
@@ -126,7 +126,7 @@ export function lspDiagnosticToViteError(
     message: ts.flattenDiagnosticMessageText(d.message, formatHost.getNewLine()),
     stack: '',
     id: absPath,
-    plugin: 'vite-plugin-ts-checker',
+    plugin: 'vite-plugin-checker',
     loc,
   }
 }

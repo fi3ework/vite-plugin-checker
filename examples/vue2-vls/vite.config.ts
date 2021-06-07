@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import { createVuePlugin } from 'vite-plugin-vue2'
 import ViteComponents from 'vite-plugin-components'
-import Checker from 'vite-plugin-ts-checker'
-import { serveAndBuild } from 'vite-plugin-ts-checker-preset-vls'
+import Checker from 'vite-plugin-checker'
+import { serveAndBuild } from 'vite-plugin-checker-preset-vls'
 import { resolve } from 'path'
 
 const config = defineConfig({

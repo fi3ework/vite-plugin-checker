@@ -1,6 +1,6 @@
-# vite-plugin-ts-checker
+# vite-plugin-checker
 
-A Vite plugin that runs TypeScript type checker.
+A Vite plugin that runs TypeScript / Vue / ... checker in worker thread.
 
 ## Features
 
@@ -20,16 +20,16 @@ A Vite plugin that runs TypeScript type checker.
 #### Install plugin
 
 ```bash
-npm i vite-plugin-ts-checker -D
+npm i vite-plugin-checker -D
 ```
 
 ### Config `vite.config.js`
 
-Add `vite-plugin-ts-checker` to plugin filed of Vite config file.
+Add `vite-plugin-checker` to plugin filed of Vite config file.
 
 ```ts
 // vite.config.js
-import Checker from 'vite-plugin-ts-checker'
+import Checker from 'vite-plugin-checker'
 
 export default {
   plugins: [Checker()],
@@ -55,14 +55,14 @@ export default {
 1. Install [VLS](https://www.npmjs.com/package/vls) checker preset.
 
 ```bash
-npm i vite-plugin-ts-checker-preset-vls -D
+npm i vite-plugin-checker-preset-vls -D
 ```
 
 2. Modify config file
 
 ```js
-import Checker from 'vite-plugin-ts-checker'
-import VlsChecker from 'vite-plugin-ts-checker-preset-vls'
+import Checker from 'vite-plugin-checker'
+import VlsChecker from 'vite-plugin-checker-preset-vls'
 
 module.exports = {
   plugins: [
