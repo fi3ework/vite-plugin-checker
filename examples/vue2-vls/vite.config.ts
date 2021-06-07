@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import { createVuePlugin } from 'vite-plugin-vue2'
 import ViteComponents from 'vite-plugin-components'
 import Checker from 'vite-plugin-ts-checker'
-import vlsChecker from 'vite-plugin-ts-checker-preset-vls'
+import { serveAndBuild } from 'vite-plugin-ts-checker-preset-vls'
 import { resolve } from 'path'
 
 const config = defineConfig({
@@ -19,7 +19,7 @@ const config = defineConfig({
     createVuePlugin({}),
     ViteComponents({ transformer: 'vue2' }),
     Checker({
-      checker: vlsChecker(),
+      checker: serveAndBuild(),
     }),
   ],
   server: {
