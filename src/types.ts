@@ -1,11 +1,16 @@
 import type { HMRPayload, ServerOptions, ConfigEnv } from 'vite'
 import type { Worker } from 'worker_threads'
 
-export type CheckerFactory = (options?: unknown) => Checker
+export type CheckerFactory = (options?: unknown) => ServeChecker
 
 export type BuildCheckBin = [string, ReadonlyArray<string>]
 
-export interface Checker {
+export interface ServeAndBuild {
+  serve: CheckWorker
+  build: { buildBin: BuildCheckBin }
+}
+
+export interface ServeChecker {
   createDiagnostic: CreateDiagnostic
 }
 
@@ -61,7 +66,7 @@ export interface PluginOptions {
    * Use `"tsc"` or `"vue-tsc"` or an custom checker
    * @defaultValue `"tcs"`
    */
-  checker: 'tsc' | 'vue-tsc' | Checker
+  checker: 'tsc' | 'vue-tsc' | ServeAndBuild
   /**
    * Enable checking in build mode
    * @defaultValue `true`

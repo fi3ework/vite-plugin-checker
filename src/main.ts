@@ -2,7 +2,7 @@ import { spawn } from 'child_process'
 import npmRunPath from 'npm-run-path'
 import { ConfigEnv, Plugin } from 'vite'
 
-import { BuildCheckBin, CheckWorker, OverlayErrorAction, PluginOptions } from './types'
+import { ServeAndBuild, OverlayErrorAction, PluginOptions } from './types'
 
 export * from './types'
 export * from './codeFrame'
@@ -11,17 +11,14 @@ export * from './utils'
 function createServeAndBuild(
   checker: PluginOptions['checker'],
   userOptions?: Partial<PluginOptions>
-): { serve: CheckWorker; build: { buildBin: BuildCheckBin } } {
+): ServeAndBuild {
   if (typeof checker === 'string') {
+    // build in checkers
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const createWorker = require(`./presets/${checker}`).createWorker
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const buildBin = require(`./presets/${checker}`).buildBin
-    // const tscCheckerFactory = require(`./presets/${checker}`).checkerFactory
+    const { createWorker, buildBin } = require(`./presets/${checker}`)
     return { serve: createWorker(userOptions), build: { buildBin } }
   }
 
-  // @ts-ignore
   return checker
 }
 
