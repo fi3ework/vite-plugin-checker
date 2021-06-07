@@ -4,7 +4,7 @@ import fs from 'fs'
 import glob from 'glob'
 import path from 'path'
 import { Duplex } from 'stream'
-import { range2Location } from 'vite-plugin-ts-checker'
+import { range2Location } from 'vite-plugin-checker'
 import { VLS } from 'vls'
 import { PublishDiagnosticsParams } from 'vscode-languageclient/node'
 import {

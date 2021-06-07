@@ -5,7 +5,7 @@ import {
   createScript,
   lspDiagnosticToViteError,
   uriToAbsPath,
-} from 'vite-plugin-ts-checker'
+} from 'vite-plugin-checker'
 import { isMainThread, parentPort } from 'worker_threads'
 
 import { DiagnosticOptions, diagnostics, prettyLspConsole } from './commands/diagnostics'
@@ -55,7 +55,7 @@ const vlsCheckerFactory: ServeCheckerFactory = () => {
   }
 }
 
-export const buildBin: BuildCheckBin = ['vite-plugin-ts-checker-preset-vls', ['diagnostics']]
+export const buildBin: BuildCheckBin = ['vite-plugin-checker-preset-vls', ['diagnostics']]
 
 const { mainScript, workerScript } = createScript({
   absFilename: __filename,
