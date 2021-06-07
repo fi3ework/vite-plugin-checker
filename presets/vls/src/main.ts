@@ -1,17 +1,12 @@
-import type { UserConfig, ViteDevServer } from 'vite'
 import {
   BuildCheckBin,
-  CheckerFactory,
+  ServeCheckerFactory,
   CreateDiagnostic,
+  createScript,
   lspDiagnosticToViteError,
-  DiagnosticOfCheck,
   uriToAbsPath,
-  CheckWorker,
-  ACTION_TYPES,
-  ConfigAction,
-  ConfigureServerAction,
 } from 'vite-plugin-ts-checker'
-import { isMainThread, parentPort, Worker, workerData } from 'worker_threads'
+import { isMainThread, parentPort } from 'worker_threads'
 
 import { DiagnosticOptions, diagnostics, prettyLspConsole } from './commands/diagnostics'
 
@@ -40,10 +35,6 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
             err: overlayErr,
           },
         })
-        // server.ws.send({
-        //   type: 'error',
-        //   err: overlayErr,
-        // })
         diagnostics.diagnostics.forEach((d) => {
           prettyLspConsole({
             d,
@@ -58,7 +49,7 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   }
 }
 
-const vlsCheckerFactory: CheckerFactory = () => {
+const vlsCheckerFactory: ServeCheckerFactory = () => {
   return {
     createDiagnostic: createDiagnostic,
   }
@@ -66,51 +57,18 @@ const vlsCheckerFactory: CheckerFactory = () => {
 
 export const buildBin: BuildCheckBin = ['vite-plugin-ts-checker-preset-vls', ['diagnostics']]
 
+const { mainScript, workerScript } = createScript({
+  absFilename: __filename,
+  buildBin,
+  checkerFactory: vlsCheckerFactory,
+})!
+
 if (isMainThread) {
-  // initialized in main thread
-  const createWorker = (userConfigs?: Record<string, never>): CheckWorker => {
-    const worker = new Worker(__filename, {
-      workerData: userConfigs,
-    })
-
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return {
-      worker,
-      config: (config) => {
-        const configAction: ConfigAction = { type: ACTION_TYPES.config, payload: config }
-        worker.postMessage(configAction)
-      },
-      configureServer: (serverConfig) => {
-        const configureServerAction: ConfigureServerAction = {
-          type: ACTION_TYPES.configureServer,
-          payload: serverConfig,
-        }
-        worker.postMessage(configureServerAction)
-      },
-    }
-  }
-
+  const { createWorker, serveAndBuild } = mainScript()
   module.exports.createWorker = createWorker
-  module.exports.serveAndBuild = (config: any) => ({
-    serve: createWorker(config),
-    build: buildBin,
-  })
+  module.exports.serveAndBuild = serveAndBuild
 } else {
-  // runs in worker thread
-  let diagnostic: DiagnosticOfCheck | null = null
-  if (!parentPort) throw Error('should have parentPort as file runs in worker thread')
-
-  parentPort.on('message', (action: ConfigAction | ConfigureServerAction) => {
-    if (action.type === ACTION_TYPES.config) {
-      const checker = vlsCheckerFactory()
-      const userConfigs = workerData
-      diagnostic = checker.createDiagnostic(userConfigs)
-      diagnostic.config(action.payload)
-    } else if (action.type === ACTION_TYPES.configureServer) {
-      if (!diagnostic) throw Error('diagnostic should be initialized in `config` hook of Vite')
-      diagnostic.configureServer(action.payload)
-    }
-  })
+  workerScript()
 }
 
 declare const serveAndBuild: any

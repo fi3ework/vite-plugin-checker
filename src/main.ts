@@ -7,6 +7,7 @@ import { ServeAndBuild, OverlayErrorAction, PluginOptions } from './types'
 export * from './types'
 export * from './codeFrame'
 export * from './utils'
+export * from './worker'
 
 function createServeAndBuild(
   checker: PluginOptions['checker'],
