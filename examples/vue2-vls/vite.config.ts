@@ -18,7 +18,7 @@ const config = defineConfig({
   plugins: [
     createVuePlugin({}),
     ViteComponents({ transformer: 'vue2' }),
-    Checker({ tsc: true, vls: VlsChecker({ volar: true }) }),
+    Checker({ tsc: true, vls: VlsChecker({}) }),
   ],
   server: {
     port: 8080,

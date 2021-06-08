@@ -1,10 +1,10 @@
 import { parentPort, Worker, workerData } from 'worker_threads'
 import type {
   ServeCheckerFactory,
-  ConfigureChecker,
+  ConfigureServeChecker,
   ConfigAction,
   ConfigureServerAction,
-  DiagnosticOfCheck,
+  CheckerDiagnostic,
   BuildCheckBin,
 } from './types'
 import { ACTION_TYPES } from './types'
@@ -15,11 +15,11 @@ interface WorkerScriptOptions {
   checkerFactory: ServeCheckerFactory
 }
 
-export function createScript({ absFilename, buildBin, checkerFactory }: WorkerScriptOptions) {
+export function createScript<T>({ absFilename, buildBin, checkerFactory }: WorkerScriptOptions) {
   return {
     mainScript: () => {
       // initialized in main thread
-      const createWorker = (checkerConfigs?: Record<string, never>): ConfigureChecker => {
+      const createWorker = (checkerConfigs?: T): ConfigureServeChecker => {
         const worker = new Worker(absFilename, {
           workerData: checkerConfigs,
         })
@@ -42,7 +42,7 @@ export function createScript({ absFilename, buildBin, checkerFactory }: WorkerSc
       }
 
       return {
-        createServeAndBuild: (config: any) => ({
+        createServeAndBuild: (config: T) => ({
           serve: createWorker(config),
           build: buildBin,
         }),
@@ -50,7 +50,7 @@ export function createScript({ absFilename, buildBin, checkerFactory }: WorkerSc
     },
     workerScript: () => {
       // runs in worker thread
-      let diagnostic: DiagnosticOfCheck | null = null
+      let diagnostic: CheckerDiagnostic | null = null
       if (!parentPort) throw Error('should have parentPort as file runs in worker thread')
 
       parentPort.on('message', (action: ConfigAction | ConfigureServerAction) => {

@@ -3,6 +3,7 @@ import ts from 'typescript'
 import { ErrorPayload } from 'vite'
 import { isMainThread, parentPort } from 'worker_threads'
 
+import { TscConfig } from '../types'
 import { ensureCall, formatHost, tsDiagnosticToViteError } from '../utils'
 import { createScript } from '../worker'
 
@@ -107,9 +108,10 @@ const checkerFactory: ServeCheckerFactory = () => {
     createDiagnostic,
   }
 }
+
 export const buildBin: BuildCheckBin = ['tsc', ['--noEmit']]
 
-const { mainScript, workerScript } = createScript({
+const { mainScript, workerScript } = createScript<TscConfig>({
   absFilename: __filename,
   buildBin,
   checkerFactory,
