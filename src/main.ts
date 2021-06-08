@@ -3,21 +3,21 @@ import npmRunPath from 'npm-run-path'
 import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
 
-import { ServeAndBuild, OverlayErrorAction, PluginOptions } from './types'
+import { ServeAndBuildConfig, OverlayErrorAction, PluginOptions } from './types'
 
 export * from './types'
 export * from './codeFrame'
 export * from './utils'
 export * from './worker'
 
-function createServeAndBuild(userOptions: Partial<PluginOptions>): ServeAndBuild[] {
-  const checkers: ServeAndBuild[] = []
-  const { tsc, vueTsc, vls } = userOptions
+function createServeAndBuild(userOptions: Partial<PluginOptions>): ServeAndBuildConfig[] {
+  const checkers: ServeAndBuildConfig[] = []
+  const { typescript, vueTsc, vls } = userOptions
 
-  if (tsc) {
+  if (typescript) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { createServeAndBuild, buildBin } = require('./presets/tsc')
-    checkers.push(createServeAndBuild(userOptions.tsc))
+    const { createServeAndBuild } = require('./presets/tsc')
+    checkers.push(createServeAndBuild(userOptions.typescript))
   }
 
   if (vueTsc) {
