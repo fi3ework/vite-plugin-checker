@@ -3,17 +3,16 @@ import ts from 'typescript'
 import { ErrorPayload } from 'vite'
 import { isMainThread, parentPort } from 'worker_threads'
 
-import { TscConfig } from '../types'
 import { ensureCall, formatHost, tsDiagnosticToViteError } from '../utils'
 import { createScript } from '../worker'
 
-import type { CreateDiagnostic, ServeCheckerFactory, BuildCheckBin } from '../types'
+import type { CreateDiagnostic, PluginConfig } from '../types'
 
 /**
  * Prints a diagnostic every time the watch status changes.
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
-const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
+const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (checkerConfig) => {
   let overlay = true // Vite defaults to true
   let currErr: ErrorPayload['err'] | null = null
 
@@ -21,15 +20,18 @@ const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
     config: ({ hmr }) => {
       const viteOverlay = !(typeof hmr === 'object' && hmr.overlay === false)
 
-      if (userOptions.overlay === false || !viteOverlay) {
+      if (checkerConfig.overlay === false || !viteOverlay) {
         overlay = false
       }
     },
     configureServer({ root }) {
-      const finalConfig = {
-        root: userOptions.root ?? root,
-        tsconfigPath: userOptions.tsconfigPath ?? 'tsconfig.json',
-      }
+      const finalConfig =
+        typeof checkerConfig.typescript === 'boolean'
+          ? { root, tsconfigPath: 'tsconfig.json' }
+          : {
+              root: checkerConfig.typescript.root ?? root,
+              tsconfigPath: checkerConfig.typescript.tsconfigPath ?? 'tsconfig.json',
+            }
 
       let configFile: string | undefined
 
@@ -103,22 +105,14 @@ const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   }
 }
 
-const checkerFactory: ServeCheckerFactory = () => {
-  return {
-    createDiagnostic,
-  }
-}
-
-export const buildBin: BuildCheckBin = ['tsc', ['--noEmit']]
-
-const { mainScript, workerScript } = createScript<TscConfig>({
+const { mainScript, workerScript } = createScript<Pick<PluginConfig, 'typescript'>>({
   absFilename: __filename,
-  buildBin,
-  checkerFactory,
+  buildBin: ['tsc', ['--noEmit']],
+  serverChecker: { createDiagnostic },
 })!
 
 if (isMainThread) {
-  const { createServeAndBuild } = mainScript()
+  const createServeAndBuild = mainScript()
   module.exports.createServeAndBuild = createServeAndBuild
 } else {
   workerScript()
