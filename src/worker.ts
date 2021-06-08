@@ -1,27 +1,40 @@
 import { parentPort, Worker, workerData } from 'worker_threads'
 import type {
-  ServeCheckerFactory,
+  // ServeCheckerFactory,
+  ServeChecker,
   ConfigureServeChecker,
   ConfigAction,
   ConfigureServerAction,
   CheckerDiagnostic,
   BuildCheckBin,
+  ServeAndBuildChecker,
+  SharedConfig,
 } from './types'
 import { ACTION_TYPES } from './types'
 
 interface WorkerScriptOptions {
   absFilename: string
   buildBin: BuildCheckBin
-  checkerFactory: ServeCheckerFactory
+  serverChecker: ServeChecker
 }
 
-export function createScript<T>({ absFilename, buildBin, checkerFactory }: WorkerScriptOptions) {
+interface Script<T> {
+  mainScript: () => (config: T & SharedConfig) => ServeAndBuildChecker
+  workerScript: () => void
+}
+
+export function createScript<T>({
+  absFilename,
+  buildBin,
+  serverChecker,
+}: WorkerScriptOptions): Script<T> {
+  type CheckerConfig = T & SharedConfig
   return {
     mainScript: () => {
       // initialized in main thread
-      const createWorker = (checkerConfigs?: T): ConfigureServeChecker => {
+      const createWorker = (checkerConfig?: CheckerConfig): ConfigureServeChecker => {
         const worker = new Worker(absFilename, {
-          workerData: checkerConfigs,
+          workerData: checkerConfig,
         })
 
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -41,12 +54,10 @@ export function createScript<T>({ absFilename, buildBin, checkerFactory }: Worke
         }
       }
 
-      return {
-        createServeAndBuild: (config: T) => ({
-          serve: createWorker(config),
-          build: buildBin,
-        }),
-      }
+      return (config) => ({
+        serve: createWorker(config),
+        build: { buildBin },
+      })
     },
     workerScript: () => {
       // runs in worker thread
@@ -55,9 +66,9 @@ export function createScript<T>({ absFilename, buildBin, checkerFactory }: Worke
 
       parentPort.on('message', (action: ConfigAction | ConfigureServerAction) => {
         if (action.type === ACTION_TYPES.config) {
-          const checker = checkerFactory()
-          const checkerConfig = workerData
-          diagnostic = checker.createDiagnostic(checkerConfig)
+          // const checker = checkerFactory()
+          const checkerConfig: T = workerData
+          diagnostic = serverChecker.createDiagnostic(checkerConfig)
           diagnostic.config(action.payload)
         } else if (action.type === ACTION_TYPES.configureServer) {
           if (!diagnostic) throw Error('diagnostic should be initialized in `config` hook of Vite')

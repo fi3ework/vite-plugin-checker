@@ -3,39 +3,39 @@ import npmRunPath from 'npm-run-path'
 import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
 
-import { ServeAndBuildConfig, OverlayErrorAction, PluginOptions } from './types'
+import { ServeAndBuildChecker, OverlayErrorAction, UserPluginConfig } from './types'
 
 export * from './types'
 export * from './codeFrame'
 export * from './utils'
 export * from './worker'
 
-function createServeAndBuild(userOptions: Partial<PluginOptions>): ServeAndBuildConfig[] {
-  const checkers: ServeAndBuildConfig[] = []
-  const { typescript, vueTsc, vls } = userOptions
+function createCheckers(userConfig: UserPluginConfig): ServeAndBuildChecker[] {
+  const serveAndBuildCheckers: ServeAndBuildChecker[] = []
+  const { typescript, vueTsc, vls: vlsCurry, ...sharedConfig } = userConfig
 
   if (typescript) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { createServeAndBuild } = require('./presets/tsc')
-    checkers.push(createServeAndBuild(userOptions.typescript))
+    serveAndBuildCheckers.push(createServeAndBuild({ typescript, ...sharedConfig }))
   }
 
   if (vueTsc) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { createServeAndBuild } = require('./presets/vue-tsc')
-    checkers.push(createServeAndBuild(userOptions.vueTsc))
+    serveAndBuildCheckers.push(createServeAndBuild({ vueTsc, ...sharedConfig }))
   }
 
-  if (vls) {
-    checkers.push(vls)
+  if (vlsCurry) {
+    serveAndBuildCheckers.push(vlsCurry(sharedConfig))
   }
 
-  return checkers
+  return serveAndBuildCheckers
 }
 
-export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
-  const serveAndBuilds = createServeAndBuild(userOptions || {})
-  const enableBuild = userOptions?.enableBuild ?? true
+export default function Plugin(userConfig?: UserPluginConfig): Plugin {
+  const checkers = createCheckers(userConfig || {})
+  const enableBuild = userConfig?.enableBuild ?? true
   let viteMode: ConfigEnv['command'] | undefined
 
   return {
@@ -46,8 +46,8 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
       viteMode = env.command
       if (viteMode !== 'serve') return
 
-      serveAndBuilds.forEach((serveAndBuild) => {
-        const workerConfig = serveAndBuild.serve.config
+      checkers.forEach((checker) => {
+        const workerConfig = checker.serve.config
         workerConfig({
           hmr: config.server?.hmr,
           env,
@@ -65,8 +65,8 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
         execPath: process.execPath,
       })
 
-      serveAndBuilds.forEach((serveAndBuild) => {
-        const buildBin = serveAndBuild.build.buildBin
+      checkers.forEach((checker) => {
+        const buildBin = checker.build.buildBin
         const proc = spawn(buildBin[0], buildBin[1], {
           cwd: process.cwd(),
           stdio: 'inherit',
@@ -85,8 +85,8 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
     configureServer(server) {
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
-      serveAndBuilds.forEach((serveAndBuild) => {
-        const { worker, configureServer: workerConfigureServer } = serveAndBuild.serve
+      checkers.forEach((checker) => {
+        const { worker, configureServer: workerConfigureServer } = checker.serve
         workerConfigureServer({ root: server.config.root })
         worker.on('message', (action: OverlayErrorAction) => {
           server.ws.send(action.payload)
