@@ -5,7 +5,7 @@ A Vite plugin that runs TypeScript / Vue / ... checker in worker thread.
 ## Features
 
 - 📦 Out of the box
-- 💚 Support Vue2/3 based on [vue-tsc](https://github.com/johnsoncodehk/vue-tsc) and [VLS](https://github.com/vuejs/vetur/blob/master/server/README.md)
+- 🌗 Support React & Vue2/3
 - ⛔️ Vite HMR overlay
 - 🛠 Support serve & build mode
 
@@ -13,11 +13,9 @@ A Vite plugin that runs TypeScript / Vue / ... checker in worker thread.
   <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/113175704-48cf1e80-927e-11eb-9bb5-43ab1b218cb2.png">
 </p>
 
-## Usage
+## Install
 
-### Install
-
-#### Install plugin
+### Install plugin
 
 ```bash
 npm i vite-plugin-checker -D
@@ -32,25 +30,25 @@ Add `vite-plugin-checker` to plugin filed of Vite config file.
 import Checker from 'vite-plugin-checker'
 
 export default {
-  plugins: [Checker()],
-  // or with advanced options `plugins: [Checker({ ...options })]`
-  // see options for detail
+  plugins: [Checker(typescript: true)]
 }
 ```
 
-#### React
+## Getting Started
+
+### React
 
 1. Make sure [typescript](https://www.npmjs.com/package/typescript) is installed as a peer dependency.
-2. Set `checker` to `"tsc"`.
+
+2. Modify config file
 
 ```js
-{
-  checker: 'tsc'
-  // ...
+export default {
+  plugins: [Checker({ typescript: true })],
 }
 ```
 
-#### Vue (Vetur)
+### Vue (Vetur/VLS)
 
 1. Install [VLS](https://www.npmjs.com/package/vls) checker preset.
 
@@ -67,60 +65,75 @@ import VlsChecker from 'vite-plugin-checker-preset-vls'
 module.exports = {
   plugins: [
     Checker({
-      checker: VlsChecker(/** VLS options */),
+      vls: VlsChecker(/** VLS options */),
     }),
   ],
 }
 ```
 
-#### Vue (Volar)
+### Vue (Volar/vue-tsc)
 
-> Only support checking in **build mode** as `vue-tsc` doesn't support watch mode for now.
+> Only support checking in **build mode** since `vue-tsc` doesn't support watch mode for now.
 
-1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) is installed as a peer dependency, and set `checker` to `"vue-tsc"`.
+1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) is installed as a peer dependency.
 
 2. The type check is powered by `vue-tsc` so it supports Vue2 according to the [documentation](https://github.com/johnsoncodehk/volar#using), you need to install `@vue/runtime-dom` by yourself.
 
 ```js
-{
-  checker: 'vue-tsc'
-  // ...
+export default {
+  plugins: [Checker({ vueTsc: true })],
 }
 ```
 
-## Advanced options interface
+## Advanced config
+
+### overlay
 
 ```ts
-export interface PluginOptions {
-  /**
-   * Use `"tsc"` or `"vue-tsc"` or an custom checker
-   * @defaultValue `"tcs"`
-   */
-  checker: 'tsc' | 'vue-tsc' | Checker
-  /**
-   * Enable checking in build mode
-   * @defaultValue `true`
-   */
-  enableBuild: boolean
-  /**
-   * Show overlay when has TypeScript error
-   * @defaultValue
-   * Same as [Vite config](https://vitejs.dev/config/#root)
-   */
-  overlay: boolean
-  /**
-   * Root path to find tsconfig file
-   * @defaultValue
-   * Same as [Vite config](https://vitejs.dev/config/#root)
-   */
-  root: string
-  /**
-   * Relative tsconfig path to {@link (PluginOptions:interface).root}
-   * @defaultValue `"tsconfig.json"`
-   */
-  tsconfigPath: string
-}
+/**
+ * Show overlay when has TypeScript error
+ * @defaultValue
+ * Same as [Vite config](https://vitejs.dev/config/#root)
+ */
+overlay: boolean
 ```
+
+### enableBuild
+
+```ts
+/**
+ * Enable checking in build mode
+ * @defaultValue `true`
+ */
+enableBuild: boolean
+```
+
+---
+
+For fields below:
+
+- Set to `true` to use checker with all default values
+- Leave the field blank or set to `false` to disable the checker
+- Enable with an object config (all object keys are optional)
+
+### typescript
+
+| field        | Type     | Default value                                         | Description                      |
+| :----------- | -------- | ----------------------------------------------------- | -------------------------------- |
+| root         | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file  |
+| tsconfigPath | `string` | `"tsconfig.json"`                                     | Relative tsconfig path to `root` |
+
+### vls
+
+| field | Type     | Default value                                         | Description              |
+| :---- | -------- | ----------------------------------------------------- | ------------------------ |
+| root  | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root dir for checker run |
+
+### vueTsc
+
+| field | Type     | Default value                                         | Description              |
+| :---- | -------- | ----------------------------------------------------- | ------------------------ |
+| root  | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root dir for checker run |
 
 ## Examples
 
@@ -129,16 +142,9 @@ Run projects in [`examples/*`](./examples) to try it out.
 ```bash
 pnpm i
 cd ./examples/<ONE_EXAMPLE>
-npm run dev
+npm run dev   # for development
+npm run build # for build
 ```
-
-### Roadmap
-
-- [x] Support [VLS](https://www.npmjs.com/package/vls)
-- [ ] Development mode runs in separated process (or worker thread?)
-- [ ] Add unit & e2e test
-- [ ] Support project reference
-- [ ] Wait for vue-tsc to support watch mode
 
 ## License
 

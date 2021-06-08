@@ -1,7 +1,8 @@
 import { isMainThread } from 'worker_threads'
+
 import { createScript } from '../worker'
 
-import type { ServeCheckerFactory, CreateDiagnostic, BuildCheckBin } from '../types'
+import type { VueTscConfig, ServeCheckerFactory, CreateDiagnostic, BuildCheckBin } from '../types'
 import type { UserConfig, ViteDevServer } from 'vite'
 
 // TODO: watch mode is not supported for now
@@ -33,7 +34,7 @@ export const checkerFactory: ServeCheckerFactory = () => {
   }
 }
 
-const { mainScript, workerScript } = createScript({
+const { mainScript, workerScript } = createScript<VueTscConfig>({
   absFilename: __filename,
   buildBin,
   checkerFactory,
