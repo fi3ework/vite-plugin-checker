@@ -1,11 +1,10 @@
 import {
-  BuildCheckBin,
-  ServeCheckerFactory,
+  SharedConfig,
   CreateDiagnostic,
   createScript,
   lspDiagnosticToViteError,
   uriToAbsPath,
-  ServeAndBuildConfig,
+  ServeAndBuildChecker,
 } from 'vite-plugin-checker'
 import { isMainThread, parentPort } from 'worker_threads'
 
@@ -50,24 +49,22 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   }
 }
 
-const vlsCheckerFactory: ServeCheckerFactory = () => {
-  return {
-    createDiagnostic,
-  }
-}
-
-export const buildBin: BuildCheckBin = ['vite-plugin-checker-preset-vls', ['diagnostics']]
-
-const { mainScript, workerScript } = createScript<VlsConfig>({
+const { mainScript, workerScript } = createScript<{ vls: VlsConfig }>({
   absFilename: __filename,
-  buildBin,
-  checkerFactory: vlsCheckerFactory,
+  buildBin: ['vite-plugin-checker-preset-vls', ['diagnostics']],
+  serverChecker: { createDiagnostic },
 })!
 
 if (isMainThread) {
-  const { createServeAndBuild } = mainScript()
-  module.exports.VlsChecker = createServeAndBuild
-  module.exports.createServeAndBuild = createServeAndBuild
+  const createChecker = mainScript()
+  const configCurryFn = (vlsConfig: VlsConfig) => {
+    return (sharedConfig: SharedConfig) => {
+      return createChecker({ vls: vlsConfig, ...sharedConfig })
+    }
+  }
+
+  module.exports.VlsChecker = configCurryFn
+  module.exports.createServeAndBuild = configCurryFn
 } else {
   workerScript()
 }
@@ -77,7 +74,9 @@ type VlsConfig = Partial<{
   root: string
 }>
 
-declare const VlsChecker: (options?: VlsConfig) => ServeAndBuildConfig
+declare const VlsChecker: (
+  options?: VlsConfig
+) => (config: VlsConfig & SharedConfig) => ServeAndBuildChecker
 
 export { VlsChecker }
 export type { VlsConfig }

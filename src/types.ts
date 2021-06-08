@@ -13,7 +13,7 @@ export type TscConfig =
       root: string
     }>
 
-/** vue-tsc configuration */
+/** vue-tsc checker configuration */
 export type VueTscConfig =
   | boolean
   | Partial<{
@@ -21,10 +21,8 @@ export type VueTscConfig =
       root: string
     }>
 
-export interface PluginOptions {
-  typescript: TscConfig
-  vueTsc: VueTscConfig
-  vls: ServeAndBuildConfig
+/** checkers shared configuration */
+export interface SharedConfig {
   /**
    * Enable checking in build mode
    * @defaultValue `true`
@@ -36,18 +34,16 @@ export interface PluginOptions {
    * Same as [Vite config](https://vitejs.dev/config/#root)
    */
   overlay: boolean
-  // /**
-  //  * Root path to find tsconfig file
-  //  * @defaultValue
-  //  * Same as [Vite config](https://vitejs.dev/config/#root)
-  //  */
-  // root: string
-  // /**
-  //  * Relative tsconfig path to {@link (PluginOptions:interface).root}
-  //  * @defaultValue `"tsconfig.json"`
-  //  */
-  // tsconfigPath: string
 }
+
+export interface PluginConfig extends SharedConfig {
+  typescript: TscConfig
+  vueTsc: VueTscConfig
+  vls: (vlsConfig: any) => ServeAndBuildChecker
+}
+
+/** Userland plugin configuration */
+export type UserPluginConfig = Partial<PluginConfig>
 
 /* ----------------------------- worker actions ----------------------------- */
 
@@ -93,14 +89,12 @@ export interface ConfigureServeChecker {
   configureServer: (serverConfig: ConfigureServerAction['payload']) => void
 }
 
-export interface ServeAndBuildConfig {
+export interface ServeAndBuildChecker {
   serve: ConfigureServeChecker
   build: { buildBin: BuildCheckBin }
 }
 
 // create serve & build checker
-
-export type ServeCheckerFactory = (options?: unknown) => ServeChecker
 
 export interface ServeChecker {
   createDiagnostic: CreateDiagnostic
@@ -111,4 +105,4 @@ export interface CheckerDiagnostic {
   configureServer: (options: { root: string }) => unknown
 }
 
-export type CreateDiagnostic = (config?: Partial<PluginOptions>) => CheckerDiagnostic
+export type CreateDiagnostic<T = any> = (config: T & SharedConfig) => CheckerDiagnostic

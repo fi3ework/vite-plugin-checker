@@ -2,7 +2,7 @@ import { isMainThread } from 'worker_threads'
 
 import { createScript } from '../worker'
 
-import type { VueTscConfig, ServeCheckerFactory, CreateDiagnostic, BuildCheckBin } from '../types'
+import type { PluginConfig, CreateDiagnostic } from '../types'
 import type { UserConfig, ViteDevServer } from 'vite'
 
 // TODO: watch mode is not supported for now
@@ -14,7 +14,7 @@ import type { UserConfig, ViteDevServer } from 'vite'
  *
  */
 // @ts-ignore
-export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
+export const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'vueTsc'>> = (checkerConfig) => {
   return {
     config: (config: UserConfig) => {
       //
@@ -25,23 +25,14 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   }
 }
 
-export const buildBin: BuildCheckBin = ['vue-tsc', ['--noEmit']]
-
-export const checkerFactory: ServeCheckerFactory = () => {
-  return {
-    buildBin: ['vue-tsc', ['--noEmit']],
-    createDiagnostic: createDiagnostic,
-  }
-}
-
-const { mainScript, workerScript } = createScript<VueTscConfig>({
+const { mainScript, workerScript } = createScript<Pick<PluginConfig, 'vueTsc'>>({
   absFilename: __filename,
-  buildBin,
-  checkerFactory,
+  buildBin: ['vue-tsc', ['--noEmit']],
+  serverChecker: { createDiagnostic },
 })!
 
 if (isMainThread) {
-  const { createServeAndBuild } = mainScript()
+  const createServeAndBuild = mainScript()
   module.exports.createServeAndBuild = createServeAndBuild
 } else {
   workerScript()

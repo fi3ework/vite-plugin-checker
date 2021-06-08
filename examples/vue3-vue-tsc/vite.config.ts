@@ -4,5 +4,5 @@ import Checker from 'vite-plugin-checker'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), Checker({ checker: 'vue-tsc' })],
+  plugins: [vue(), Checker({ vueTsc: true })],
 })
