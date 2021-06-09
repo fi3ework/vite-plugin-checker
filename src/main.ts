@@ -1,10 +1,10 @@
 import { spawn } from 'child_process'
 import npmRunPath from 'npm-run-path'
+import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
-import { PluginOptions } from './types'
 
 import { createDiagnosis } from './apiMode'
-import { tscProcess } from './cliMode'
+import { PluginOptions } from './types'
 
 export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
   const checker = userOptions?.checker ?? 'tsc'
@@ -14,18 +14,12 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
 
   return {
     name: 'ts-checker',
-    config: (config, { command, mode }) => {
+    config: (config, { command }) => {
       viteMode = command
-      if (mode === 'cli') {
-        tscProcess.config(config)
-      } else {
-        diagnose = createDiagnosis({
-          root: userOptions?.root,
-          tsconfigPath: userOptions?.tsconfigPath,
-        })
-
-        diagnose.config(config)
-      }
+      diagnose = createDiagnosis({
+        root: userOptions?.root,
+        tsconfigPath: userOptions?.tsconfigPath,
+      })
     },
     buildStart: (options) => {
       if (viteMode === 'build') {
@@ -39,6 +33,7 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
           cwd: process.cwd(),
           stdio: 'inherit',
           env: localEnv,
+          shell: os.platform() === 'win32',
         })
 
         if (enableBuild) {

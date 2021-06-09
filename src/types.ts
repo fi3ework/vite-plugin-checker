@@ -16,20 +16,6 @@ export interface PluginOptions {
    */
   overlay: boolean
   /**
-   * [WIP]
-   * 'cli': use `tsc --noEmit` or `vue-tsc --noEmit`
-   *  - No overlay support
-   *  - Original console output
-   *
-   * 'api': use TypeScript programmatic API
-   *  - Support overlay
-   *  - Almost the same console output as original
-   *
-   * @defaultValue
-   * if 'vueTsc' is true, then force set to 'cli', otherwise default to 'api'
-   */
-  // mode: 'cli' | 'api'
-  /**
    * Root path to find tsconfig file
    * @defaultValue
    * Same as Vite https://vitejs.dev/config/#root
