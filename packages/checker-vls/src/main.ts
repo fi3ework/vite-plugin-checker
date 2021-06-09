@@ -70,8 +70,7 @@ if (isMainThread) {
 }
 
 type VlsConfig = Partial<{
-  /** root path of cwd */
-  root: string
+  // TODO: support VLS config
 }>
 
 declare const VlsChecker: (

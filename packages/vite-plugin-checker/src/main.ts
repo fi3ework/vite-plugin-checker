@@ -15,13 +15,13 @@ function createCheckers(userConfig: UserPluginConfig): ServeAndBuildChecker[] {
 
   if (typescript) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { createServeAndBuild } = require('./presets/tsc')
+    const { createServeAndBuild } = require('./checkers/tsc')
     serveAndBuildCheckers.push(createServeAndBuild({ typescript, ...sharedConfig }))
   }
 
   if (vueTsc) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { createServeAndBuild } = require('./presets/vue-tsc')
+    const { createServeAndBuild } = require('./checkers/vue-tsc')
     serveAndBuildCheckers.push(createServeAndBuild({ vueTsc, ...sharedConfig }))
   }
 
@@ -38,7 +38,7 @@ export default function Plugin(userConfig?: UserPluginConfig): Plugin {
   let viteMode: ConfigEnv['command'] | undefined
 
   return {
-    name: 'ts-checker',
+    name: 'vite-plugin-checker',
     config: (config, env) => {
       // for dev mode (1/2)
       // Initialize checker with config

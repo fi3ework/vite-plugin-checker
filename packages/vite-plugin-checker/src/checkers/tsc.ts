@@ -1,4 +1,5 @@
 import os from 'os'
+import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { ErrorPayload } from 'vite'
 import { isMainThread, parentPort } from 'worker_threads'
@@ -25,8 +26,9 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
       }
     },
     configureServer({ root }) {
+      invariant(checkerConfig.typescript, 'config.typescript should be `false`')
       const finalConfig =
-        typeof checkerConfig.typescript === 'boolean'
+        checkerConfig.typescript === true
           ? { root, tsconfigPath: 'tsconfig.json' }
           : {
               root: checkerConfig.typescript.root ?? root,

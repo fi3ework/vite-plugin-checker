@@ -1,19 +1,19 @@
 # vite-plugin-checker
 
-A Vite plugin that runs TypeScript / Vue / ... checker in worker thread.
+A Vite plugin that runs TypeScript / Vue / ... checks in worker thread.
 
 ## Features
 
 - 📦 Out of the box
 - 🌗 Support React & Vue2/3
-- ⛔️ Vite HMR overlay
+- 🕸 Vite HMR overlay
 - 🛠 Support serve & build mode
 
 <p align="center">
   <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/113175704-48cf1e80-927e-11eb-9bb5-43ab1b218cb2.png">
 </p>
 
-## Install
+## Getting Started
 
 ### Install plugin
 
@@ -34,9 +34,11 @@ export default {
 }
 ```
 
-## Getting Started
+## Framework related configuration
 
-### React
+> See detailed configuration in [advanced config](#advanced-config) section.
+
+### React / Vanilla TypeScript
 
 1. Make sure [typescript](https://www.npmjs.com/package/typescript) is installed as a peer dependency.
 
@@ -48,7 +50,7 @@ export default {
 }
 ```
 
-### Vue (Vetur/VLS)
+### Vue (with Vetur / VLS)
 
 1. Install [VLS](https://www.npmjs.com/package/vls) checker preset.
 
@@ -71,7 +73,7 @@ module.exports = {
 }
 ```
 
-### Vue (Volar/vue-tsc)
+### Vue (with Volar / vue-tsc)
 
 > Only support checking in **build mode** since `vue-tsc` doesn't support watch mode for now.
 
@@ -87,53 +89,60 @@ export default {
 
 ## Advanced config
 
-### overlay
-
-```ts
-/**
- * Show overlay when has TypeScript error
- * @defaultValue
- * Same as [Vite config](https://vitejs.dev/config/#root)
- */
-overlay: boolean
+```js
+export default {
+  plugins: [Checker(config)],
+}
 ```
 
-### enableBuild
+The plugin config can be accept following fields
 
-```ts
-/**
- * Enable checking in build mode
- * @defaultValue `true`
- */
-enableBuild: boolean
-```
+### config.overlay
 
----
+| field   | Type      | Default value                                                         | Description                            |
+| :------ | --------- | --------------------------------------------------------------------- | -------------------------------------- |
+| overlay | `boolean` | Same as [`server.hmr.overlay`](https://vitejs.dev/config/#server-hmr) | Show overlay when has TypeScript error |
 
-For fields below:
+### config.enableBuild
+
+| field       | Type      | Default value | Description                   |
+| :---------- | --------- | ------------- | ----------------------------- |
+| enableBuild | `boolean` | `true`        | Enable checking in build mode |
+
+### config.typescript
 
 - Set to `true` to use checker with all default values
 - Leave the field blank or set to `false` to disable the checker
 - Enable with an object config (all object keys are optional)
-
-### typescript
 
 | field        | Type     | Default value                                         | Description                      |
 | :----------- | -------- | ----------------------------------------------------- | -------------------------------- |
 | root         | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file  |
 | tsconfigPath | `string` | `"tsconfig.json"`                                     | Relative tsconfig path to `root` |
 
-### vls
+### config.vls
 
-| field | Type     | Default value                                         | Description              |
+```ts
+import { VlsChecker } from 'vite-plugin-checker-vls'
+
+// plugin config
+{ vls?: VlsChecker() }
+```
+
+<!-- | field | Type     | Default value                                         | Description              |
 | :---- | -------- | ----------------------------------------------------- | ------------------------ |
-| root  | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root dir for checker run |
+| root  | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root dir for checker run | -->
 
-### vueTsc
+### config.vueTsc
 
-| field | Type     | Default value                                         | Description              |
+```ts
+// plugin config
+{ vueTsc?: boolean }
+```
+
+<!-- | field | Type     | Default value                                         | Description              |
 | :---- | -------- | ----------------------------------------------------- | ------------------------ |
-| root  | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root dir for checker run |
+| root  | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root dir for checker run | -->
 
 ## Examples
 

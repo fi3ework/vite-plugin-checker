@@ -13,7 +13,6 @@ execSync(
   `pnpm -r --filter ./packages exec --\
     standard-version\
     ${betaScript}\
-    --release-as minor\
     --skip.commit=true\
     --skip.tag=true`
 )

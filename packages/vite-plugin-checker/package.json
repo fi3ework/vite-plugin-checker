@@ -29,6 +29,7 @@
     "@babel/code-frame": "^7.12.13",
     "npm-run-path": "^4.0.1",
     "strip-ansi": "^6.0.0",
+    "tiny-invariant": "^1.1.0",
     "vscode-languageclient": "^7.0.0"
   },
   "peerDependencies": {
