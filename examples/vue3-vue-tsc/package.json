@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "vite-vue-typescript-starter",
   "version": "0.0.0",
   "scripts": {
