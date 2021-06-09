@@ -51,7 +51,7 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
 
 const { mainScript, workerScript } = createScript<{ vls: VlsConfig }>({
   absFilename: __filename,
-  buildBin: ['vite-plugin-checker-preset-vls', ['diagnostics']],
+  buildBin: ['vite-plugin-checker-vls', ['diagnostics']],
   serverChecker: { createDiagnostic },
 })!
 

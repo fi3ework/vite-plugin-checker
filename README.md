@@ -53,14 +53,14 @@ export default {
 1. Install [VLS](https://www.npmjs.com/package/vls) checker preset.
 
 ```bash
-npm i vite-plugin-checker-preset-vls -D
+npm i vite-plugin-checker-vls -D
 ```
 
 2. Modify config file
 
 ```js
 import Checker from 'vite-plugin-checker'
-import VlsChecker from 'vite-plugin-checker-preset-vls'
+import VlsChecker from 'vite-plugin-checker-vls'
 
 module.exports = {
   plugins: [

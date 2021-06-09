@@ -1,56 +1,58 @@
 {
-  "name": "vite-plugin-checker",
-  "version": "0.1.0",
-  "description": "Vite plugin that runs TypeScript type checker on a separate process.",
-  "main": "lib/main.js",
-  "types": "lib/main.d.ts",
-  "files": [
-    "lib"
-  ],
+  "private": true,
+  "version": "0.0.0",
   "scripts": {
-    "lint": "eslint \"**/*.ts\"",
-    "dev": "tsc --watch",
-    "build": "tsc",
-    "prepublishOnly": "rm -rf ./lib && npm run build"
+    "dev": "pnpm -r --filter ./packages run dev",
+    "build": "pnpm -r --filter ./packages run build",
+    "lint": "eslint '**/*.{js,ts}'",
+    "release:beta": "zx scripts/release.mjs --beta",
+    "ci:publish": "zx scripts/publish.mjs"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fi3ework/vite-plugin-checker.git"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
-  "keywords": [
-    "vite",
-    "vite-plugin",
-    "typescript"
-  ],
-  "author": "fi3ework <fi3ework@gmail.com>",
-  "license": "MIT",
-  "bugs": "https://github.com/fi3ework/vite-plugin-checker/issues",
-  "homepage": "https://github.com/fi3ework/vite-plugin-checker",
-  "dependencies": {
-    "@babel/code-frame": "^7.12.13",
-    "npm-run-path": "^4.0.1",
-    "strip-ansi": "^6.0.0",
-    "vscode-languageclient": "^7.0.0"
-  },
-  "peerDependencies": {
-    "vite": "^2.0.0"
+  "lint-staged": {
+    "{packages}/**/*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
   },
   "devDependencies": {
+    "@babel/code-frame": "^7.12.13",
     "@release-it/conventional-changelog": "^2.0.1",
     "@types/babel__code-frame": "^7.0.2",
     "@types/debug": "^4.1.5",
+    "@types/fs-extra": "^9.0.11",
+    "@types/glob": "^7.1.3",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.31",
     "@types/rimraf": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
+    "chalk": "^4.1.1",
     "eslint": "^7.20.0",
     "eslint-config-alloy": "^3.10.0",
+    "fs-extra": "^10.0.0",
+    "glob": "^7.1.7",
+    "husky": "4.3.7",
     "jest": "^26.6.3",
+    "lint-staged": "^11.0.0",
     "release-it": "^14.5.0",
     "rimraf": "^3.0.2",
+    "rollup": "^2.47.0",
+    "standard-version": "^9.3.0",
     "ts-jest": "^26.5.2",
     "typescript": "^4.2.2",
-    "vite": "^2.1.3"
+    "vite": "^2.1.3",
+    "vite-plugin-checker": "workspace:*",
+    "vscode-languageclient": "^7.0.0",
+    "vscode-languageserver": "^7.0.0",
+    "vscode-languageserver-protocol": "^3.16.0",
+    "vscode-languageserver-types": "^3.16.0",
+    "vscode-uri": "^3.0.2",
+    "zx": "^1.14.1"
   }
 }

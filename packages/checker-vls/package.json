@@ -1,0 +1,41 @@
+{
+  "name": "vite-plugin-checker-vls",
+  "version": "0.0.1",
+  "description": "VLS preset for vite-plugin-ts",
+  "main": "lib/main.js",
+  "types": "lib/main.d.ts",
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "bin": {
+    "vite-plugin-checker-vls": "./bin/vls"
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "prepublishOnly": "rimraf lib && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fi3ework/vite-plugin-checker.git"
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "typescript"
+  ],
+  "author": "fi3ework <fi3ework@gmail.com>",
+  "license": "MIT",
+  "bugs": "https://github.com/fi3ework/vite-plugin-checker/issues",
+  "homepage": "https://github.com/fi3ework/vite-plugin-checker",
+  "dependencies": {
+    "vite-plugin-checker": "workspace:*",
+    "chokidar": "^3.5.1",
+    "commander": "^7.2.0",
+    "vls": "^0.7.2"
+  },
+  "peerDependencies": {
+    "vite": "^2.0.0"
+  }
+}
