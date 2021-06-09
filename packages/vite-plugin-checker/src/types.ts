@@ -17,8 +17,7 @@ export type TscConfig =
 export type VueTscConfig =
   | boolean
   | Partial<{
-      /** root path of cwd */
-      root: string
+      // TODO: support vue-tsc config
     }>
 
 /** checkers shared configuration */
