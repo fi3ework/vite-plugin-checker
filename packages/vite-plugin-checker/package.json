@@ -1,0 +1,37 @@
+{
+  "name": "vite-plugin-checker",
+  "version": "0.0.1",
+  "description": "Vite plugin that runs TypeScript type checker on a separate process.",
+  "main": "lib/main.js",
+  "types": "lib/main.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "prepublishOnly": "rimraf lib && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fi3ework/vite-plugin-checker.git"
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "typescript"
+  ],
+  "author": "fi3ework <fi3ework@gmail.com>",
+  "license": "MIT",
+  "bugs": "https://github.com/fi3ework/vite-plugin-checker/issues",
+  "homepage": "https://github.com/fi3ework/vite-plugin-checker",
+  "dependencies": {
+    "@babel/code-frame": "^7.12.13",
+    "npm-run-path": "^4.0.1",
+    "strip-ansi": "^6.0.0",
+    "vscode-languageclient": "^7.0.0"
+  },
+  "peerDependencies": {
+    "vite": "^2.0.0"
+  }
+}
