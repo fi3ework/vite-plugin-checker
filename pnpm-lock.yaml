@@ -178,11 +178,13 @@ importers:
       '@babel/code-frame': ^7.12.13
       npm-run-path: ^4.0.1
       strip-ansi: ^6.0.0
+      tiny-invariant: ^1.1.0
       vscode-languageclient: ^7.0.0
     dependencies:
       '@babel/code-frame': 7.12.13
       npm-run-path: 4.0.1
       strip-ansi: 6.0.0
+      tiny-invariant: 1.1.0
       vscode-languageclient: 7.0.0
 
 packages:
@@ -7359,6 +7361,10 @@ packages:
     dependencies:
       readable-stream: 3.6.0
     dev: true
+
+  /tiny-invariant/1.1.0:
+    resolution: {integrity: sha512-ytxQvrb1cPc9WBEI/HSeYYoGD0kWnGEOR8RY6KomWLBVhqz0RgTwVO9dLrGz7dC+nN9llyI7OKAgRq8Vq4ZBSw==}
+    dev: false
 
   /tmp/0.0.33:
     resolution: {integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==}

@@ -8,6 +8,8 @@ export default defineConfig({
     reactRefresh(),
     Checker({
       typescript: true,
+      // @ts-ignore
+      test: 1,
     }),
   ],
 })
