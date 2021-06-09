@@ -5,6 +5,7 @@
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
   "files": [
+    "bin",
     "lib"
   ],
   "bin": {
@@ -14,7 +15,8 @@
     "lint": "eslint \"**/*.ts\"",
     "dev": "tsc --watch",
     "build": "tsc",
-    "prepublishOnly": "rm -rf ./lib && npm run build"
+    "prepublishOnly": "rm -rf ./lib && npm run build",
+    "publish": ""
   },
   "repository": {
     "type": "git",
