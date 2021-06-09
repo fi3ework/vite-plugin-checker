@@ -1,3 +1,4 @@
+import { platform } from 'os'
 import ts from 'typescript'
 import type { UserConfig, ViteDevServer } from 'vite'
 import { exec, ChildProcess, spawn } from 'child_process'
@@ -27,7 +28,8 @@ function createTscProcess() {
       }
     },
     configureServer: (server: ViteDevServer) => {
-      const tsProc = exec('tsc --noEmit --watch', { cwd: server.config.root })
+      const checkerSuffix = platform() === 'win32' ? '.cmd' : ''
+      const tsProc = exec(`tsc${checkerSuffix} --noEmit --watch`, { cwd: server.config.root })
       // const tsProc = spawn('tsc', ['--noEmit', '--watch'], { cwd: root, stdio: 'pipe' })
       // diagnosticCount++
       tsProc.stdout!.on('data', (data) => {

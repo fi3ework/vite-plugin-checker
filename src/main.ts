@@ -1,4 +1,5 @@
 import { spawn } from 'child_process'
+import { platform } from 'os'
 import npmRunPath from 'npm-run-path'
 import { ConfigEnv, Plugin } from 'vite'
 import { PluginOptions } from './types'
@@ -35,7 +36,8 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
           execPath: process.execPath,
         })
 
-        const proc = spawn(checker, ['--noEmit'], {
+        const checkerSuffix = platform() === 'win32' ? '.cmd' : ''
+        const proc = spawn(checker + checkerSuffix, ['--noEmit'], {
           cwd: process.cwd(),
           stdio: 'inherit',
           env: localEnv,
