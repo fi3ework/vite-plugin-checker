@@ -30,9 +30,9 @@
   "bugs": "https://github.com/fi3ework/vite-plugin-checker/issues",
   "homepage": "https://github.com/fi3ework/vite-plugin-checker",
   "dependencies": {
-    "vite-plugin-checker": "workspace:*",
     "chokidar": "^3.5.1",
     "commander": "^7.2.0",
+    "vite-plugin-checker": "workspace:*",
     "vls": "^0.7.2"
   },
   "peerDependencies": {
