@@ -17,10 +17,12 @@ export default function Plugin(userOptions?: Partial<PluginOptions>): Plugin {
     config: (config, { command }) => {
       viteMode = command
       if (viteMode === 'build') return
+
       diagnose = createDiagnosis({
         root: userOptions?.root,
         tsconfigPath: userOptions?.tsconfigPath,
       })
+      diagnose.config(config)
     },
     buildStart: (options) => {
       if (viteMode === 'build') {
