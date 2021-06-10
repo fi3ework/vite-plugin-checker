@@ -3,28 +3,33 @@ import { execSync } from 'child_process'
 import fs from 'fs-extra'
 import path from 'path'
 import { $ } from 'zx'
+import hasFlag from 'has-flag'
 
 await $`npm run lint`
 
-const isBeta = process.argv[3] === '--beta'
-const betaScript = isBeta ? '--prerelease beta' : ''
+const betaScript = hasFlag('beta') ? '--prerelease beta' : ''
+const dryRun = hasFlag('dry-run') ? '--dry-run' : ''
 
 execSync(
   `pnpm -r --filter ./packages exec --\
     standard-version\
-    ${betaScript}\
     --skip.commit=true\
-    --skip.tag=true`
+    --skip.tag=true
+    ${betaScript}\
+    ${dryRun}`
 )
 
 const { version } = await fs.readJSON(
   path.resolve(__dirname, '../packages/vite-plugin-checker/package.json')
 )
 
-console.log(`Going to release v${version}`)
+console.log(`✨ Going to release v${version}`)
 
 await $`git add .`
 await $`git commit -m "chore: release v${version}"`
 await $`git tag v${version}`
 await $`git push`
-await $`git push origin --tags`
+
+if (!hasFlag('skip-push')) {
+  await $`git push origin --tags`
+}
