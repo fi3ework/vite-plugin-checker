@@ -3,7 +3,7 @@ import npmRunPath from 'npm-run-path'
 import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
 
-import { ServeAndBuildChecker, OverlayErrorAction, UserPluginConfig } from './types'
+import { OverlayErrorAction, ServeAndBuildChecker, UserPluginConfig } from './types'
 
 export * from './types'
 export * from './codeFrame'
@@ -71,6 +71,7 @@ export default function Plugin(userConfig?: UserPluginConfig): Plugin {
           cwd: process.cwd(),
           stdio: 'inherit',
           env: localEnv,
+          shell: os.platform() === 'win32',
         })
 
         if (enableBuild) {
