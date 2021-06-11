@@ -3,6 +3,7 @@ import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { ErrorPayload } from 'vite'
 import { isMainThread, parentPort } from 'worker_threads'
+import logUpdate from 'log-update'
 
 import { ensureCall, formatHost, tsDiagnosticToViteError } from '../utils'
 import { createScript } from '../worker'
@@ -45,26 +46,33 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
         )
       }
 
+      let logChunk: { diagnostics: string | null; message: string | null } = {
+        diagnostics: null,
+        message: null,
+      }
+
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
-        const originalDiagnostic = ts.formatDiagnosticsWithColorAndContext([diagnostic], formatHost)
+        const formattedDiagnostics = ts.formatDiagnosticsWithColorAndContext(
+          [diagnostic],
+          formatHost
+        )
 
         if (!currErr) {
           currErr = tsDiagnosticToViteError(diagnostic)
         }
 
-        ensureCall(() => {
-          ts.sys.write(originalDiagnostic)
-        })
+        logChunk.diagnostics = formattedDiagnostics
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
-        diagnostic
-        // newLine,
-        // options,
-        // errorCount
+        diagnostic,
+        newLine,
+        options,
+        errorCount
         // eslint-disable-next-line max-params
       ) => {
+        // logChunk = []
         // https://github.com/microsoft/TypeScript/issues/32542
         switch (diagnostic.code) {
           case 6032: // Incremental build
@@ -83,11 +91,16 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
                 },
               })
             }
-
-            ensureCall(() => {
-              ts.sys.write(os.EOL + os.EOL + diagnostic.messageText.toString())
-            })
         }
+        ensureCall(() => {
+          const diagnosticMessage = os.EOL + os.EOL + diagnostic.messageText.toString()
+          logChunk.message = diagnosticMessage
+          if (errorCount === 0) {
+            logChunk.diagnostics = null
+          }
+          const d = logChunk.diagnostics === null ? '' : logChunk.diagnostics + os.EOL
+          logUpdate(d + logChunk.message)
+        })
       }
 
       // https://github.com/microsoft/TypeScript/issues/32385

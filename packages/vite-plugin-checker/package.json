@@ -27,6 +27,7 @@
   "homepage": "https://github.com/fi3ework/vite-plugin-checker",
   "dependencies": {
     "@babel/code-frame": "^7.12.13",
+    "log-update": "^4.0.0",
     "npm-run-path": "^4.0.1",
     "strip-ansi": "^6.0.0",
     "tiny-invariant": "^1.1.0",
