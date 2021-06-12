@@ -7,6 +7,7 @@
 # git clone
 # cd vite-plugin-checker
 pnpm i
+pnpm build
 pnpm dev
 ```
 
