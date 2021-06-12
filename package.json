@@ -2,7 +2,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "pnpm -r --filter ./packages run dev",
+    "dev": "pnpm -r --filter ./packages --parallel run dev",
     "build": "pnpm -r --filter ./packages run build",
     "lint": "eslint '**/*.{js,ts}'",
     "release:beta": "zx scripts/release.mjs --beta",
