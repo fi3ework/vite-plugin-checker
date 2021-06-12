@@ -167,11 +167,13 @@ importers:
     specifiers:
       chokidar: ^3.5.1
       commander: ^7.2.0
+      log-update: ^4.0.0
       vite-plugin-checker: workspace:*
       vls: ^0.7.2
     dependencies:
       chokidar: 3.5.1
       commander: 7.2.0
+      log-update: 4.0.0
       vite-plugin-checker: link:../vite-plugin-checker
       vls: 0.7.4
 

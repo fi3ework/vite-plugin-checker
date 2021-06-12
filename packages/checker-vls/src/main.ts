@@ -8,7 +8,7 @@ import {
 } from 'vite-plugin-checker'
 import { isMainThread, parentPort } from 'worker_threads'
 
-import { DiagnosticOptions, diagnostics, prettyLspConsole } from './commands/diagnostics'
+import { DiagnosticOptions, diagnostics, prettyDiagnosticsLog } from './commands/diagnostics'
 
 export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   let overlay = true // Vite defaults to true
@@ -23,9 +23,7 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
     },
     async configureServer({ root }) {
       const workDir: string = userOptions.root ?? root
-      const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics) => {
-        if (!diagnostics.diagnostics.length) return
-        const overlayErr = lspDiagnosticToViteError(diagnostics)
+      const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics, overlayErr) => {
         if (!overlayErr) return
 
         parentPort?.postMessage({
@@ -35,16 +33,9 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
             err: overlayErr,
           },
         })
-        diagnostics.diagnostics.forEach((d) => {
-          prettyLspConsole({
-            d,
-            absFilePath: uriToAbsPath(diagnostics.uri),
-            fileText: overlayErr.fileText,
-          })
-        })
       }
 
-      await diagnostics(workDir, 'WARN', { watch: true, errorCallback })
+      await diagnostics(workDir, 'WARN', { watch: true, errorCallback, verbose: false })
     },
   }
 }
