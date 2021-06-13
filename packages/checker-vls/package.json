@@ -30,12 +30,19 @@
   "bugs": "https://github.com/fi3ework/vite-plugin-checker/issues",
   "homepage": "https://github.com/fi3ework/vite-plugin-checker",
   "dependencies": {
+    "@babel/code-frame": "^7.12.13",
+    "chalk": "^4.1.1",
     "chokidar": "^3.5.1",
     "commander": "^7.2.0",
+    "glob": "^7.1.7",
     "log-update": "^4.0.0",
     "vite-plugin-checker": "workspace:*",
     "vls": "^0.7.2",
-    "vscode-languageserver-textdocument": "^1.0.1"
+    "vscode-languageclient": "^7.0.0",
+    "vscode-languageserver": "^7.0.0",
+    "vscode-languageserver-protocol": "^3.16.0",
+    "vscode-languageserver-textdocument": "^1.0.1",
+    "vscode-uri": "^3.0.2"
   },
   "peerDependencies": {
     "vite": "^2.0.0"
