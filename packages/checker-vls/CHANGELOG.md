@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0-beta.3](https://github.com/fi3ework/vite-plugin-checker/compare/v0.1.0-beta.2...v0.1.0-beta.3) (2021-06-13)
+
 ## 0.1.0-beta.2 (2021-06-13)
 
 
