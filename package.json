@@ -8,7 +8,7 @@
     "release:beta": "zx scripts/release.mjs --beta",
     "release:beta-dry-run": "zx scripts/release.mjs --beta --dry-run --skip-push",
     "release": "zx scripts/release.mjs",
-    "release:dry-run": "zx scripts/release.mjs --dry-run",
+    "release:dry-run": "zx scripts/release.mjs --dry-run --skip-push",
     "ci:publish": "zx scripts/publish.mjs"
   },
   "husky": {
