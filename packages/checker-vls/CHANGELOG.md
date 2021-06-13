@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.1.0-beta.2 (2021-06-13)
+
+
+### Features
+
+* can log out to stdout ([dde7cd7](https://github.com/fi3ework/vite-plugin-checker/commit/dde7cd75eb0442f1bd38d54f5917c63cd4466cae))
+* can show client side overlay ([af77873](https://github.com/fi3ework/vite-plugin-checker/commit/af778735d2223b3194ec3bdf96f9d17deb5331b0))
+* display code frame ([9a9eca8](https://github.com/fi3ework/vite-plugin-checker/commit/9a9eca868bc0fffe1019a347b871cf859b50f366))
+* run checker in worker thread ([c37097f](https://github.com/fi3ework/vite-plugin-checker/commit/c37097f3ea54ea26b743347e6a7e162033d4f639))
+* run VLS in dev mode ([cf16f1b](https://github.com/fi3ework/vite-plugin-checker/commit/cf16f1b5f7808c2e01cac030ab6a25f1b512ecf4))
+* stdout formatted ts diagnostics ([96453a5](https://github.com/fi3ework/vite-plugin-checker/commit/96453a56c934ccba513e2d10c400b2b6ca0b61cc))
+* support for running muliple checks in parallel ([2588205](https://github.com/fi3ework/vite-plugin-checker/commit/258820515fc4cf543d5c72c80766dcaccec892a2))
+* support read configs ([1cde236](https://github.com/fi3ework/vite-plugin-checker/commit/1cde236afcfc2f90cc1a113634f00a714e3c8cfd))
+* **vls:** console error when dev ([1f9699c](https://github.com/fi3ework/vite-plugin-checker/commit/1f9699c560d0687f2db7fa9994f7b2326ae2a5d6))
+* **vls:** run VLS in worker thread ([5d8f8a8](https://github.com/fi3ework/vite-plugin-checker/commit/5d8f8a8c99f3446d22515ce21ece0e0bb0dc55c2))
+* support custom tsconfig ([6bfd83b](https://github.com/fi3ework/vite-plugin-checker/commit/6bfd83bdc4cbb39dbea13712e638030229bf9d28))
+* support VLS in dev mode ([b96204a](https://github.com/fi3ework/vite-plugin-checker/commit/b96204a42472edb3a53a38951e5dd8bab6f47c1b))
+* **vue2:** add vti check command ([eeaf1d5](https://github.com/fi3ework/vite-plugin-checker/commit/eeaf1d5f9b15aa57340286a091fb0caa40c03768))
+* add react-example ([be8ea9b](https://github.com/fi3ework/vite-plugin-checker/commit/be8ea9b5ecd7d56b7553aa830a3dfd12389c0419))
+* add vue-tsc example ([17d5d3b](https://github.com/fi3ework/vite-plugin-checker/commit/17d5d3b9233f3e6945349c3ab4c577dc2595f1c1))
+* show formatted frame ([4025c4f](https://github.com/fi3ework/vite-plugin-checker/commit/4025c4f5d1e0275a31da69c27c7b19676871a6ad))
+* show overlay error under API mode ([2ace313](https://github.com/fi3ework/vite-plugin-checker/commit/2ace313b546416382d4b2d608d0ff608184cf11c))
+* support programmatic type check ([5231531](https://github.com/fi3ework/vite-plugin-checker/commit/5231531d3e805e72346a32bd075eddaccd28d962))
+* work in buld mode ([88c3662](https://github.com/fi3ework/vite-plugin-checker/commit/88c3662eee95c5b21b77c2106b337238bc021303))
+
+
+### Bug Fixes
+
+* **vls:** clean previous console ([c9f02c1](https://github.com/fi3ework/vite-plugin-checker/commit/c9f02c169c889138b27b081f4d72f28531aabffc))
+* **vls:** suppress extra log when VLS initial report ([4918762](https://github.com/fi3ework/vite-plugin-checker/commit/4918762f027703fbff6b7bf8443789825da5279d))
+* add simple vue-tsc ([126b433](https://github.com/fi3ework/vite-plugin-checker/commit/126b4339a4353d05302fabb499b1cce236c8e855))
+* checker can read shared and own config ([a906e83](https://github.com/fi3ework/vite-plugin-checker/commit/a906e83dc83557be793134d13880667e478ddfe4))
+* checker uses config right ([fe6fe37](https://github.com/fi3ework/vite-plugin-checker/commit/fe6fe376a55e4333a726d204e1d6361a6c400de7))
+* clean previous console ([4cc92a6](https://github.com/fi3ework/vite-plugin-checker/commit/4cc92a68c3d0c29481b3aeeb8f3f4896b8154b29))
+* ensure stdout after clear screen ([aa24643](https://github.com/fi3ework/vite-plugin-checker/commit/aa246435edd8957fb7df288c936a80afdf1d51ef))
+* lockfile registry ([028c4ab](https://github.com/fi3ework/vite-plugin-checker/commit/028c4ab4ea604a484fcf12f398670b24e2b88077))
+* should use config ([5ce19ec](https://github.com/fi3ework/vite-plugin-checker/commit/5ce19ecd07765eaf0a72215d3cae705df0789faa))
+* support spawn in Windows ([4103b1c](https://github.com/fi3ework/vite-plugin-checker/commit/4103b1ce18c2c92cfdd98b660250ad30a3e2b165))
+* support Windows batch file ([f1c7d25](https://github.com/fi3ework/vite-plugin-checker/commit/f1c7d25b112956dbb0d318ce84f1a635f3e93066))
+* use abs file path as error ID ([fdc0360](https://github.com/fi3ework/vite-plugin-checker/commit/fdc0360e990a5447a919e76a58ef2745c80d9344))
+
 ## [0.1.0-beta.1](https://github.com/fi3ework/vite-plugin-checker/compare/v0.1.0-beta.0...v0.1.0-beta.1) (2021-06-10)
 
 
