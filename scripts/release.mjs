@@ -14,7 +14,7 @@ execSync(
   `pnpm -r --filter ./packages exec --\
     standard-version\
     --skip.commit=true\
-    --skip.tag=true
+    --skip.tag=true\
     ${betaScript}\
     ${dryRun}`
 )
@@ -26,10 +26,10 @@ const { version } = await fs.readJSON(
 console.log(`✨ Going to release v${version}`)
 
 await $`git add .`
-await $`git commit -m "chore: release v${version}"`
-await $`git tag v${version}`
-await $`git push`
 
 if (!hasFlag('skip-push')) {
+  await $`git commit -m "chore: release v${version}"`
+  await $`git tag v${version}`
+  await $`git push`
   await $`git push origin --tags`
 }
