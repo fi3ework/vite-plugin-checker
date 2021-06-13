@@ -30,7 +30,11 @@ import { codeFrameColumns } from '@babel/code-frame'
 
 import { getInitParams } from '../initParams'
 
-let muteWatchNotification = true
+import type { TextDocument } from 'vscode-languageserver-textdocument'
+enum DOC_VERSION {
+  init = -1,
+}
+
 export type LogLevel = typeof logLevels[number]
 export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 const logLevel2Severity = {
@@ -77,13 +81,14 @@ export async function diagnostics(
   }
 
   // initial report
+  console.log(os.EOL)
   if (!errCount) {
-    console.log(chalk.green(`VTI found no error`))
+    console.log(chalk.green(`[VLS checker] No error found`))
     if (!watch) {
       process.exit(0)
     }
   } else {
-    console.log(chalk.red(`VTI found ${errCount} ${errCount === 1 ? 'error' : 'errors'}`))
+    console.log(chalk.red(`[VLS checker] Found ${errCount} ${errCount === 1 ? 'error' : 'errors'}`))
     if (!watch) {
       process.exit(1)
     }
@@ -124,8 +129,7 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
 
   // hijack sendDiagnostics
   serverConnection.sendDiagnostics = (diagnostics) => {
-    if (muteWatchNotification) return
-
+    if (diagnostics.version === DOC_VERSION.init) return
     if (!diagnostics.diagnostics.length) {
       prettyDiagnosticsLog({
         ds: [],
@@ -146,6 +150,18 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
   }
 
   const vls = new VLS(serverConnection as any)
+
+  vls.validateTextDocument = async (textDocument: TextDocument, cancellationToken?: any) => {
+    const diagnostics = await vls.doValidate(textDocument, cancellationToken)
+    if (diagnostics) {
+      // @ts-ignore
+      vls.lspConnection.sendDiagnostics({
+        uri: textDocument.uri,
+        version: textDocument.version,
+        diagnostics,
+      })
+    }
+  }
 
   serverConnection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
     await vls.init(params)
@@ -220,31 +236,32 @@ async function getDiagnostics(
       textDocument: {
         languageId: 'vue',
         uri: URI.file(absFilePath).toString(),
-        version: 1,
+        version: DOC_VERSION.init,
         text: fileText,
       },
     })
 
     try {
-      let res = (await clientConnection.sendRequest('$/getDiagnostics', {
+      let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
         uri: URI.file(absFilePath).toString(),
+        version: DOC_VERSION.init,
       })) as Diagnostic[]
       /**
        * Ignore eslint errors for now
        */
-      res = res
+      diagnostics = diagnostics
         .filter((r) => r.source !== 'eslint-plugin-vue')
         .filter((r) => r.severity && r.severity <= severity)
 
-      if (res.length > 0) {
+      if (diagnostics.length > 0) {
         logChunk += prettyDiagnosticsLog({
           absFilePath,
           fileText,
-          ds: res,
+          ds: diagnostics,
           doLog: false,
         })
 
-        res.forEach((d) => {
+        diagnostics.forEach((d) => {
           if (d.severity === DiagnosticSeverity.Error) {
             initialErrCount++
           }
@@ -254,9 +271,7 @@ async function getDiagnostics(
       console.error(err.stack)
     }
   }
-
   logUpdate(logChunk)
-  muteWatchNotification = false
   return initialErrCount
 }
 

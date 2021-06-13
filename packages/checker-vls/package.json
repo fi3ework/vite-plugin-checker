@@ -34,7 +34,8 @@
     "commander": "^7.2.0",
     "log-update": "^4.0.0",
     "vite-plugin-checker": "workspace:*",
-    "vls": "^0.7.2"
+    "vls": "^0.7.2",
+    "vscode-languageserver-textdocument": "^1.0.1"
   },
   "peerDependencies": {
     "vite": "^2.0.0"
