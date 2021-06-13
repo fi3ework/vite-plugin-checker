@@ -30,11 +30,11 @@ Add `vite-plugin-checker` to plugin filed of Vite config file.
 import Checker from 'vite-plugin-checker'
 
 export default {
-  plugins: [Checker(typescript: true)]
+  plugins: [Checker({ typescript: true })],
 }
 ```
 
-## Framework related configuration
+## Framework configuration
 
 > See detailed configuration in [advanced config](#advanced-config) section.
 
@@ -42,7 +42,7 @@ export default {
 
 1. Make sure [typescript](https://www.npmjs.com/package/typescript) is installed as a peer dependency.
 
-2. Modify config file
+2. Modify Vite config file.
 
 ```js
 export default {
@@ -50,15 +50,15 @@ export default {
 }
 ```
 
-### Vue (with Vetur / VLS)
+### Vue (use Vetur / VLS)
 
-1. Install [VLS](https://www.npmjs.com/package/vls) checker preset.
+1. Install [VLS](https://www.npmjs.com/package/vls) checker checker.
 
 ```bash
 npm i vite-plugin-checker-vls -D
 ```
 
-2. Modify config file
+2. Modify Vite config file.
 
 ```js
 import Checker from 'vite-plugin-checker'
@@ -73,7 +73,7 @@ module.exports = {
 }
 ```
 
-### Vue (with Volar / vue-tsc)
+### Vue (use Volar / vue-tsc)
 
 > Only support checking in **build mode** since `vue-tsc` doesn't support watch mode for now.
 
@@ -89,19 +89,19 @@ export default {
 
 ## Advanced config
 
+Plugin can accept an object configuration.
+
 ```js
 export default {
-  plugins: [Checker(config)],
+  plugins: [Checker(config /** Object config below */)],
 }
 ```
 
-The plugin config can be accept following fields
-
 ### config.overlay
 
-| field   | Type      | Default value                                                         | Description                            |
-| :------ | --------- | --------------------------------------------------------------------- | -------------------------------------- |
-| overlay | `boolean` | Same as [`server.hmr.overlay`](https://vitejs.dev/config/#server-hmr) | Show overlay when has TypeScript error |
+| field   | Type      | Default value                                                         | Description                                   |
+| :------ | --------- | --------------------------------------------------------------------- | --------------------------------------------- |
+| overlay | `boolean` | Same as [`server.hmr.overlay`](https://vitejs.dev/config/#server-hmr) | Show Vite error overlay when there's an error |
 
 ### config.enableBuild
 
@@ -122,11 +122,21 @@ The plugin config can be accept following fields
 
 ### config.vls
 
-```ts
-import { VlsChecker } from 'vite-plugin-checker-vls'
+- type: `VlsChecker` instance.
 
-// plugin config
-{ vls?: VlsChecker() }
+e.g.
+
+```js
+import Checker from 'vite-plugin-checker'
+import VlsChecker from 'vite-plugin-checker-vls'
+
+module.exports = {
+  plugins: [
+    Checker({
+      vls: VlsChecker(/** No options for now */),
+    }),
+  ],
+}
 ```
 
 <!-- | field | Type     | Default value                                         | Description              |
@@ -135,10 +145,7 @@ import { VlsChecker } from 'vite-plugin-checker-vls'
 
 ### config.vueTsc
 
-```ts
-// plugin config
-{ vueTsc?: boolean }
-```
+- type: `boolean`
 
 <!-- | field | Type     | Default value                                         | Description              |
 | :---- | -------- | ----------------------------------------------------- | ------------------------ |
@@ -150,9 +157,9 @@ Run projects in [`examples/*`](./examples) to try it out.
 
 ```bash
 pnpm i
-cd ./examples/<ONE_EXAMPLE>
-npm run dev   # for development
-npm run build # for build
+cd ./examples/<ONE_EXAMPLE> # react / vls / vue-tsc
+npm run dev                 # for development
+npm run build               # for build
 ```
 
 ## License
