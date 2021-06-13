@@ -16,7 +16,10 @@ execSync(
     --skip.commit=true\
     --skip.tag=true\
     ${betaScript}\
-    ${dryRun}`
+    ${dryRun}`,
+  {
+    stdio: 'inherit',
+  }
 )
 
 const { version } = await fs.readJSON(
