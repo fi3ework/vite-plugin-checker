@@ -3,8 +3,8 @@ import os from 'os'
 import strip from 'strip-ansi'
 import ts from 'typescript'
 import { ErrorPayload } from 'vite'
-import { Range } from 'vscode-languageclient'
-import { PublishDiagnosticsParams } from 'vscode-languageclient/node'
+import type { Range } from 'vscode-languageclient'
+import type { PublishDiagnosticsParams } from 'vscode-languageclient/node'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
