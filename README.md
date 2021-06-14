@@ -2,6 +2,8 @@
 
 A Vite plugin that runs TypeScript, VLS, vue-tsc and other checkers in worker thread.
 
+![npm version](https://img.shields.io/npm/v/vite-plugin-checker) ![downloads/month](https://img.shields.io/npm/dm/vite-plugin-checker)
+
 ## Features
 
 - ⚡️ Speeds up TypeScirpt, VLS, etc. checkers by running in worker thread in serve mode
