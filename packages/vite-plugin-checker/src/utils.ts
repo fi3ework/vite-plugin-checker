@@ -3,12 +3,13 @@ import os from 'os'
 import strip from 'strip-ansi'
 import ts from 'typescript'
 import { ErrorPayload } from 'vite'
-import type { Range } from 'vscode-languageclient'
-import type { PublishDiagnosticsParams } from 'vscode-languageclient/node'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
-import { createFrame } from './codeFrame'
+import { createFrame, tsLocationToBabelLocation } from './codeFrame'
+
+import type { Range } from 'vscode-languageclient'
+import type { PublishDiagnosticsParams } from 'vscode-languageclient/node'
 
 /**
  * TypeScript utils
@@ -40,8 +41,10 @@ export function tsDiagnosticToViteError(d: ts.Diagnostic): ErrorPayload['err'] {
           os.EOL +
           createFrame({
             source: d.file!.text,
-            start: d.file?.getLineAndCharacterOfPosition(d.start),
-            end: d.file?.getLineAndCharacterOfPosition(d.start + d.length),
+            location: tsLocationToBabelLocation({
+              start: d.file?.getLineAndCharacterOfPosition(d.start),
+              end: d.file?.getLineAndCharacterOfPosition(d.start + d.length),
+            }),
           })
       ),
       stack: '',
