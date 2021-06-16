@@ -3,4 +3,7 @@ module.exports = {
   env: {
     jest: true,
   },
+  rules: {
+    '@typescript-eslint/consistent-type-assertions': 'off',
+  },
 }
