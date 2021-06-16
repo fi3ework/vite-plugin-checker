@@ -4,9 +4,10 @@
   "scripts": {
     "dev": "pnpm -r --filter ./packages --parallel run dev",
     "build": "pnpm -r --filter ./packages run build",
-    "lint": "eslint '**/*.{js,ts}'",
+    "lint": "eslint --ext .js,.ts packages/*/src/**",
     "test": "jest",
     "test:watch": "jest -w",
+    "type-check": "pnpm -r --parallel --filter ./packages exec -- tsc --noEmit",
     "release:beta": "zx scripts/release.mjs --beta",
     "release:beta-dry-run": "zx scripts/release.mjs --beta --dry-run --skip-push",
     "release": "zx scripts/release.mjs",

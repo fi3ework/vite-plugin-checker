@@ -6,6 +6,7 @@ import { $ } from 'zx'
 import hasFlag from 'has-flag'
 
 await $`npm run lint`
+await $`npm run type-check`
 await $`npm run test`
 
 const betaScript = hasFlag('beta') ? '--prerelease beta' : ''
