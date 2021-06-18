@@ -24,6 +24,7 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
     async configureServer({ root }) {
       const workDir: string = userOptions.root ?? root
       const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics, overlayErr) => {
+        if (!overlay) return
         if (!overlayErr) return
 
         parentPort?.postMessage({
