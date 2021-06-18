@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/fi3ework/vite-plugin-checker/compare/v0.1.0...v0.1.1) (2021-06-18)
+
+
+### Bug Fixes
+
+* **checker-vls:** support disabled overlay ([3a0831c](https://github.com/fi3ework/vite-plugin-checker/commit/3a0831c3256785bb9a804c2a86635adb23c04de3))
+
 ## [0.1.0](https://github.com/fi3ework/vite-plugin-checker/compare/v0.1.0-beta.3...v0.1.0) (2021-06-14)
 
 ## [0.1.0-beta.3](https://github.com/fi3ework/vite-plugin-checker/compare/v0.1.0-beta.2...v0.1.0-beta.3) (2021-06-13)
