@@ -8,8 +8,8 @@
     "lib"
   ],
   "scripts": {
-    "dev": "tsc --watch",
-    "build": "tsc",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "rimraf lib && npm run build"
   },
   "repository": {
