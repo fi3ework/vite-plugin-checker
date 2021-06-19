@@ -30,8 +30,7 @@ describe('build', () => {
 
   it('run build bin by child_process.spawn', () => {
     const plugin = CheckerPlugin({
-      // TODO: allow custom checker key
-      vls: TestChecker(),
+      myChecker: TestChecker(),
     })
 
     sandbox.plugin = plugin
