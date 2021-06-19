@@ -1,9 +1,9 @@
 import cp from 'child_process'
+import os from 'os'
 
-import CheckerPlugin from '../../src/main'
+import CheckerPlugin from '../../lib/main'
+import { VlsChecker } from '../../../checker-vls/lib/main'
 import { Sandbox } from './Sandbox/Sandbox'
-
-const { createServeAndBuild: TestChecker, buildBin } = require('./TestChecker/main')
 
 // ref https://github.com/facebook/jest/issues/936#issuecomment-613220940
 jest.mock('child_process', () => {
@@ -19,18 +19,28 @@ jest.mock('child_process', () => {
 
 describe('build', () => {
   let sandbox!: Sandbox
+  const spawnOptions = expect.objectContaining({
+    cwd: expect.any(String),
+    stdio: 'inherit',
+    env: expect.any(Object),
+    shell: os.platform() === 'win32',
+  })
 
   beforeAll(() => {
     sandbox = new Sandbox()
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   afterAll(() => {
     jest.restoreAllMocks()
   })
 
-  it('run build bin by child_process.spawn', () => {
+  it('typescript', () => {
     const plugin = CheckerPlugin({
-      myChecker: TestChecker(),
+      typescript: true,
     })
 
     sandbox.plugin = plugin
@@ -38,7 +48,38 @@ describe('build', () => {
       config: {},
       env: { command: 'build', mode: '' },
     })
+
     expect(cp.spawn).toHaveBeenCalledTimes(1)
-    expect(cp.spawn).toHaveBeenCalledWith(buildBin[0], buildBin[1], expect.anything())
+    expect(cp.spawn).toHaveBeenCalledWith('tsc', ['--noEmit'], spawnOptions)
+  })
+
+  it('vueTsc', () => {
+    const plugin = CheckerPlugin({
+      vueTsc: true,
+    })
+
+    sandbox.plugin = plugin
+    sandbox.viteBuild({
+      config: {},
+      env: { command: 'build', mode: '' },
+    })
+
+    expect(cp.spawn).toHaveBeenCalledTimes(1)
+    expect(cp.spawn).toHaveBeenCalledWith('vue-tsc', ['--noEmit'], spawnOptions)
+  })
+
+  it('custom checker (test vls)', () => {
+    const plugin = CheckerPlugin({
+      vls: VlsChecker(),
+    })
+
+    sandbox.plugin = plugin
+    sandbox.viteBuild({
+      config: {},
+      env: { command: 'build', mode: '' },
+    })
+
+    expect(cp.spawn).toHaveBeenCalledTimes(1)
+    expect(cp.spawn).toHaveBeenCalledWith('vite-plugin-checker-vls', ['diagnostics'], spawnOptions)
   })
 })
