@@ -50,7 +50,7 @@ exports.__esModule = true;
 exports.TestChecker = exports.buildBin = exports.createDiagnostic = void 0;
 var vite_plugin_checker_1 = require("vite-plugin-checker");
 var worker_threads_1 = require("worker_threads");
-var createDiagnostic = function (userOptions) {
+exports.createDiagnostic = function (userOptions) {
     if (userOptions === void 0) { userOptions = {}; }
     var overlay = true; // Vite defaults to true
     return {
@@ -69,7 +69,6 @@ var createDiagnostic = function (userOptions) {
         }
     };
 };
-exports.createDiagnostic = createDiagnostic;
 exports.buildBin = ['_mock_build_cmd', ['_mock_arg1', '_mock_arg2']];
 var _a = vite_plugin_checker_1.createScript({
     absFilename: __filename,
