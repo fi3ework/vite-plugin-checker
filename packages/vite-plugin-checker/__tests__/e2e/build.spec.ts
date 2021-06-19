@@ -97,8 +97,13 @@ describe('build', () => {
     })
 
     expect(cp.spawn).toHaveBeenCalledTimes(3)
-    expect(cp.spawn).toHaveBeenCalledWith('tsc', ['--noEmit'], spawnOptions)
-    expect(cp.spawn).toHaveBeenCalledWith('vue-tsc', ['--noEmit'], spawnOptions)
-    expect(cp.spawn).toHaveBeenCalledWith('vite-plugin-checker-vls', ['diagnostics'], spawnOptions)
+    expect(cp.spawn).toHaveBeenNthCalledWith(1, 'tsc', ['--noEmit'], spawnOptions)
+    expect(cp.spawn).toHaveBeenNthCalledWith(2, 'vue-tsc', ['--noEmit'], spawnOptions)
+    expect(cp.spawn).toHaveBeenNthCalledWith(
+      3,
+      'vite-plugin-checker-vls',
+      ['diagnostics'],
+      spawnOptions
+    )
   })
 })
