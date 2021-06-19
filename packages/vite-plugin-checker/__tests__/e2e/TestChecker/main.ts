@@ -53,4 +53,4 @@ declare const TestChecker: (
 ) => (config: CheckerConfig & SharedConfig) => ServeAndBuildChecker
 
 export { TestChecker }
-export type { CheckerConfig as VlsConfig }
+export type { CheckerConfig }

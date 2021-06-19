@@ -1,18 +1,32 @@
 import { spawn } from 'child_process'
+import omit from 'lodash.omit'
+import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
 import os from 'os'
+import invariant from 'tiny-invariant'
 import { ConfigEnv, Plugin } from 'vite'
 
-import { OverlayErrorAction, ServeAndBuildChecker, UserPluginConfig } from './types'
+import type {
+  OverlayErrorAction,
+  BuildInCheckers,
+  ServeAndBuildChecker,
+  UserPluginConfig,
+  SharedConfig,
+} from './types'
 
 export * from './types'
 export * from './codeFrame'
 export * from './utils'
 export * from './worker'
 
+const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
+const buildInCheckerKeys: (keyof BuildInCheckers)[] = ['typescript', 'vueTsc']
+
 function createCheckers(userConfig: UserPluginConfig): ServeAndBuildChecker[] {
+  const { typescript, vueTsc } = userConfig
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
-  const { typescript, vueTsc, vls: vlsCurry, ...sharedConfig } = userConfig
+  const sharedConfig = pick(userConfig, sharedConfigKeys)
+  const customCheckers = omit(userConfig, [...sharedConfigKeys, ...buildInCheckerKeys])
 
   if (typescript) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -26,9 +40,14 @@ function createCheckers(userConfig: UserPluginConfig): ServeAndBuildChecker[] {
     serveAndBuildCheckers.push(createServeAndBuild({ vueTsc, ...sharedConfig }))
   }
 
-  if (vlsCurry) {
-    serveAndBuildCheckers.push(vlsCurry(sharedConfig))
-  }
+  Object.keys(customCheckers).forEach((key) => {
+    const checkerCurryFn = customCheckers[key]
+    invariant(
+      typeof checkerCurryFn === 'function',
+      `Custom checker key should be a function, but got ${typeof checkerCurryFn}`
+    )
+    serveAndBuildCheckers.push(checkerCurryFn(sharedConfig))
+  })
 
   return serveAndBuildCheckers
 }

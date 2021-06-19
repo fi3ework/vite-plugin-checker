@@ -35,11 +35,20 @@ export interface SharedConfig {
   overlay: boolean
 }
 
-export interface PluginConfig extends SharedConfig {
+export type CustomChecker = (vlsConfig: any) => ServeAndBuildChecker
+
+export interface CustomCheckers {
+  // TODO: poor TS index signature type https://stackoverflow.com/questions/49969390/how-do-i-type-an-object-with-known-and-unknown-keys-in-typescript?noredirect=1&lq=1
+  // should remove `| boolean`
+  [k: string]: CustomChecker | boolean
+}
+
+export interface BuildInCheckers {
   typescript: TscConfig
   vueTsc: VueTscConfig
-  vls: (vlsConfig: any) => ServeAndBuildChecker
 }
+
+export type PluginConfig = SharedConfig & CustomCheckers & BuildInCheckers
 
 /** Userland plugin configuration */
 export type UserPluginConfig = Partial<PluginConfig>

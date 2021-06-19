@@ -176,6 +176,10 @@ importers:
   packages/vite-plugin-checker:
     specifiers:
       '@babel/code-frame': ^7.12.13
+      '@types/lodash.omit': ^4.5.6
+      '@types/lodash.pick': ^4.4.6
+      lodash.omit: ^4.5.0
+      lodash.pick: ^4.4.0
       log-update: ^4.0.0
       npm-run-path: ^4.0.1
       strip-ansi: ^6.0.0
@@ -183,6 +187,10 @@ importers:
       vscode-languageclient: ^7.0.0
     dependencies:
       '@babel/code-frame': 7.12.13
+      '@types/lodash.omit': 4.5.6
+      '@types/lodash.pick': 4.4.6
+      lodash.omit: 4.5.0
+      lodash.pick: 4.4.0
       log-update: 4.0.0
       npm-run-path: 4.0.1
       strip-ansi: 6.0.0
@@ -1157,6 +1165,22 @@ packages:
   /@types/json-schema/7.0.7:
     resolution: {integrity: sha512-cxWFQVseBm6O9Gbw1IWb8r6OS4OhSt3hPZLkFApLjM8TEXROBuQGLAH2i2gZpcXdLBIrpXuTDhH7Vbm1iXmNGA==}
     dev: true
+
+  /@types/lodash.omit/4.5.6:
+    resolution: {integrity: sha512-KXPpOSNX2h0DAG2w7ajpk7TXvWF28ZHs5nJhOJyP0BQHkehgr948RVsToItMme6oi0XJkp19CbuNXkIX8FiBlQ==}
+    dependencies:
+      '@types/lodash': 4.14.170
+    dev: false
+
+  /@types/lodash.pick/4.4.6:
+    resolution: {integrity: sha512-u8bzA16qQ+8dY280z3aK7PoWb3fzX5ATJ0rJB6F+uqchOX2VYF02Aqa+8aYiHiHgPzQiITqCgeimlyKFy4OA6g==}
+    dependencies:
+      '@types/lodash': 4.14.170
+    dev: false
+
+  /@types/lodash/4.14.170:
+    resolution: {integrity: sha512-bpcvu/MKHHeYX+qeEN8GE7DIravODWdACVA1ctevD8CN24RhPZIKMn9ntfAsrvLfSX3cR5RrBKAbYm9bGs0A+Q==}
+    dev: false
 
   /@types/minimatch/3.0.4:
     resolution: {integrity: sha512-1z8k4wzFnNjVK/tlxvrWuK5WMt6mydWWP7+zvH5eFep4oj+UkrfiJTRtjCeBXNpwaA/FYqqtb4/QS4ianFpIRA==}
@@ -4630,6 +4654,14 @@ packages:
 
   /lodash.merge/4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+
+  /lodash.omit/4.5.0:
+    resolution: {integrity: sha1-brGa5aHuHdnfC5aeZs4Lf6MLXmA=}
+    dev: false
+
+  /lodash.pick/4.4.0:
+    resolution: {integrity: sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=}
+    dev: false
 
   /lodash.truncate/4.4.2:
     resolution: {integrity: sha1-WjUNoLERO4N+z//VgSy+WNbq4ZM=}
