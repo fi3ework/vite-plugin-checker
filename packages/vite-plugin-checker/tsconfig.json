@@ -1,8 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./lib",
-    "rootDir": "src"
+    "allowJs": true
   },
-  "include": ["src"]
+  "extends": "../../tsconfig.json",
+  "include": ["src", "__tests__"]
 }
