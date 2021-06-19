@@ -5,5 +5,6 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/consistent-type-assertions': 'off',
+    '@typescript-eslint/no-require-imports': 'off',
   },
 }

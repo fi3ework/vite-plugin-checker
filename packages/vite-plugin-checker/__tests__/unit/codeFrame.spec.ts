@@ -1,4 +1,4 @@
-import { tsLocationToBabelLocation } from '../src/codeFrame'
+import { tsLocationToBabelLocation } from '../../src/codeFrame'
 import { SourceLocation } from '@babel/code-frame'
 
 describe('code frame', () => {

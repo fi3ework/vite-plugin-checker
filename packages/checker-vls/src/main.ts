@@ -1,14 +1,12 @@
 import {
-  SharedConfig,
   CreateDiagnostic,
   createScript,
-  lspDiagnosticToViteError,
-  uriToAbsPath,
   ServeAndBuildChecker,
+  SharedConfig,
 } from 'vite-plugin-checker'
 import { isMainThread, parentPort } from 'worker_threads'
 
-import { DiagnosticOptions, diagnostics, prettyDiagnosticsLog } from './commands/diagnostics'
+import { DiagnosticOptions, diagnostics } from './commands/diagnostics'
 
 export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   let overlay = true // Vite defaults to true
@@ -26,6 +24,7 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
       const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics, overlayErr) => {
         if (!overlay) return
         if (!overlayErr) return
+        if (!overlay) return
 
         parentPort?.postMessage({
           type: 'ERROR',
