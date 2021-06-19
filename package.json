@@ -7,7 +7,7 @@
     "lint": "eslint --ext .js,.ts packages/*/src/**",
     "test": "jest",
     "test:watch": "jest -w",
-    "type-check": "pnpm -r --parallel --filter ./packages exec -- tsc --noEmit",
+    "type-check": "pnpm -r --parallel --filter ./packages exec -- tsc --noEmit -p tsconfig.build.json",
     "release:beta": "zx scripts/release.mjs --beta",
     "release:beta-dry-run": "zx scripts/release.mjs --beta --dry-run --skip-push",
     "release": "zx scripts/release.mjs",
