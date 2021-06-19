@@ -82,4 +82,23 @@ describe('build', () => {
     expect(cp.spawn).toHaveBeenCalledTimes(1)
     expect(cp.spawn).toHaveBeenCalledWith('vite-plugin-checker-vls', ['diagnostics'], spawnOptions)
   })
+
+  it('multiple checkers', () => {
+    const plugin = CheckerPlugin({
+      typescript: true,
+      vueTsc: true,
+      vls: VlsChecker(),
+    })
+
+    sandbox.plugin = plugin
+    sandbox.viteBuild({
+      config: {},
+      env: { command: 'build', mode: '' },
+    })
+
+    expect(cp.spawn).toHaveBeenCalledTimes(3)
+    expect(cp.spawn).toHaveBeenCalledWith('tsc', ['--noEmit'], spawnOptions)
+    expect(cp.spawn).toHaveBeenCalledWith('vue-tsc', ['--noEmit'], spawnOptions)
+    expect(cp.spawn).toHaveBeenCalledWith('vite-plugin-checker-vls', ['diagnostics'], spawnOptions)
+  })
 })
