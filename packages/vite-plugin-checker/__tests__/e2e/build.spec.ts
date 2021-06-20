@@ -3,7 +3,7 @@ import os from 'os'
 
 import CheckerPlugin from '../../lib/main'
 import { VlsChecker } from '../../../checker-vls/lib/main'
-import { Sandbox } from './Sandbox/Sandbox'
+import { MockSandbox } from './MockSandbox/MockSandbox'
 
 // ref https://github.com/facebook/jest/issues/936#issuecomment-613220940
 jest.mock('child_process', () => {
@@ -18,7 +18,7 @@ jest.mock('child_process', () => {
 })
 
 describe('build', () => {
-  let sandbox!: Sandbox
+  let sandbox!: MockSandbox
   const spawnOptions = expect.objectContaining({
     cwd: expect.any(String),
     stdio: 'inherit',
@@ -27,7 +27,7 @@ describe('build', () => {
   })
 
   beforeAll(() => {
-    sandbox = new Sandbox()
+    sandbox = new MockSandbox()
   })
 
   afterEach(() => {
