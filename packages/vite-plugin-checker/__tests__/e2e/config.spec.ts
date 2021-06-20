@@ -7,8 +7,6 @@ import {
   viteBuild,
 } from './Sandbox/Sandbox'
 
-jest.setTimeout(100000)
-
 beforeAll(async () => {
   await preTest()
 })
