@@ -7,26 +7,21 @@ let browser: playwright.Browser
 let page: playwright.Page
 let binPath: string
 
-// const fixtureDir = path.join(__dirname, '../../../../../playground/react-ts')
-const tempDir = path.join(__dirname, '../../../../../playground/react-ts')
+const tempDir = composeTestTempDirPath()
 
 export async function preTest() {
   try {
-    // await fs.remove(tempDir)
+    binPath = path.resolve(tempDir, 'node_modules/vite/bin/vite.js')
   } catch (e) {}
-  // await fs.copy(fixtureDir, tempDir, {
-  //   filter: (file) => !/dist|node_modules/.test(file),
-  // })
-  // await execa('yarn', { cwd: tempDir })
-  binPath = path.resolve(tempDir, './node_modules/vite/bin/vite.js')
-
-  // await viteBuild()
 }
 
-export async function viteBuild(errorMsg?: string) {
+export async function viteBuild({
+  expectErrorMsg,
+  cwd = process.cwd(),
+}: { expectErrorMsg?: string; cwd?: string } = {}) {
   console.log('Vite building...')
 
-  const expectError = typeof errorMsg === 'string'
+  const expectError = typeof expectErrorMsg === 'string'
 
   if (!expectError) {
     await expect(
@@ -37,10 +32,20 @@ export async function viteBuild(errorMsg?: string) {
   } else {
     await expect(
       execa(binPath, ['build'], {
-        cwd: tempDir,
+        cwd: cwd ?? tempDir,
       })
-    ).rejects.toThrow(errorMsg)
+    ).rejects.toThrow(expectErrorMsg)
   }
+}
+
+export function slash(p: string): string {
+  return p.replace(/\\/g, '/')
+}
+
+export function composeTestTempDirPath() {
+  const testPath = expect.getState().testPath
+  const testName = slash(testPath).match(/playground\/([\w-]+)\//)?.[1]
+  return path.resolve(process.env.JEST_ROOT_DIR!, `./temp/${testName}`)
 }
 
 export async function postTest() {
