@@ -7,8 +7,8 @@ let browser: playwright.Browser
 let page: playwright.Page
 let binPath: string
 
-// const fixtureDir = path.join(__dirname, '../../../../../examples/react-ts')
-const tempDir = path.join(__dirname, '../../../../../examples/react-ts')
+// const fixtureDir = path.join(__dirname, '../../../../../playground/react-ts')
+const tempDir = path.join(__dirname, '../../../../../playground/react-ts')
 
 export async function preTest() {
   try {

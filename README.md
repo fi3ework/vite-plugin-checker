@@ -153,14 +153,14 @@ module.exports = {
 | :---- | -------- | ----------------------------------------------------- | ------------------------ |
 | root  | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root dir for checker run | -->
 
-## Examples
+## Playground
 
-Run projects in [`examples/*`](./examples) to try it out.
+Run projects in [`playground/*`](./playground) to try it out.
 
 ```bash
 pnpm i
 npm run build
-cd ./examples/<ONE_EXAMPLE> # react / vls / vue-tsc
+cd ./playground/<ONE_EXAMPLE> # react / vls / vue-tsc
 npm run dev                 # for development
 npm run build               # for build
 ```
