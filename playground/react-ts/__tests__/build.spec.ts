@@ -1,11 +1,9 @@
 import {
   preTest,
   postTest,
-  declareTests,
-  startServer,
-  killServer,
   viteBuild,
-} from './Sandbox/Sandbox'
+  composeTestTempDirPath,
+} from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
 
 beforeAll(async () => {
   await preTest()
@@ -28,7 +26,7 @@ describe('typescript', () => {
 
   describe('build', () => {
     it('console error', async () => {
-      await viteBuild('error TS2345')
+      await viteBuild({ expectErrorMsg: 'error TS2345', cwd: composeTestTempDirPath() })
     })
   })
 })
