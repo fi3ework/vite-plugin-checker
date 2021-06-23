@@ -4,7 +4,7 @@ module.exports = {
   globalSetup: './scripts/jestGlobalSetup.js',
   globalTeardown: './scripts/jestGlobalTeardown.js',
   setupFilesAfterEnv: ['./scripts/jestPerTestSetup.ts'],
-  testTimeout: process.env.CI ? 30000 : 10000,
+  testTimeout: process.env.CI ? 60000 : 60000,
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
