@@ -35,7 +35,7 @@ export interface SharedConfig {
   overlay: boolean
 }
 
-export type CustomChecker = (vlsConfig: any) => ServeAndBuildChecker
+export type CustomChecker = (checkerConfig: any, env: ConfigEnv) => ServeAndBuildChecker
 
 export interface CustomCheckers {
   // TODO: poor TS index signature type https://stackoverflow.com/questions/49969390/how-do-i-type-an-object-with-known-and-unknown-keys-in-typescript?noredirect=1&lq=1
@@ -56,9 +56,10 @@ export type UserPluginConfig = Partial<PluginConfig>
 /* ----------------------------- worker actions ----------------------------- */
 
 export enum ACTION_TYPES {
-  overlayError = 'overlayError',
   config = 'config',
   configureServer = 'configureServer',
+  overlayError = 'overlayError',
+  unref = 'unref',
 }
 
 interface Action {
@@ -83,7 +84,11 @@ export interface ConfigureServerAction extends Action {
   }
 }
 
-export type Actions = OverlayErrorAction | ConfigAction | ConfigureServerAction
+export interface UnrefAction extends Action {
+  type: ACTION_TYPES.unref
+}
+
+export type Actions = OverlayErrorAction | ConfigAction | ConfigureServerAction | UnrefAction
 
 /* ----------------------------- internal types ----------------------------- */
 

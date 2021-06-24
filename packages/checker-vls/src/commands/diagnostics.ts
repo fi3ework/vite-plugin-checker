@@ -246,6 +246,7 @@ async function getDiagnostics(
         uri: URI.file(absFilePath).toString(),
         version: DOC_VERSION.init,
       })) as Diagnostic[]
+
       /**
        * Ignore eslint errors for now
        */
@@ -271,6 +272,7 @@ async function getDiagnostics(
       console.error(err.stack)
     }
   }
+
   logUpdate(logChunk)
   return initialErrCount
 }

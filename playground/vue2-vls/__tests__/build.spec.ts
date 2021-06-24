@@ -26,7 +26,10 @@ describe('vue2-vls', () => {
 
   describe('build', () => {
     it('console error', async () => {
-      await viteBuild({ expectErrorMsg: 'error TS2345', cwd: composeTestTempDirPath() })
+      await viteBuild({
+        expectErrorMsg: `Property 'msg1' does not exist on type`,
+        cwd: composeTestTempDirPath(),
+      })
     })
   })
 })
