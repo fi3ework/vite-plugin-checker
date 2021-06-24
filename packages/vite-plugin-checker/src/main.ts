@@ -22,7 +22,7 @@ export * from './worker'
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: (keyof BuildInCheckers)[] = ['typescript', 'vueTsc']
 
-function createCheckers(userConfig: UserPluginConfig): ServeAndBuildChecker[] {
+function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndBuildChecker[] {
   const { typescript, vueTsc } = userConfig
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
   const sharedConfig = pick(userConfig, sharedConfigKeys)
@@ -31,13 +31,13 @@ function createCheckers(userConfig: UserPluginConfig): ServeAndBuildChecker[] {
   if (typescript) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { createServeAndBuild } = require('./checkers/tsc')
-    serveAndBuildCheckers.push(createServeAndBuild({ typescript, ...sharedConfig }))
+    serveAndBuildCheckers.push(createServeAndBuild({ typescript, ...sharedConfig }, env))
   }
 
   if (vueTsc) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { createServeAndBuild } = require('./checkers/vue-tsc')
-    serveAndBuildCheckers.push(createServeAndBuild({ vueTsc, ...sharedConfig }))
+    serveAndBuildCheckers.push(createServeAndBuild({ vueTsc, ...sharedConfig }, env))
   }
 
   Object.keys(customCheckers).forEach((key) => {
@@ -46,14 +46,16 @@ function createCheckers(userConfig: UserPluginConfig): ServeAndBuildChecker[] {
       typeof checkerCurryFn === 'function',
       `Custom checker key should be a function, but got ${typeof checkerCurryFn}`
     )
-    serveAndBuildCheckers.push(checkerCurryFn(sharedConfig))
+
+    serveAndBuildCheckers.push(checkerCurryFn(sharedConfig, env))
   })
 
   return serveAndBuildCheckers
 }
 
 export default function Plugin(userConfig?: UserPluginConfig): Plugin {
-  const checkers = createCheckers(userConfig || {})
+  let checkers: ServeAndBuildChecker[] = []
+  // const checkers = createCheckers(userConfig || {})
   const enableBuild = userConfig?.enableBuild ?? true
   let viteMode: ConfigEnv['command'] | undefined
 
@@ -63,6 +65,7 @@ export default function Plugin(userConfig?: UserPluginConfig): Plugin {
       // for dev mode (1/2)
       // Initialize checker with config
       viteMode = env.command
+      checkers = createCheckers(userConfig || {}, env)
       if (viteMode !== 'serve') return
 
       checkers.forEach((checker) => {

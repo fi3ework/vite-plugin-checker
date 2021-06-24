@@ -8,6 +8,8 @@ import { isMainThread, parentPort } from 'worker_threads'
 
 import { DiagnosticOptions, diagnostics } from './commands/diagnostics'
 
+import type { ConfigEnv } from 'vite'
+
 export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   let overlay = true // Vite defaults to true
 
@@ -47,10 +49,10 @@ const { mainScript, workerScript } = createScript<{ vls: VlsConfig }>({
 })!
 
 if (isMainThread) {
-  const createChecker = mainScript()
   const configCurryFn = (vlsConfig: VlsConfig) => {
-    return (sharedConfig: SharedConfig) => {
-      return createChecker({ vls: vlsConfig, ...sharedConfig })
+    return (sharedConfig: SharedConfig, env: ConfigEnv) => {
+      const createChecker = mainScript()
+      return createChecker({ vls: vlsConfig, ...sharedConfig }, env)
     }
   }
 
