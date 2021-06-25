@@ -5,7 +5,7 @@
     "dev": "pnpm -r --filter ./packages --parallel run dev",
     "build": "pnpm -r --filter ./packages run build",
     "lint": "eslint --ext .js,.ts packages/*/src/**",
-    "test": "jest --runInBand --forceExit",
+    "test": "jest --runInBand",
     "test:watch": "jest -w",
     "type-check": "pnpm -r --parallel --filter ./packages exec -- tsc --noEmit -p tsconfig.build.json",
     "release:beta": "zx scripts/release.mjs --beta",
