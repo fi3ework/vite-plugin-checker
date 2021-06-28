@@ -9,7 +9,7 @@ const config = {
   setupFilesAfterEnv: ['./scripts/jestPerTestSetup.ts'],
   testTimeout: process.env.CI ? 60000 : 60000,
   collectCoverage: false,
-  collectCoverageFrom: ['packages/*/src/**/*.ts'],
+  collectCoverageFrom: ['packages/*/src/**/*.ts', 'packages/*/lib/**/*.js'],
   detectOpenHandles: true,
   transform: {
     '^.+\\.ts$': 'ts-jest',
