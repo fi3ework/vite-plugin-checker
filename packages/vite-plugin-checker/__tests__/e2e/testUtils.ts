@@ -6,9 +6,9 @@ export function slash(p: string): string {
   return p.replace(/\\/g, '/')
 }
 
+export const WORKER_CLEAN_TIMEOUT = process.env.CI ? 6000 : 3000
 export const testPath = expect.getState().testPath
 export const testName = slash(testPath).match(/playground\/([\w-]+)\//)?.[1]
-assert(testName, `should detect testName, but got null`)
 export const testDir = path.resolve(process.env.JEST_ROOT_DIR!, `./temp/${testName}`)
 
 export function editFile(
@@ -27,4 +27,12 @@ export function expectStdoutNotContains(str: string, unexpectedErrorMsg: string)
   expect.objectContaining({
     stdout: expect(str).not.toContain(unexpectedErrorMsg),
   })
+}
+
+export async function sleep(millSeconds: number, callback?: Function) {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, millSeconds)
+  }).then(() => callback?.())
 }

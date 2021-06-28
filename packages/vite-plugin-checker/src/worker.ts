@@ -1,5 +1,6 @@
 import { ConfigEnv } from 'vite'
 import { parentPort, Worker, workerData } from 'worker_threads'
+import invariant from 'tiny-invariant'
 
 import { ACTION_TYPES } from './types'
 
@@ -30,7 +31,9 @@ export function createScript<T>({
   buildBin,
   serverChecker,
 }: WorkerScriptOptions): Script<T> {
+  // let _env: ConfigEnv | undefined
   type CheckerConfig = T & SharedConfig
+  let _env: ConfigEnv
   return {
     mainScript: () => {
       // initialized in main thread
@@ -38,7 +41,9 @@ export function createScript<T>({
         checkerConfig: CheckerConfig,
         env: ConfigEnv
       ): ConfigureServeChecker => {
+        _env = env
         const isBuild = env.command === 'build'
+
         const worker = new Worker(absFilename, {
           workerData: { env, checkerConfig },
         })
@@ -73,7 +78,6 @@ export function createScript<T>({
       if (!parentPort) throw Error('should have parentPort as file runs in worker thread')
       const isBuild = workerData.env.command === 'build'
       // only run bin command and do not listen message in build mode
-      if (isBuild) return
 
       const port = parentPort.on(
         'message',
@@ -81,6 +85,7 @@ export function createScript<T>({
           switch (action.type) {
             case ACTION_TYPES.config: {
               const checkerConfig: T = workerData.checkerConfig
+              invariant(_env, 'env should be initialized in mainScript, but got undefined')
               diagnostic = serverChecker.createDiagnostic(checkerConfig)
               diagnostic.config(action.payload)
               break
@@ -96,6 +101,10 @@ export function createScript<T>({
           }
         }
       )
+
+      if (isBuild) {
+        port.unref()
+      }
     },
   }
 }
