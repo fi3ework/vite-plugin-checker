@@ -78,8 +78,11 @@ export default function Plugin(userConfig?: UserPluginConfig): Plugin {
     },
     buildStart: () => {
       // for build mode
-      // Run a bin command in a separated process
+      // run a bin command in a separated process
       if (viteMode !== 'build') return
+
+      // do not do anything when disable build mode
+      if (!enableBuild) return
 
       const localEnv = npmRunPath.env({
         env: process.env,
@@ -96,13 +99,11 @@ export default function Plugin(userConfig?: UserPluginConfig): Plugin {
           shell: os.platform() === 'win32',
         })
 
-        if (enableBuild) {
-          proc.on('exit', (code) => {
-            if (code !== null && code !== 0) {
-              process.exit(code)
-            }
-          })
-        }
+        proc.on('exit', (code) => {
+          if (code !== null && code !== 0) {
+            process.exit(code)
+          }
+        })
       })
     },
     configureServer(server) {
