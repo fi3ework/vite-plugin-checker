@@ -1,7 +1,7 @@
 import path from 'path'
 import execa from 'execa'
 import playwright, { chromium } from 'playwright-chromium'
-import { slash, testPath, testName, testDir } from '../testUtils'
+import { testDir, expectStdoutNotContains } from '../testUtils'
 
 let devServer: any
 let browser: playwright.Browser
@@ -19,22 +19,19 @@ export async function viteBuild({
   expectedErrorMsg,
   cwd = process.cwd(),
 }: { unexpectedErrorMsg?: string; expectedErrorMsg?: string; cwd?: string } = {}) {
-  console.log('Vite building...')
+  const promise = execa(binPath, ['build'], {
+    cwd: cwd ?? testDir,
+  })
 
-  const expectError = typeof expectedErrorMsg === 'string'
+  if (expectedErrorMsg) {
+    await expect(promise).rejects.toThrow(expectedErrorMsg)
+    return
+  }
 
-  if (!expectError) {
-    await expect(
-      execa(binPath, ['build'], {
-        cwd: testDir,
-      })
-    ).resolves.toBeDefined()
-  } else { 
-    await expect(
-      execa(binPath, ['build'], {
-        cwd: cwd ?? testDir,
-      })
-    ).rejects.toThrow(expectedErrorMsg)
+  await expect(promise).resolves.toBeDefined()
+
+  if (unexpectedErrorMsg) {
+    expectStdoutNotContains((await promise).stdout, unexpectedErrorMsg)
   }
 }
 

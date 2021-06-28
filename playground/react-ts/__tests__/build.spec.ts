@@ -28,5 +28,12 @@ describe('typescript', () => {
     it('console error', async () => {
       await viteBuild({ expectedErrorMsg: 'error TS2345', cwd: testDir })
     })
+
+    it('enableBuild: false', async () => {
+      editFile('vite.config.ts', (code) =>
+        code.replace('typescript: true,', 'typescript: true, enableBuild: false')
+      )
+      await viteBuild({ unexpectedErrorMsg: 'error TS2345', cwd: testDir })
+    })
   })
 })
