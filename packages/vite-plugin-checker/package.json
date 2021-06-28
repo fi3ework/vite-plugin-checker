@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "tsc -p tsconfig.build.json --watch",
     "build": "tsc -p tsconfig.build.json",
+    "build:test": "tsc -p tsconfig.test.json",
     "prepublishOnly": "rimraf lib && npm run build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . --lerna-package vite-plugin-checker",
     "release": "zx ../../scripts/release.mjs"

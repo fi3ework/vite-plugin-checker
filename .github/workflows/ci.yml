@@ -35,7 +35,7 @@ jobs:
         run: pnpm i
 
       - name: Build
-        run: npm run build
+        run: npm run build:test
 
       - name: Lint
         run: npm run lint
@@ -64,7 +64,7 @@ jobs:
         run: pnpm i
 
       - name: Build
-        run: npm run build
+        run: npm run build:test
 
       - name: Coverage test
         run: npm run test:coverage

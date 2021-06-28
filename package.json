@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "pnpm -r --filter ./packages --parallel run dev",
     "build": "pnpm -r --filter ./packages run build",
+    "build:test": "pnpm -r --filter ./packages run build:test",
     "lint": "eslint --ext .js,.ts packages/*/src/**",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage=true",
