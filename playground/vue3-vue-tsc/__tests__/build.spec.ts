@@ -2,8 +2,8 @@ import {
   preTest,
   postTest,
   viteBuild,
-  composeTestTempDirPath,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
+import { testDir } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
 
 beforeAll(async () => {
   await preTest()
@@ -26,7 +26,7 @@ describe('vue3-vue-tsc', () => {
 
   describe('build', () => {
     it('console error', async () => {
-      await viteBuild({ expectErrorMsg: 'error TS2322', cwd: composeTestTempDirPath() })
+      await viteBuild({ expectedErrorMsg: 'error TS2322', cwd: testDir })
     })
   })
 })

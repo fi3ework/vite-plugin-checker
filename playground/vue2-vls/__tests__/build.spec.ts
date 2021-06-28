@@ -2,8 +2,8 @@ import {
   preTest,
   postTest,
   viteBuild,
-  composeTestTempDirPath,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
+import { testDir } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
 
 beforeAll(async () => {
   await preTest()
@@ -27,8 +27,8 @@ describe('vue2-vls', () => {
   describe('build', () => {
     it('console error', async () => {
       await viteBuild({
-        expectErrorMsg: `Property 'msg1' does not exist on type`,
-        cwd: composeTestTempDirPath(),
+        expectedErrorMsg: `Property 'msg1' does not exist on type`,
+        cwd: testDir,
       })
     })
   })

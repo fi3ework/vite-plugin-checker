@@ -1,51 +1,41 @@
 import path from 'path'
 import execa from 'execa'
 import playwright, { chromium } from 'playwright-chromium'
+import { slash, testPath, testName, testDir } from '../testUtils'
 
 let devServer: any
 let browser: playwright.Browser
 let page: playwright.Page
 let binPath: string
 
-const tempDir = composeTestTempDirPath()
-
 export async function preTest() {
   try {
-    binPath = path.resolve(tempDir, 'node_modules/vite/bin/vite.js')
+    binPath = path.resolve(testDir, 'node_modules/vite/bin/vite.js')
   } catch (e) {}
 }
 
 export async function viteBuild({
-  expectErrorMsg,
+  unexpectedErrorMsg,
+  expectedErrorMsg,
   cwd = process.cwd(),
-}: { expectErrorMsg?: string; cwd?: string } = {}) {
+}: { unexpectedErrorMsg?: string; expectedErrorMsg?: string; cwd?: string } = {}) {
   console.log('Vite building...')
 
-  const expectError = typeof expectErrorMsg === 'string'
+  const expectError = typeof expectedErrorMsg === 'string'
 
   if (!expectError) {
     await expect(
       execa(binPath, ['build'], {
-        cwd: tempDir,
+        cwd: testDir,
       })
     ).resolves.toBeDefined()
-  } else {
+  } else { 
     await expect(
       execa(binPath, ['build'], {
-        cwd: cwd ?? tempDir,
+        cwd: cwd ?? testDir,
       })
-    ).rejects.toThrow(expectErrorMsg)
+    ).rejects.toThrow(expectedErrorMsg)
   }
-}
-
-export function slash(p: string): string {
-  return p.replace(/\\/g, '/')
-}
-
-export function composeTestTempDirPath() {
-  const testPath = expect.getState().testPath
-  const testName = slash(testPath).match(/playground\/([\w-]+)\//)?.[1]
-  return path.resolve(process.env.JEST_ROOT_DIR!, `./temp/${testName}`)
 }
 
 export async function postTest() {
@@ -57,7 +47,7 @@ export async function postTest() {
 export async function startServer(isBuild: boolean) {
   // start dev server
   devServer = execa(binPath, {
-    cwd: isBuild ? path.join(tempDir, '/dist') : tempDir,
+    cwd: isBuild ? path.join(testDir, '/dist') : testDir,
   })
 
   browser = await chromium.launch({
