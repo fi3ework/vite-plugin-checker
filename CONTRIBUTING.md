@@ -13,19 +13,19 @@ pnpm dev
 
 ## Release
 
-To release a beta version
+cd to `packages/*`.
 
-```bash
-npm run release:beta
-```
-
-To release a official version
+Release with interactive CLI
 
 ```bash
 npm run release
 ```
 
-Use `release:beta-dry-run` or `release:dry-run` to dry run release locally.
+or release with an explicit version
+
+```bash
+npm run release -- --version=1.2.3
+```
 
 ## Publish
 

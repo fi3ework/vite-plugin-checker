@@ -10,7 +10,9 @@ importers:
       '@types/glob': ^7.1.3
       '@types/jest': ^26.0.23
       '@types/node': ^14.14.31
+      '@types/prompts': ^2.0.13
       '@types/rimraf': ^3.0.0
+      '@types/semver': ^7.3.6
       '@typescript-eslint/eslint-plugin': ^4.15.2
       '@typescript-eslint/parser': ^4.15.2
       chalk: ^4.1.1
@@ -32,7 +34,7 @@ importers:
       vite: ^2.1.3
       vite-plugin-checker: workspace:*
       vite-plugin-checker-vls: workspace:*
-      zx: ^1.14.1
+      zx: ^1.14.2
     devDependencies:
       '@types/babel__code-frame': 7.0.2
       '@types/debug': 4.1.5
@@ -40,7 +42,9 @@ importers:
       '@types/glob': 7.1.3
       '@types/jest': 26.0.23
       '@types/node': 14.17.3
+      '@types/prompts': 2.0.13
       '@types/rimraf': 3.0.0
+      '@types/semver': 7.3.6
       '@typescript-eslint/eslint-plugin': 4.26.1_c8cbd5e7f5f92609ec78d991aced454b
       '@typescript-eslint/parser': 4.26.1_eslint@7.28.0+typescript@4.3.2
       chalk: 4.1.1
@@ -62,7 +66,7 @@ importers:
       vite: 2.3.7
       vite-plugin-checker: link:packages/vite-plugin-checker
       vite-plugin-checker-vls: link:packages/checker-vls
-      zx: 1.14.1
+      zx: 1.14.2
 
   packages/checker-vls:
     specifiers:
@@ -1023,7 +1027,7 @@ packages:
   /@types/node-fetch/2.5.10:
     resolution: {integrity: sha512-IpkX0AasN44hgEad0gEF/V6EgR5n69VEqPEgnmoM8GsIGro3PowbWs4tR6IhxUTyPLpOn+fiGG6nrQhcmoCuIQ==}
     dependencies:
-      '@types/node': 15.12.2
+      '@types/node': 15.12.5
       form-data: 3.0.1
     dev: true
 
@@ -1031,8 +1035,16 @@ packages:
     resolution: {integrity: sha512-e6ZowgGJmTuXa3GyaPbTGxX17tnThl2aSSizrFthQ7m9uLGZBXiGhgE55cjRZTF5kjZvYn9EOPOMljdjwbflxw==}
     dev: true
 
+  /@types/node/14.17.4:
+    resolution: {integrity: sha512-8kQ3+wKGRNN0ghtEn7EGps/B8CzuBz1nXZEIGGLP2GnwbqYn4dbTs7k+VKLTq1HvZLRCIDtN3Snx1Ege8B7L5A==}
+    dev: true
+
   /@types/node/15.12.2:
     resolution: {integrity: sha512-zjQ69G564OCIWIOHSXyQEEDpdpGl+G348RAKY0XXy9Z5kU9Vzv1GMNnkar/ZJ8dzXB3COzD9Mo9NtRZ4xfgUww==}
+    dev: true
+
+  /@types/node/15.12.5:
+    resolution: {integrity: sha512-se3yX7UHv5Bscf8f1ERKvQOD6sTyycH3hdaoozvaLxgUiY5lIGEeH37AD0G0Qi9kPqihPn0HOfd2yaIEN9VwEg==}
     dev: true
 
   /@types/normalize-package-data/2.4.0:
@@ -1045,6 +1057,12 @@ packages:
 
   /@types/prettier/2.3.0:
     resolution: {integrity: sha512-hkc1DATxFLQo4VxPDpMH1gCkPpBbpOoJ/4nhuXw4n63/0R6bCpQECj4+K226UJ4JO/eJQz+1mC2I7JsWanAdQw==}
+    dev: true
+
+  /@types/prompts/2.0.13:
+    resolution: {integrity: sha512-jwMOIGy49VruR/gYehhJYgpVzB+EVpEE7t7j9m1oTo4HMpOe7KmsyqdBuoxAzA5B4caUgx0cKrWr7wUEqMXJ7Q==}
+    dependencies:
+      '@types/node': 14.17.4
     dev: true
 
   /@types/prop-types/15.7.3:
@@ -1074,6 +1092,10 @@ packages:
 
   /@types/scheduler/0.16.1:
     resolution: {integrity: sha512-EaCxbanVeyxDRTQBkdLb3Bvl/HK7PBK6UJjsSixB0iHKoWxE5uu2Q/DgtpOhPIojN0Zl1whvOd7PoHs2P0s5eA==}
+    dev: true
+
+  /@types/semver/7.3.6:
+    resolution: {integrity: sha512-0caWDWmpCp0uifxFh+FaqK3CuZ2SkRR/ZRxAV5+zNdC3QVUi6wyOJnefhPvtNt8NQWXB5OA93BUvZsXpWat2Xw==}
     dev: true
 
   /@types/stack-utils/2.0.0:
@@ -6503,12 +6525,12 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zx/1.14.1:
-    resolution: {integrity: sha512-M8U7SM8nVnko4vaeb4jp2+gwIyaJpnLNqkOurViML2WOsIn9M+bVHmuJxlVPHKHB6WkoZ3P/0FESLKwvJF4dtw==}
+  /zx/1.14.2:
+    resolution: {integrity: sha512-omgqRVve+5dqbFrogFSjJXLUCUr4xHF2Gan+Njn/z4fumhIj3tMTFEA9iV+HgiobZ5Mgl5N96z4S4fwhaas4Pw==}
     engines: {node: '>= 14.8.0'}
     hasBin: true
     dependencies:
-      '@types/node': 15.12.2
+      '@types/node': 15.12.5
       '@types/node-fetch': 2.5.10
       chalk: 4.1.1
       node-fetch: 2.6.1

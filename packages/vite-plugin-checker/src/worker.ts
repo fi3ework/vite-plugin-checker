@@ -33,7 +33,6 @@ export function createScript<T>({
   type CheckerConfig = T & SharedConfig
   return {
     mainScript: () => {
-      // console.log(process.env)
       // initialized in main thread
       const createWorker = (
         checkerConfig: CheckerConfig,

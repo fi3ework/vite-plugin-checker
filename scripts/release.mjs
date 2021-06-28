@@ -1,17 +1,20 @@
+#!/usr/bin/env zx
+
 /**
  * modified from https://github.com/vitejs/vite/blob/main/scripts/release.js
  */
 
+import chalk from 'chalk'
 import fs from 'fs-extra'
 import minimist from 'minimist'
 import path from 'path'
-import { $, cd } from 'zx'
 import prompts from 'prompts'
 import semver from 'semver'
-import chalk from 'chalk'
+import { $, cd } from 'zx'
 
 const args = minimist(process.argv.slice(2))
 const isDryRun = args.dry
+const explicitVersion = args.version
 const pkgDir = process.cwd()
 const pkgPath = path.resolve(pkgDir, 'package.json')
 const pkg = fs.readJsonSync(pkgPath)
@@ -32,7 +35,7 @@ const inc = (i) => semver.inc(currentVersion, i, 'beta')
 const step = (msg) => console.log(chalk.cyan(msg))
 
 async function preCheck() {
-  cd('../..')
+  cd('../../')
   await $`npm run lint`
   await $`npm run type-check`
   await $`npm run test`
@@ -40,7 +43,6 @@ async function preCheck() {
 }
 
 function updateVersion(version) {
-  console.log(pkgPath)
   const pkg = fs.readJsonSync(pkgPath)
   pkg.version = version
   fs.writeJsonSync(pkgPath, pkg, { spaces: 2 })
@@ -48,7 +50,7 @@ function updateVersion(version) {
 
 async function main() {
   await preCheck()
-  let targetVersion = args._[0]
+  let targetVersion = explicitVersion
   const currentVersion = pkg.version
 
   if (!targetVersion) {

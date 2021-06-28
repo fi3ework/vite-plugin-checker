@@ -15,7 +15,8 @@
     "dev": "tsc -p tsconfig.build.json --watch",
     "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "rimraf lib && npm run build",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . --lerna-package vite-plugin-checker-vls"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . --lerna-package vite-plugin-checker-vls",
+    "release": "zx ../../scripts/release.mjs"
   },
   "repository": {
     "type": "git",
