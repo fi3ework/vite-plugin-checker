@@ -3,7 +3,7 @@ import {
   postTest,
   viteBuild,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
-import { testDir } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
+import { testDir, editFile } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
 
 beforeAll(async () => {
   await preTest()
@@ -28,6 +28,19 @@ describe('vue2-vls', () => {
     it('console error', async () => {
       await viteBuild({
         expectedErrorMsg: `Property 'msg1' does not exist on type`,
+        cwd: testDir,
+      })
+    })
+
+    it('enableBuild: false', async () => {
+      editFile('vite.config.ts', (code) =>
+        code.replace(
+          'Checker({ vls: VlsChecker() })',
+          'Checker({ vls: VlsChecker(), enableBuild: false })'
+        )
+      )
+      await viteBuild({
+        unexpectedErrorMsg: `Property 'msg1' does not exist on type`,
         cwd: testDir,
       })
     })
