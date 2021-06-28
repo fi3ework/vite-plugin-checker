@@ -4,6 +4,7 @@ import os from 'os'
 import CheckerPlugin from '../../lib/main'
 import { VlsChecker } from '../../../checker-vls/lib/main'
 import { MockSandbox } from './MockSandbox/MockSandbox'
+import { sleep, WORKER_CLEAN_TIMEOUT } from './testUtils'
 
 // ref https://github.com/facebook/jest/issues/936#issuecomment-613220940
 jest.mock('child_process', () => {
@@ -34,8 +35,9 @@ describe('build', () => {
     jest.clearAllMocks()
   })
 
-  afterAll(() => {
+  afterAll(async () => {
     jest.restoreAllMocks()
+    await sleep(WORKER_CLEAN_TIMEOUT)
   })
 
   it('typescript', () => {

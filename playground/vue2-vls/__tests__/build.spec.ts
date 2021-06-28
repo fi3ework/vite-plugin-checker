@@ -3,13 +3,20 @@ import {
   postTest,
   viteBuild,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
-import { testDir, editFile } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
+import {
+  testDir,
+  editFile,
+  sleep,
+  WORKER_CLEAN_TIMEOUT,
+} from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
 
 beforeAll(async () => {
   await preTest()
 })
 
-afterAll(postTest)
+afterAll(async () => {
+  await sleep(WORKER_CLEAN_TIMEOUT)
+})
 
 describe('vue2-vls', () => {
   // describe('dev', () => {

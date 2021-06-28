@@ -3,13 +3,20 @@ import {
   postTest,
   viteBuild,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
-import { editFile, testDir } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
+import {
+  editFile,
+  testDir,
+  sleep,
+  WORKER_CLEAN_TIMEOUT,
+} from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
 
 beforeAll(async () => {
   await preTest()
 })
 
-afterAll(postTest)
+afterAll(async () => {
+  await sleep(WORKER_CLEAN_TIMEOUT)
+})
 
 describe('typescript', () => {
   // describe('dev', () => {

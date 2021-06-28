@@ -35,11 +35,7 @@ export async function viteBuild({
   }
 }
 
-export async function postTest() {
-  try {
-    // await fs.remove(tempDir)
-  } catch (e) {}
-}
+export function postTest() {}
 
 export async function startServer(isBuild: boolean) {
   // start dev server
