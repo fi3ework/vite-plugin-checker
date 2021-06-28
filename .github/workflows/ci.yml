@@ -45,3 +45,29 @@ jobs:
 
       - name: Test
         run: npm run test
+
+  coverage:
+    runs-on: ubuntu-latest
+    name: Report coverage to Codecov
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Setup
+        run: npm i -g pnpm
+
+      - name: Install
+        run: pnpm i
+
+      - name: Build
+        run: npm run build
+
+      - name: Coverage test
+        run: npm run test:coverage
+
+      - name: Upload coverage to Codecov # https://github.com/codecov/codecov-action
+        uses: codecov/codecov-action@v1

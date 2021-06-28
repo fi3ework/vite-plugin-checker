@@ -2,7 +2,8 @@
 
 A Vite plugin that runs TypeScript, VLS, vue-tsc and other checkers in worker thread.
 
-![npm version](https://img.shields.io/npm/v/vite-plugin-checker) ![downloads/month](https://img.shields.io/npm/dm/vite-plugin-checker) [![Unit Test](https://github.com/fi3ework/vite-plugin-checker/actions/workflows/ci.yml/badge.svg)](https://github.com/fi3ework/vite-plugin-checker/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/vite-plugin-checker)](https://www.npmjs.com/package/vite-plugin-checker) [![downloads/month](https://img.shields.io/npm/dm/vite-plugin-checker)](https://www.npmtrends.com/vite-plugin-checker) [![Unit Test](https://github.com/fi3ework/vite-plugin-checker/actions/workflows/ci.yml/badge.svg)](https://github.com/fi3ework/vite-plugin-checker/actions/workflows/ci.yml)
+![codecov](https://codecov.io/gh/fi3ework/vite-plugin-checker/branch/master/graph/badge.svg)
 
 ## Features
 
