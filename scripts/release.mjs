@@ -107,12 +107,14 @@ async function main() {
 
   await $`pnpm run changelog`
   await $`git add .`
-  await $`git commit -m "release: ${pkgName}@${targetVersion}"`
+
+  const commitMsg = `release: ${tag}` // 🤨 https://github.com/google/zx/issues/86
+  await $`git commit -m ${commitMsg}`
 
   if (!isDryRun) {
-    await $`git tag v${targetVersion}`
+    await $`git tag ${tag}`
     await $`git push`
-    await $`git push origin --tags`
+    await $`git push origin refs/tags/${tag}`
   }
 }
 
