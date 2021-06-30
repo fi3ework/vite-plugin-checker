@@ -31,9 +31,7 @@ export function createScript<T>({
   buildBin,
   serverChecker,
 }: WorkerScriptOptions): Script<T> {
-  // let _env: ConfigEnv | undefined
   type CheckerConfig = T & SharedConfig
-  let _env: ConfigEnv
   return {
     mainScript: () => {
       // initialized in main thread
@@ -41,7 +39,6 @@ export function createScript<T>({
         checkerConfig: CheckerConfig,
         env: ConfigEnv
       ): ConfigureServeChecker => {
-        _env = env
         const isBuild = env.command === 'build'
 
         const worker = new Worker(absFilename, {
@@ -85,7 +82,6 @@ export function createScript<T>({
           switch (action.type) {
             case ACTION_TYPES.config: {
               const checkerConfig: T = workerData.checkerConfig
-              invariant(_env, 'env should be initialized in mainScript, but got undefined')
               diagnostic = serverChecker.createDiagnostic(checkerConfig)
               diagnostic.config(action.payload)
               break
