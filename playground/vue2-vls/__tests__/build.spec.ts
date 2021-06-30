@@ -32,7 +32,7 @@ describe('vue2-vls', () => {
   // })
 
   describe('build', () => {
-    it('console error', async () => {
+    it('enableBuild: true', async () => {
       await viteBuild({
         expectedErrorMsg: `Property 'msg1' does not exist on type`,
         cwd: testDir,

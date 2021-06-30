@@ -32,7 +32,7 @@ describe('typescript', () => {
   // })
 
   describe('build', () => {
-    it('console error', async () => {
+    it('enableBuild: true', async () => {
       await viteBuild({ expectedErrorMsg: 'error TS2345', cwd: testDir })
     })
 

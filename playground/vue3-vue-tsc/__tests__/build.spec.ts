@@ -32,7 +32,7 @@ describe('vue3-vue-tsc', () => {
   // })
 
   describe('build', () => {
-    it('console error', async () => {
+    it('enableBuild: true', async () => {
       await viteBuild({ expectedErrorMsg: 'error TS2322', cwd: testDir })
     })
 

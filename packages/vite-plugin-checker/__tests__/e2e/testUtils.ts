@@ -29,10 +29,10 @@ export function expectStdoutNotContains(str: string, unexpectedErrorMsg: string)
   })
 }
 
-export async function sleep(millSeconds: number, callback?: Function) {
+export async function sleep(millisecond: number, callback?: Function) {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
       resolve()
-    }, millSeconds)
+    }, millisecond)
   }).then(() => callback?.())
 }
