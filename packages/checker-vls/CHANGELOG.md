@@ -1,3 +1,12 @@
+# [0.2.0-beta.0](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker-vls@0.1.1...vite-plugin-checker-vls@0.2.0-beta.0) (2021-06-30)
+
+
+### Bug Fixes
+
+* worker forever hang ([b5e159f](https://github.com/fi3ework/vite-plugin-checker/commit/b5e159f35bc093c66bb5724eadfede55e368d1c3))
+
+
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
