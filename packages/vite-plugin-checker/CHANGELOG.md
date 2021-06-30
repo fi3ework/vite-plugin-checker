@@ -1,3 +1,31 @@
+# 0.2.0-beta.0 (2021-06-30)
+
+
+### Bug Fixes
+
+* clean dead logic ([f88fd86](https://github.com/fi3ework/vite-plugin-checker/commit/f88fd866503ecc7fbe2ed6e16e7aaa9a14e0ce84))
+* kill worker in build mode ([e7810f0](https://github.com/fi3ework/vite-plugin-checker/commit/e7810f0f76ffa6963e26cd8d51f981e6678ab841))
+* make enableBuild works ([556db26](https://github.com/fi3ework/vite-plugin-checker/commit/556db26ab0ccde3a95bf7b29d1a40048829afce9))
+* worker forever hang ([b5e159f](https://github.com/fi3ework/vite-plugin-checker/commit/b5e159f35bc093c66bb5724eadfede55e368d1c3))
+
+
+### Features
+
+* support arbitrary key for custom check ([#12](https://github.com/fi3ework/vite-plugin-checker/issues/12)) ([fc14b05](https://github.com/fi3ework/vite-plugin-checker/commit/fc14b05ce1c29e3ac84352397732f89e19c31a85))
+
+
+
+# 0.1.0 (2021-06-14)
+
+
+### Bug Fixes
+
+* checker uses config right ([293f261](https://github.com/fi3ework/vite-plugin-checker/commit/293f2611b80556b7a4c2304cea7dee6a0651ba15))
+* clean previous console ([fa47e77](https://github.com/fi3ework/vite-plugin-checker/commit/fa47e7707421f5a90d8bdcf871160bd5632e040c))
+* support spawn in Windows ([5322714](https://github.com/fi3ework/vite-plugin-checker/commit/53227147b07284ac335123750c75ea5b6519d85a))
+
+
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
