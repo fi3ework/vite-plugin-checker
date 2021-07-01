@@ -28,11 +28,20 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
 
-      - name: Setup
-        run: npm i -g pnpm
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-pnpm-modules
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-
 
-      - name: Install
-        run: pnpm i
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.4.0
+          run_install: true
 
       - name: Build
         run: npm run build:test
@@ -57,11 +66,20 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Setup
-        run: npm i -g pnpm
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-pnpm-modules
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-
 
-      - name: Install
-        run: pnpm i
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.4.0
+          run_install: true
 
       - name: Build
         run: npm run build:test

@@ -14,6 +14,7 @@ const config = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
+  watchPathIgnorePatterns: ['<rootDir>/temp'],
 }
 
 module.exports = config
