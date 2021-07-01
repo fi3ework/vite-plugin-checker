@@ -26,7 +26,6 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
       const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics, overlayErr) => {
         if (!overlay) return
         if (!overlayErr) return
-        if (!overlay) return
 
         parentPort?.postMessage({
           type: 'ERROR',
