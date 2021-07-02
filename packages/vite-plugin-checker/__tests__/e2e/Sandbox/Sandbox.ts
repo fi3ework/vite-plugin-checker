@@ -55,7 +55,7 @@ export async function killServer() {
 }
 
 export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T) => boolean) {
-  const maxTries = process.env.CI ? 500 : 100 // 25s / 5s
+  const maxTries = process.env.CI ? 1000 : 100 // 50s / 5s
   for (let tries = 0; tries < maxTries; tries++) {
     const actual = await poll()
     if (until(actual)) {
