@@ -146,6 +146,7 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
       absFilePath: uriToAbsPath(diagnostics.uri),
       fileText: overlayErr.fileText,
     })
+
     options.errorCallback?.(diagnostics, overlayErr)
   }
 
@@ -207,25 +208,6 @@ async function getDiagnostics(
 
   const absFilePaths = files.map((f) => path.resolve(workspaceUri.fsPath, f))
 
-  // watched diagnostics report
-  if (options.watch) {
-    chokidar
-      .watch(workspaceUri.fsPath, {
-        ignored: (path: string) => path.includes('node_modules'),
-        ignoreInitial: true,
-      })
-      .on('all', (event, path) => {
-        if (!path.endsWith('.vue')) return
-        clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
-          textDocument: {
-            uri: URI.file(path).toString(),
-            version: Date.now(),
-          },
-          contentChanges: [{ text: fs.readFileSync(path, 'utf-8') }],
-        })
-      })
-  }
-
   // initial diagnostics report
   // watch mode will run this full diagnostic at starting
   let initialErrCount = 0
@@ -271,6 +253,25 @@ async function getDiagnostics(
     } catch (err) {
       console.error(err.stack)
     }
+  }
+
+  // watched diagnostics report
+  if (options.watch) {
+    chokidar
+      .watch(workspaceUri.fsPath, {
+        ignored: (path: string) => path.includes('node_modules'),
+        ignoreInitial: false,
+      })
+      .on('all', (event, path) => {
+        if (!path.endsWith('.vue')) return
+        clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
+          textDocument: {
+            uri: URI.file(path).toString(),
+            version: Date.now(),
+          },
+          contentChanges: [{ text: fs.readFileSync(path, 'utf-8') }],
+        })
+      })
   }
 
   logUpdate(logChunk)
