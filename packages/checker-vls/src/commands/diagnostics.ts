@@ -2,7 +2,6 @@ import chalk from 'chalk'
 import chokidar from 'chokidar'
 import fs from 'fs'
 import glob from 'glob'
-import logUpdate from 'log-update'
 import os from 'os'
 import path from 'path'
 import { Duplex } from 'stream'
@@ -31,12 +30,16 @@ import { codeFrameColumns } from '@babel/code-frame'
 import { getInitParams } from '../initParams'
 
 import type { TextDocument } from 'vscode-languageserver-textdocument'
+
 enum DOC_VERSION {
   init = -1,
 }
 
 export type LogLevel = typeof logLevels[number]
 export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
+
+let disposeSuppressConsole: ReturnType<typeof suppressConsole>
+
 const logLevel2Severity = {
   ERROR: DiagnosticSeverity.Error,
   WARN: DiagnosticSeverity.Warning,
@@ -81,7 +84,6 @@ export async function diagnostics(
   }
 
   // initial report
-  console.log(os.EOL)
   if (!errCount) {
     console.log(chalk.green(`[VLS checker] No error found`))
     if (!watch) {
@@ -107,8 +109,20 @@ class TestStream extends Duplex {
     this.emit('data', chunk)
     done()
   }
-
   public _read(_size: number) {}
+}
+
+function suppressConsole() {
+  let disposed = false
+  const rawConsoleLog = globalThis.console.log
+  globalThis.console.log = () => {}
+
+  return () => {
+    if (disposed) return
+
+    disposed = true
+    globalThis.console.log = rawConsoleLog
+  }
 }
 
 async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOptions) {
@@ -129,22 +143,29 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
 
   // hijack sendDiagnostics
   serverConnection.sendDiagnostics = (diagnostics) => {
-    if (diagnostics.version === DOC_VERSION.init) return
+    disposeSuppressConsole?.()
+    if (diagnostics.version === DOC_VERSION.init) {
+      return
+    }
+
     if (!diagnostics.diagnostics.length) {
       prettyDiagnosticsLog({
-        ds: [],
+        diagnostics: [],
         absFilePath: '',
         fileText: '',
+        showNoError: false,
       })
       return
     }
 
     const overlayErr = lspDiagnosticToViteError(diagnostics)
     if (!overlayErr) return
+
     prettyDiagnosticsLog({
-      ds: diagnostics.diagnostics,
+      diagnostics: diagnostics.diagnostics,
       absFilePath: uriToAbsPath(diagnostics.uri),
       fileText: overlayErr.fileText,
+      showNoError: false,
     })
 
     options.errorCallback?.(diagnostics, overlayErr)
@@ -212,6 +233,11 @@ async function getDiagnostics(
   // watch mode will run this full diagnostic at starting
   let initialErrCount = 0
   let logChunk = ''
+
+  if (options.watch) {
+    disposeSuppressConsole = suppressConsole()
+  }
+
   for (const absFilePath of absFilePaths) {
     const fileText = fs.readFileSync(absFilePath, 'utf-8')
     clientConnection.sendNotification(DidOpenTextDocumentNotification.type, {
@@ -223,35 +249,38 @@ async function getDiagnostics(
       },
     })
 
-    try {
-      let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
-        uri: URI.file(absFilePath).toString(),
-        version: DOC_VERSION.init,
-      })) as Diagnostic[]
+    // logout in build mode
+    if (!options.watch) {
+      try {
+        let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
+          uri: URI.file(absFilePath).toString(),
+          version: DOC_VERSION.init,
+        })) as Diagnostic[]
 
-      /**
-       * Ignore eslint errors for now
-       */
-      diagnostics = diagnostics
-        .filter((r) => r.source !== 'eslint-plugin-vue')
-        .filter((r) => r.severity && r.severity <= severity)
+        /**
+         * Ignore eslint errors for now
+         */
+        diagnostics = diagnostics
+          .filter((r) => r.source !== 'eslint-plugin-vue')
+          .filter((r) => r.severity && r.severity <= severity)
 
-      if (diagnostics.length > 0) {
-        logChunk += prettyDiagnosticsLog({
-          absFilePath,
-          fileText,
-          ds: diagnostics,
-          doLog: false,
-        })
+        if (diagnostics.length > 0) {
+          logChunk += prettyDiagnosticsLog({
+            absFilePath,
+            fileText,
+            diagnostics: diagnostics,
+            doLog: false,
+          })
 
-        diagnostics.forEach((d) => {
-          if (d.severity === DiagnosticSeverity.Error) {
-            initialErrCount++
-          }
-        })
+          diagnostics.forEach((d) => {
+            if (d.severity === DiagnosticSeverity.Error) {
+              initialErrCount++
+            }
+          })
+        }
+      } catch (err) {
+        console.error(err.stack)
       }
-    } catch (err) {
-      console.error(err.stack)
     }
   }
 
@@ -274,7 +303,7 @@ async function getDiagnostics(
       })
   }
 
-  logUpdate(logChunk)
+  console.log(logChunk)
   return initialErrCount
 }
 
@@ -289,14 +318,14 @@ function composeLspLog({
 }) {
   let logChunk = ''
   const location = range2Location(diagnostic.range)
-  logChunk += `${chalk.green('File')}: ${chalk.green(absFilePath)}:${location.start.line}:${
+  logChunk += `${os.EOL}${chalk.green.bold('FILE ')} ${absFilePath}:${location.start.line}:${
     location.start.column
-  }`
+  }${os.EOL}`
 
   if (diagnostic.severity === DiagnosticSeverity.Error) {
-    logChunk += `${chalk.red('Error')}: ${diagnostic.message.trim()}`
+    logChunk += `${chalk.red.bold('ERROR ')} ${diagnostic.message.trim()}`
   } else {
-    logChunk += `${chalk.yellow('Warn')} : ${diagnostic.message.trim()}`
+    logChunk += `${chalk.yellow.bold('WARN ')} ${diagnostic.message.trim()}`
   }
 
   logChunk += codeFrameColumns(fileText, location)
@@ -304,23 +333,25 @@ function composeLspLog({
 }
 
 export function prettyDiagnosticsLog({
-  ds,
+  diagnostics,
   fileText,
   absFilePath,
   doLog = true,
+  showNoError = true,
 }: {
-  ds: Diagnostic[]
+  diagnostics: Diagnostic[]
   fileText: string
   absFilePath: string
   /** does log to terminal */
   doLog?: boolean
+  showNoError?: boolean
 }) {
-  if (!ds.length) {
-    doLog && logUpdate(chalk.green(`[VLS checker] No error found`))
+  if (!diagnostics.length && showNoError) {
+    doLog && console.log(chalk.green(`[VLS checker] No error found`))
     return ''
   }
 
-  const logs = ds.map((d) => {
+  const logs = diagnostics.map((d) => {
     return composeLspLog({
       diagnostic: d,
       absFilePath,
@@ -328,7 +359,7 @@ export function prettyDiagnosticsLog({
     })
   })
 
-  const logChunk = logs.join(os.EOL)
-  doLog && logUpdate(logChunk)
+  let logChunk = logs.join(os.EOL) + os.EOL
+  doLog && console.log(logChunk)
   return logChunk
 }
