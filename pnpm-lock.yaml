@@ -101,12 +101,10 @@ importers:
       '@babel/code-frame': ^7.12.13
       '@types/lodash.omit': ^4.5.6
       '@types/lodash.pick': ^4.4.6
-      '@types/slice-ansi': ^4.0.0
       ansi-escapes: ^4.3.0
       lodash.omit: ^4.5.0
       lodash.pick: ^4.4.0
       npm-run-path: ^4.0.1
-      slice-ansi: ^4.0.0
       strip-ansi: ^6.0.0
       tiny-invariant: ^1.1.0
       vscode-languageclient: ^7.0.0
@@ -118,12 +116,9 @@ importers:
       lodash.omit: 4.5.0
       lodash.pick: 4.4.0
       npm-run-path: 4.0.1
-      slice-ansi: 4.0.0
       strip-ansi: 6.0.0
       tiny-invariant: 1.1.0
       vscode-languageclient: 7.0.0
-    devDependencies:
-      '@types/slice-ansi': 4.0.0
 
   playground/react-ts:
     specifiers:
@@ -1099,10 +1094,6 @@ packages:
 
   /@types/semver/7.3.6:
     resolution: {integrity: sha512-0caWDWmpCp0uifxFh+FaqK3CuZ2SkRR/ZRxAV5+zNdC3QVUi6wyOJnefhPvtNt8NQWXB5OA93BUvZsXpWat2Xw==}
-    dev: true
-
-  /@types/slice-ansi/4.0.0:
-    resolution: {integrity: sha512-+OpjSaq85gvlZAYINyzKpLeiFkSC4EsC6IIiT6v6TLSU5k5U83fHGj9Lel8oKEXM0HqgrMVCjXPDPVICtxF7EQ==}
     dev: true
 
   /@types/stack-utils/2.0.0:
