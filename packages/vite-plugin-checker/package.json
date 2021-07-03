@@ -36,15 +36,11 @@
     "lodash.omit": "^4.5.0",
     "lodash.pick": "^4.4.0",
     "npm-run-path": "^4.0.1",
-    "slice-ansi": "^4.0.0",
     "strip-ansi": "^6.0.0",
     "tiny-invariant": "^1.1.0",
     "vscode-languageclient": "^7.0.0"
   },
   "peerDependencies": {
     "vite": "^2.0.0"
-  },
-  "devDependencies": {
-    "@types/slice-ansi": "^4.0.0"
   }
 }

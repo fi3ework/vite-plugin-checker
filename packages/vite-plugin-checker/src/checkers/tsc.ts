@@ -71,16 +71,15 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
         errorCount
         // eslint-disable-next-line max-params
       ) => {
-        // https://github.com/microsoft/TypeScript/blob/dc237b317ed4bbccd043ddda802ffde00362a387/src/compiler/diagnosticMessages.json#L4086-L4088
         if (diagnostic.code === 6031) return
-
         // https://github.com/microsoft/TypeScript/issues/32542
+        // https://github.com/microsoft/TypeScript/blob/dc237b317ed4bbccd043ddda802ffde00362a387/src/compiler/diagnosticMessages.json#L4086-L4088
         switch (diagnostic.code) {
-          case 6032: // Incremental build
+          case 6031:
+          case 6032:
             // clear current error and use the newer errors
             currErr = null
-            break
-          case 6031: // Initial build
+            return
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
             if (currErr && overlay) {
@@ -93,6 +92,7 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
               })
             }
         }
+
         ensureCall(() => {
           const diagnosticMessage = os.EOL + os.EOL + diagnostic.messageText.toString()
           logChunk.message = diagnosticMessage
