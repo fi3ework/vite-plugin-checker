@@ -53,7 +53,7 @@
     "semver": "^7.3.5",
     "ts-jest": "^27.0.3",
     "typescript": "^4.2.2",
-    "vite": "^2.1.3",
+    "vite": "^2.3.8",
     "vite-plugin-checker": "workspace:*",
     "vite-plugin-checker-vls": "workspace:*",
     "zx": "^1.14.2"

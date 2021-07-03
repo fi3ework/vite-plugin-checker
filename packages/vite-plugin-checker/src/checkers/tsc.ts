@@ -3,7 +3,6 @@ import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { ErrorPayload } from 'vite'
 import { isMainThread, parentPort } from 'worker_threads'
-import logUpdate from 'log-update'
 
 import { ensureCall, formatHost, tsDiagnosticToViteError } from '../utils'
 import { createScript } from '../worker'
@@ -72,7 +71,9 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
         errorCount
         // eslint-disable-next-line max-params
       ) => {
-        // logChunk = []
+        // https://github.com/microsoft/TypeScript/blob/dc237b317ed4bbccd043ddda802ffde00362a387/src/compiler/diagnosticMessages.json#L4086-L4088
+        if (diagnostic.code === 6031) return
+
         // https://github.com/microsoft/TypeScript/issues/32542
         switch (diagnostic.code) {
           case 6032: // Incremental build
@@ -99,13 +100,14 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
             logChunk.diagnostics = null
           }
           const d = logChunk.diagnostics === null ? '' : logChunk.diagnostics + os.EOL
-          logUpdate(d + logChunk.message)
+          console.log(d + logChunk.message)
         })
       }
 
       // https://github.com/microsoft/TypeScript/issues/32385
       // https://github.com/microsoft/TypeScript/pull/33082/files
       const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram
+
       const host = ts.createWatchCompilerHost(
         configFile,
         { noEmit: true },

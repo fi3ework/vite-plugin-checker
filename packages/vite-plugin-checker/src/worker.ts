@@ -1,6 +1,5 @@
 import { ConfigEnv } from 'vite'
 import { parentPort, Worker, workerData } from 'worker_threads'
-import invariant from 'tiny-invariant'
 
 import { ACTION_TYPES } from './types'
 
@@ -32,6 +31,7 @@ export function createScript<T>({
   serverChecker,
 }: WorkerScriptOptions): Script<T> {
   type CheckerConfig = T & SharedConfig
+
   return {
     mainScript: () => {
       // initialized in main thread
@@ -42,7 +42,7 @@ export function createScript<T>({
         const isBuild = env.command === 'build'
 
         const worker = new Worker(absFilename, {
-          workerData: { env, checkerConfig },
+          workerData: { env, checkerConfig, columns: process.stdout.columns },
         })
 
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -74,6 +74,7 @@ export function createScript<T>({
       let diagnostic: CheckerDiagnostic | null = null
       if (!parentPort) throw Error('should have parentPort as file runs in worker thread')
       const isBuild = workerData.env.command === 'build'
+      process.stdout.columns = workerData.columns
       // only run bin command and do not listen message in build mode
 
       const port = parentPort.on(

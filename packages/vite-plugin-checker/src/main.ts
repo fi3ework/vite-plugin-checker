@@ -18,6 +18,7 @@ export * from './types'
 export * from './codeFrame'
 export * from './utils'
 export * from './worker'
+export * as logger from './logger'
 
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: (keyof BuildInCheckers)[] = ['typescript', 'vueTsc']

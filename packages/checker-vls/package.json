@@ -38,7 +38,6 @@
     "chokidar": "^3.5.1",
     "commander": "^7.2.0",
     "glob": "^7.1.7",
-    "log-update": "^4.0.0",
     "vite-plugin-checker": "workspace:*",
     "vls": "^0.7.2",
     "vscode-languageclient": "^7.0.0",

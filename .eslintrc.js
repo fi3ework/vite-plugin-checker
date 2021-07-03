@@ -3,6 +3,9 @@ module.exports = {
   env: {
     jest: true,
   },
+  globals: {
+    globalThis: 'readable',
+  },
   rules: {
     '@typescript-eslint/consistent-type-assertions': 'off',
     '@typescript-eslint/no-require-imports': 'off',
