@@ -1,14 +1,24 @@
-import path from 'path'
 import execa from 'execa'
+import path from 'path'
 import playwright, { chromium } from 'playwright-chromium'
-import { testDir, expectStdoutNotContains, sleep } from '../testUtils'
 import { ElementHandleForTag } from 'playwright-chromium/types/structs'
+import strip from 'strip-ansi'
 import invariant from 'tiny-invariant'
+
+import { expectStdoutNotContains, sleep, testDir } from '../testUtils'
 
 let devServer: any
 let browser: playwright.Browser
 let page: playwright.Page
 let binPath: string
+
+export let log = ''
+export let stripedLog = ''
+
+export function resetTerminalLog() {
+  log = ''
+  stripedLog = ''
+}
 
 export async function preTest() {
   try {
@@ -31,6 +41,8 @@ export async function viteServe({
 
   await new Promise((resolve) => {
     devServer.stdout.on('data', (data: Buffer) => {
+      log += data.toString()
+      stripedLog += strip(data.toString())
       if (data.toString().match('running')) {
         console.log('dev server running.')
         resolve('')

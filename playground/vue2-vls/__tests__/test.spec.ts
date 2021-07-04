@@ -7,6 +7,8 @@ import {
   preTest,
   viteBuild,
   viteServe,
+  stripedLog,
+  resetTerminalLog,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
 import {
   editFile,
@@ -38,15 +40,23 @@ describe('vue2-vls', () => {
 
   describe('serve', () => {
     it('get initial error and subsequent error', async () => {
+      const snapshot = {
+        errorCode1: '> 3 |     <h1>{{ msg1 }}</h1>',
+        errorCode2: '> 3 |     <h1>{{ msg2 }}</h1>',
+        absPath: 'vue2-vls/src/components/HelloWorld.vue:3:12',
+        errorMsg: `Property 'msg1' does not exist on type 'CombinedVueInstance<{ msg: string; } & Vue, object, object, object, Record<never, any>>'. Did you mean 'msg'?`,
+      }
+
       if (isWindows) {
         expect(1).toBe(1)
       } else {
         const [message1, file1] = await getHmrOverlayText()
-        expect(message1).toContain('> 3 |     <h1>{{ msg1 }}</h1>')
-        expect(message1).toContain(
-          `Property 'msg1' does not exist on type 'CombinedVueInstance<{ msg: string; } & Vue, object, object, object, Record<never, any>>'. Did you mean 'msg'?`
-        )
-        expect(file1).toContain('vue2-vls/src/components/HelloWorld.vue:3:12')
+        expect(message1).toContain(snapshot.errorCode1)
+        expect(message1).toContain(snapshot.errorMsg)
+        expect(file1).toContain(snapshot.absPath)
+        expect(stripedLog).toContain(snapshot.errorCode1)
+        expect(stripedLog).toContain(snapshot.errorMsg)
+        expect(stripedLog).toContain(snapshot.absPath)
       }
 
       editFile('src/components/HelloWorld.vue', (code) => code.replace('msg1', 'msg2'))
@@ -55,7 +65,8 @@ describe('vue2-vls', () => {
         expect(1).toBe(1)
       } else {
         const [message2] = await getHmrOverlayText()
-        expect(message2).toContain(`> 3 |     <h1>{{ msg2 }}</h1>`)
+        expect(message2).toContain(snapshot.errorCode2)
+        expect(stripedLog).toContain(snapshot.errorCode2)
       }
     })
   })

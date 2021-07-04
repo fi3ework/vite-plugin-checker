@@ -161,9 +161,9 @@ Run projects in [`playground/*`](./playground) to try it out.
 ```bash
 pnpm i
 npm run build
-cd ./playground/<ONE_EXAMPLE> # react / vls / vue-tsc
-npm run dev                 # for development
-npm run build               # for build
+cd ./playground/<ONE_EXAMPLE> # ts / vls / vue-tsc
+npm run dev                   # test serve
+npm run build                 # test build
 ```
 
 ## License

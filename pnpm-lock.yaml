@@ -29,6 +29,7 @@ importers:
       prompts: ^2.4.1
       rimraf: ^3.0.2
       semver: ^7.3.5
+      strip-ansi: ^7.0.0
       ts-jest: ^27.0.3
       typescript: ^4.2.2
       vite: ^2.3.8
@@ -61,6 +62,7 @@ importers:
       prompts: 2.4.1
       rimraf: 3.0.2
       semver: 7.3.5
+      strip-ansi: 7.0.0
       ts-jest: 27.0.3_jest@27.0.4+typescript@4.3.2
       typescript: 4.3.2
       vite: 2.3.8
@@ -1557,6 +1559,11 @@ packages:
   /ansi-regex/5.0.0:
     resolution: {integrity: sha512-bY6fj56OUQ0hU1KjFNDQuJFezqKdrAyFdIevADiqrWHwSlbmBNMHp5ak2f40Pm8JTFyM2mqxkG6ngkHO11f/lg==}
     engines: {node: '>=8'}
+
+  /ansi-regex/6.0.0:
+    resolution: {integrity: sha512-tAaOSrWCHF+1Ear1Z4wnJCXA9GGox4K6Ic85a5qalES2aeEwQGr7UC93mwef49536PkCYjzkp0zIxfFvexJ6zQ==}
+    engines: {node: '>=12'}
+    dev: true
 
   /ansi-styles/2.2.1:
     resolution: {integrity: sha1-tDLdM1i2NM914eRmQ2gkBTPB3b4=}
@@ -5770,6 +5777,13 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       ansi-regex: 5.0.0
+
+  /strip-ansi/7.0.0:
+    resolution: {integrity: sha512-UhDTSnGF1dc0DRbUqr1aXwNoY3RgVkSWG8BrpnuFIxhP57IqbS7IRta2Gfiavds4yCxc5+fEAVVOgBZWnYkvzg==}
+    engines: {node: '>=12'}
+    dependencies:
+      ansi-regex: 6.0.0
+    dev: true
 
   /strip-bom/2.0.0:
     resolution: {integrity: sha1-YhmoVhZSBJHzV4i9vxRHqZx+aw4=}

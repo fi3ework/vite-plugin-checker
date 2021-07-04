@@ -6,6 +6,8 @@ import {
   preTest,
   viteBuild,
   viteServe,
+  stripedLog,
+  resetTerminalLog,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
 import {
   editFile,
@@ -34,18 +36,28 @@ describe('typescript', () => {
     })
 
     it('get initial error and subsequent error', async () => {
+      const snapshot = {
+        errorCode1: 'const [count, setCount] = useState<string>(1)',
+        errorCode2: 'const [count, setCount] = useState<string>(2)',
+        absPath: 'react-ts/src/App.tsx:7:46',
+        relativePath: 'src/App.tsx:7:46',
+        errorMsg: `Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.`,
+      }
+
       const [message1, file1] = await getHmrOverlayText()
-      expect(message1).toContain('const [count, setCount] = useState<string>(1)')
-      expect(message1).toContain(
-        `Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.`
-      )
+      expect(message1).toContain(snapshot.errorCode1)
+      expect(message1).toContain(snapshot.errorMsg)
+      expect(file1).toContain(snapshot.absPath)
+      expect(stripedLog).toContain(snapshot.errorCode1)
+      expect(stripedLog).toContain(snapshot.errorMsg)
+      expect(stripedLog).toContain(snapshot.relativePath)
 
-      expect(file1).toContain('react-ts/src/App.tsx:7:46')
-
+      resetTerminalLog()
       editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
       await sleep(1000)
       const [message2] = await getHmrOverlayText()
-      expect(message2).toContain(`const [count, setCount] = useState<string>(2)`)
+      expect(message2).toContain(snapshot.errorCode2)
+      expect(stripedLog).toContain(snapshot.errorCode2)
     })
   })
 

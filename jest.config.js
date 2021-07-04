@@ -6,7 +6,7 @@ const config = {
   testMatch: ['**/*.spec.[jt]s?(x)'],
   globalSetup: './scripts/jestGlobalSetup.js',
   globalTeardown: './scripts/jestGlobalTeardown.js',
-  setupFilesAfterEnv: ['./scripts/jestPerTestSetup.ts'],
+  setupFilesAfterEnv: ['./scripts/jestSetupFilesAfterEnv.ts'],
   testTimeout: process.env.CI ? 100000 : 30000,
   collectCoverage: false,
   collectCoverageFrom: ['packages/*/src/**/*.ts', 'packages/*/lib/**/*.js'],
