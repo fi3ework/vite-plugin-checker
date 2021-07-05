@@ -35,6 +35,8 @@ export default {
 }
 ```
 
+Open localhost page and start development (it's recommended to open browser for a better terminal display, see [#27](https://github.com/fi3ework/vite-plugin-checker/pull/27)).
+
 ## Configuration
 
 > See detail options in [advanced config](#advanced-config) section.
@@ -161,9 +163,9 @@ Run projects in [`playground/*`](./playground) to try it out.
 ```bash
 pnpm i
 npm run build
-cd ./playground/<ONE_EXAMPLE> # ts / vls / vue-tsc
-npm run dev                   # test serve
-npm run build                 # test build
+cd ./playground/<ONE_EXAMPLE>   # ts / vls / vue-tsc
+npm run dev                     # test serve
+npm run build                   # test build
 ```
 
 ## License
