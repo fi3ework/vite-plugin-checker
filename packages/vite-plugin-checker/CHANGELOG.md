@@ -1,3 +1,15 @@
+# [0.2.0](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.2.0-beta.0...vite-plugin-checker@0.2.0) (2021-07-05)
+
+
+### Bug Fixes
+
+* add test for terminal log ([1f6700e](https://github.com/fi3ework/vite-plugin-checker/commit/1f6700e38fc43b38ed965312731dd99d12b33227))
+* clean output by Vite hmr console clear ([b30ca51](https://github.com/fi3ework/vite-plugin-checker/commit/b30ca51a7e699f64054bfb3e95aabe7d03e55919))
+* do not wrap log ([2bb6cbd](https://github.com/fi3ework/vite-plugin-checker/commit/2bb6cbdb454b4536126710373184059e47d67d59))
+* **vls:** show initial error overlay ([20c95e9](https://github.com/fi3ework/vite-plugin-checker/commit/20c95e926ca7115f7ff89013af0ec6ac96c9273c))
+
+
+
 # 0.2.0-beta.0 (2021-06-30)
 
 
