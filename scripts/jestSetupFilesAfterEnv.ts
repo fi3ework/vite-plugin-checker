@@ -48,7 +48,7 @@ export async function copyCode({
   } catch (e) {}
 }
 
-beforeAll(async () => copyCode({ includeNodeModules: true, cleanBefore: true }), 30000)
+beforeAll(async () => await copyCode({ includeNodeModules: true, cleanBefore: true }), 30000)
 
 afterAll(async () => {
   // global.page?.off('console', onConsole)
