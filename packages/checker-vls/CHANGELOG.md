@@ -1,3 +1,14 @@
+# [0.2.0](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker-vls@0.1.1...vite-plugin-checker-vls@0.2.0) (2021-07-05)
+
+
+### Bug Fixes
+
+* do not wrap log ([2bb6cbd](https://github.com/fi3ework/vite-plugin-checker/commit/2bb6cbdb454b4536126710373184059e47d67d59))
+* **vls:** show initial error overlay ([20c95e9](https://github.com/fi3ework/vite-plugin-checker/commit/20c95e926ca7115f7ff89013af0ec6ac96c9273c))
+* worker forever hang ([b5e159f](https://github.com/fi3ework/vite-plugin-checker/commit/b5e159f35bc093c66bb5724eadfede55e368d1c3))
+
+
+
 # [0.2.0-beta.0](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker-vls@0.1.1...vite-plugin-checker-vls@0.2.0-beta.0) (2021-06-30)
 
 
