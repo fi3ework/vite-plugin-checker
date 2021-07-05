@@ -12,7 +12,10 @@ export function slash(p: string): string {
 
 let tempDir: string
 
-beforeAll(async () => {
+export async function copyCode({
+  includeNodeModules = false,
+  cleanBefore = false,
+}: { includeNodeModules?: boolean; cleanBefore?: boolean } = {}) {
   try {
     const testPath = expect.getState().testPath
     const testName = slash(testPath).match(/playground\/([\w-]+)\//)?.[1]
@@ -23,23 +26,29 @@ beforeAll(async () => {
       const playgroundRoot = resolve(__dirname, '../playground')
       const srcDir = resolve(playgroundRoot, testName)
       tempDir = resolve(__dirname, '../temp', testName)
-      await fs.remove(tempDir)
+      if (cleanBefore) {
+        await fs.remove(tempDir)
+      }
       await fs.copy(srcDir, tempDir, {
+        overwrite: true,
         // dereference: true,
         filter(rawFile) {
           const file = slash(rawFile)
+          const copyNodeModules = includeNodeModules ? true : !file.includes('node_modules')
           return (
             !file.includes('__tests__') &&
             // TODO: copy node_modules is not elegant
             // Maybe we should install dependencies after copy
-            // !file.includes('node_modules') &&
+            copyNodeModules &&
             !file.match(/dist(\/|$)/)
           )
         },
       })
     }
   } catch (e) {}
-}, 30000)
+}
+
+beforeAll(async () => copyCode({ includeNodeModules: true, cleanBefore: true }), 30000)
 
 afterAll(async () => {
   // global.page?.off('console', onConsole)
