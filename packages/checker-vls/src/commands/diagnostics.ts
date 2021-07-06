@@ -328,6 +328,7 @@ function composeLspLog({
     logChunk += `${chalk.yellow.bold('WARN ')} ${diagnostic.message.trim()}`
   }
 
+  logChunk += os.EOL + os.EOL
   logChunk += codeFrameColumns(fileText, location)
   return logChunk
 }
