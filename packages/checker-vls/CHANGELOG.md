@@ -1,3 +1,12 @@
+## [0.2.1](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker-vls@0.2.0...vite-plugin-checker-vls@0.2.1) (2021-07-06)
+
+
+### Bug Fixes
+
+* **vls-checker:** append EOL to message ([b4d4fce](https://github.com/fi3ework/vite-plugin-checker/commit/b4d4fce237cd721f67adb860fba9706a9fe8ce17))
+
+
+
 # [0.2.0](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker-vls@0.1.1...vite-plugin-checker-vls@0.2.0) (2021-07-05)
 
 
