@@ -65,7 +65,7 @@ npm i vite-plugin-checker-vls -D
 
 ```js
 import Checker from 'vite-plugin-checker'
-import VlsChecker from 'vite-plugin-checker-vls'
+import {VlsChecker} from 'vite-plugin-checker-vls'
 
 module.exports = {
   plugins: [
@@ -133,7 +133,7 @@ e.g.
 
 ```js
 import Checker from 'vite-plugin-checker'
-import VlsChecker from 'vite-plugin-checker-vls'
+import {VlsChecker} from 'vite-plugin-checker-vls'
 
 module.exports = {
   plugins: [
