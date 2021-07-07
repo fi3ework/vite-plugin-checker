@@ -38,14 +38,14 @@ interface NormalizedDiagnostic {
 }
 
 export function diagnosticToTerminalLog(d: NormalizedDiagnostic): string {
-  const level =
+  const levelLabel =
     d.level === 'error'
       ? chalk.red.bold('ERROR') + ' '
       : d.level === 'warning'
       ? chalk.yellow.bold('WARNING') + ' '
       : ''
-  const file = chalk.green.bold('FILE') + '  '
-  return [level + d.message, file + d.id, d.codeFrame + os.EOL, d.conclusion]
+  const fileLabel = chalk.green.bold('FILE') + '  '
+  return [levelLabel + d.message, fileLabel + d.id + os.EOL, d.codeFrame + os.EOL, d.conclusion]
     .filter(Boolean)
     .join(os.EOL)
 }

@@ -46,10 +46,7 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
         )
       }
 
-      let logChunk: { diagnostics: string | null; message: string | null } = {
-        diagnostics: null,
-        message: null,
-      }
+      let logChunk = ''
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
@@ -58,7 +55,7 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
           currErr = diagnosticToViteError(formattedDiagnostics)
         }
 
-        logChunk.diagnostics = diagnosticToTerminalLog(formattedDiagnostics)
+        logChunk = diagnosticToTerminalLog(formattedDiagnostics)
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
@@ -91,13 +88,11 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
         }
 
         ensureCall(() => {
-          const diagnosticMessage = os.EOL + os.EOL + diagnostic.messageText.toString()
-          logChunk.message = diagnosticMessage
           if (errorCount === 0) {
-            logChunk.diagnostics = null
+            logChunk = ''
           }
-          const d = logChunk.diagnostics === null ? '' : logChunk.diagnostics
-          console.log(d + logChunk.message)
+
+          console.log(logChunk + (errorCount ? os.EOL : '') + diagnostic.messageText.toString())
         })
       }
 
