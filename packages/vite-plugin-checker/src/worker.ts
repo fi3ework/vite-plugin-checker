@@ -40,7 +40,6 @@ export function createScript<T>({
         env: ConfigEnv
       ): ConfigureServeChecker => {
         const isBuild = env.command === 'build'
-
         const worker = new Worker(absFilename, {
           workerData: { env, checkerConfig, columns: process.stdout.columns },
         })

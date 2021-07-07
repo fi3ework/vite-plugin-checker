@@ -4,7 +4,8 @@ import ts from 'typescript'
 import { ErrorPayload } from 'vite'
 import { isMainThread, parentPort } from 'worker_threads'
 
-import { ensureCall, formatHost, tsDiagnosticToViteError } from '../utils'
+import { ensureCall } from '../utils'
+import { normalizeDiagnostic, diagnosticToViteError, diagnosticToTerminalLog } from '../logger'
 import { createScript } from '../worker'
 
 import type { CreateDiagnostic, PluginConfig } from '../types'
@@ -52,16 +53,12 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
-        const formattedDiagnostics = ts.formatDiagnosticsWithColorAndContext(
-          [diagnostic],
-          formatHost
-        )
-
+        const formattedDiagnostics = normalizeDiagnostic(diagnostic)
         if (!currErr) {
-          currErr = tsDiagnosticToViteError(diagnostic)
+          currErr = diagnosticToViteError(formattedDiagnostics)
         }
 
-        logChunk.diagnostics = formattedDiagnostics
+        logChunk.diagnostics = diagnosticToTerminalLog(formattedDiagnostics)
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
@@ -99,7 +96,7 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
           if (errorCount === 0) {
             logChunk.diagnostics = null
           }
-          const d = logChunk.diagnostics === null ? '' : logChunk.diagnostics + os.EOL
+          const d = logChunk.diagnostics === null ? '' : logChunk.diagnostics
           console.log(d + logChunk.message)
         })
       }
