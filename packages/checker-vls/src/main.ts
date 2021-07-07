@@ -69,5 +69,5 @@ declare const VlsChecker: (
   options?: VlsConfig
 ) => (config: VlsConfig & SharedConfig) => ServeAndBuildChecker
 
-export { VlsChecker }
+export default VlsChecker
 export type { VlsConfig }
