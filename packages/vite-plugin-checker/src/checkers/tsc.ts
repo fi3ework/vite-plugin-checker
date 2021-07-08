@@ -55,7 +55,7 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
           currErr = diagnosticToViteError(formattedDiagnostics)
         }
 
-        logChunk = diagnosticToTerminalLog(formattedDiagnostics)
+        logChunk += os.EOL + diagnosticToTerminalLog(formattedDiagnostics)
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (

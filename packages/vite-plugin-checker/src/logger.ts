@@ -34,18 +34,33 @@ interface NormalizedDiagnostic {
   /** error code location */
   loc?: SourceLocation
   /** error level */
-  level?: 'error' | 'warning'
+  level?: DiagnosticCategory
+}
+
+// copied from TypeScript because we used `import type`.
+export enum DiagnosticCategory {
+  Warning = 0,
+  Error = 1,
+  Suggestion = 2,
+  Message = 3,
 }
 
 export function diagnosticToTerminalLog(d: NormalizedDiagnostic): string {
-  const levelLabel =
-    d.level === 'error'
-      ? chalk.red.bold('ERROR') + ' '
-      : d.level === 'warning'
-      ? chalk.yellow.bold('WARNING') + ' '
-      : ''
-  const fileLabel = chalk.green.bold('FILE') + '  '
-  return [levelLabel + d.message, fileLabel + d.id + os.EOL, d.codeFrame + os.EOL, d.conclusion]
+  const labelMap: Record<DiagnosticCategory, string> = {
+    [DiagnosticCategory.Error]: chalk.bold.red('ERROR'),
+    [DiagnosticCategory.Warning]: chalk.bold.yellow('WARNING'),
+    [DiagnosticCategory.Suggestion]: chalk.bold.blue('SUGGESTION'),
+    [DiagnosticCategory.Message]: chalk.bold.cyan('MESSAGE'),
+  }
+
+  const levelLabel = labelMap[d.level || DiagnosticCategory.Error]
+  const fileLabel = chalk.green.bold('FILE') + ' '
+  return [
+    levelLabel + ' ' + d.message,
+    fileLabel + d.id + os.EOL,
+    d.codeFrame + os.EOL,
+    d.conclusion,
+  ]
     .filter(Boolean)
     .join(os.EOL)
 }
@@ -118,6 +133,7 @@ export function isTsDiagnostic(d: any): d is TsDiagnostic {
 }
 
 export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
+  // console.log(d.category)
   const fileName = d.file?.fileName
   const {
     flattenDiagnosticMessageText,
@@ -152,7 +168,7 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
     id: fileName,
     checker: 'TypeScript',
     loc,
-    level: 'error',
+    level: d.category,
   }
 }
 
