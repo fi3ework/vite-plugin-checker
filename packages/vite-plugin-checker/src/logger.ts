@@ -55,9 +55,13 @@ export function diagnosticToTerminalLog(d: NormalizedDiagnostic): string {
 
   const levelLabel = labelMap[d.level || DiagnosticCategory.Error]
   const fileLabel = chalk.green.bold('FILE') + ' '
+  const position = d.loc
+    ? chalk.yellow(d.loc.start.line) + ':' + chalk.yellow(d.loc.start.column)
+    : ''
+
   return [
     levelLabel + ' ' + d.message,
-    fileLabel + d.id + os.EOL,
+    fileLabel + d.id + ':' + position + os.EOL,
     d.codeFrame + os.EOL,
     d.conclusion,
   ]
@@ -70,13 +74,13 @@ export function diagnosticToViteError(d: NormalizedDiagnostic): ErrorPayload['er
   if (d.loc) {
     loc = {
       file: d.id,
-      line: d.loc.start.line + 1,
-      column: typeof d.loc.start.column === 'number' ? d.loc.start.column + 1 : 0,
+      line: d.loc.start.line,
+      column: typeof d.loc.start.column === 'number' ? d.loc.start.column : 0,
     }
   }
 
   return {
-    message: d.message ?? '',
+    message: d.message + os.EOL + d.stripedCodeFrame,
     stack:
       typeof d.stack === 'string' ? d.stack : Array.isArray(d.stack) ? d.stack.join(os.EOL) : '',
     id: d.id,
