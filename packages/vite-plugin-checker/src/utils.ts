@@ -35,17 +35,18 @@ export function tsDiagnosticToViteError(d: ts.Diagnostic): ErrorPayload['err'] {
   // has detail message
   if (d.file && typeof d.start === 'number' && typeof d.length === 'number') {
     return {
-      message:
+      message: strip(
         ts.flattenDiagnosticMessageText(d.messageText, formatHost.getNewLine()) +
-        os.EOL +
-        os.EOL +
-        createFrame({
-          source: d.file!.text,
-          location: tsLocationToBabelLocation({
-            start: d.file?.getLineAndCharacterOfPosition(d.start),
-            end: d.file?.getLineAndCharacterOfPosition(d.start + d.length),
-          }),
-        }),
+          os.EOL +
+          os.EOL +
+          createFrame({
+            source: d.file!.text,
+            location: tsLocationToBabelLocation({
+              start: d.file?.getLineAndCharacterOfPosition(d.start),
+              end: d.file?.getLineAndCharacterOfPosition(d.start + d.length),
+            }),
+          })
+      ),
       stack: '',
       id: d.file?.fileName,
       plugin: 'vite-plugin-checker',
