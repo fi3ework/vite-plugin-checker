@@ -71,14 +71,3 @@ declare const VlsChecker: (
 
 export { VlsChecker }
 export type { VlsConfig }
-
-import commander from 'commander'
-
-export * as vscodeLanguageserverProtocol from 'vscode-languageserver-protocol'
-export * as vscodeUri from 'vscode-uri'
-export * as chokidar from 'chokidar'
-export * as vls from 'vls'
-export { commander }
-
-export * as vscodeLanguageserverNode from 'vscode-languageserver/node'
-export * as vscodeLanguageserverTextdocument from 'vscode-languageserver-textdocument'
