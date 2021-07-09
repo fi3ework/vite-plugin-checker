@@ -5,12 +5,8 @@
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
   "files": [
-    "bin",
     "lib"
   ],
-  "bin": {
-    "vite-plugin-checker-vls": "./bin/vls"
-  },
   "scripts": {
     "dev": "tsc -p tsconfig.build.json --watch",
     "build": "tsc -p tsconfig.build.json",
@@ -38,7 +34,6 @@
     "chokidar": "^3.5.1",
     "commander": "^7.2.0",
     "glob": "^7.1.7",
-    "vite-plugin-checker": "workspace:*",
     "vls": "^0.7.2",
     "vscode-languageclient": "^7.0.0",
     "vscode-languageserver": "^7.0.0",

@@ -115,7 +115,7 @@ export class TscChecker extends Checker implements CheckerAbility {
     super({
       name: 'typescript',
       absFilePath: __filename,
-      buildBin: ['tsc', ['--noEmit']],
+      build: { buildBin: ['tsc', ['--noEmit']] },
       createDiagnostic,
     })
   }

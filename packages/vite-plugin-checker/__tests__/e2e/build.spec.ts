@@ -2,7 +2,7 @@ import cp from 'child_process'
 import os from 'os'
 
 import CheckerPlugin from '../../lib/main'
-import { VlsChecker } from '../../../checker-vls/lib/main'
+// import { VlsChecker } from '../../../checker-vls/lib/main'
 import { MockSandbox } from './MockSandbox/MockSandbox'
 import { sleep, WORKER_CLEAN_TIMEOUT } from './testUtils'
 
@@ -72,7 +72,9 @@ describe('build', () => {
 
   it('custom checker (test vls)', () => {
     const plugin = CheckerPlugin({
-      vls: VlsChecker(),
+      // TODO: v0.3.0
+      // @ts-ignore
+      vls: {},
     })
 
     sandbox.plugin = plugin
@@ -89,7 +91,9 @@ describe('build', () => {
     const plugin = CheckerPlugin({
       typescript: true,
       vueTsc: true,
-      vls: VlsChecker(),
+      // TODO: v0.3.0
+      // @ts-ignore
+      vls: {},
     })
 
     sandbox.plugin = plugin

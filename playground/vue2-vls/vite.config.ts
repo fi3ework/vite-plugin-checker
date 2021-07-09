@@ -18,6 +18,7 @@ const config = defineConfig({
   plugins: [
     createVuePlugin({}),
     ViteComponents({ transformer: 'vue2' }),
+    // TODO: v0.3.0
     // @ts-ignore
     Checker({ vls: {} }),
   ],
