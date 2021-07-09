@@ -6,6 +6,8 @@ import os from 'os'
 import invariant from 'tiny-invariant'
 import { ConfigEnv, Plugin } from 'vite'
 
+import type { TscChecker as TscCheckerType } from './checkers/tsc2'
+
 import type {
   OverlayErrorAction,
   BuildInCheckers,
@@ -30,7 +32,7 @@ function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndB
 
   if (typescript) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { createServeAndBuild } = require('./checkers/tsc')
+    const { createServeAndBuild } = require('./checkers/tsc2')
     serveAndBuildCheckers.push(createServeAndBuild({ typescript, ...sharedConfig }, env))
   }
 
