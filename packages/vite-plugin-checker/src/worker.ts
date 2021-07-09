@@ -20,7 +20,7 @@ interface WorkerScriptOptions {
   serverChecker: ServeChecker
 }
 
-interface Script<T> {
+export interface Script<T> {
   mainScript: () => (config: T & SharedConfig, env: ConfigEnv) => ServeAndBuildChecker
   workerScript: () => void
 }
