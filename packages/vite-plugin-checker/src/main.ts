@@ -6,8 +6,6 @@ import os from 'os'
 import invariant from 'tiny-invariant'
 import { ConfigEnv, Plugin } from 'vite'
 
-import type { TscChecker as TscCheckerType } from './checkers/tsc2'
-
 import type {
   OverlayErrorAction,
   BuildInCheckers,
@@ -25,10 +23,10 @@ const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: (keyof BuildInCheckers)[] = ['typescript', 'vueTsc']
 
 function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndBuildChecker[] {
-  const { typescript, vueTsc } = userConfig
+  const { typescript, vueTsc, vls } = userConfig
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
   const sharedConfig = pick(userConfig, sharedConfigKeys)
-  const customCheckers = omit(userConfig, [...sharedConfigKeys, ...buildInCheckerKeys])
+  // const customCheckers = omit(userConfig, [...sharedConfigKeys, ...buildInCheckerKeys])
 
   if (typescript) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -42,15 +40,22 @@ function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndB
     serveAndBuildCheckers.push(createServeAndBuild({ vueTsc, ...sharedConfig }, env))
   }
 
-  Object.keys(customCheckers).forEach((key) => {
-    const checkerCurryFn = customCheckers[key]
-    invariant(
-      typeof checkerCurryFn === 'function',
-      `Custom checker key should be a function, but got ${typeof checkerCurryFn}`
-    )
+  // @ts-ignore
+  if (vls) {
+    const { createServeAndBuild } = require('./checkers/vls2/main2')
+    serveAndBuildCheckers.push(createServeAndBuild({ vls, ...sharedConfig }, env))
+  }
 
-    serveAndBuildCheckers.push(checkerCurryFn(sharedConfig, env))
-  })
+  // TODO: move vls here
+  // Object.keys(customCheckers).forEach((key) => {
+  //   const checkerCurryFn = customCheckers[key]
+  //   invariant(
+  //     typeof checkerCurryFn === 'function',
+  //     `Custom checker key should be a function, but got ${typeof checkerCurryFn}`
+  //   )
+
+  //   serveAndBuildCheckers.push(checkerCurryFn(sharedConfig, env))
+  // })
 
   return serveAndBuildCheckers
 }
