@@ -3,6 +3,9 @@
   "version": "0.2.0",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
   "main": "lib/main.js",
+  "bin": {
+    "vite-plugin-checker-vls": "./bin/vls"
+  },
   "types": "lib/main.d.ts",
   "files": [
     "lib"
@@ -42,5 +45,8 @@
   },
   "peerDependencies": {
     "vite": "^2.0.0"
+  },
+  "devDependencies": {
+    "vite-plugin-checker-vls": "workspace:*"
   }
 }

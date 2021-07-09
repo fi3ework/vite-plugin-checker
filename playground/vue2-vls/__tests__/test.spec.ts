@@ -72,7 +72,7 @@ describe('vue2-vls', () => {
     it('overlay: false', async () => {
       resetTerminalLog()
       editFile('vite.config.ts', (code) =>
-        code.replace('vls: VlsChecker()', 'vls: VlsChecker(), overlay: false')
+        code.replace('Checker({ vls: {} }),', 'Checker({ vls: {}, overlay: false })')
       )
 
       await viteServe({ cwd: testDir, port: 8080, path: '/vue-template/' })
@@ -110,10 +110,7 @@ describe('vue2-vls', () => {
 
     it('enableBuild: false', async () => {
       editFile('vite.config.ts', (code) =>
-        code.replace(
-          'Checker({ vls: VlsChecker() })',
-          'Checker({ vls: VlsChecker(), enableBuild: false })'
-        )
+        code.replace('Checker({ vls: {} }),', 'Checker({ vls: {}, enableBuild: false })')
       )
       await viteBuild({
         unexpectedErrorMsg: `Property 'msg1' does not exist on type`,

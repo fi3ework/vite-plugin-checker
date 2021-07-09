@@ -1,6 +1,7 @@
 import * as commander from 'commander'
+import * as glob from 'glob'
 
-export { commander }
+export { commander, glob }
 export * as chokidar from 'chokidar'
 export * as vls from 'vls'
 export * as vscodeLanguageserverNode from 'vscode-languageserver/node'

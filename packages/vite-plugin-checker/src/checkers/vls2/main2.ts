@@ -41,7 +41,7 @@ export class VlsChecker extends Checker implements CheckerAbility {
     super({
       name: 'vls',
       absFilePath: __filename,
-      buildBin: ['vite-plugin-checker-vls', ['diagnostics']],
+      build: { buildBin: ['vite-plugin-checker-vls', ['diagnostics']] },
       createDiagnostic,
     })
   }

@@ -77,7 +77,6 @@ importers:
       chokidar: ^3.5.1
       commander: ^7.2.0
       glob: ^7.1.7
-      vite-plugin-checker: workspace:*
       vls: ^0.7.2
       vscode-languageclient: ^7.0.0
       vscode-languageserver: ^7.0.0
@@ -90,7 +89,6 @@ importers:
       chokidar: 3.5.1
       commander: 7.2.0
       glob: 7.1.7
-      vite-plugin-checker: link:../vite-plugin-checker
       vls: 0.7.4
       vscode-languageclient: 7.0.0
       vscode-languageserver: 7.0.0
@@ -109,6 +107,7 @@ importers:
       npm-run-path: ^4.0.1
       strip-ansi: ^6.0.0
       tiny-invariant: ^1.1.0
+      vite-plugin-checker-vls: workspace:*
       vscode-languageclient: ^7.0.0
     dependencies:
       '@babel/code-frame': 7.12.13
@@ -121,6 +120,8 @@ importers:
       strip-ansi: 6.0.0
       tiny-invariant: 1.1.0
       vscode-languageclient: 7.0.0
+    devDependencies:
+      vite-plugin-checker-vls: link:../checker-vls
 
   playground/react-ts:
     specifiers:

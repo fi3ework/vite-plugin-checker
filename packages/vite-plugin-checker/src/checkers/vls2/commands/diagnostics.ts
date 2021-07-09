@@ -1,22 +1,30 @@
-import {
-  vscodeLanguageserverNode,
-  vscodeLanguageserverTextdocument,
-  vls,
-  chokidar,
-  vscodeUri,
-} from 'vite-plugin-checker-vls'
-
 import chalk from 'chalk'
 // import chokidar from 'chokidar'
 import fs from 'fs'
-import glob from 'glob'
+// import glob from 'glob'
 import os from 'os'
 import path from 'path'
 import { Duplex } from 'stream'
-import { lspDiagnosticToViteError, range2Location, uriToAbsPath } from 'vite-plugin-checker'
+import {
+  chokidar,
+  glob,
+  vls,
+  vscodeLanguageserverNode,
+  vscodeLanguageserverTextdocument,
+  vscodeUri,
+} from 'vite-plugin-checker-vls'
+import { PublishDiagnosticsParams } from 'vscode-languageclient/node'
+
+// type URI = vscodeUri.URI
+// const { URI } = vscodeUri
+// import { URI } from 'vscode-uri'
+import { codeFrameColumns } from '@babel/code-frame'
+
+import { lspDiagnosticToViteError, range2Location, uriToAbsPath } from '../../../utils'
+import { getInitParams } from '../initParams'
+
 // import { VLS } from 'vls'
 const { VLS } = vls
-import { PublishDiagnosticsParams } from 'vscode-languageclient/node'
 const {
   createConnection,
   createProtocolConnection,
@@ -37,14 +45,6 @@ type InitializeParams = vscodeLanguageserverNode.InitializeParams
 type InitializeResult = vscodeLanguageserverNode.InitializeResult
 type Logger = vscodeLanguageserverNode.Logger
 type ServerCapabilities = vscodeLanguageserverNode.ServerCapabilities
-
-// type URI = vscodeUri.URI
-// const { URI } = vscodeUri
-// import { URI } from 'vscode-uri'
-
-import { codeFrameColumns } from '@babel/code-frame'
-
-import { getInitParams } from '../initParams'
 
 // import type { TextDocument } from 'vscode-languageserver-textdocument'
 type TextDocument = vscodeLanguageserverTextdocument.TextDocument

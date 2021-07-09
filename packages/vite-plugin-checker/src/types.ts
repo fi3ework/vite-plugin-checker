@@ -104,7 +104,7 @@ export interface ConfigureServeChecker {
 
 export interface ServeAndBuildChecker {
   serve: ConfigureServeChecker
-  build: { buildBin: BuildCheckBin }
+  build: { buildBin: BuildCheckBin; buildFile?: string }
 }
 
 // create serve & build checker
