@@ -58,6 +58,7 @@ function updateVersion(version) {
 
 async function main() {
   await preCheck()
+  let isPre = false
   let targetVersion = explicitVersion
   const currentVersion = pkg.version
 
@@ -82,6 +83,9 @@ async function main() {
       targetVersion = res.version
     } else {
       targetVersion = release.match(/\((.*)\)/)[1]
+      if (targetVersion.includes('beta')) {
+        isPre = true
+      }
     }
   }
 
@@ -111,7 +115,7 @@ async function main() {
   const commitMsg = `release: ${tag}` // 🤨 https://github.com/google/zx/issues/86
   await $`git commit -m ${commitMsg}`
 
-  if (!isDryRun) {
+  if (!isDryRun && !isPre) {
     await $`git tag ${tag}`
     await $`git push`
     await $`git push origin refs/tags/${tag}`
