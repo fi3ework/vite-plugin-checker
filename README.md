@@ -21,17 +21,17 @@ A Vite plugin that runs TypeScript, VLS, vue-tsc and other checkers in worker th
 Install plugin.
 
 ```bash
-npm i vite-plugin-checker -D
+yarn add vite-plugin-checker -D
 ```
 
 Add it to Vite config file.
 
 ```ts
 // vite.config.js
-import Checker from 'vite-plugin-checker'
+import checker from 'vite-plugin-checker'
 
 export default {
-  plugins: [Checker({ typescript: true })],
+  plugins: [checker({ typescript: true })],
 }
 ```
 
@@ -49,30 +49,25 @@ Open localhost page and start development (it's recommended to open browser for 
 
 ```js
 export default {
-  plugins: [Checker({ typescript: true } /** TS options */)],
+  plugins: [checker({ typescript: true } /** TS options */)],
 }
 ```
 
 ### Vue (use Vetur / VLS)
 
-1. Install [VLS](https://www.npmjs.com/package/vls) checker.
+1. Install `vite-plugin-checker-vls`. This package provides the essential dependencies that will be imported by VLS checker (`vls` filed).
 
 ```bash
-npm i vite-plugin-checker-vls -D
+yarn add vite-plugin-checker-vls -D
 ```
 
 2. Add `vls` field to plugin config.
 
 ```js
-import Checker from 'vite-plugin-checker'
-import { VlsChecker } from 'vite-plugin-checker-vls'
+import checker from 'vite-plugin-checker'
 
 module.exports = {
-  plugins: [
-    Checker({
-      vls: VlsChecker(/** advanced VLS options */),
-    }),
-  ],
+  plugins: [checker({ vls: true })],
 }
 ```
 
@@ -88,7 +83,7 @@ module.exports = {
 
 ```js
 export default {
-  plugins: [Checker({ vueTsc: true })],
+  plugins: [checker({ vueTsc: true })],
 }
 ```
 
@@ -98,7 +93,7 @@ Plugin can accept an object configuration.
 
 ```js
 export default {
-  plugins: [Checker(config /** Object config below */)],
+  plugins: [checker(config /** Object config below */)],
 }
 ```
 
@@ -114,11 +109,15 @@ export default {
 | :---------- | --------- | ------------- | ----------------------------- |
 | enableBuild | `boolean` | `true`        | Enable checking in build mode |
 
-### config.typescript
+---
 
-- Set to `true` to use checker with all default values
+**For config fields below:**
+
+- Set to `true` to use checker with it's default values
 - Leave the field blank or set to `false` to disable the checker
-- Enable with an object config (all object keys are optional)
+- Enable with an object advanced config (all keys are optional)
+
+### config.typescript
 
 | field        | Type     | Default value                                         | Description                      |
 | :----------- | -------- | ----------------------------------------------------- | -------------------------------- |
@@ -127,18 +126,23 @@ export default {
 
 ### config.vls
 
-- type: `VlsChecker` instance.
+_If `vls` filed is not falsy. `vite-plugin-checker-vls` **must** be installed as a peer dependency to provide VLS needed dependencies._
+
+| field | Type     | Default value | Description |
+| :---- | -------- | ------------- | ----------- |
+| todo  | `string` | todo          | todo        |
 
 e.g.
 
 ```js
-import Checker from 'vite-plugin-checker'
-import { VlsChecker } from 'vite-plugin-checker-vls'
+import checker from 'vite-plugin-checker'
 
 module.exports = {
   plugins: [
-    Checker({
-      vls: VlsChecker(/** No options for now */),
+    checker({
+      vls: {
+        /** No options for now */
+      },
     }),
   ],
 }
