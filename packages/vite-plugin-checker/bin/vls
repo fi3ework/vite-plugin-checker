@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require('../lib/checkers/vls2/cli.js')
+require('../lib/checkers/vls/cli.js')

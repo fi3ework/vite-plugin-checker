@@ -1,7 +1,7 @@
 import os from 'os'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
-import { isMainThread, parentPort } from 'worker_threads'
+import { parentPort } from 'worker_threads'
 
 import { Checker, CheckerAbility } from '../../Checker'
 import { diagnosticToTerminalLog, diagnosticToViteError, normalizeDiagnostic } from '../../logger'
