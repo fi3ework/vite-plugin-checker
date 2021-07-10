@@ -13,7 +13,9 @@ import type {
   ServeAndBuildChecker,
   SharedConfig,
   UnrefAction,
+  BuildInCheckers,
 } from './types'
+
 interface WorkerScriptOptions {
   absFilename: string
   buildBin: BuildCheckBin
@@ -25,7 +27,7 @@ export interface Script<T> {
   workerScript: () => void
 }
 
-export function createScript<T>({
+export function createScript<T extends Partial<BuildInCheckers>>({
   absFilename,
   buildBin,
   serverChecker,
@@ -81,7 +83,7 @@ export function createScript<T>({
         (action: ConfigAction | ConfigureServerAction | UnrefAction) => {
           switch (action.type) {
             case ACTION_TYPES.config: {
-              const checkerConfig: T = workerData.checkerConfig
+              const checkerConfig: T & SharedConfig = workerData.checkerConfig
               diagnostic = serverChecker.createDiagnostic(checkerConfig)
               diagnostic.config(action.payload)
               break

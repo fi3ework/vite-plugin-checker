@@ -3,14 +3,14 @@ import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { isMainThread, parentPort } from 'worker_threads'
 
-import { Checker, CheckerAbility } from '../Checker'
-import { diagnosticToTerminalLog, diagnosticToViteError, normalizeDiagnostic } from '../logger'
-import { ensureCall } from '../utils'
+import { Checker, CheckerAbility } from '../../Checker'
+import { diagnosticToTerminalLog, diagnosticToViteError, normalizeDiagnostic } from '../../logger'
+import { ensureCall } from '../../utils'
 
-import type { CreateDiagnostic, PluginConfig, BuildCheckBin } from '../types'
+import type { CreateDiagnostic } from '../../types'
 import type { ErrorPayload } from 'vite'
 
-const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (checkerConfig) => {
+const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true // Vite defaults to true
   let currErr: ErrorPayload['err'] | null = null
 
@@ -18,18 +18,18 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
     config: ({ hmr }) => {
       const viteOverlay = !(typeof hmr === 'object' && hmr.overlay === false)
 
-      if (checkerConfig.overlay === false || !viteOverlay) {
+      if (pluginConfig.overlay === false || !viteOverlay) {
         overlay = false
       }
     },
     configureServer({ root }) {
-      invariant(checkerConfig.typescript, 'config.typescript should be `false`')
+      invariant(pluginConfig.typescript, 'config.typescript should be `false`')
       const finalConfig =
-        checkerConfig.typescript === true
+        pluginConfig.typescript === true
           ? { root, tsconfigPath: 'tsconfig.json' }
           : {
-              root: checkerConfig.typescript.root ?? root,
-              tsconfigPath: checkerConfig.typescript.tsconfigPath ?? 'tsconfig.json',
+              root: pluginConfig.typescript.root ?? root,
+              tsconfigPath: pluginConfig.typescript.tsconfigPath ?? 'tsconfig.json',
             }
 
       let configFile: string | undefined
@@ -110,7 +110,7 @@ const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'typescript'>> = (ch
   }
 }
 
-export class TscChecker extends Checker implements CheckerAbility {
+export class TscChecker extends Checker<'typescript'> implements CheckerAbility {
   public constructor() {
     super({
       name: 'typescript',

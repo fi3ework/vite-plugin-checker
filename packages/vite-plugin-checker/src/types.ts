@@ -20,6 +20,13 @@ export type VueTscConfig =
       // TODO: support vue-tsc config
     }>
 
+/** vls checker configuration */
+export type VlsConfig =
+  | boolean
+  | Partial<{
+      // TODO: support vls config
+    }>
+
 /** checkers shared configuration */
 export interface SharedConfig {
   /**
@@ -35,20 +42,15 @@ export interface SharedConfig {
   overlay: boolean
 }
 
-export type CustomChecker = (checkerConfig: any, env: ConfigEnv) => ServeAndBuildChecker
-
-export interface CustomCheckers {
-  // TODO: poor TS index signature type https://stackoverflow.com/questions/49969390/how-do-i-type-an-object-with-known-and-unknown-keys-in-typescript?noredirect=1&lq=1
-  // should remove `| boolean`
-  [k: string]: CustomChecker | boolean
-}
-
 export interface BuildInCheckers {
   typescript: TscConfig
   vueTsc: VueTscConfig
+  vls: VlsConfig
 }
 
-export type PluginConfig = SharedConfig & CustomCheckers & BuildInCheckers
+export type BuildInCheckerNames = keyof BuildInCheckers
+
+export type PluginConfig = SharedConfig & BuildInCheckers
 
 /** Userland plugin configuration */
 export type UserPluginConfig = Partial<PluginConfig>
@@ -107,10 +109,12 @@ export interface ServeAndBuildChecker {
   build: { buildBin: BuildCheckBin; buildFile?: string }
 }
 
-// create serve & build checker
+/**
+ * create serve & build checker
+ */
 
-export interface ServeChecker {
-  createDiagnostic: CreateDiagnostic
+export interface ServeChecker<T extends BuildInCheckerNames = any> {
+  createDiagnostic: CreateDiagnostic<T>
 }
 
 export interface CheckerDiagnostic {
@@ -118,4 +122,6 @@ export interface CheckerDiagnostic {
   configureServer: (options: { root: string }) => unknown
 }
 
-export type CreateDiagnostic<T = any> = (config: T & SharedConfig) => CheckerDiagnostic
+export type CreateDiagnostic<T extends BuildInCheckerNames = any> = (
+  config: Pick<BuildInCheckers, T> & SharedConfig
+) => CheckerDiagnostic

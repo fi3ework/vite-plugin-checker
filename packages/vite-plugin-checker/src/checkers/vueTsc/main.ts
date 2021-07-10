@@ -1,8 +1,8 @@
 import { isMainThread } from 'worker_threads'
 
-import { createScript } from '../worker'
+import { createScript } from '../../worker'
 
-import type { PluginConfig, CreateDiagnostic } from '../types'
+import type { PluginConfig, CreateDiagnostic } from '../../types'
 import type { UserConfig, ViteDevServer } from 'vite'
 
 // TODO: watch mode is not supported for now
