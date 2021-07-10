@@ -38,7 +38,7 @@ describe('vue3-vue-tsc', () => {
 
     it('enableBuild: false', async () => {
       editFile('vite.config.ts', (code) =>
-        code.replace('vueTsc: true', 'typescript: true, enableBuild: false')
+        code.replace('vueTsc: true', 'vueTsc: true, enableBuild: false')
       )
       await viteBuild({ unexpectedErrorMsg: 'error TS2322', cwd: testDir })
     })
