@@ -1,31 +1,33 @@
-import { ServeAndBuildChecker } from './types'
 import invariant from 'tiny-invariant'
 import { isMainThread } from 'worker_threads'
 
+import { ServeAndBuildChecker, BuildInCheckerNames } from './types'
 import { createScript, Script } from './worker'
 
-import type { CreateDiagnostic, PluginConfig, BuildCheckBin } from './types'
+// still an only issue https://github.com/microsoft/TypeScript/issues/29808#issuecomment-829750974
+import type {} from 'vite'
+import type { CreateDiagnostic, BuildInCheckers } from './types'
 
 export interface CheckerAbility {
   sealConclusion: any
 }
 
-export interface KK {
+export interface CheckerMeta<T extends BuildInCheckerNames> {
   name: string
   absFilePath: string
-  createDiagnostic: CreateDiagnostic
+  createDiagnostic: CreateDiagnostic<T>
   build: ServeAndBuildChecker['build']
   script?: Script<any>
 }
 
-export abstract class Checker<T = any> implements KK {
+export abstract class Checker<T extends BuildInCheckerNames> implements CheckerMeta<T> {
   public name: string
   public absFilePath: string
-  public createDiagnostic: CreateDiagnostic
+  public createDiagnostic: CreateDiagnostic<T>
   public build: ServeAndBuildChecker['build']
   public script?: Script<any>
 
-  public constructor({ name, absFilePath, createDiagnostic, build }: KK) {
+  public constructor({ name, absFilePath, createDiagnostic, build }: CheckerMeta<T>) {
     this.name = name
     this.absFilePath = absFilePath
     this.build = build
@@ -34,7 +36,7 @@ export abstract class Checker<T = any> implements KK {
   }
 
   public prepare() {
-    const script = createScript<Pick<PluginConfig, 'typescript'>>({
+    const script = createScript<Pick<BuildInCheckers, T>>({
       absFilename: this.absFilePath,
       buildBin: this.build.buildBin,
       serverChecker: { createDiagnostic: this.createDiagnostic },

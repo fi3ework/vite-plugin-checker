@@ -5,19 +5,19 @@ import { DiagnosticOptions, diagnostics } from './commands/diagnostics'
 
 import type { CreateDiagnostic } from '../../types'
 
-export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
+export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
   let overlay = true // Vite defaults to true
 
   return {
     config: ({ hmr }) => {
       const viteOverlay = !(typeof hmr === 'object' && hmr.overlay === false)
 
-      if (userOptions.overlay === false || !viteOverlay) {
+      if (pluginConfig.overlay === false || !viteOverlay) {
         overlay = false
       }
     },
     async configureServer({ root }) {
-      const workDir: string = userOptions.root ?? root
+      const workDir: string = root
       const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics, overlayErr) => {
         if (!overlay) return
         if (!overlayErr) return
@@ -36,7 +36,7 @@ export const createDiagnostic: CreateDiagnostic = (userOptions = {}) => {
   }
 }
 
-export class VlsChecker extends Checker implements CheckerAbility {
+export class VlsChecker extends Checker<'vls'> implements CheckerAbility {
   public constructor() {
     super({
       name: 'vls',

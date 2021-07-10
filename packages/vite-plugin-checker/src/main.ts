@@ -8,7 +8,7 @@ import { ConfigEnv, Plugin } from 'vite'
 
 import type {
   OverlayErrorAction,
-  BuildInCheckers,
+  BuildInCheckerNames,
   ServeAndBuildChecker,
   UserPluginConfig,
   SharedConfig,
@@ -20,42 +20,36 @@ export * from './utils'
 export * from './worker'
 
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
-const buildInCheckerKeys: (keyof BuildInCheckers)[] = ['typescript', 'vueTsc']
+const buildInCheckerKeys: BuildInCheckerNames[] = ['typescript', 'vueTsc', 'vls']
 
 function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndBuildChecker[] {
-  const { typescript, vueTsc, vls } = userConfig
+  // const { typescript, vueTsc, vls } = userConfig
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
   const sharedConfig = pick(userConfig, sharedConfigKeys)
-  // const customCheckers = omit(userConfig, [...sharedConfigKeys, ...buildInCheckerKeys])
+  // const customCheckers = omit(userConfig, [...sharedConfigKeys, ...buildInCheckerKeys])(
+  // if (typescript) {
+  //   const { createServeAndBuild } = require('./checkers/tsc')
+  //   serveAndBuildCheckers.push(createServeAndBuild({ typescript, ...sharedConfig }, env))
+  // }
 
-  if (typescript) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { createServeAndBuild } = require('./checkers/tsc2')
-    serveAndBuildCheckers.push(createServeAndBuild({ typescript, ...sharedConfig }, env))
-  }
+  // if (vueTsc) {
+  //   const { createServeAndBuild } = require('./checkers/vue-tsc')
+  //   serveAndBuildCheckers.push(createServeAndBuild({ vueTsc, ...sharedConfig }, env))
+  // }
 
-  if (vueTsc) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { createServeAndBuild } = require('./checkers/vue-tsc')
-    serveAndBuildCheckers.push(createServeAndBuild({ vueTsc, ...sharedConfig }, env))
-  }
+  // if (vls) {
+  //   const { createServeAndBuild } = require('./checkers/vls/main2')
+  //   serveAndBuildCheckers.push(createServeAndBuild({ vls, ...sharedConfig }, env))
+  // }
 
-  // @ts-ignore
-  if (vls) {
-    const { createServeAndBuild } = require('./checkers/vls2/main2')
-    serveAndBuildCheckers.push(createServeAndBuild({ vls, ...sharedConfig }, env))
-  }
+  buildInCheckerKeys.forEach((name: BuildInCheckerNames) => {
+    if (!userConfig[name]) return
 
-  // TODO: move vls here
-  // Object.keys(customCheckers).forEach((key) => {
-  //   const checkerCurryFn = customCheckers[key]
-  //   invariant(
-  //     typeof checkerCurryFn === 'function',
-  //     `Custom checker key should be a function, but got ${typeof checkerCurryFn}`
-  //   )
-
-  //   serveAndBuildCheckers.push(checkerCurryFn(sharedConfig, env))
-  // })
+    const { createServeAndBuild } = require(`./checkers/${name}/main`)
+    serveAndBuildCheckers.push(
+      createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env)
+    )
+  })
 
   return serveAndBuildCheckers
 }

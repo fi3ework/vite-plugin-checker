@@ -72,8 +72,6 @@ describe('build', () => {
 
   it('custom checker (test vls)', () => {
     const plugin = CheckerPlugin({
-      // TODO: v0.3.0
-      // @ts-ignore
       vls: {},
     })
 
@@ -91,8 +89,6 @@ describe('build', () => {
     const plugin = CheckerPlugin({
       typescript: true,
       vueTsc: true,
-      // TODO: v0.3.0
-      // @ts-ignore
       vls: {},
     })
 
