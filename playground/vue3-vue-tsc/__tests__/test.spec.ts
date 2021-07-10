@@ -1,5 +1,4 @@
 import {
-  postTest,
   preTest,
   viteBuild,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
@@ -20,15 +19,6 @@ afterAll(async () => {
 
 describe('vue3-vue-tsc', () => {
   // describe('dev', () => {
-  //   beforeAll(async () => {
-  //     await startServer(false)
-  //   })
-
-  //   afterAll(async () => {
-  //     await killServer()
-  //   })
-
-  //   declareTests(false)
   // })
 
   describe('build', () => {
