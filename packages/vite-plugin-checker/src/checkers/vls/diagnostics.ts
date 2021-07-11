@@ -12,14 +12,16 @@ import {
   vscodeUri,
 } from 'vite-plugin-checker-vls'
 import { PublishDiagnosticsParams } from 'vscode-languageclient/node'
-import {
-  normalizePublishDiagnosticParams,
-  diagnosticToTerminalLog,
-  normalizeLspDiagnostic,
-} from '../../logger'
 
-import { lspDiagnosticToViteError } from '../../utils'
+import {
+  diagnosticToTerminalLog,
+  diagnosticToViteError,
+  normalizeLspDiagnostic,
+  normalizePublishDiagnosticParams,
+} from '../../logger'
 import { getInitParams } from './initParams'
+
+import type { ErrorPayload } from 'vite'
 
 const { VLS } = vls
 const {
@@ -59,10 +61,7 @@ const logLevel2Severity = {
 export interface DiagnosticOptions {
   watch: boolean
   verbose: boolean
-  errorCallback?: (
-    diagnostic: PublishDiagnosticsParams,
-    viteError: ReturnType<typeof lspDiagnosticToViteError>
-  ) => void
+  errorCallback?: (diagnostic: PublishDiagnosticsParams, viteError: ErrorPayload['err']) => void
 }
 
 export async function diagnostics(
@@ -151,24 +150,24 @@ async function prepareClientConnection(workspaceUri: vscodeUri.URI, options: Dia
   )
 
   // hijack sendDiagnostics
-  serverConnection.sendDiagnostics = async (diagnostics) => {
+  serverConnection.sendDiagnostics = async (publishDiagnostics) => {
     disposeSuppressConsole?.()
-    if (diagnostics.version === DOC_VERSION.init) {
+    if (publishDiagnostics.version === DOC_VERSION.init) {
       return
     }
 
-    if (!diagnostics.diagnostics.length) {
+    if (!publishDiagnostics.diagnostics.length) {
       return
     }
 
-    const overlayErr = lspDiagnosticToViteError(diagnostics)
-    if (!overlayErr) return
+    if (!publishDiagnostics.diagnostics.length) return
 
-    const res = await normalizePublishDiagnosticParams(diagnostics)
+    const res = await normalizePublishDiagnosticParams(publishDiagnostics)
+    const normalized = diagnosticToViteError(res)
     console.log(os.EOL)
     console.log(res.map((d) => diagnosticToTerminalLog(d)).join(os.EOL))
 
-    options.errorCallback?.(diagnostics, overlayErr)
+    options.errorCallback?.(publishDiagnostics, normalized)
   }
 
   const vls = new VLS(serverConnection as any)

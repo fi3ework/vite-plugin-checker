@@ -4,8 +4,12 @@ import ts from 'typescript'
 import { parentPort } from 'worker_threads'
 
 import { Checker, CheckerAbility } from '../../Checker'
-import { diagnosticToTerminalLog, diagnosticToViteError, normalizeTsDiagnostic } from '../../logger'
-import { ensureCall } from '../../utils'
+import {
+  diagnosticToTerminalLog,
+  diagnosticToViteError,
+  ensureCall,
+  normalizeTsDiagnostic,
+} from '../../logger'
 
 import type { CreateDiagnostic } from '../../types'
 import type { ErrorPayload } from 'vite'
