@@ -1,7 +1,7 @@
 // import { Command, Option } from 'commander'
 import { commander } from 'vite-plugin-checker-vls'
 
-import { diagnostics, LogLevel, logLevels } from './commands/diagnostics'
+import { diagnostics, LogLevel, logLevels } from './diagnostics'
 
 function getVersion(): string {
   // eslint-disable-next-line @typescript-eslint/no-require-imports

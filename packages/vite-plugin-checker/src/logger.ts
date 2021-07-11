@@ -1,12 +1,18 @@
-import { readFileSync } from 'fs'
+import chalk from 'chalk'
+import { readFile } from 'fs/promises'
 import os from 'os'
 import strip from 'strip-ansi'
 import { ErrorPayload } from 'vite'
-import chalk from 'chalk'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
-import { uriToAbsPath } from './utils'
+import { lspRange2Location, uriToAbsPath } from './utils'
+
+import type {
+  Diagnostic as LspDiagnostic,
+  URI,
+  PublishDiagnosticsParams,
+} from 'vscode-languageclient/node'
 
 // TODO: remove ./codeFrame.ts and ./utils.ts
 
@@ -118,26 +124,9 @@ export function tsLocationToBabelLocation(
   }
 }
 
-export function normalizeDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
-  if (isTsDiagnostic(d)) return normalizeTsDiagnostic(d)
-  throw Error(`unsupported diagnostic, only support TypeScript / VLS for now.`)
-}
-
 /* ------------------------------- TypeScript ------------------------------- */
 
-export function isTsDiagnostic(d: any): d is TsDiagnostic {
-  return (
-    'category' in d &&
-    'code' in d &&
-    'file' in d &&
-    'start' in d &&
-    'length' in d &&
-    'messageText' in d
-  )
-}
-
 export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
-  // console.log(d.category)
   const fileName = d.file?.fileName
   const {
     flattenDiagnosticMessageText,
@@ -177,6 +166,93 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
 }
 
 /* ----------------------------------- VLS ---------------------------------- */
+
+export function normalizeLspDiagnostic({
+  diagnostic,
+  absFilePath,
+  fileText,
+}: {
+  diagnostic: LspDiagnostic
+  absFilePath: string
+  fileText: string
+}): NormalizedDiagnostic {
+  let level = DiagnosticCategory.Error
+  const loc = lspRange2Location(diagnostic.range)
+  const codeFrame = codeFrameColumns(fileText, loc)
+
+  switch (diagnostic.severity) {
+    case 1: // Error
+      level = DiagnosticCategory.Error
+      break
+    case 2: // Warning
+      level = DiagnosticCategory.Warning
+      break
+    case 3: // Information
+      level = DiagnosticCategory.Message
+      break
+    case 4: // Hint
+      level = DiagnosticCategory.Suggestion
+      break
+  }
+
+  return {
+    message: diagnostic.message.trim(),
+    conclusion: '',
+    codeFrame,
+    stripedCodeFrame: codeFrame && strip(codeFrame),
+    id: absFilePath,
+    checker: 'VLS',
+    loc,
+    level,
+  }
+}
+
+export async function normalizePublishDiagnosticParams(
+  publishDiagnostics: PublishDiagnosticsParams
+): Promise<NormalizedDiagnostic[]> {
+  const diagnostics = publishDiagnostics.diagnostics
+  const absFilePath = uriToAbsPath(publishDiagnostics.uri)
+  const fileText = await readFile(absFilePath, 'utf-8')
+
+  const res = diagnostics.map((d) => {
+    return normalizeLspDiagnostic({
+      diagnostic: d,
+      absFilePath,
+      fileText,
+    })
+  })
+
+  return res
+
+  // const thing = normalizeLspDiagnostic(publishDiagnostics)
+  // const location = lspRange2Location(d.range)
+  // const path = publishDiagnostics
+  // logChunk += `${os.EOL}${chalk.green.bold('FILE ')} ${absFilePath}:${location.start.line}:${
+  //   location.start.column
+  // }${os.EOL}`
+
+  // if (diagnostic.severity === vscodeLanguageserverNode.DiagnosticSeverity.Error) {
+  //   logChunk += `${chalk.red.bold('ERROR ')} ${diagnostic.message.trim()}`
+  // } else {
+  //   logChunk += `${chalk.yellow.bold('WARN ')} ${diagnostic.message.trim()}`
+  // }
+
+  // logChunk += os.EOL + os.EOL
+  // logChunk += codeFrameColumns(fileText, location)
+  // return logChunk
+
+  // return {
+  //   message,
+  //   conclusion: '',
+  //   codeFrame,
+  //   stripedCodeFrame: codeFrame && strip(codeFrame),
+  //   id: fileName,
+  //   checker: 'TypeScript',
+  //   loc,
+  //   level: d.category,
+  // }
+  // return 1 as any
+}
 
 /* --------------------------------- vue-tsc -------------------------------- */
 

@@ -4,7 +4,7 @@ import ts from 'typescript'
 import { parentPort } from 'worker_threads'
 
 import { Checker, CheckerAbility } from '../../Checker'
-import { diagnosticToTerminalLog, diagnosticToViteError, normalizeDiagnostic } from '../../logger'
+import { diagnosticToTerminalLog, diagnosticToViteError, normalizeTsDiagnostic } from '../../logger'
 import { ensureCall } from '../../utils'
 
 import type { CreateDiagnostic } from '../../types'
@@ -46,7 +46,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
-        const formattedDiagnostics = normalizeDiagnostic(diagnostic)
+        const formattedDiagnostics = normalizeTsDiagnostic(diagnostic)
         if (!currErr) {
           currErr = diagnosticToViteError(formattedDiagnostics)
         }

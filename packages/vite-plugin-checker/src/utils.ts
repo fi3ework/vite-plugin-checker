@@ -72,7 +72,7 @@ export function uriToAbsPath(uri: string): string {
   return uri.slice('file://'.length)
 }
 
-export function range2Location(range: Range): SourceLocation {
+export function lspRange2Location(range: Range): SourceLocation {
   return {
     start: {
       line: range.start.line + 1,
@@ -103,7 +103,7 @@ export function lspDiagnosticToViteError(
   }
 
   const fileText = readFileSync(absPath, 'utf-8')
-  const location = range2Location(d.range)
+  const location = lspRange2Location(d.range)
   const columns = codeFrameColumns(fileText, location)
 
   // has detail message

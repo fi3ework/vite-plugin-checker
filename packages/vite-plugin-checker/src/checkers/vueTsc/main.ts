@@ -1,39 +1,38 @@
-import { isMainThread } from 'worker_threads'
+import { Checker, CheckerAbility } from '../../Checker'
 
-import { createScript } from '../../worker'
-
-import type { PluginConfig, CreateDiagnostic } from '../../types'
-import type { UserConfig, ViteDevServer } from 'vite'
+import type { CreateDiagnostic } from '../../types'
 
 // TODO: watch mode is not supported for now
-// we will wait for vue-tsc
-
-/**
- * Prints a diagnostic every time the watch status changes.
- * This is mainly for messages like "Starting compilation" or "Compilation completed".
- *
- */
-// @ts-ignore
-export const createDiagnostic: CreateDiagnostic<Pick<PluginConfig, 'vueTsc'>> = (checkerConfig) => {
+const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
   return {
-    config: (config: UserConfig) => {
+    config: (config) => {
       //
     },
-    configureServer(server: ViteDevServer) {
+    configureServer(server) {
       //
     },
   }
 }
 
-const { mainScript, workerScript } = createScript<Pick<PluginConfig, 'vueTsc'>>({
-  absFilename: __filename,
-  buildBin: ['vue-tsc', ['--noEmit']],
-  serverChecker: { createDiagnostic },
-})!
+export class VueTscChecker extends Checker<'vueTsc'> implements CheckerAbility {
+  public constructor() {
+    super({
+      name: 'typescript',
+      absFilePath: __filename,
+      build: { buildBin: ['vue-tsc', ['--noEmit']] },
+      createDiagnostic,
+    })
+  }
 
-if (isMainThread) {
-  const createServeAndBuild = mainScript()
-  module.exports.createServeAndBuild = createServeAndBuild
-} else {
-  workerScript()
+  public sealConclusion() {}
+
+  public init() {
+    const createServeAndBuild = super.initMainThread()
+    module.exports.createServeAndBuild = createServeAndBuild
+    super.initWorkerThread()
+  }
 }
+
+const vueTscChecker = new VueTscChecker()
+vueTscChecker.prepare()
+vueTscChecker.init()

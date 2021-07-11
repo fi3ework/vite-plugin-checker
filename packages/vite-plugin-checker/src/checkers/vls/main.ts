@@ -1,7 +1,7 @@
 import { parentPort } from 'worker_threads'
 
 import { Checker, CheckerAbility } from '../../Checker'
-import { DiagnosticOptions, diagnostics } from './commands/diagnostics'
+import { DiagnosticOptions, diagnostics } from './diagnostics'
 
 import type { CreateDiagnostic } from '../../types'
 
