@@ -38,7 +38,6 @@ type InitializeResult = vscodeLanguageserverNode.InitializeResult
 type Logger = vscodeLanguageserverNode.Logger
 type ServerCapabilities = vscodeLanguageserverNode.ServerCapabilities
 
-// import type { TextDocument } from 'vscode-languageserver-textdocument'
 type TextDocument = vscodeLanguageserverTextdocument.TextDocument
 
 enum DOC_VERSION {
@@ -160,12 +159,6 @@ async function prepareClientConnection(workspaceUri: vscodeUri.URI, options: Dia
 
     if (!diagnostics.diagnostics.length) {
       return
-      // prettyDiagnosticsLog({
-      //   diagnostics: [],
-      //   absFilePath: '',
-      //   fileText: '',
-      //   showNoError: false,
-      // })
     }
 
     const overlayErr = lspDiagnosticToViteError(diagnostics)
@@ -174,12 +167,6 @@ async function prepareClientConnection(workspaceUri: vscodeUri.URI, options: Dia
     const res = await normalizePublishDiagnosticParams(diagnostics)
     console.log(os.EOL)
     console.log(res.map((d) => diagnosticToTerminalLog(d)).join(os.EOL))
-    // prettyDiagnosticsLog({
-    //   diagnostics: diagnostics.diagnostics,
-    //   absFilePath: uriToAbsPath(diagnostics.uri),
-    //   fileText: overlayErr.fileText,
-    //   showNoError: false,
-    // })
 
     options.errorCallback?.(diagnostics, overlayErr)
   }
@@ -278,11 +265,6 @@ async function getDiagnostics(
           .filter((r) => r.severity && r.severity <= severity)
 
         if (diagnostics.length > 0) {
-          // const res = await normalizePublishDiagnosticParams({
-          //   diagnostics,
-          //   uri: diagnostics[0].,
-          // })
-
           logChunk +=
             os.EOL +
             diagnostics
@@ -296,14 +278,6 @@ async function getDiagnostics(
                 )
               )
               .join(os.EOL)
-
-          // logChunk += res.map((d) => diagnosticToTerminalLog(d)).join(os.EOL)
-          // logChunk += prettyDiagnosticsLog({
-          //   absFilePath,
-          //   fileText,
-          //   diagnostics: diagnostics,
-          //   doLog: false,
-          // })
 
           diagnostics.forEach((d) => {
             if (d.severity === vscodeLanguageserverNode.DiagnosticSeverity.Error) {
@@ -339,61 +313,3 @@ async function getDiagnostics(
   console.log(logChunk)
   return initialErrCount
 }
-
-// function composeLspLog({
-//   diagnostic,
-//   absFilePath,
-//   fileText,
-// }: {
-//   diagnostic: Diagnostic
-//   absFilePath: string
-//   fileText: string
-// }) {
-//   let logChunk = ''
-//   const location = lspRange2Location(diagnostic.range)
-//   logChunk += `${os.EOL}${chalk.green.bold('FILE ')} ${absFilePath}:${location.start.line}:${
-//     location.start.column
-//   }${os.EOL}`
-
-//   if (diagnostic.severity === vscodeLanguageserverNode.DiagnosticSeverity.Error) {
-//     logChunk += `${chalk.red.bold('ERROR ')} ${diagnostic.message.trim()}`
-//   } else {
-//     logChunk += `${chalk.yellow.bold('WARN ')} ${diagnostic.message.trim()}`
-//   }
-
-//   logChunk += os.EOL + os.EOL
-//   logChunk += codeFrameColumns(fileText, location)
-//   return logChunk
-// }
-
-// export function prettyDiagnosticsLog({
-//   diagnostics,
-//   fileText,
-//   absFilePath,
-//   doLog = true,
-//   showNoError = true,
-// }: {
-//   diagnostics: Diagnostic[]
-//   fileText: string
-//   absFilePath: string
-//   /** does log to terminal */
-//   doLog?: boolean
-//   showNoError?: boolean
-// }) {
-//   if (!diagnostics.length && showNoError) {
-//     doLog && console.log(chalk.green(`[VLS checker] No error found`))
-//     return ''
-//   }
-
-//   const logs = diagnostics.map((d) => {
-//     return composeLspLog({
-//       diagnostic: d,
-//       absFilePath,
-//       fileText,
-//     })
-//   })
-
-//   let logChunk = logs.join(os.EOL) + os.EOL
-//   doLog && console.log(logChunk)
-//   return logChunk
-// }
