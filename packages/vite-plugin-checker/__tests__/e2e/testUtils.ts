@@ -23,7 +23,7 @@ export function editFile(
   fs.writeFileSync(filePath, modified)
 }
 
-export function expectStdoutNotContains(str: string, unexpectedErrorMsg: string) {
+export function expectStdoutNotContains(str: string, unexpectedErrorMsg: string | string[]) {
   expect.objectContaining({
     stdout: expect(str).not.toContain(unexpectedErrorMsg),
   })

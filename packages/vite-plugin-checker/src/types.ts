@@ -31,7 +31,13 @@ export type VlsConfig =
 export type EslintConfig =
   | boolean
   | Partial<{
-      // TODO: support ESLint config
+      /** One or more glob patterns to the files that should be linted. Works the same as the eslint command. */
+      files: string | string[]
+      /**
+       * Specify JavaScript file extensions, e.g. '.jsx,.js'
+       * @defaultValue: .js
+       */
+      ext?: string
     }>
 
 /** checkers shared configuration */
@@ -104,7 +110,9 @@ export type Actions = OverlayErrorAction | ConfigAction | ConfigureServerAction 
 
 // prepare for create serve & build checker
 
-export type BuildCheckBin = [string, ReadonlyArray<string>]
+export type BuildCheckBin = BuildCheckBinStr | BuildCheckBinFn
+export type BuildCheckBinStr = [string, ReadonlyArray<string>]
+export type BuildCheckBinFn = (config: any) => [string, ReadonlyArray<string>]
 
 export interface ConfigureServeChecker {
   worker: Worker

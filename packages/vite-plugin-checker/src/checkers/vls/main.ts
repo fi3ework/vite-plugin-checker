@@ -1,6 +1,6 @@
 import { parentPort } from 'worker_threads'
 
-import { Checker, CheckerAbility } from '../../Checker'
+import { Checker } from '../../Checker'
 import { DiagnosticOptions, diagnostics } from './diagnostics'
 
 import type { CreateDiagnostic } from '../../types'
@@ -36,7 +36,7 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
   }
 }
 
-export class VlsChecker extends Checker<'vls'> implements CheckerAbility {
+export class VlsChecker extends Checker<'vls'> {
   public constructor() {
     super({
       name: 'vls',
@@ -45,8 +45,6 @@ export class VlsChecker extends Checker<'vls'> implements CheckerAbility {
       createDiagnostic,
     })
   }
-
-  public sealConclusion() {}
 
   public init() {
     const createServeAndBuild = super.initMainThread()

@@ -164,6 +164,7 @@ importers:
       vite-plugin-checker: workspace:*
       vite-plugin-components: ^0.10.2
       vite-plugin-vue2: ^1.2.1
+      vls: ^0.7.2
       vue: ^2.6.12
       vue-class-component: ^7.2.6
       vue-property-decorator: ^9.1.2
@@ -192,6 +193,7 @@ importers:
       vite-plugin-checker: link:../../packages/vite-plugin-checker
       vite-plugin-components: 0.10.4_vite@2.3.8
       vite-plugin-vue2: 1.6.2_vite@2.3.8
+      vls: 0.7.4
       vue-template-compiler: 2.6.14
 
   playground/vue3-vue-tsc:

@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant'
 import { ESLint } from 'eslint'
 import { parentPort } from 'worker_threads'
 
-import { Checker, CheckerAbility } from '../../Checker'
+import { Checker } from '../../Checker'
 import {
   diagnosticToTerminalLog,
   diagnosticToViteError,
@@ -15,7 +15,7 @@ import {
 import type { CreateDiagnostic } from '../../types'
 import type { ErrorPayload } from 'vite'
 
-const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
+const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
   let overlay = true // Vite defaults to true
   let currErr: ErrorPayload['err'] | null = null
 
@@ -32,17 +32,23 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   }
 }
 
-export class EslintChecker extends Checker<'typescript'> implements CheckerAbility {
+export class EslintChecker extends Checker<'eslint'> {
   public constructor() {
     super({
       name: 'typescript',
       absFilePath: __filename,
-      build: { buildBin: ['tsc', ['--noEmit']] },
+      build: {
+        buildBin: (userConfig) => {
+          invariant(
+            userConfig.eslint.files,
+            `eslint.files is required, but got ${userConfig.eslint.files}`
+          )
+          return ['eslint', ['--ext', userConfig.eslint.ext ?? '.js', userConfig.eslint.files]]
+        },
+      },
       createDiagnostic,
     })
   }
-
-  public sealConclusion() {}
 
   public init() {
     const createServeAndBuild = super.initMainThread()

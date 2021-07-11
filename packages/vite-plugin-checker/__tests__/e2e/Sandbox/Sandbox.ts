@@ -108,7 +108,11 @@ export async function viteBuild({
   unexpectedErrorMsg,
   expectedErrorMsg,
   cwd = process.cwd(),
-}: { unexpectedErrorMsg?: string; expectedErrorMsg?: string; cwd?: string } = {}) {
+}: {
+  unexpectedErrorMsg?: string | string[]
+  expectedErrorMsg?: string
+  cwd?: string
+} = {}) {
   const promise = execa(binPath, ['build'], {
     cwd: cwd ?? testDir,
   })

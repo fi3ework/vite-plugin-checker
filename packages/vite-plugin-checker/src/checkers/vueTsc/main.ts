@@ -1,4 +1,4 @@
-import { Checker, CheckerAbility } from '../../Checker'
+import { Checker } from '../../Checker'
 
 import type { CreateDiagnostic } from '../../types'
 
@@ -14,7 +14,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
   }
 }
 
-export class VueTscChecker extends Checker<'vueTsc'> implements CheckerAbility {
+export class VueTscChecker extends Checker<'vueTsc'> {
   public constructor() {
     super({
       name: 'typescript',
@@ -23,8 +23,6 @@ export class VueTscChecker extends Checker<'vueTsc'> implements CheckerAbility {
       createDiagnostic,
     })
   }
-
-  public sealConclusion() {}
 
   public init() {
     const createServeAndBuild = super.initMainThread()
