@@ -6,15 +6,12 @@ import { ErrorPayload } from 'vite'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
-import { lspRange2Location, uriToAbsPath } from './utils'
+import type { Range } from 'vscode-languageclient'
 
 import type {
   Diagnostic as LspDiagnostic,
-  URI,
   PublishDiagnosticsParams,
 } from 'vscode-languageclient/node'
-
-// TODO: remove ./codeFrame.ts and ./utils.ts
 
 import type {
   Diagnostic as TsDiagnostic,
@@ -75,7 +72,10 @@ export function diagnosticToTerminalLog(d: NormalizedDiagnostic): string {
     .join(os.EOL)
 }
 
-export function diagnosticToViteError(d: NormalizedDiagnostic): ErrorPayload['err'] {
+export function diagnosticToViteError(
+  diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[]
+): ErrorPayload['err'] {
+  const d = Array.isArray(diagnostics) ? diagnostics[0] : diagnostics
   let loc: ErrorPayload['err']['loc']
   if (d.loc) {
     loc = {
@@ -86,11 +86,11 @@ export function diagnosticToViteError(d: NormalizedDiagnostic): ErrorPayload['er
   }
 
   return {
-    message: d.message + os.EOL + d.stripedCodeFrame,
+    message: d.message ?? '',
     stack:
       typeof d.stack === 'string' ? d.stack : Array.isArray(d.stack) ? d.stack.join(os.EOL) : '',
     id: d.id,
-    frame: d.codeFrame,
+    frame: d.stripedCodeFrame,
     plugin: `vite-plugin-checker(${d.checker})`,
     loc,
   }
@@ -165,7 +165,7 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
   }
 }
 
-/* ----------------------------------- VLS ---------------------------------- */
+/* ----------------------------------- LSP ---------------------------------- */
 
 export function normalizeLspDiagnostic({
   diagnostic,
@@ -223,37 +223,32 @@ export async function normalizePublishDiagnosticParams(
   })
 
   return res
+}
 
-  // const thing = normalizeLspDiagnostic(publishDiagnostics)
-  // const location = lspRange2Location(d.range)
-  // const path = publishDiagnostics
-  // logChunk += `${os.EOL}${chalk.green.bold('FILE ')} ${absFilePath}:${location.start.line}:${
-  //   location.start.column
-  // }${os.EOL}`
+export function uriToAbsPath(uri: string): string {
+  return uri.slice('file://'.length)
+}
 
-  // if (diagnostic.severity === vscodeLanguageserverNode.DiagnosticSeverity.Error) {
-  //   logChunk += `${chalk.red.bold('ERROR ')} ${diagnostic.message.trim()}`
-  // } else {
-  //   logChunk += `${chalk.yellow.bold('WARN ')} ${diagnostic.message.trim()}`
-  // }
-
-  // logChunk += os.EOL + os.EOL
-  // logChunk += codeFrameColumns(fileText, location)
-  // return logChunk
-
-  // return {
-  //   message,
-  //   conclusion: '',
-  //   codeFrame,
-  //   stripedCodeFrame: codeFrame && strip(codeFrame),
-  //   id: fileName,
-  //   checker: 'TypeScript',
-  //   loc,
-  //   level: d.category,
-  // }
-  // return 1 as any
+export function lspRange2Location(range: Range): SourceLocation {
+  return {
+    start: {
+      line: range.start.line + 1,
+      column: range.start.character + 1,
+    },
+    end: {
+      line: range.end.line + 1,
+      column: range.end.character + 1,
+    },
+  }
 }
 
 /* --------------------------------- vue-tsc -------------------------------- */
 
 /* --------------------------------- ESLint --------------------------------- */
+
+/* ------------------------------ miscellaneous ----------------------------- */
+export function ensureCall(callback: CallableFunction) {
+  setTimeout(() => {
+    callback()
+  })
+}

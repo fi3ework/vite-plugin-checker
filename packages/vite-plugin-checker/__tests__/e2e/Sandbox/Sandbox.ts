@@ -93,11 +93,15 @@ export async function getHmrOverlayText() {
   invariant(messageBody, '.message-body is expected in shadow root')
   const message = await messageBody.innerText()
 
-  const fileLink = await shadowRoot.$('.file-link')
-  invariant(fileLink, '.file-link is expected in shadow root')
-  const file = await fileLink.innerText()
+  const fileDom = await shadowRoot.$('.file-link')
+  invariant(fileDom, '.file-link is expected in shadow root')
+  const file = await fileDom.innerText()
 
-  return [message, file]
+  const frameDom = await shadowRoot.$('.frame')
+  invariant(frameDom, '.frame is expected in shadow root')
+  const frame = await frameDom.innerText()
+
+  return [message, file, frame]
 }
 
 export async function viteBuild({

@@ -53,18 +53,18 @@ describe('vue2-vls', () => {
         expect(1).toBe(1)
       } else {
         await pollingUntil(getHmrOverlay, (dom) => !!dom)
-        const [message1, file1] = await getHmrOverlayText()
-        expect(message1).toContain(snapshot.errorCode1)
+        const [message1, file1, frame1] = await getHmrOverlayText()
         expect(message1).toContain(snapshot.errorMsg)
         expect(file1).toContain(snapshot.absPath)
+        expect(frame1).toContain(snapshot.errorCode1)
         expect(stripedLog).toContain(snapshot.errorCode1)
         expect(stripedLog).toContain(snapshot.errorMsg)
         expect(stripedLog).toContain(snapshot.absPath)
 
         editFile('src/components/HelloWorld.vue', (code) => code.replace('msg1', 'msg2'))
         await sleep(process.env.CI ? 5000 : 2000)
-        const [message2] = await getHmrOverlayText()
-        expect(message2).toContain(snapshot.errorCode2)
+        const [, , frame2] = await getHmrOverlayText()
+        expect(frame2).toContain(snapshot.errorCode2)
         expect(stripedLog).toContain(snapshot.errorCode2)
       }
     })

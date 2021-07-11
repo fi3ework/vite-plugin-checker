@@ -16,7 +16,6 @@ import type {
 
 export * from './types'
 export * from './codeFrame'
-export * from './utils'
 export * from './worker'
 
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
