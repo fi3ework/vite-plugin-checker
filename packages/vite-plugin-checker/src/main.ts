@@ -1,10 +1,9 @@
 import { spawn } from 'child_process'
-import omit from 'lodash.omit'
 import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
 import os from 'os'
-import invariant from 'tiny-invariant'
 import { ConfigEnv, Plugin } from 'vite'
+import { Checker } from './Checker'
 
 import type {
   OverlayErrorAction,
@@ -22,24 +21,8 @@ const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: BuildInCheckerNames[] = ['typescript', 'vueTsc', 'vls']
 
 function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndBuildChecker[] {
-  // const { typescript, vueTsc, vls } = userConfig
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
   const sharedConfig = pick(userConfig, sharedConfigKeys)
-  // const customCheckers = omit(userConfig, [...sharedConfigKeys, ...buildInCheckerKeys])(
-  // if (typescript) {
-  //   const { createServeAndBuild } = require('./checkers/tsc')
-  //   serveAndBuildCheckers.push(createServeAndBuild({ typescript, ...sharedConfig }, env))
-  // }
-
-  // if (vueTsc) {
-  //   const { createServeAndBuild } = require('./checkers/vue-tsc')
-  //   serveAndBuildCheckers.push(createServeAndBuild({ vueTsc, ...sharedConfig }, env))
-  // }
-
-  // if (vls) {
-  //   const { createServeAndBuild } = require('./checkers/vls/main2')
-  //   serveAndBuildCheckers.push(createServeAndBuild({ vls, ...sharedConfig }, env))
-  // }
 
   buildInCheckerKeys.forEach((name: BuildInCheckerNames) => {
     if (!userConfig[name]) return
@@ -54,9 +37,8 @@ function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndB
 }
 
 export default function Plugin(userConfig?: UserPluginConfig): Plugin {
-  let checkers: ServeAndBuildChecker[] = []
-  // const checkers = createCheckers(userConfig || {})
   const enableBuild = userConfig?.enableBuild ?? true
+  let checkers: ServeAndBuildChecker[] = []
   let viteMode: ConfigEnv['command'] | undefined
 
   return {

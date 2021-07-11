@@ -72,13 +72,11 @@ importers:
     specifiers:
       '@babel/code-frame': ^7.12.13
       '@types/eslint': ^7.2.14
-      '@types/lodash.omit': ^4.5.6
       '@types/lodash.pick': ^4.4.6
       ansi-escapes: ^4.3.0
       chokidar: ^3.5.1
       commander: ^8.0.0
       fast-glob: ^3.2.7
-      lodash.omit: ^4.5.0
       lodash.pick: ^4.4.0
       npm-run-path: ^4.0.1
       strip-ansi: ^6.0.0
@@ -90,12 +88,10 @@ importers:
       vscode-uri: ^3.0.2
     dependencies:
       '@babel/code-frame': 7.12.13
-      '@types/lodash.omit': 4.5.6
       '@types/lodash.pick': 4.4.6
       ansi-escapes: 4.3.2
       chokidar: 3.5.1
       fast-glob: 3.2.7
-      lodash.omit: 4.5.0
       lodash.pick: 4.4.0
       npm-run-path: 4.0.1
       strip-ansi: 6.0.0
@@ -997,12 +993,6 @@ packages:
   /@types/json-schema/7.0.8:
     resolution: {integrity: sha512-YSBPTLTVm2e2OoQIDYx8HaeWJ5tTToLH67kXR7zYNGupXMEHa2++G8k+DczX2cFVgalypqtyZIcU19AFcmOpmg==}
     dev: true
-
-  /@types/lodash.omit/4.5.6:
-    resolution: {integrity: sha512-KXPpOSNX2h0DAG2w7ajpk7TXvWF28ZHs5nJhOJyP0BQHkehgr948RVsToItMme6oi0XJkp19CbuNXkIX8FiBlQ==}
-    dependencies:
-      '@types/lodash': 4.14.170
-    dev: false
 
   /@types/lodash.pick/4.4.6:
     resolution: {integrity: sha512-u8bzA16qQ+8dY280z3aK7PoWb3fzX5ATJ0rJB6F+uqchOX2VYF02Aqa+8aYiHiHgPzQiITqCgeimlyKFy4OA6g==}
@@ -4559,10 +4549,6 @@ packages:
   /lodash.merge/4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
     dev: true
-
-  /lodash.omit/4.5.0:
-    resolution: {integrity: sha1-brGa5aHuHdnfC5aeZs4Lf6MLXmA=}
-    dev: false
 
   /lodash.pick/4.4.0:
     resolution: {integrity: sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=}

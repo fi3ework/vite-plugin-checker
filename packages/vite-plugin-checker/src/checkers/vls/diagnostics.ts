@@ -6,6 +6,7 @@ import os from 'os'
 import path from 'path'
 import { Duplex } from 'stream'
 import { VLS } from 'vls'
+import { Checker } from '../../Checker'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import {
   createConnection,
@@ -285,21 +286,18 @@ async function getDiagnostics(
 
   // watched diagnostics report
   if (options.watch) {
-    chokidar
-      .watch(workspaceUri.fsPath, {
-        ignored: (path: string) => path.includes('node_modules'),
-        ignoreInitial: false,
+    Checker.watcher.add(workspaceUri.fsPath)
+    Checker.watcher.on('all', (event, path) => {
+      if (!path.endsWith('.vue')) return
+      // TODO: watch js change
+      clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
+        textDocument: {
+          uri: URI.file(path).toString(),
+          version: Date.now(),
+        },
+        contentChanges: [{ text: fs.readFileSync(path, 'utf-8') }],
       })
-      .on('all', (event, path) => {
-        if (!path.endsWith('.vue')) return
-        clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
-          textDocument: {
-            uri: URI.file(path).toString(),
-            version: Date.now(),
-          },
-          contentChanges: [{ text: fs.readFileSync(path, 'utf-8') }],
-        })
-      })
+    })
   }
 
   console.log(logChunk)
