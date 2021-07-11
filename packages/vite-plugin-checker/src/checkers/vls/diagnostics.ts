@@ -1,17 +1,29 @@
 import chalk from 'chalk'
+import chokidar from 'chokidar'
+import glob from 'fast-glob'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import { Duplex } from 'stream'
+import { VLS } from 'vls'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import {
-  chokidar,
-  glob,
-  vls,
-  vscodeLanguageserverNode,
-  vscodeLanguageserverTextdocument,
-  vscodeUri,
-} from 'vite-plugin-checker-vls'
-import { PublishDiagnosticsParams } from 'vscode-languageclient/node'
+  createConnection,
+  createProtocolConnection,
+  Diagnostic,
+  DiagnosticSeverity,
+  DidChangeTextDocumentNotification,
+  DidOpenTextDocumentNotification,
+  InitializeParams,
+  InitializeRequest,
+  InitializeResult,
+  Logger,
+  PublishDiagnosticsParams,
+  ServerCapabilities,
+  StreamMessageReader,
+  StreamMessageWriter,
+} from 'vscode-languageserver/node'
+import { URI } from 'vscode-uri'
 
 import {
   diagnosticToTerminalLog,
@@ -23,25 +35,6 @@ import { getInitParams } from './initParams'
 
 import type { ErrorPayload } from 'vite'
 
-const { VLS } = vls
-const {
-  createConnection,
-  createProtocolConnection,
-  DidChangeTextDocumentNotification,
-  DidOpenTextDocumentNotification,
-  InitializeRequest,
-  StreamMessageReader,
-  StreamMessageWriter,
-} = vscodeLanguageserverNode
-
-type Diagnostic = vscodeLanguageserverNode.Diagnostic
-type InitializeParams = vscodeLanguageserverNode.InitializeParams
-type InitializeResult = vscodeLanguageserverNode.InitializeResult
-type Logger = vscodeLanguageserverNode.Logger
-type ServerCapabilities = vscodeLanguageserverNode.ServerCapabilities
-
-type TextDocument = vscodeLanguageserverTextdocument.TextDocument
-
 enum DOC_VERSION {
   init = -1,
 }
@@ -52,10 +45,10 @@ export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 let disposeSuppressConsole: ReturnType<typeof suppressConsole>
 
 const logLevel2Severity = {
-  ERROR: vscodeLanguageserverNode.DiagnosticSeverity.Error,
-  WARN: vscodeLanguageserverNode.DiagnosticSeverity.Warning,
-  INFO: vscodeLanguageserverNode.DiagnosticSeverity.Information,
-  HINT: vscodeLanguageserverNode.DiagnosticSeverity.Hint,
+  ERROR: DiagnosticSeverity.Error,
+  WARN: DiagnosticSeverity.Warning,
+  INFO: DiagnosticSeverity.Information,
+  HINT: DiagnosticSeverity.Hint,
 }
 
 export interface DiagnosticOptions {
@@ -79,10 +72,10 @@ export async function diagnostics(
   if (workspace) {
     const absPath = path.resolve(process.cwd(), workspace)
     console.log(`Loading Vetur in workspace path: ${chalk.green(absPath)}`)
-    workspaceUri = vscodeUri.URI.file(absPath)
+    workspaceUri = URI.file(absPath)
   } else {
     console.log(`Loading Vetur in current directory: ${chalk.green(process.cwd())}`)
-    workspaceUri = vscodeUri.URI.file(process.cwd())
+    workspaceUri = URI.file(process.cwd())
   }
 
   const errCount = await getDiagnostics(workspaceUri, logLevel2Severity[logLevel], options)
@@ -133,7 +126,7 @@ function suppressConsole() {
   }
 }
 
-async function prepareClientConnection(workspaceUri: vscodeUri.URI, options: DiagnosticOptions) {
+async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOptions) {
   const up = new TestStream()
   const down = new TestStream()
   const logger = new NullLogger()
@@ -208,8 +201,8 @@ async function prepareClientConnection(workspaceUri: vscodeUri.URI, options: Dia
 }
 
 async function getDiagnostics(
-  workspaceUri: vscodeUri.URI,
-  severity: vscodeLanguageserverNode.DiagnosticSeverity,
+  workspaceUri: URI,
+  severity: DiagnosticSeverity,
   options: DiagnosticOptions
 ) {
   const clientConnection = await prepareClientConnection(workspaceUri, options)
@@ -242,7 +235,7 @@ async function getDiagnostics(
     clientConnection.sendNotification(DidOpenTextDocumentNotification.type, {
       textDocument: {
         languageId: 'vue',
-        uri: vscodeUri.URI.file(absFilePath).toString(),
+        uri: URI.file(absFilePath).toString(),
         version: DOC_VERSION.init,
         text: fileText,
       },
@@ -252,7 +245,7 @@ async function getDiagnostics(
     if (!options.watch) {
       try {
         let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
-          uri: vscodeUri.URI.file(absFilePath).toString(),
+          uri: URI.file(absFilePath).toString(),
           version: DOC_VERSION.init,
         })) as Diagnostic[]
 
@@ -279,7 +272,7 @@ async function getDiagnostics(
               .join(os.EOL)
 
           diagnostics.forEach((d) => {
-            if (d.severity === vscodeLanguageserverNode.DiagnosticSeverity.Error) {
+            if (d.severity === DiagnosticSeverity.Error) {
               initialErrCount++
             }
           })
@@ -301,7 +294,7 @@ async function getDiagnostics(
         if (!path.endsWith('.vue')) return
         clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
           textDocument: {
-            uri: vscodeUri.URI.file(path).toString(),
+            uri: URI.file(path).toString(),
             version: Date.now(),
           },
           contentChanges: [{ text: fs.readFileSync(path, 'utf-8') }],

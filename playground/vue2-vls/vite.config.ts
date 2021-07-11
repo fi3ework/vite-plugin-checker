@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import { createVuePlugin } from 'vite-plugin-vue2'
 import ViteComponents from 'vite-plugin-components'
 import Checker from 'vite-plugin-checker'
-// import { VlsChecker } from 'vite-plugin-checker-vls'
 import { resolve } from 'path'
 
 const config = defineConfig({
