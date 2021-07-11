@@ -29,8 +29,8 @@ export type VlsConfig =
 
 /** ESLint checker configuration */
 export type EslintConfig =
-  | boolean
-  | Partial<{
+  | false
+  | {
       /** One or more glob patterns to the files that should be linted. Works the same as the eslint command. */
       files: string | string[]
       /**
@@ -38,7 +38,12 @@ export type EslintConfig =
        * @defaultValue: .js
        */
       ext?: string
-    }>
+      /**
+       * millisecond for watcher to wait to trigger re-lint
+       * @defaultValue: 300
+       */
+      watchDelay?: number
+    }
 
 /** checkers shared configuration */
 export interface SharedConfig {
@@ -112,7 +117,7 @@ export type Actions = OverlayErrorAction | ConfigAction | ConfigureServerAction 
 
 export type BuildCheckBin = BuildCheckBinStr | BuildCheckBinFn
 export type BuildCheckBinStr = [string, ReadonlyArray<string>]
-export type BuildCheckBinFn = (config: any) => [string, ReadonlyArray<string>]
+export type BuildCheckBinFn = (config: UserPluginConfig) => [string, ReadonlyArray<string>]
 
 export interface ConfigureServeChecker {
   worker: Worker

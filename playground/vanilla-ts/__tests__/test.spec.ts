@@ -37,36 +37,36 @@ describe('eslint', () => {
 
     const snapshot = {
       errorCode1: `var hello = 'Hello'`,
-      errorCode2: '',
+      errorCode2: `var hello = 'Hello~'`,
       absPath: 'vanilla-ts/src/main.ts:3:1',
       relativePath: 'src/main.ts:3:1',
       errorMsg: `Unexpected var, use let or const instead.`,
     }
 
-    // it('get initial error and subsequent error', async () => {
-    //   await viteServe({ cwd: testDir })
-    //   await pollingUntil(getHmrOverlay, (dom) => !!dom)
-    //   const [message1, file1, frame1] = await getHmrOverlayText()
-    //   expect(message1).toContain(snapshot.errorMsg)
-    //   expect(file1).toContain(snapshot.absPath)
-    //   expect(frame1).toContain(snapshot.errorCode1)
-    //   expect(stripedLog).toContain(snapshot.errorCode1)
-    //   expect(stripedLog).toContain(snapshot.errorMsg)
-    //   expect(stripedLog).toContain(snapshot.relativePath)
+    it('get initial error and subsequent error', async () => {
+      await viteServe({ cwd: testDir })
+      await pollingUntil(getHmrOverlay, (dom) => !!dom)
+      const [message1, file1, frame1] = await getHmrOverlayText()
+      expect(message1).toContain(snapshot.errorMsg)
+      expect(file1).toContain(snapshot.absPath)
+      expect(frame1).toContain(snapshot.errorCode1)
+      expect(stripedLog).toContain(snapshot.errorCode1)
+      expect(stripedLog).toContain(snapshot.errorMsg)
+      expect(stripedLog).toContain(snapshot.relativePath)
 
-    //   resetTerminalLog()
-    //   editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
-    //   await sleep(2000)
-    //   const [, , frame2] = await getHmrOverlayText()
-    //   expect(frame2).toContain(snapshot.errorCode2)
-    //   expect(stripedLog).toContain(snapshot.errorCode2)
-    // })
+      resetTerminalLog()
+      editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
+      await sleep(2000)
+      // the case will trigger a full reload, so HRM overlay will be flushed
+      await expect(getHmrOverlayText()).rejects.toThrow(
+        '<vite-error-overlay> shadow dom is expected to be found, but got null'
+      )
+      expect(stripedLog).toContain(snapshot.errorCode2)
+    })
 
     it('overlay: false', async () => {
       resetTerminalLog()
-      editFile('vite.config.ts', (code) =>
-        code.replace('eslint: true,', 'eslint: true, overlay: false,')
-      )
+      editFile('vite.config.ts', (code) => code.replace('eslint: {', 'overlay: false, eslint: {'))
 
       await viteServe({ cwd: testDir })
       await sleep(6000)
@@ -81,7 +81,7 @@ describe('eslint', () => {
       resetTerminalLog()
       editFile('src/main.ts', (code) => code.replace('var hello', 'const hello'))
       await sleep(2000)
-      expect(stripedLog).toContain(snapshot.errorCode2)
+      expect(stripedLog).not.toContain(snapshot.errorCode2)
     })
   })
 

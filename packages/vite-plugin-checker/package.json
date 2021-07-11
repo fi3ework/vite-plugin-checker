@@ -33,11 +33,11 @@
   "homepage": "https://github.com/fi3ework/vite-plugin-checker",
   "dependencies": {
     "@babel/code-frame": "^7.12.13",
-    "@types/lodash.pick": "^4.4.6",
     "ansi-escapes": "^4.3.0",
     "chokidar": "^3.5.1",
     "fast-glob": "^3.2.7",
     "lodash.pick": "^4.4.0",
+    "lodash.debounce": "^4.0.8",
     "npm-run-path": "^4.0.1",
     "strip-ansi": "^6.0.0",
     "tiny-invariant": "^1.1.0",
@@ -50,6 +50,8 @@
     "vite": "^2.0.0"
   },
   "devDependencies": {
+    "@types/lodash.pick": "^4.4.6",
+    "@types/lodash.debounce": "^4.0.6",
     "@types/eslint": "^7.2.14",
     "commander": "^8.0.0",
     "vls": "^0.7.2"
