@@ -27,6 +27,13 @@ export type VlsConfig =
       // TODO: support vls config
     }>
 
+/** ESLint checker configuration */
+export type EslintConfig =
+  | boolean
+  | Partial<{
+      // TODO: support ESLint config
+    }>
+
 /** checkers shared configuration */
 export interface SharedConfig {
   /**
@@ -46,6 +53,7 @@ export interface BuildInCheckers {
   typescript: TscConfig
   vueTsc: VueTscConfig
   vls: VlsConfig
+  eslint: EslintConfig
 }
 
 export type BuildInCheckerNames = keyof BuildInCheckers
