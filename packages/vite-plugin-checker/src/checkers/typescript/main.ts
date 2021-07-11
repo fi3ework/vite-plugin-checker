@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { parentPort } from 'worker_threads'
 
-import { Checker, CheckerAbility } from '../../Checker'
+import { Checker } from '../../Checker'
 import {
   diagnosticToTerminalLog,
   diagnosticToViteError,
@@ -114,7 +114,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   }
 }
 
-export class TscChecker extends Checker<'typescript'> implements CheckerAbility {
+export class TscChecker extends Checker<'typescript'> {
   public constructor() {
     super({
       name: 'typescript',
@@ -123,8 +123,6 @@ export class TscChecker extends Checker<'typescript'> implements CheckerAbility 
       createDiagnostic,
     })
   }
-
-  public sealConclusion() {}
 
   public init() {
     const createServeAndBuild = super.initMainThread()

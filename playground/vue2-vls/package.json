@@ -30,6 +30,7 @@
     "vite-plugin-components": "^0.10.2",
     "vite-plugin-checker": "workspace:*",
     "vite-plugin-vue2": "^1.2.1",
+    "vls": "^0.7.2",
     "vue-template-compiler": "^2.6.12"
   }
 }

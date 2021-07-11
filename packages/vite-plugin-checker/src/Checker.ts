@@ -9,10 +9,6 @@ import chokidar from 'chokidar'
 import type {} from 'vite'
 import type { CreateDiagnostic, BuildInCheckers } from './types'
 
-export interface CheckerAbility {
-  sealConclusion: any
-}
-
 export interface CheckerMeta<T extends BuildInCheckerNames> {
   name: string
   absFilePath: string

@@ -3,7 +3,6 @@ import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
 import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
-import { Checker } from './Checker'
 
 import type {
   OverlayErrorAction,
@@ -11,6 +10,7 @@ import type {
   ServeAndBuildChecker,
   UserPluginConfig,
   SharedConfig,
+  BuildCheckBinStr,
 } from './types'
 
 export * from './types'
@@ -74,7 +74,10 @@ export default function Plugin(userConfig?: UserPluginConfig): Plugin {
 
       checkers.forEach((checker) => {
         const buildBin = checker.build.buildBin
-        const proc = spawn(buildBin[0], buildBin[1], {
+        const finalBin: BuildCheckBinStr =
+          typeof buildBin === 'function' ? buildBin(userConfig) : buildBin
+
+        const proc = spawn(...finalBin, {
           cwd: process.cwd(),
           stdio: 'inherit',
           env: localEnv,
