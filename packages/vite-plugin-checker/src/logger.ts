@@ -7,6 +7,7 @@ import { ErrorPayload } from 'vite'
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
 import type { Range } from 'vscode-languageclient'
+import type { ESLint } from 'eslint'
 
 import type {
   Diagnostic as LspDiagnostic,
@@ -37,11 +38,11 @@ interface NormalizedDiagnostic {
   /** error code location */
   loc?: SourceLocation
   /** error level */
-  level?: DiagnosticCategory
+  level?: DiagnosticLevel
 }
 
 // copied from TypeScript because we used `import type`.
-export enum DiagnosticCategory {
+export enum DiagnosticLevel {
   Warning = 0,
   Error = 1,
   Suggestion = 2,
@@ -49,14 +50,14 @@ export enum DiagnosticCategory {
 }
 
 export function diagnosticToTerminalLog(d: NormalizedDiagnostic): string {
-  const labelMap: Record<DiagnosticCategory, string> = {
-    [DiagnosticCategory.Error]: chalk.bold.red('ERROR'),
-    [DiagnosticCategory.Warning]: chalk.bold.yellow('WARNING'),
-    [DiagnosticCategory.Suggestion]: chalk.bold.blue('SUGGESTION'),
-    [DiagnosticCategory.Message]: chalk.bold.cyan('MESSAGE'),
+  const labelMap: Record<DiagnosticLevel, string> = {
+    [DiagnosticLevel.Error]: chalk.bold.red('ERROR'),
+    [DiagnosticLevel.Warning]: chalk.bold.yellow('WARNING'),
+    [DiagnosticLevel.Suggestion]: chalk.bold.blue('SUGGESTION'),
+    [DiagnosticLevel.Message]: chalk.bold.cyan('MESSAGE'),
   }
 
-  const levelLabel = labelMap[d.level || DiagnosticCategory.Error]
+  const levelLabel = labelMap[d.level || DiagnosticLevel.Error]
   const fileLabel = chalk.green.bold('FILE') + ' '
   const position = d.loc
     ? chalk.yellow(d.loc.start.line) + ':' + chalk.yellow(d.loc.start.column)
@@ -161,7 +162,7 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
     id: fileName,
     checker: 'TypeScript',
     loc,
-    level: d.category,
+    level: d.category as any as DiagnosticLevel,
   }
 }
 
@@ -176,22 +177,22 @@ export function normalizeLspDiagnostic({
   absFilePath: string
   fileText: string
 }): NormalizedDiagnostic {
-  let level = DiagnosticCategory.Error
+  let level = DiagnosticLevel.Error
   const loc = lspRange2Location(diagnostic.range)
   const codeFrame = codeFrameColumns(fileText, loc)
 
   switch (diagnostic.severity) {
     case 1: // Error
-      level = DiagnosticCategory.Error
+      level = DiagnosticLevel.Error
       break
     case 2: // Warning
-      level = DiagnosticCategory.Warning
+      level = DiagnosticLevel.Warning
       break
     case 3: // Information
-      level = DiagnosticCategory.Message
+      level = DiagnosticLevel.Message
       break
     case 4: // Hint
-      level = DiagnosticCategory.Suggestion
+      level = DiagnosticLevel.Suggestion
       break
   }
 
@@ -245,6 +246,61 @@ export function lspRange2Location(range: Range): SourceLocation {
 /* --------------------------------- vue-tsc -------------------------------- */
 
 /* --------------------------------- ESLint --------------------------------- */
+
+const isNormalizedDiagnostic = (
+  d: NormalizedDiagnostic | null | undefined
+): d is NormalizedDiagnostic => {
+  return Boolean(d)
+}
+
+export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): NormalizedDiagnostic[] {
+  const firstMessage = diagnostic.messages[0]
+  if (!firstMessage) return []
+
+  return diagnostic.messages
+    .map((d) => {
+      let level = DiagnosticLevel.Error
+      switch (firstMessage.severity) {
+        case 0: // off, ignore
+          level = DiagnosticLevel.Error
+          return null
+        case 1: // warn
+          level = DiagnosticLevel.Warning
+          break
+        case 2: // error
+          level = DiagnosticLevel.Error
+          break
+      }
+
+      const loc: SourceLocation = {
+        start: {
+          line: firstMessage.line,
+          column: firstMessage.column,
+        },
+        end: {
+          line: firstMessage.endLine || 0,
+          column: firstMessage.endColumn,
+        },
+      }
+
+      const codeFrame = createFrame({
+        source: diagnostic.source ?? '',
+        location: loc,
+      })
+
+      return {
+        message: firstMessage.message,
+        conclusion: '',
+        codeFrame,
+        stripedCodeFrame: codeFrame && strip(codeFrame),
+        id: diagnostic.filePath,
+        checker: 'ESLint',
+        loc,
+        level,
+      } as any as NormalizedDiagnostic
+    })
+    .filter(isNormalizedDiagnostic)
+}
 
 /* ------------------------------ miscellaneous ----------------------------- */
 export function ensureCall(callback: CallableFunction) {

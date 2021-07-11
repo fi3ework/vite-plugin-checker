@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   extends: ['alloy', 'alloy/typescript'],
   env: {
     jest: true,

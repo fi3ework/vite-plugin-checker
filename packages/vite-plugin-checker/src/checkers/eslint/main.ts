@@ -1,4 +1,5 @@
 import os from 'os'
+import path from 'path'
 import invariant from 'tiny-invariant'
 import { ESLint } from 'eslint'
 import { parentPort } from 'worker_threads'
@@ -8,7 +9,7 @@ import {
   diagnosticToTerminalLog,
   diagnosticToViteError,
   ensureCall,
-  normalizeTsDiagnostic,
+  normalizeEslintDiagnostic,
 } from '../../logger'
 
 import type { CreateDiagnostic } from '../../types'
@@ -19,8 +20,13 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let currErr: ErrorPayload['err'] | null = null
 
   return {
-    config: ({ hmr }) => {
-      const engine = new ESLint()
+    config: async ({ hmr }) => {
+      const eslint = new ESLint()
+      const diagnostics = await eslint.lintFiles(path.resolve(process.cwd(), 'src/*.ts'))
+      const normalized = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
+      normalized.forEach((n) => {
+        console.log(diagnosticToTerminalLog(n))
+      })
     },
     configureServer({ root }) {},
   }
