@@ -1,5 +1,4 @@
-// import { Command, Option } from 'commander'
-import { commander } from 'vite-plugin-checker-vls'
+import { Command, Option } from 'commander'
 
 import { diagnostics, LogLevel, logLevels } from './diagnostics'
 
@@ -17,14 +16,14 @@ function validateLogLevel(logLevelInput: unknown): logLevelInput is LogLevel {
 }
 
 ;(async () => {
-  const program = new commander.Command()
+  const program = new Command()
   program.name('vti').description('Vetur Terminal Interface').version(getVersion())
 
   program
     .command('diagnostics [workspace]')
     .description('Print all diagnostics')
     .addOption(
-      new commander.Option('-l, --log-level <logLevel>', 'Log level to print')
+      new Option('-l, --log-level <logLevel>', 'Log level to print')
         .default('WARN')
         // logLevels is readonly array but .choices need read-write array (because of weak typing)
         .choices(logLevels as unknown as string[])

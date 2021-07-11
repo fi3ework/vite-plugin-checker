@@ -55,10 +55,10 @@ export default {
 
 ### Vue (use Vetur / VLS)
 
-1. Install `vite-plugin-checker-vls`. This package provides the essential dependencies that will be imported by VLS checker (`vls` filed).
+1. Install [vls](https://www.npmjs.com/package/vls), plugin uses vls as the check server.
 
 ```bash
-yarn add vite-plugin-checker-vls -D
+yarn add vls -D
 ```
 
 2. Add `vls` field to plugin config.
@@ -126,7 +126,7 @@ export default {
 
 ### config.vls
 
-_If `vls` filed is not falsy. `vite-plugin-checker-vls` **must** be installed as a peer dependency to provide VLS needed dependencies._
+_If `vls` filed is not falsy. [vls](https://www.npmjs.com/package/vls) **must** be installed as a peer dependency to provide VLS needed dependencies._
 
 | field | Type     | Default value | Description |
 | :---- | -------- | ------------- | ----------- |
