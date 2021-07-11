@@ -20,7 +20,7 @@ import type {
   LineAndCharacter,
 } from 'typescript'
 
-interface NormalizedDiagnostic {
+export interface NormalizedDiagnostic {
   /** error message */
   message?: string
   /** error conclusion */

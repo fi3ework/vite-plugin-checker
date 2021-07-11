@@ -72,11 +72,13 @@ importers:
     specifiers:
       '@babel/code-frame': ^7.12.13
       '@types/eslint': ^7.2.14
+      '@types/lodash.debounce': ^4.0.6
       '@types/lodash.pick': ^4.4.6
       ansi-escapes: ^4.3.0
       chokidar: ^3.5.1
       commander: ^8.0.0
       fast-glob: ^3.2.7
+      lodash.debounce: ^4.0.8
       lodash.pick: ^4.4.0
       npm-run-path: ^4.0.1
       strip-ansi: ^6.0.0
@@ -88,10 +90,10 @@ importers:
       vscode-uri: ^3.0.2
     dependencies:
       '@babel/code-frame': 7.12.13
-      '@types/lodash.pick': 4.4.6
       ansi-escapes: 4.3.2
       chokidar: 3.5.1
       fast-glob: 3.2.7
+      lodash.debounce: 4.0.8
       lodash.pick: 4.4.0
       npm-run-path: 4.0.1
       strip-ansi: 6.0.0
@@ -102,6 +104,8 @@ importers:
       vscode-uri: 3.0.2
     devDependencies:
       '@types/eslint': 7.2.14
+      '@types/lodash.debounce': 4.0.6
+      '@types/lodash.pick': 4.4.6
       commander: 8.0.0
       vls: 0.7.4
 
@@ -1017,15 +1021,21 @@ packages:
     resolution: {integrity: sha512-YSBPTLTVm2e2OoQIDYx8HaeWJ5tTToLH67kXR7zYNGupXMEHa2++G8k+DczX2cFVgalypqtyZIcU19AFcmOpmg==}
     dev: true
 
+  /@types/lodash.debounce/4.0.6:
+    resolution: {integrity: sha512-4WTmnnhCfDvvuLMaF3KV4Qfki93KebocUF45msxhYyjMttZDQYzHkO639ohhk8+oco2cluAFL3t5+Jn4mleylQ==}
+    dependencies:
+      '@types/lodash': 4.14.170
+    dev: true
+
   /@types/lodash.pick/4.4.6:
     resolution: {integrity: sha512-u8bzA16qQ+8dY280z3aK7PoWb3fzX5ATJ0rJB6F+uqchOX2VYF02Aqa+8aYiHiHgPzQiITqCgeimlyKFy4OA6g==}
     dependencies:
       '@types/lodash': 4.14.170
-    dev: false
+    dev: true
 
   /@types/lodash/4.14.170:
     resolution: {integrity: sha512-bpcvu/MKHHeYX+qeEN8GE7DIravODWdACVA1ctevD8CN24RhPZIKMn9ntfAsrvLfSX3cR5RrBKAbYm9bGs0A+Q==}
-    dev: false
+    dev: true
 
   /@types/minimatch/3.0.4:
     resolution: {integrity: sha512-1z8k4wzFnNjVK/tlxvrWuK5WMt6mydWWP7+zvH5eFep4oj+UkrfiJTRtjCeBXNpwaA/FYqqtb4/QS4ianFpIRA==}
@@ -4560,6 +4570,10 @@ packages:
   /lodash.clonedeep/4.5.0:
     resolution: {integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=}
     dev: true
+
+  /lodash.debounce/4.0.8:
+    resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
+    dev: false
 
   /lodash.ismatch/4.4.0:
     resolution: {integrity: sha1-dWy1FQyjum8RCFp4hJZF8Yj4Xzc=}

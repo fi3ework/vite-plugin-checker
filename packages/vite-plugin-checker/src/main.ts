@@ -36,7 +36,7 @@ function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndB
   return serveAndBuildCheckers
 }
 
-export default function Plugin(userConfig?: UserPluginConfig): Plugin {
+export default function Plugin(userConfig: UserPluginConfig): Plugin {
   const enableBuild = userConfig?.enableBuild ?? true
   let checkers: ServeAndBuildChecker[] = []
   let viteMode: ConfigEnv['command'] | undefined
