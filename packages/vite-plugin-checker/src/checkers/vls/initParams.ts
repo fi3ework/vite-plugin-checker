@@ -2,8 +2,6 @@ import { vscodeLanguageserverProtocol, vscodeUri } from 'vite-plugin-checker-vls
 
 type InitializeParams = vscodeLanguageserverProtocol.InitializeParams
 type URI = vscodeUri.URI
-// import { InitializeParams } from 'vscode-languageserver-protocol'
-// import { URI } from 'vscode-uri'
 
 export function getInitParams(workspaceUri: URI): InitializeParams {
   const defaultVLSConfig = getDefaultVLSConfig()
