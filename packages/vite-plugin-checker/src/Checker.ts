@@ -9,6 +9,10 @@ import chokidar from 'chokidar'
 import type {} from 'vite'
 import type { CreateDiagnostic, BuildInCheckers } from './types'
 
+if (!isMainThread) {
+  process.stdout.isTTY = true
+}
+
 export interface CheckerMeta<T extends BuildInCheckerNames> {
   name: string
   absFilePath: string
