@@ -92,6 +92,7 @@ importers:
       '@babel/code-frame': 7.12.13
       ansi-escapes: 4.3.2
       chokidar: 3.5.1
+      commander: 8.0.0
       fast-glob: 3.2.7
       lodash.debounce: 4.0.8
       lodash.pick: 4.4.0
@@ -106,7 +107,6 @@ importers:
       '@types/eslint': 7.2.14
       '@types/lodash.debounce': 4.0.6
       '@types/lodash.pick': 4.4.6
-      commander: 8.0.0
       vls: 0.7.4
 
   playground/react-ts:
@@ -2428,7 +2428,7 @@ packages:
   /commander/8.0.0:
     resolution: {integrity: sha512-Xvf85aAtu6v22+E5hfVoLHqyul/jyxh91zvqk/ioJTQuJR7Z78n7H558vMPKanPSRgIEeZemT92I2g9Y8LPbSQ==}
     engines: {node: '>= 12'}
-    dev: true
+    dev: false
 
   /compare-func/2.0.0:
     resolution: {integrity: sha512-zHig5N+tPWARooBnb0Zx1MFcdfpyJrfTJ3Y5L+IFvUm8rM74hHz66z0gw0x4tijh5CorKkKUCnW82R2vmpeCRA==}

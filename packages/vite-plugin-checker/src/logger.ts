@@ -51,14 +51,14 @@ export enum DiagnosticLevel {
 
 export function diagnosticToTerminalLog(d: NormalizedDiagnostic): string {
   const labelMap: Record<DiagnosticLevel, string> = {
-    [DiagnosticLevel.Error]: chalk.bold.red('ERROR'),
-    [DiagnosticLevel.Warning]: chalk.bold.yellow('WARNING'),
-    [DiagnosticLevel.Suggestion]: chalk.bold.blue('SUGGESTION'),
-    [DiagnosticLevel.Message]: chalk.bold.cyan('MESSAGE'),
+    [DiagnosticLevel.Error]: chalk.bold.bgRed.rgb(0, 0, 0)(' ERROR '),
+    [DiagnosticLevel.Warning]: chalk.bold.bgYellow.rgb(0, 0, 0)(' WARNING '),
+    [DiagnosticLevel.Suggestion]: chalk.bold.bgBlue.rgb(0, 0, 0)(' SUGGESTION '),
+    [DiagnosticLevel.Message]: chalk.bold.bgCyan.rgb(0, 0, 0)(' MESSAGE '),
   }
 
   const levelLabel = labelMap[d.level || DiagnosticLevel.Error]
-  const fileLabel = chalk.green.bold('FILE') + ' '
+  const fileLabel = chalk.bgGreen.rgb(0, 0, 0).bold(' FILE ') + ' '
   const position = d.loc
     ? chalk.yellow(d.loc.start.line) + ':' + chalk.yellow(d.loc.start.column)
     : ''
