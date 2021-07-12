@@ -45,6 +45,7 @@
     "fs-extra": "^10.0.0",
     "husky": "4.3.7",
     "jest": "^27.0.4",
+    "jest-serializer-path": "^0.1.15",
     "lint-staged": "^11.0.0",
     "minimist": "^1.2.5",
     "playwright-chromium": "^1.7.0",

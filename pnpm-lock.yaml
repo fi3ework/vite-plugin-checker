@@ -23,6 +23,7 @@ importers:
       fs-extra: ^10.0.0
       husky: 4.3.7
       jest: ^27.0.4
+      jest-serializer-path: ^0.1.15
       lint-staged: ^11.0.0
       minimist: ^1.2.5
       playwright-chromium: ^1.7.0
@@ -55,6 +56,7 @@ importers:
       fs-extra: 10.0.0
       husky: 4.3.7
       jest: 27.0.4
+      jest-serializer-path: 0.1.15
       lint-staged: 11.0.0
       minimist: 1.2.5
       playwright-chromium: 1.12.2
@@ -4202,6 +4204,15 @@ packages:
       - supports-color
     dev: true
 
+  /jest-serializer-path/0.1.15:
+    resolution: {integrity: sha512-sXb+Ckz9LK5bB5sRAXFeG/nwhGn1XBKayy9xhPpgOmAWaljJiS+VN/xJ3P4I19jZ+WejowvO/kES+A9HePTMvQ==}
+    engines: {node: '>=6.4.x', npm: '>=3.10.3'}
+    dependencies:
+      lodash.clonedeep: 4.5.0
+      lodash.iserror: 3.1.1
+      slash: 2.0.0
+    dev: true
+
   /jest-serializer/27.0.1:
     resolution: {integrity: sha512-svy//5IH6bfQvAbkAEg1s7xhhgHTtXu0li0I2fdKHDsLP2P2MOiscPQIENQep8oU2g2B3jqLyxKKzotZOz4CwQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -4574,6 +4585,10 @@ packages:
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
     dev: false
+
+  /lodash.iserror/3.1.1:
+    resolution: {integrity: sha1-KXuaBfq2cUvCRE18wZ0dfES17Ow=}
+    dev: true
 
   /lodash.ismatch/4.4.0:
     resolution: {integrity: sha1-dWy1FQyjum8RCFp4hJZF8Yj4Xzc=}
@@ -5737,6 +5752,11 @@ packages:
 
   /sisteransi/1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
+    dev: true
+
+  /slash/2.0.0:
+    resolution: {integrity: sha512-ZYKh3Wh2z1PpEXWr0MpSBZ0V6mZHAQfYevttO11c51CaWjGTaadiKZ+wVt1PbMlDV5qhMFslpZCemhwOK7C89A==}
+    engines: {node: '>=6'}
     dev: true
 
   /slash/3.0.0:
