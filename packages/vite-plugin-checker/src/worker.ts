@@ -43,7 +43,7 @@ export function createScript<T extends Partial<BuildInCheckers>>({
       ): ConfigureServeChecker => {
         const isBuild = env.command === 'build'
         const worker = new Worker(absFilename, {
-          workerData: { env, checkerConfig, columns: process.stdout.columns },
+          workerData: { env, checkerConfig },
         })
 
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -75,7 +75,6 @@ export function createScript<T extends Partial<BuildInCheckers>>({
       let diagnostic: CheckerDiagnostic | null = null
       if (!parentPort) throw Error('should have parentPort as file runs in worker thread')
       const isBuild = workerData.env.command === 'build'
-      process.stdout.columns = workerData.columns
       // only run bin command and do not listen message in build mode
 
       const port = parentPort.on(
