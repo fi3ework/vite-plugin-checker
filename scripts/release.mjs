@@ -45,7 +45,6 @@ async function preCheck() {
   cd('../../')
   await $`npm run lint`
   await $`npm run type-check`
-  await $`npm run test`
   await sleep(0) // don't know why
   cd(pkgDir)
 }
