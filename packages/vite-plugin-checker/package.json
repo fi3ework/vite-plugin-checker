@@ -36,24 +36,24 @@
     "ansi-escapes": "^4.3.0",
     "chokidar": "^3.5.1",
     "fast-glob": "^3.2.7",
-    "lodash.pick": "^4.4.0",
     "lodash.debounce": "^4.0.8",
+    "lodash.pick": "^4.4.0",
     "npm-run-path": "^4.0.1",
     "strip-ansi": "^6.0.0",
     "tiny-invariant": "^1.1.0",
     "vscode-languageclient": "^7.0.0",
     "vscode-languageserver": "^7.0.0",
     "vscode-languageserver-textdocument": "^1.0.1",
-    "vscode-uri": "^3.0.2"
+    "vscode-uri": "^3.0.2",
+    "commander": "^8.0.0"
   },
   "peerDependencies": {
     "vite": "^2.0.0"
   },
   "devDependencies": {
-    "@types/lodash.pick": "^4.4.6",
-    "@types/lodash.debounce": "^4.0.6",
     "@types/eslint": "^7.2.14",
-    "commander": "^8.0.0",
+    "@types/lodash.debounce": "^4.0.6",
+    "@types/lodash.pick": "^4.4.6",
     "vls": "^0.7.2"
   }
 }
