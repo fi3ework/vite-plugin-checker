@@ -11,8 +11,12 @@ async function main() {
   await $`npm run lint`
   await $`npm run type-check`
   await $`npm run build`
-  const tagPart = distTag ? '--tag ' + distTag : ''
+  const tagPart = distTag ? `--tag ${distTag}` : ''
+  // https://github.com/google/zx/issues/144#issuecomment-859745076
+  const q = $.quote
+  $.quote = (v) => v
   await $`npx pnpm -r publish ${tagPart} --access public --no-git-checks`
+  $.quote = q
   await $`git clean -fd`
 }
 
