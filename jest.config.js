@@ -15,6 +15,7 @@ const config = {
     '^.+\\.ts$': 'ts-jest',
   },
   watchPathIgnorePatterns: ['<rootDir>/temp'],
+  snapshotSerializers: ['jest-serializer-path'],
 }
 
 module.exports = config
