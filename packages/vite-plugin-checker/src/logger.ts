@@ -19,6 +19,7 @@ import type {
   flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
   LineAndCharacter,
 } from 'typescript'
+import type { BuildInCheckerNames } from './types'
 
 export interface NormalizedDiagnostic {
   /** error message */
@@ -49,16 +50,22 @@ export enum DiagnosticLevel {
   Message = 3,
 }
 
-export function diagnosticToTerminalLog(d: NormalizedDiagnostic): string {
+export function diagnosticToTerminalLog(
+  d: NormalizedDiagnostic,
+  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint'
+): string {
+  const nameInLabel = name ? `(${name})` : ''
+  const boldBlack = chalk.bold.rgb(0, 0, 0)
+
   const labelMap: Record<DiagnosticLevel, string> = {
-    [DiagnosticLevel.Error]: chalk.bold.bgRed.rgb(0, 0, 0)(' ERROR '),
-    [DiagnosticLevel.Warning]: chalk.bold.bgYellow.rgb(0, 0, 0)(' WARNING '),
-    [DiagnosticLevel.Suggestion]: chalk.bold.bgBlue.rgb(0, 0, 0)(' SUGGESTION '),
-    [DiagnosticLevel.Message]: chalk.bold.bgCyan.rgb(0, 0, 0)(' MESSAGE '),
+    [DiagnosticLevel.Error]: boldBlack.bgRedBright(` ERROR${nameInLabel} `),
+    [DiagnosticLevel.Warning]: boldBlack.bgYellowBright(` WARNING${nameInLabel} `),
+    [DiagnosticLevel.Suggestion]: boldBlack.bgBlueBright(` SUGGESTION${nameInLabel} `),
+    [DiagnosticLevel.Message]: boldBlack.bgCyanBright(` MESSAGE${nameInLabel} `),
   }
 
   const levelLabel = labelMap[d.level || DiagnosticLevel.Error]
-  const fileLabel = chalk.bgGreen.rgb(0, 0, 0).bold(' FILE ') + ' '
+  const fileLabel = boldBlack.bgCyanBright(' FILE ') + ' '
   const position = d.loc
     ? chalk.yellow(d.loc.start.line) + ':' + chalk.yellow(d.loc.start.column)
     : ''

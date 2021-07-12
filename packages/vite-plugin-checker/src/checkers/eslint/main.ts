@@ -58,7 +58,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         const diagnostics = await eslint.lintFiles(filePath)
         const normalized = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
         normalized.forEach((n) => {
-          console.log(diagnosticToTerminalLog(n))
+          console.log(diagnosticToTerminalLog(n, 'ESLint'))
         })
         diagnosticsCache[filePath] = normalized
 
