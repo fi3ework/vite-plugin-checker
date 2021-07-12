@@ -105,10 +105,7 @@ export function createFrame({
   source: string
   location: SourceLocation
 }) {
-  const frame = codeFrameColumns(source, location, {
-    // worker tty did not fork parent process stdout, let's make a workaround
-    forceColor: true,
-  })
+  const frame = codeFrameColumns(source, location)
     .split('\n')
     .map((line) => '  ' + line)
     .join(os.EOL)
