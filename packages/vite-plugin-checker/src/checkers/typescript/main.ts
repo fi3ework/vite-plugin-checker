@@ -55,7 +55,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           currErr = diagnosticToViteError(formattedDiagnostics)
         }
 
-        logChunk += os.EOL + diagnosticToTerminalLog(formattedDiagnostics)
+        logChunk += os.EOL + diagnosticToTerminalLog(formattedDiagnostics, 'TypeScript')
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (

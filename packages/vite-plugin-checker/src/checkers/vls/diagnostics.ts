@@ -159,7 +159,7 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
     const res = await normalizePublishDiagnosticParams(publishDiagnostics)
     const normalized = diagnosticToViteError(res)
     console.log(os.EOL)
-    console.log(res.map((d) => diagnosticToTerminalLog(d)).join(os.EOL))
+    console.log(res.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
 
     options.errorCallback?.(publishDiagnostics, normalized)
   }
@@ -267,7 +267,8 @@ async function getDiagnostics(
                     diagnostic: d,
                     absFilePath,
                     fileText,
-                  })
+                  }),
+                  'VLS'
                 )
               )
               .join(os.EOL)
