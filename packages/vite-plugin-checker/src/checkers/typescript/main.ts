@@ -72,6 +72,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           case 6031:
           case 6032:
             // clear current error and use the newer errors
+            logChunk = ''
             currErr = null
             return
           case 6193: // 1 Error
@@ -92,7 +93,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             logChunk = ''
           }
 
-          console.log(logChunk + (errorCount ? os.EOL : '') + diagnostic.messageText.toString())
+          console.log(logChunk + os.EOL + diagnostic.messageText.toString())
         })
       }
 
