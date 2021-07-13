@@ -38,6 +38,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-
 
+      - name: Install playwright
+        run: npx playwright install-deps chromium
+
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: 6.4.0
@@ -53,7 +56,7 @@ jobs:
         run: npm run type-check
 
       - name: Test
-        run: npm run test
+        run: npm --silent run test
 
   coverage:
     runs-on: ubuntu-latest
@@ -75,6 +78,9 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-
+
+      - name: Install playwright
+        run: npx playwright install-deps chromium
 
       - uses: pnpm/action-setup@v2.0.1
         with:

@@ -44,64 +44,6 @@ Found 1 error. Watching for file changes.
 `;
 
 exports[`typescript serve get initial error and subsequent error 5`] = `
-"Pre-bundling dependencies:
-  react
-  react-dom
-(this will be run only when your dependencies or config have changed)
-
-  vite v2.3.8 dev server running at:
-
-  > Local: http://localhost:3000/
-  > Network: use \`--host\` to expose
-
-  ready in XXXms
-
-
- ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:7:46
-
-     5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(1)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">
-
-Found 1 error. Watching for file changes.
-"
-`;
-
-exports[`typescript serve get initial error and subsequent error 6`] = `
-"Pre-bundling dependencies:
-  react
-  react-dom
-(this will be run only when your dependencies or config have changed)
-
-  vite v2.3.8 dev server running at:
-
-  > Local: http://localhost:3000/
-  > Network: use \`--host\` to expose
-
-  ready in XXXms
-
-
- ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:7:46
-
-     5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(1)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">
-
-Found 1 error. Watching for file changes.
-"
-`;
-
-exports[`typescript serve get initial error and subsequent error 7`] = `
 "5 | function App() {
      6 |   // Try change <string> to <number> and the overlay will gone.
   >  7 |   const [count, setCount] = useState<string>(2)
@@ -111,7 +53,7 @@ exports[`typescript serve get initial error and subsequent error 7`] = `
     10 |       <header className=\\"App-header\\">"
 `;
 
-exports[`typescript serve get initial error and subsequent error 8`] = `
+exports[`typescript serve get initial error and subsequent error 6`] = `
 "HH:MM:SS AM [vite] hmr update /src/App.tsx
 
  ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
@@ -155,56 +97,6 @@ Found 1 error. Watching for file changes.
 `;
 
 exports[`typescript serve overlay: false 2`] = `
-"
-  vite v2.3.8 dev server running at:
-
-  > Local: http://localhost:3000/
-  > Network: use \`--host\` to expose
-
-  ready in XXXms
-
-
- ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:7:46
-
-     5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(1)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">
-
-Found 1 error. Watching for file changes.
-"
-`;
-
-exports[`typescript serve overlay: false 3`] = `
-"
-  vite v2.3.8 dev server running at:
-
-  > Local: http://localhost:3000/
-  > Network: use \`--host\` to expose
-
-  ready in XXXms
-
-
- ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:7:46
-
-     5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(1)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">
-
-Found 1 error. Watching for file changes.
-"
-`;
-
-exports[`typescript serve overlay: false 4`] = `
 "HH:MM:SS AM [vite] hmr update /src/App.tsx
 
  ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.

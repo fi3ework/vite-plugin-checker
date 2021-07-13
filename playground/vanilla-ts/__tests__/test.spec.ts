@@ -46,8 +46,6 @@ describe('eslint', () => {
       expect(file1).toMatchSnapshot()
       expect(frame1).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
 
       resetTerminalLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
@@ -69,8 +67,6 @@ describe('eslint', () => {
         '<vite-error-overlay> shadow dom is expected to be found, but got null'
       )
 
-      expect(stripedLog).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       resetTerminalLog()

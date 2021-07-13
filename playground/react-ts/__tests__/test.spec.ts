@@ -46,8 +46,6 @@ describe('typescript', () => {
       expect(file1).toMatchSnapshot()
       expect(frame1).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
 
       resetTerminalLog()
       editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
@@ -69,8 +67,6 @@ describe('typescript', () => {
         '<vite-error-overlay> shadow dom is expected to be found, but got null'
       )
 
-      expect(stripedLog).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       resetTerminalLog()
