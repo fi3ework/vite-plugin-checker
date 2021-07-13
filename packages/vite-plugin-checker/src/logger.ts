@@ -2,6 +2,7 @@ import chalk from 'chalk'
 import { readFile } from 'fs/promises'
 import os from 'os'
 import strip from 'strip-ansi'
+import { URI } from 'vscode-uri'
 import { ErrorPayload } from 'vite'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
@@ -233,8 +234,8 @@ export async function normalizePublishDiagnosticParams(
   return res
 }
 
-export function uriToAbsPath(uri: string): string {
-  return uri.slice('file://'.length)
+export function uriToAbsPath(documentUri: string): string {
+  return URI.parse(documentUri).fsPath
 }
 
 export function lspRange2Location(range: Range): SourceLocation {

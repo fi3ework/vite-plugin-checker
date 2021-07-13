@@ -1,5 +1,4 @@
 import chalk from 'chalk'
-import chokidar from 'chokidar'
 import glob from 'fast-glob'
 import fs from 'fs'
 import os from 'os'

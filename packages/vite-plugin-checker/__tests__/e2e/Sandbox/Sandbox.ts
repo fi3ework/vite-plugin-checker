@@ -1,7 +1,7 @@
 import execa from 'execa'
 import path from 'path'
 import playwright, { chromium } from 'playwright-chromium'
-import { ElementHandleForTag } from 'playwright-chromium/types/structs'
+import type {} from 'playwright-chromium/types/structs'
 import strip from 'strip-ansi'
 import invariant from 'tiny-invariant'
 
@@ -31,13 +31,16 @@ export async function viteServe({
   port = 3000,
   path = '',
 }: { cwd?: string; port?: number; path?: string } = {}) {
+  browser = await chromium.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  })
+
   devServer = execa(binPath, {
     cwd: cwd ?? testDir,
   })
 
-  browser = await chromium.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  })
+  console.log('launching browser')
+  page = await browser.newPage()
 
   await new Promise((resolve) => {
     devServer.stdout.on('data', (data: Buffer) => {
@@ -50,8 +53,6 @@ export async function viteServe({
     })
   })
 
-  console.log('launching browser')
-  page = await browser.newPage()
   await page.goto(`http://localhost:${port}${path}`)
   await page.waitForLoadState('domcontentloaded')
   await page.waitForSelector('body', { state: 'visible' })
@@ -79,6 +80,10 @@ export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T)
       }
     }
   }
+}
+
+export async function waitForHmrOverlay() {
+  return page.waitForSelector('vite-error-overlay', { state: 'visible' })
 }
 
 export async function getHmrOverlay() {
