@@ -4,12 +4,17 @@ import playwright, { chromium } from 'playwright-chromium'
 import type {} from 'playwright-chromium/types/structs'
 import strip from 'strip-ansi'
 import invariant from 'tiny-invariant'
+import fs from 'fs'
+import os from 'os'
 
+// @ts-ignore
+const page = global.page!
+const DIR = path.join(os.tmpdir(), 'jest_playwright_global_setup')
 import { expectStdoutNotContains, sleep, testDir } from '../testUtils'
 
 let devServer: any
 let browser: playwright.Browser
-let page: playwright.Page
+// const page: playwright.Page
 let binPath: string
 
 export let log = ''
@@ -29,18 +34,26 @@ export async function preTest() {
 export async function viteServe({
   cwd = process.cwd(),
   port = 3000,
-  path = '',
+  path: _path = '',
 }: { cwd?: string; port?: number; path?: string } = {}) {
-  browser = await chromium.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  })
+  // browser = await chromium.launch({
+  //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  // })
+
+  // const wsEndpoint = fs.readFileSync(path.join(DIR, 'wsEndpoint'), 'utf-8')
+  // const browser = await chromium.connect({
+  //   wsEndpoint,
+  // })
+
+  // // @ts-ignore
+  // global.page = await browser.newPage()
 
   devServer = execa(binPath, {
     cwd: cwd ?? testDir,
   })
 
   console.log('launching browser')
-  page = await browser.newPage()
+  // page = await browser.newPage()
 
   await new Promise((resolve) => {
     devServer.stdout.on('data', (data: Buffer) => {
@@ -53,13 +66,13 @@ export async function viteServe({
     })
   })
 
-  await page.goto(`http://localhost:${port}${path}`)
+  await page.goto(`http://localhost:${port}${_path}`)
   await page.waitForLoadState('domcontentloaded')
   await page.waitForSelector('body', { state: 'visible' })
 }
 
 export async function killServer() {
-  if (browser) await browser.close()
+  // if (browser) await browser.close()
   if (devServer) {
     devServer.kill('SIGTERM', {
       forceKillAfterTimeout: 2000,
