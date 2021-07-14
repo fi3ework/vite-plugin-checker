@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import assert from 'assert'
 
 export function slash(p: string): string {
   return p.replace(/\\/g, '/')

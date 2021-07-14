@@ -12,6 +12,16 @@ export function slash(p: string): string {
 
 let tempDir: string
 
+// injected by the test env
+declare global {
+  namespace NodeJS {
+    interface Global {
+      page?: Page
+      viteTestUrl?: string
+    }
+  }
+}
+
 export async function copyCode({
   includeNodeModules = false,
   cleanBefore = false,
@@ -48,13 +58,20 @@ export async function copyCode({
   } catch (e) {}
 }
 
-beforeAll(async () => await copyCode({ includeNodeModules: true, cleanBefore: true }), 30000)
+beforeAll(async () => {
+  const page = global.page
+  if (!page) {
+    return
+  }
+
+  await copyCode({ includeNodeModules: true, cleanBefore: true })
+}, 30000)
 
 afterAll(async () => {
   // global.page?.off('console', onConsole)
-  // await global.page?.close()
+  await global.page?.close()
   // await server?.close()
   // if (err) {
-  //   throw err
+  // throw err
   // }
 })

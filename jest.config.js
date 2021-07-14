@@ -8,6 +8,7 @@ const config = {
   globalTeardown: './scripts/jestGlobalTeardown.js',
   setupFilesAfterEnv: ['./scripts/jestSetupFilesAfterEnv.ts'],
   testTimeout: process.env.CI ? 100000 : 30000,
+  testEnvironment: './scripts/testEnvironment.js',
   collectCoverage: false,
   collectCoverageFrom: ['packages/*/src/**/*.ts', 'packages/*/lib/**/*.js'],
   detectOpenHandles: true,
