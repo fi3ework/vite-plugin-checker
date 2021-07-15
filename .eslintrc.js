@@ -5,6 +5,7 @@ module.exports = {
     jest: true,
   },
   globals: {
+    page: 'readable',
     globalThis: 'readable',
   },
   rules: {

@@ -3,6 +3,7 @@ import {
   getHmrOverlayText,
   killServer,
   pollingUntil,
+  waitForHmrOverlay,
   preTest,
   resetTerminalLog,
   stripedLog,
@@ -47,9 +48,11 @@ describe('typescript', () => {
       expect(frame1).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
+      console.log('-- edit file --')
       resetTerminalLog()
       editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
-      await sleep(2000)
+      await sleep(process.env.CI ? 5000 : 2000)
+      await pollingUntil(getHmrOverlay, (dom) => !!dom)
       const [, , frame2] = await getHmrOverlayText()
       expect(frame2).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
@@ -69,9 +72,10 @@ describe('typescript', () => {
 
       expect(stripedLog).toMatchSnapshot()
 
+      console.log('-- edit file --')
       resetTerminalLog()
       editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
-      await sleep(2000)
+      await sleep(process.env.CI ? 5000 : 2000)
       expect(stripedLog).toMatchSnapshot()
     })
   })
