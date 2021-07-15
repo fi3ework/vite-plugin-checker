@@ -56,34 +56,7 @@ exports[`vue2-vls serve get initial error and subsequent error 5`] = `
 `;
 
 exports[`vue2-vls serve get initial error and subsequent error 6`] = `
-"Pre-bundling dependencies:
-  vue
-  vuex
-  vue-router
-(this will be run only when your dependencies or config have changed)
-
-  vite v2.3.8 dev server running at:
-
-  > Local: http://localhost:3001/vue-template/
-  > Network: use \`--host\` to expose
-
-  ready in XXXms
-
-Loading Vetur in workspace path: <PROJECT_ROOT>/temp/vue2-vls
-
-
- ERROR(VLS)  Property 'msg1' does not exist on type 'CombinedVueInstance<{ msg: string; } & Vue, object, object, object, Record<never, any>>'. Did you mean 'msg'?
- FILE  <PROJECT_ROOT>/temp/vue2-vls/src/components/HelloWorld.vue:3:12
-
-  1 | <template>
-  2 |   <div class=\\"hello\\">
-> 3 |     <h1>{{ msg1 }}</h1>
-    |            ^^^^
-  4 |     <p>
-  5 |       For a guide and recipes on how to configure / customize this project,<br />
-  6 |       check out the
-
-HH:MM:SS AM [vite] hmr update /src/components/HelloWorld.vue
+"HH:MM:SS AM [vite] hmr update /src/components/HelloWorld.vue
 
 
  ERROR(VLS)  Property 'msg2' does not exist on type 'CombinedVueInstance<{ msg: string; } & Vue, object, object, object, Record<never, any>>'. Did you mean 'msg'?

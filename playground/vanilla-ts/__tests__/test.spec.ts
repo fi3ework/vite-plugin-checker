@@ -47,13 +47,11 @@ describe('eslint', () => {
       expect(frame1).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
+      console.log('-- edit file --')
       resetTerminalLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
-      await sleep(2000)
-      // the case will trigger a full reload, so HRM overlay will be flushed
-      // await expect(getHmrOverlayText()).rejects.toThrow(
-      //   '<vite-error-overlay> shadow dom is expected to be found, but got null'
-      // )
+      await sleep(process.env.CI ? 5000 : 2000)
+      await pollingUntil(getHmrOverlay, (dom) => !!dom)
       expect(stripedLog).toMatchSnapshot()
     })
 
@@ -71,7 +69,7 @@ describe('eslint', () => {
 
       resetTerminalLog()
       editFile('src/main.ts', (code) => code.replace('var hello', 'const hello'))
-      await sleep(2000)
+      await sleep(process.env.CI ? 5000 : 2000)
       expect(stripedLog).toMatchSnapshot()
     })
   })

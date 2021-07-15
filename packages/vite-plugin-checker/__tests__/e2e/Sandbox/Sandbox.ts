@@ -1,15 +1,15 @@
 import execa from 'execa'
 import path from 'path'
 import playwright, { chromium } from 'playwright-chromium'
-import type {} from 'playwright-chromium/types/structs'
+import type { ElementHandleForTag } from 'playwright-chromium/types/structs'
 import strip from 'strip-ansi'
 import invariant from 'tiny-invariant'
-import fs from 'fs'
-import os from 'os'
+// import fs from 'fs'
+// import os from 'os'
 
 // @ts-ignore
-const page = global.page!
-const DIR = path.join(os.tmpdir(), 'jest_playwright_global_setup')
+// const page = global.page!
+// const DIR = path.join(os.tmpdir(), 'jest_playwright_global_setup')
 import { expectStdoutNotContains, sleep, testDir } from '../testUtils'
 
 let devServer: any
@@ -36,6 +36,9 @@ export async function viteServe({
   port = 3000,
   path: _path = '',
 }: { cwd?: string; port?: number; path?: string } = {}) {
+  sleep(2000)
+  // @ts-ignore
+  // const devServer = global.devServer!
   // browser = await chromium.launch({
   //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
   // })
@@ -48,12 +51,12 @@ export async function viteServe({
   // // @ts-ignore
   // global.page = await browser.newPage()
 
+  console.log('launching browser')
+  // page = await browser.newPage()
+
   devServer = execa(binPath, {
     cwd: cwd ?? testDir,
   })
-
-  console.log('launching browser')
-  // page = await browser.newPage()
 
   await new Promise((resolve) => {
     devServer.stdout.on('data', (data: Buffer) => {
@@ -66,22 +69,25 @@ export async function viteServe({
     })
   })
 
+  await sleep(6000)
   await page.goto(`http://localhost:${port}${_path}`)
   await page.waitForLoadState('domcontentloaded')
-  await page.waitForSelector('body', { state: 'visible' })
+  // await page.waitForSelector('body', { state: 'attached' })
 }
 
 export async function killServer() {
-  // if (browser) await browser.close()
+  // @ts-ignore
+  // const devServer = global.devServer!
+  // if (page) await page.close()
   if (devServer) {
     devServer.kill('SIGTERM', {
-      forceKillAfterTimeout: 2000,
+      forceKillAfterTimeout: 1,
     })
   }
 }
 
 export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T) => boolean) {
-  const maxTries = process.env.CI ? 1000 : 100 // 50s / 5s
+  const maxTries = process.env.CI ? 1000 : 200 // 50s / 10s
   for (let tries = 0; tries <= maxTries; tries++) {
     const actual = await poll()
     if (until(actual)) {
@@ -96,19 +102,33 @@ export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T)
 }
 
 export async function waitForHmrOverlay() {
-  return page.waitForSelector('vite-error-overlay', { state: 'visible' })
+  const element = await page.waitForSelector('vite-error-overlay', { state: 'attached' })
+  return element
 }
 
 export async function getHmrOverlay() {
-  return page.$('vite-error-overlay')
+  const dom = await page.$('vite-error-overlay')
+  if (dom) console.log('found vite-error-overlay')
+  return dom
 }
 
-export async function getHmrOverlayText() {
-  const shadowRoot = await getHmrOverlay()
-  invariant(
-    shadowRoot,
-    `<vite-error-overlay> shadow dom is expected to be found, but got ${shadowRoot}`
-  )
+export async function getHmrOverlayText(
+  element?: ElementHandleForTag<'vite-error-overlay'> | null
+) {
+  let shadowRoot: ElementHandleForTag<'vite-error-overlay'> | undefined | null
+  if (element) {
+    shadowRoot = element
+  } else {
+    shadowRoot = await getHmrOverlay()
+    invariant(
+      shadowRoot,
+      `<vite-error-overlay> shadow dom is expected to be found, but got ${shadowRoot}`
+    )
+  }
+
+  if (!shadowRoot) {
+    throw Error(`shadowRoot should exists, but got ${shadowRoot}`)
+  }
 
   const messageBody = await shadowRoot.$('.message-body')
   invariant(messageBody, '.message-body is expected in shadow root')
