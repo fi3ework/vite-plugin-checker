@@ -9,7 +9,7 @@ export default defineConfig({
     checker({
       eslint: {
         files: ['./src'],
-        ext: '.ts',
+        extensions: ['.ts'],
       },
     }),
   ],
