@@ -31,18 +31,18 @@ export type VlsConfig =
 export type EslintConfig =
   | false
   | {
-      /** One or more glob patterns to the files that should be linted. Works the same as the eslint command. */
+      /** The lint target files. This can contain any of file paths, directory paths, and glob patterns. ([Details](https://eslint.org/docs/developer-guide/nodejs-api#parameters-1)). */
       files: string | string[]
       /**
-       * Specify JavaScript file extensions, e.g. '.jsx,.js'
-       * @defaultValue: .js
+       * Specify linted file extensions, 'extensions' must be an array of non-empty strings, e.g. `['.jsx', '.js']`. ([Details](https://eslint.org/docs/developer-guide/nodejs-api#parameters)).
+       * @defaultValue: ['.js']
        */
-      ext?: string
+      extensions?: string[]
       /**
        * millisecond for watcher to wait to trigger re-lint
        * @defaultValue: 300
        */
-      watchDelay?: number
+      // watchDelay?: number
     }
 
 /** checkers shared configuration */
