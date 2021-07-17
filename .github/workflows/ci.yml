@@ -55,8 +55,11 @@ jobs:
       - name: Type check
         run: npm run type-check
 
-      - name: Test
-        run: npm --silent run test
+      - uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: npm --silent run test
 
   coverage:
     runs-on: ubuntu-latest
@@ -90,8 +93,11 @@ jobs:
       - name: Build
         run: npm run build:test
 
-      - name: Coverage test
-        run: npm run test:coverage
+      - uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: npm run test:coverage
 
       - name: Upload coverage to Codecov # https://github.com/codecov/codecov-action
         uses: codecov/codecov-action@v1
