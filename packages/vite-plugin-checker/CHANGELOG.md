@@ -1,3 +1,35 @@
+# [0.3.0](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.2.0...vite-plugin-checker@0.3.0) (2021-07-17)
+
+
+### Bug Fixes
+
+* add missing dependency ([66fbe8e](https://github.com/fi3ework/vite-plugin-checker/commit/66fbe8ed75185943d7020b95ac7d7bd114ad991d))
+* change ESLint configuration and doc ([e825711](https://github.com/fi3ework/vite-plugin-checker/commit/e8257115bca18aa7ceb5d46a5cd4989f656579ee))
+* clean code ([5b2d475](https://github.com/fi3ework/vite-plugin-checker/commit/5b2d4755cee2703937ac95c08eb0d4d32e895469))
+* clean previous log ([cb17837](https://github.com/fi3ework/vite-plugin-checker/commit/cb17837e5940a221968e3dcd31588708c4881165))
+* correct HMR overlay ([a386058](https://github.com/fi3ework/vite-plugin-checker/commit/a3860580144351e24de1524f61a338415e590ece))
+* log line and column ([6a0d247](https://github.com/fi3ework/vite-plugin-checker/commit/6a0d2478b97b70494bddb28c49826bbea8e65e11))
+* pass all test ([a30137e](https://github.com/fi3ework/vite-plugin-checker/commit/a30137e54a2ba4037cd53f40a0a71985fdddcf6c))
+* set forceColor to Chalk ([c4c6887](https://github.com/fi3ework/vite-plugin-checker/commit/c4c6887dfd2849a2f878ae4db92b7d1c5f00ef91))
+* set worker process to tty ([e46de1c](https://github.com/fi3ework/vite-plugin-checker/commit/e46de1c970ca520bc20c559af273480414b8cb86))
+* **tsc:** show all errors in terminal ([a4bb9ce](https://github.com/fi3ework/vite-plugin-checker/commit/a4bb9ce285bcbfdece4eb619795ed90f4a7a9070))
+
+
+### Features
+
+* console.log error source ([f99588d](https://github.com/fi3ework/vite-plugin-checker/commit/f99588dbbf2cf6ca742b9ce085f56de7da9de60b))
+* only import exclusive dependencies from vite-plugin-checker-vls ([8ba0641](https://github.com/fi3ework/vite-plugin-checker/commit/8ba0641969b0a67f6cab8261326dafa5a364dee9))
+* support ESLint in build ([a855866](https://github.com/fi3ework/vite-plugin-checker/commit/a855866a19d682dc9b6403db46ad2015b3c9a54d))
+* support ESLint on terminal log ([0819997](https://github.com/fi3ework/vite-plugin-checker/commit/081999750819e87f0e17b30c3b589de44750d21e))
+* support ESLint serve ([98aca8c](https://github.com/fi3ework/vite-plugin-checker/commit/98aca8ca728c9f443436e46625b8d1cf6e2842ce))
+* tsc checker extends base Checker ([8823409](https://github.com/fi3ework/vite-plugin-checker/commit/88234096d2da91846f55adf1aeea6296f61a341d))
+* tsc use unified logger ([eef3d77](https://github.com/fi3ework/vite-plugin-checker/commit/eef3d771ebb0e559d4c7cc02fd04a97705f809bc))
+* vls checker extends Checker ([782f0c9](https://github.com/fi3ework/vite-plugin-checker/commit/782f0c9ab306ae94a7276b49b40731217d2603d7))
+* VLS use logger ([558dacb](https://github.com/fi3ework/vite-plugin-checker/commit/558dacb97d374c8286a03e572db2e672a6ef70f2))
+* vue-tsc extends Checker ([95fddec](https://github.com/fi3ework/vite-plugin-checker/commit/95fddec5f959af69073f14aeb934e6e07e363dc0))
+
+
+
 # [0.2.0](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.2.0-beta.0...vite-plugin-checker@0.2.0) (2021-07-05)
 
 
