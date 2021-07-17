@@ -13,7 +13,7 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 - 🌗 Support both serve and build mode
 
 <p align="center">
-  <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/113175704-48cf1e80-927e-11eb-9bb5-43ab1b218cb2.png">
+  <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/126038209-81901247-86f1-4129-86c6-e1f8a13417e7.png">
 </p>
 
 ## Getting Started
