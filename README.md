@@ -16,6 +16,8 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
   <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/126038209-81901247-86f1-4129-86c6-e1f8a13417e7.png">
 </p>
 
+> History version documentations [0.1](https://github.com/fi3ework/vite-plugin-checker/tree/v0.1.x) | [0.2](https://github.com/fi3ework/vite-plugin-checker/tree/v0.2)
+
 ## Getting Started
 
 Install plugin.
@@ -154,13 +156,13 @@ _coming soon._
 
 ### config.vueTsc
 
+_coming soon._
+
 | field | Type | Default value | Description |
 | :---- | ---- | ------------- | ----------- |
 |       |      |               |             |
 
 ### config.eslint
-
-_coming soon._
 
 | field      | Type                 | Default value          | Description                                                                                                                                                                             |
 | :--------- | -------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
