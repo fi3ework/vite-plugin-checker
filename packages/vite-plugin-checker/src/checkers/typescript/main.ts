@@ -123,7 +123,7 @@ export class TscChecker extends Checker<'typescript'> {
       build: {
         buildBin: (config) => {
           if (typeof config.typescript === 'object' && config.typescript.tsconfigPath) {
-            return ['tsc', ['--noEmit', `-p "${config.typescript.tsconfigPath}"`]]
+            return ['tsc', ['--noEmit', '-p', config.typescript.tsconfigPath]]
           }
           return ['tsc', ['--noEmit']]
         },
