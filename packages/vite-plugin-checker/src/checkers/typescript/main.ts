@@ -120,7 +120,14 @@ export class TscChecker extends Checker<'typescript'> {
     super({
       name: 'typescript',
       absFilePath: __filename,
-      build: { buildBin: ['tsc', ['--noEmit']] },
+      build: {
+        buildBin: (config) => {
+          if (typeof config.typescript === 'object' && config.typescript.tsconfigPath) {
+            return ['tsc', ['--noEmit', `-p "${config.typescript.tsconfigPath}"`]]
+          }
+          return ['tsc', ['--noEmit']]
+        },
+      },
       createDiagnostic,
     })
   }
