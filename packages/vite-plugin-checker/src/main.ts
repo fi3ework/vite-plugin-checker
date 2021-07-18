@@ -11,6 +11,7 @@ import type {
   UserPluginConfig,
   SharedConfig,
   BuildCheckBinStr,
+  PluginConfig,
 } from './types'
 
 export * from './types'
@@ -72,24 +73,12 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         execPath: process.execPath,
       })
 
-      checkers.forEach((checker) => {
-        const buildBin = checker.build.buildBin
-        const finalBin: BuildCheckBinStr =
-          typeof buildBin === 'function' ? buildBin(userConfig) : buildBin
-
-        const proc = spawn(...finalBin, {
-          cwd: process.cwd(),
-          stdio: 'inherit',
-          env: localEnv,
-          shell: os.platform() === 'win32',
-        })
-
-        proc.on('exit', (code) => {
-          if (code !== null && code !== 0) {
-            process.exit(code)
-          }
-        })
-      })
+      Promise.all(checkers.map((checker) => spawnChecker(checker, userConfig, localEnv))).then(
+        (exitCodes) => {
+          const exitCode = exitCodes.find((code) => code !== 0) || 0
+          process.exit(exitCode)
+        }
+      )
     },
     configureServer(server) {
       // for dev mode (2/2)
@@ -109,4 +98,31 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       }
     },
   }
+}
+
+function spawnChecker(
+  checker: ServeAndBuildChecker,
+  userConfig: Partial<PluginConfig>,
+  localEnv: npmRunPath.ProcessEnv
+) {
+  return new Promise<number>((resolve) => {
+    const buildBin = checker.build.buildBin
+    const finalBin: BuildCheckBinStr =
+      typeof buildBin === 'function' ? buildBin(userConfig) : buildBin
+
+    const proc = spawn(...finalBin, {
+      cwd: process.cwd(),
+      stdio: 'inherit',
+      env: localEnv,
+      shell: os.platform() === 'win32',
+    })
+
+    proc.on('exit', (code) => {
+      if (code !== null && code !== 0) {
+        resolve(code)
+      } else {
+        resolve(0)
+      }
+    })
+  })
 }
