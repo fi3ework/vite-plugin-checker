@@ -34,6 +34,7 @@
   "dependencies": {
     "@babel/code-frame": "^7.12.13",
     "ansi-escapes": "^4.3.0",
+    "chalk": "^4.1.1",
     "chokidar": "^3.5.1",
     "commander": "^8.0.0",
     "fast-glob": "^3.2.7",
