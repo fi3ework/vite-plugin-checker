@@ -172,7 +172,7 @@ importers:
       typescript: ~4.3.2
       vite: ^2.3.8
       vite-plugin-checker: workspace:*
-      vite-plugin-components: ^0.10.2
+      vite-plugin-components: ^0.12.2
       vite-plugin-vue2: ^1.2.1
       vls: ^0.7.2
       vue: ^2.6.12
@@ -201,7 +201,7 @@ importers:
       typescript: 4.3.2
       vite: 2.3.8
       vite-plugin-checker: link:../../packages/vite-plugin-checker
-      vite-plugin-components: 0.10.4_vite@2.3.8
+      vite-plugin-components: 0.12.2_vite@2.3.8
       vite-plugin-vue2: 1.6.2_vite@2.3.8
       vls: 0.7.4
       vue-template-compiler: 2.6.14
@@ -3181,7 +3181,6 @@ packages:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.4
-    dev: false
 
   /fast-json-stable-stringify/2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
@@ -6340,14 +6339,13 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-plugin-components/0.10.4_vite@2.3.8:
-    resolution: {integrity: sha512-QOGd+7IE4EonPGMlxmudj0HadVxKzCdvaZmZcRgap4gE8F55sAIztuAQN4IHACEKuappWsB6XpMAY1iVrJUqog==}
+  /vite-plugin-components/0.12.2_vite@2.3.8:
+    resolution: {integrity: sha512-ecGCqEQMEwPw556WfdbRwbDsdGtBWkjSkuOXw5sKbgaZzVSlybOfrXhGjiYEatR13KCUxTHzioU2eOLu1tpWVQ==}
     peerDependencies:
-      vite: ^2.0.0-beta.69
+      vite: ^2.0.0
     dependencies:
-      chokidar: 3.5.1
       debug: 4.3.2
-      fast-glob: 3.2.5
+      fast-glob: 3.2.7
       magic-string: 0.25.7
       minimatch: 3.0.4
       vite: 2.3.8
