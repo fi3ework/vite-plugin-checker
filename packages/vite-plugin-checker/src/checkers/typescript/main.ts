@@ -1,4 +1,5 @@
 import os from 'os'
+import path from 'path'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { parentPort } from 'worker_threads'
@@ -120,7 +121,17 @@ export class TscChecker extends Checker<'typescript'> {
     super({
       name: 'typescript',
       absFilePath: __filename,
-      build: { buildBin: ['tsc', ['--noEmit']] },
+      build: {
+        buildBin: (config) => {
+          if (typeof config.typescript === 'object' && config.typescript.tsconfigPath) {
+            const tsconfig = config.typescript.root
+              ? path.join(config.typescript.root, config.typescript.tsconfigPath)
+              : config.typescript.tsconfigPath
+            return ['tsc', ['--noEmit', '-p', tsconfig]]
+          }
+          return ['tsc', ['--noEmit']]
+        },
+      },
       createDiagnostic,
     })
   }
