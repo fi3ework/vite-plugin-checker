@@ -15,7 +15,7 @@ async function main() {
   // https://github.com/google/zx/issues/144#issuecomment-859745076
   const q = $.quote
   $.quote = (v) => v
-  console.log(`🧪 Releasing in ${distTag} tag ...`)
+  console.log(`🧪 Releasing in @${distTag || 'latest'} dist-tag ...`)
   await $`npx pnpm -r publish ${tagPart} --access public --no-git-checks`
   $.quote = q
   await $`git clean -fd`
