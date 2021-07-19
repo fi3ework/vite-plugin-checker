@@ -1,3 +1,17 @@
+## [0.3.2](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.3.1...vite-plugin-checker@0.3.2) (2021-07-19)
+
+
+### Bug Fixes
+
+* use `fs.promises` instead of `fs/promises` ([#43](https://github.com/fi3ework/vite-plugin-checker/issues/43)) ([8dd5446](https://github.com/fi3ework/vite-plugin-checker/commit/8dd54464f221f96fd2a96a30813df25aca8b77c9))
+
+
+### Performance Improvements
+
+* drop readFileSync ([107f0c8](https://github.com/fi3ework/vite-plugin-checker/commit/107f0c8f43252e38bc65bf317dd0bfdbc3e47bbf))
+
+
+
 ## [0.3.1](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.3.0...vite-plugin-checker@0.3.1) (2021-07-19)
 
 
