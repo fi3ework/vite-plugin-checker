@@ -230,72 +230,75 @@ async function getDiagnostics(
     disposeSuppressConsole = suppressConsole()
   }
 
-  for (const absFilePath of absFilePaths) {
-    const fileText = fs.readFileSync(absFilePath, 'utf-8')
-    clientConnection.sendNotification(DidOpenTextDocumentNotification.type, {
-      textDocument: {
-        languageId: 'vue',
-        uri: URI.file(absFilePath).toString(),
-        version: DOC_VERSION.init,
-        text: fileText,
-      },
-    })
-
-    // logout in build mode
-    if (!options.watch) {
-      try {
-        let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
+  await Promise.all(
+    absFilePaths.map(async (absFilePath) => {
+      const fileText = await fs.promises.readFile(absFilePath, 'utf-8')
+      clientConnection.sendNotification(DidOpenTextDocumentNotification.type, {
+        textDocument: {
+          languageId: 'vue',
           uri: URI.file(absFilePath).toString(),
           version: DOC_VERSION.init,
-        })) as Diagnostic[]
+          text: fileText,
+        },
+      })
 
-        /**
-         * Ignore eslint errors for now
-         */
-        diagnostics = diagnostics
-          .filter((r) => r.source !== 'eslint-plugin-vue')
-          .filter((r) => r.severity && r.severity <= severity)
+      // logout in build mode
+      if (!options.watch) {
+        try {
+          let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
+            uri: URI.file(absFilePath).toString(),
+            version: DOC_VERSION.init,
+          })) as Diagnostic[]
 
-        if (diagnostics.length > 0) {
-          logChunk +=
-            os.EOL +
-            diagnostics
-              .map((d) =>
-                diagnosticToTerminalLog(
-                  normalizeLspDiagnostic({
-                    diagnostic: d,
-                    absFilePath,
-                    fileText,
-                  }),
-                  'VLS'
+          /**
+           * Ignore eslint errors for now
+           */
+          diagnostics = diagnostics
+            .filter((r) => r.source !== 'eslint-plugin-vue')
+            .filter((r) => r.severity && r.severity <= severity)
+
+          if (diagnostics.length > 0) {
+            logChunk +=
+              os.EOL +
+              diagnostics
+                .map((d) =>
+                  diagnosticToTerminalLog(
+                    normalizeLspDiagnostic({
+                      diagnostic: d,
+                      absFilePath,
+                      fileText,
+                    }),
+                    'VLS'
+                  )
                 )
-              )
-              .join(os.EOL)
+                .join(os.EOL)
 
-          diagnostics.forEach((d) => {
-            if (d.severity === DiagnosticSeverity.Error) {
-              initialErrCount++
-            }
-          })
+            diagnostics.forEach((d) => {
+              if (d.severity === DiagnosticSeverity.Error) {
+                initialErrCount++
+              }
+            })
+          }
+        } catch (err) {
+          console.error(err.stack)
         }
-      } catch (err) {
-        console.error(err.stack)
       }
-    }
-  }
+    })
+  )
 
   // watched diagnostics report
   if (options.watch) {
     Checker.watcher.add(workspaceUri.fsPath)
-    Checker.watcher.on('all', (event, path) => {
+    Checker.watcher.on('all', async (event, path) => {
       if (!path.endsWith('.vue')) return
+      const fileContent = await fs.promises.readFile(path, 'utf-8')
       // TODO: watch js change
       clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
         textDocument: {
           uri: URI.file(path).toString(),
           version: Date.now(),
         },
-        contentChanges: [{ text: fs.readFileSync(path, 'utf-8') }],
+        contentChanges: [{ text: fileContent }],
       })
     })
   }
