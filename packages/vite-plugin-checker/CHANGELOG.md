@@ -1,3 +1,14 @@
+## [0.3.1](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.3.0...vite-plugin-checker@0.3.1) (2021-07-19)
+
+
+### Bug Fixes
+
+* add chalk dependency ([#41](https://github.com/fi3ework/vite-plugin-checker/issues/41)) ([2b39c80](https://github.com/fi3ework/vite-plugin-checker/commit/2b39c80a89280004bd007a1a70b384fda579e00c))
+* TS checker should respect custom tsconfig ([#39](https://github.com/fi3ework/vite-plugin-checker/issues/39)) ([948920d](https://github.com/fi3ework/vite-plugin-checker/commit/948920d5b2b8c80e960517b1a320a40e6cc087c4))
+* wait for all checkers to finish during build ([#37](https://github.com/fi3ework/vite-plugin-checker/issues/37)) ([257358f](https://github.com/fi3ework/vite-plugin-checker/commit/257358fcd9b1ad28d9570c737d335225d8f60296))
+
+
+
 # [0.3.0](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.2.0...vite-plugin-checker@0.3.0) (2021-07-17)
 
 
