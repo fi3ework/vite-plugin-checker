@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { readFile } from 'fs/promises'
+import fs from 'fs'
 import os from 'os'
 import strip from 'strip-ansi'
 import { URI } from 'vscode-uri'
@@ -221,6 +221,7 @@ export async function normalizePublishDiagnosticParams(
 ): Promise<NormalizedDiagnostic[]> {
   const diagnostics = publishDiagnostics.diagnostics
   const absFilePath = uriToAbsPath(publishDiagnostics.uri)
+  const { readFile } = fs.promises
   const fileText = await readFile(absFilePath, 'utf-8')
 
   const res = diagnostics.map((d) => {
