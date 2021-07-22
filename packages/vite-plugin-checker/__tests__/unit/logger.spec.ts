@@ -1,17 +1,33 @@
-import { diagnosticToTerminalLog } from '../../src/logger'
-import { error1 as eslintError1, warning1 as eslintWarning1 } from './fixtures/eslintDiagnostic'
 import strip from 'strip-ansi'
+
+import {
+  diagnosticToTerminalLog,
+  NormalizedDiagnostic,
+  normalizeEslintDiagnostic,
+} from '../../src/logger'
+import {
+  error1 as eslintError1,
+  warning1 as eslintWarning1,
+  eslintResult1,
+} from './fixtures/eslintDiagnostic'
 
 describe('logger', () => {
   describe('diagnosticToTerminalLog', () => {
     it('get error', () => {
-      const receive = strip(diagnosticToTerminalLog(eslintError1, 'ESLint'))
-      expect(receive).toMatchSnapshot()
+      const received = strip(diagnosticToTerminalLog(eslintError1, 'ESLint'))
+      expect(received).toMatchSnapshot()
     })
 
     it('get warning', () => {
-      const receive = strip(diagnosticToTerminalLog(eslintWarning1, 'ESLint'))
-      expect(receive).toMatchSnapshot()
+      const received = strip(diagnosticToTerminalLog(eslintWarning1, 'ESLint'))
+      expect(received).toMatchSnapshot()
+    })
+  })
+
+  describe('normalizeEslintDiagnostic', () => {
+    it('get multiple errors', () => {
+      const received = normalizeEslintDiagnostic(eslintResult1)
+      expect(received).toMatchSnapshot()
     })
   })
 })

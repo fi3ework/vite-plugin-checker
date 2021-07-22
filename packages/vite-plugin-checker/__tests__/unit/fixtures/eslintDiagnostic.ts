@@ -1,4 +1,7 @@
-export const error1 = {
+import type { NormalizedDiagnostic } from './../../../src/logger'
+import type { ESLint } from 'eslint'
+
+export const error1: NormalizedDiagnostic = {
   message: 'Unexpected var, use let or const instead.',
   conclusion: '',
   codeFrame:
@@ -9,6 +12,43 @@ export const error1 = {
   checker: 'ESLint',
   loc: { start: { line: 3, column: 1 }, end: { line: 3, column: 20 } },
   level: 1,
-} as const
+}
 
-export const warning1 = { ...error1, level: 0 }
+export const warning1: NormalizedDiagnostic = { ...error1, level: 0 }
+
+export const eslintResult1: ESLint.LintResult = {
+  filePath: '/Users/vite-plugin-checker/playground/vanilla-ts/src/main.ts',
+  messages: [
+    {
+      ruleId: 'no-var',
+      severity: 2,
+      message: 'Unexpected var, use let or const instead.',
+      line: 3,
+      column: 1,
+      nodeType: 'VariableDeclaration',
+      messageId: 'unexpectedVar',
+      endLine: 3,
+      endColumn: 20,
+      fix: { range: [31, 34], text: 'let' },
+    },
+    {
+      ruleId: 'no-var',
+      severity: 2,
+      message: 'Unexpected var, use let or const instead.',
+      line: 4,
+      column: 1,
+      nodeType: 'VariableDeclaration',
+      messageId: 'unexpectedVar',
+      endLine: 4,
+      endColumn: 22,
+      fix: { range: [51, 54], text: 'let' },
+    },
+  ],
+  errorCount: 2,
+  warningCount: 0,
+  fixableErrorCount: 2,
+  fixableWarningCount: 0,
+  source:
+    "import { text } from './text'\n\nvar hello = 'Hello'\nvar hello1 = 'Hello1'\n\nconst rootDom = document.querySelector('#root')!\nrootDom.innerHTML = hello + text\n\nexport {}\n",
+  usedDeprecatedRules: [],
+}

@@ -263,13 +263,10 @@ const isNormalizedDiagnostic = (
 }
 
 export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): NormalizedDiagnostic[] {
-  const firstMessage = diagnostic.messages[0]
-  if (!firstMessage) return []
-
   return diagnostic.messages
     .map((d) => {
       let level = DiagnosticLevel.Error
-      switch (firstMessage.severity) {
+      switch (d.severity) {
         case 0: // off, ignore
           level = DiagnosticLevel.Error
           return null
@@ -283,12 +280,12 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
 
       const loc: SourceLocation = {
         start: {
-          line: firstMessage.line,
-          column: firstMessage.column,
+          line: d.line,
+          column: d.column,
         },
         end: {
-          line: firstMessage.endLine || 0,
-          column: firstMessage.endColumn,
+          line: d.endLine || 0,
+          column: d.endColumn,
         },
       }
 
@@ -298,7 +295,7 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
       })
 
       return {
-        message: firstMessage.message,
+        message: d.message,
         conclusion: '',
         codeFrame,
         stripedCodeFrame: codeFrame && strip(codeFrame),
