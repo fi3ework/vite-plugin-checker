@@ -65,7 +65,7 @@ export function diagnosticToTerminalLog(
     [DiagnosticLevel.Message]: boldBlack.bgCyanBright(` MESSAGE${nameInLabel} `),
   }
 
-  const levelLabel = labelMap[d.level || DiagnosticLevel.Error]
+  const levelLabel = labelMap[d.level ?? DiagnosticLevel.Error]
   const fileLabel = boldBlack.bgCyanBright(' FILE ') + ' '
   const position = d.loc
     ? chalk.yellow(d.loc.start.line) + ':' + chalk.yellow(d.loc.start.column)
