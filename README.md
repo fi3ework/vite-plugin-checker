@@ -101,7 +101,7 @@ export default {
     checker({
       eslint: {
         files: ['./src'],
-        extensions: '.ts',
+        extensions: ['.ts'],
       },
     }),
   ],
