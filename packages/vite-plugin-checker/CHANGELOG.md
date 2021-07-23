@@ -1,3 +1,19 @@
+## [0.3.3](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.3.1...vite-plugin-checker@0.3.3) (2021-07-23)
+
+
+### Bug Fixes
+
+* eslint normalization ([#52](https://github.com/fi3ework/vite-plugin-checker/issues/52)) ([95aa772](https://github.com/fi3ework/vite-plugin-checker/commit/95aa772d934a3fe48baa6edd002aed0cd19abc8c))
+* use `fs.promises` instead of `fs/promises` ([#43](https://github.com/fi3ework/vite-plugin-checker/issues/43)) ([8dd5446](https://github.com/fi3ework/vite-plugin-checker/commit/8dd54464f221f96fd2a96a30813df25aca8b77c9))
+* warning level logging ([#51](https://github.com/fi3ework/vite-plugin-checker/issues/51)) ([5b0ac3a](https://github.com/fi3ework/vite-plugin-checker/commit/5b0ac3aa84a88a9e0f1067881f84c6997e346e89))
+
+
+### Performance Improvements
+
+* drop readFileSync ([#45](https://github.com/fi3ework/vite-plugin-checker/issues/45)) ([12af43d](https://github.com/fi3ework/vite-plugin-checker/commit/12af43d83b276f3c17358dd14c7273281cf6e658))
+
+
+
 ## [0.3.2](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.3.1...vite-plugin-checker@0.3.2) (2021-07-19)
 
 
