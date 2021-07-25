@@ -18,7 +18,6 @@ import type { ErrorPayload } from 'vite'
 
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
   let overlay = true // Vite defaults to true
-  let currErr: ErrorPayload['err'] | null = null
 
   return {
     config: async ({ hmr }) => {
@@ -32,6 +31,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       const extensions = pluginConfig.eslint.extensions ?? ['.js']
       const eslint = new ESLint({
+        cwd: root,
         extensions,
       })
       invariant(pluginConfig.eslint, 'config.eslint should not be `false`')
@@ -45,21 +45,14 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           ? [pluginConfig.eslint.files]
           : pluginConfig.eslint.files
 
-      const diagnosticsCache: Record<string, NormalizedDiagnostic[]> = {}
+      let diagnosticsCache: NormalizedDiagnostic[] = []
 
-      Checker.watcher.add(paths)
-      Checker.watcher.on('all', async (event, filePath) => {
-        if (!['add', 'change'].includes(event)) return
-        if (!extensions.includes(path.extname(filePath))) return
-
-        const diagnostics = await eslint.lintFiles(filePath)
-        const normalized = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
-        normalized.forEach((n) => {
+      const dispatchDiagnostics = () => {
+        diagnosticsCache.forEach((n) => {
           console.log(diagnosticToTerminalLog(n, 'ESLint'))
         })
-        diagnosticsCache[filePath] = normalized
 
-        const lastErr = normalized[0]
+        const lastErr = diagnosticsCache[0]
 
         if (!lastErr) return
 
@@ -72,6 +65,38 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
             },
           })
         }
+      }
+
+      const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
+        if (!extensions.includes(path.extname(filePath))) return
+
+        if (type === 'unlink') {
+          const absPath = path.resolve(root, filePath)
+          diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath)
+        } else if (type === 'change') {
+          const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
+          const newDiagnostics = diagnosticsOfChangedFile
+            .map((d) => normalizeEslintDiagnostic(d))
+            .flat(1)
+          const absPath = diagnosticsOfChangedFile[0].filePath
+          diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath).concat(newDiagnostics)
+        }
+
+        dispatchDiagnostics()
+      }
+
+      // initial lint
+      const diagnostics = await eslint.lintFiles(paths)
+      diagnosticsCache = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
+      dispatchDiagnostics()
+
+      // watch lint
+      Checker.watcher.add(paths)
+      Checker.watcher.on('change', async (filePath) => {
+        handleFileChange(filePath, 'change')
+      })
+      Checker.watcher.on('unlink', async (filePath) => {
+        handleFileChange(filePath, 'unlink')
       })
     },
   }
@@ -104,7 +129,6 @@ export class EslintChecker extends Checker<'eslint'> {
   public init() {
     const createServeAndBuild = super.initMainThread()
     module.exports.createServeAndBuild = createServeAndBuild
-
     super.initWorkerThread()
   }
 }
