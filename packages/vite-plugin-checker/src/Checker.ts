@@ -24,7 +24,6 @@ export interface CheckerMeta<T extends BuildInCheckerNames> {
 export abstract class Checker<T extends BuildInCheckerNames> implements CheckerMeta<T> {
   public static watcher: chokidar.FSWatcher = chokidar.watch([], {
     ignored: (path: string) => path.includes('node_modules'),
-    ignoreInitial: false,
   })
 
   public name: string

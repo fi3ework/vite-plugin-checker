@@ -47,11 +47,16 @@ describe('eslint', () => {
       expect(frame1).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
-      console.log('-- edit file --')
+      console.log('-- edit error file --')
       resetTerminalLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
       await sleep(process.env.CI ? 5000 : 2000)
-      await pollingUntil(getHmrOverlay, (dom) => !!dom)
+      expect(stripedLog).toMatchSnapshot()
+
+      console.log('-- edit non error file --')
+      resetTerminalLog()
+      editFile('src/text.ts', (code) => code.replace(`Vanilla`, `vanilla`))
+      await sleep(process.env.CI ? 5000 : 2000)
       expect(stripedLog).toMatchSnapshot()
     })
 
