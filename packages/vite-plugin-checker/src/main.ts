@@ -75,7 +75,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
 
       const exitCodes = await Promise.all(checkers.map((checker) => spawnChecker(checker, userConfig, localEnv)));
       const exitCode = exitCodes.find((code) => code !== 0) ?? 0;
-      if (exitCode !== 0) process.exit(exitCode);
+      if (exitCode !== 0) throw Error(`one of the checkers failed with exit code ${exitCode}`);
     },
     configureServer(server) {
       // for dev mode (2/2)
