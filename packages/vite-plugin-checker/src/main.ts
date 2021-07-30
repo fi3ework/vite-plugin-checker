@@ -59,7 +59,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         })
       })
     },
-    buildStart: async () => {
+    buildStart: () => {
       // for build mode
       // run a bin command in a separated process
       if (viteMode !== 'build') return
@@ -73,9 +73,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         execPath: process.execPath,
       })
 
-      const exitCodes = await Promise.all(checkers.map((checker) => spawnChecker(checker, userConfig, localEnv)));
-      const exitCode = exitCodes.find((code) => code !== 0) ?? 0;
-      if (exitCode !== 0) throw Error(`one of the checkers failed with exit code ${exitCode}`);
+      Promise.all(checkers.map((checker) => spawnChecker(checker, userConfig, localEnv)));
     },
     configureServer(server) {
       // for dev mode (2/2)
