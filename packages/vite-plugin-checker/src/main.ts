@@ -73,7 +73,12 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         execPath: process.execPath,
       })
 
-      Promise.all(checkers.map((checker) => spawnChecker(checker, userConfig, localEnv)));
+      // spawn an async runner that we don't wait for in order to avoid blocking the build from continuing in parallel
+      (async () => {
+        const exitCodes = await Promise.all(checkers.map((checker) => spawnChecker(checker, userConfig, localEnv)));
+        const exitCode = exitCodes.find((code) => code !== 0) ?? 0;
+        if (exitCode !== 0) process.exit(exitCode);
+      })();
     },
     configureServer(server) {
       // for dev mode (2/2)
