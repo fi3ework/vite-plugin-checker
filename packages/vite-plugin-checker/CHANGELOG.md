@@ -1,3 +1,14 @@
+## [0.3.4](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.3.3...vite-plugin-checker@0.3.4) (2021-07-31)
+
+
+### Bug Fixes
+
+* early exit when enableBuild is true ([#61](https://github.com/fi3ework/vite-plugin-checker/issues/61)) ([cc0912f](https://github.com/fi3ework/vite-plugin-checker/commit/cc0912f25bdeb53d293015ab4ca014cb5646bfc1))
+* **eslint:** do not flush existing errors on changing file ([#55](https://github.com/fi3ework/vite-plugin-checker/issues/55)) ([4f7abbe](https://github.com/fi3ework/vite-plugin-checker/commit/4f7abbe1471664cd77b1c3b0d9deae241ff46ca2))
+* **vls:** enable VLS check features ([#59](https://github.com/fi3ework/vite-plugin-checker/issues/59)) ([ba929c5](https://github.com/fi3ework/vite-plugin-checker/commit/ba929c57e50b8c53fee7eaf1f9b9e68d732d45e1))
+
+
+
 ## [0.3.3](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.3.1...vite-plugin-checker@0.3.3) (2021-07-23)
 
 
