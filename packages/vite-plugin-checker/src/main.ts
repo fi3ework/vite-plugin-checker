@@ -62,16 +62,16 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
     buildStart: () => {
       // for build mode
       // run a bin command in a separated process
-      if (viteMode !== 'build') return
+      if (viteMode !== 'build') return;
 
       // do not do anything when disable build mode
-      if (!enableBuild) return
+      if (!enableBuild) return;
 
       const localEnv = npmRunPath.env({
         env: process.env,
         cwd: process.cwd(),
         execPath: process.execPath,
-      })
+      });
 
       // spawn an async runner that we don't wait for in order to avoid blocking the build from continuing in parallel
       (async () => {
