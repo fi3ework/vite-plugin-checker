@@ -62,23 +62,23 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
     buildStart: () => {
       // for build mode
       // run a bin command in a separated process
-      if (viteMode !== 'build') return
+      if (viteMode !== 'build') return;
 
       // do not do anything when disable build mode
-      if (!enableBuild) return
+      if (!enableBuild) return;
 
       const localEnv = npmRunPath.env({
         env: process.env,
         cwd: process.cwd(),
         execPath: process.execPath,
-      })
+      });
 
-      Promise.all(checkers.map((checker) => spawnChecker(checker, userConfig, localEnv))).then(
-        (exitCodes) => {
-          const exitCode = exitCodes.find((code) => code !== 0) || 0
-          process.exit(exitCode)
-        }
-      )
+      // spawn an async runner that we don't wait for in order to avoid blocking the build from continuing in parallel
+      (async () => {
+        const exitCodes = await Promise.all(checkers.map((checker) => spawnChecker(checker, userConfig, localEnv)));
+        const exitCode = exitCodes.find((code) => code !== 0) ?? 0;
+        if (exitCode !== 0) process.exit(exitCode);
+      })();
     },
     configureServer(server) {
       // for dev mode (2/2)
