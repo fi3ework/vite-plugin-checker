@@ -8,6 +8,7 @@ const distTag = args['dist-tag']
 async function main() {
   await fs.copyFile('README.md', 'packages/vite-plugin-checker/README.md')
   await $`pnpm i`
+  await $`npm run format`
   await $`npm run lint`
   await $`npm run type-check`
   await $`npm run build`

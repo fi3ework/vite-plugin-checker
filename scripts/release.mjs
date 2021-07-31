@@ -43,6 +43,7 @@ const sleep = (millisecond) =>
 
 async function preCheck() {
   cd('../../')
+  await $`npm run format`
   await $`npm run lint`
   await $`npm run type-check`
   await sleep(0) // don't know why
