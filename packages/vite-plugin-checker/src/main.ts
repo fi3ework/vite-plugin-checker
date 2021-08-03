@@ -3,6 +3,7 @@ import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
 import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
+import { resolve } from 'path'
 
 import type {
   OverlayErrorAction,
@@ -28,7 +29,7 @@ function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndB
   buildInCheckerKeys.forEach((name: BuildInCheckerNames) => {
     if (!userConfig[name]) return
 
-    const { createServeAndBuild } = require(`./checkers/${name}/main`)
+    const { createServeAndBuild } = require(resolve(__dirname, `./checkers/${name}/main`))
     serveAndBuildCheckers.push(
       createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env)
     )
