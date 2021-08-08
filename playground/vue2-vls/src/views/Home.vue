@@ -6,5 +6,17 @@
 </template>
 
 <script lang="ts">
-export default {}
+import Vuex from 'vuex'
+import Vue from 'vue'
+// import { IProps } from '../store/index'
+
+Vue.use(Vuex)
+
+export default {
+  computed: {
+    supply() {
+      return this.$store.state.count
+    },
+  },
+}
 </script>

@@ -13,6 +13,7 @@ import {
   Diagnostic,
   DiagnosticSeverity,
   DidChangeTextDocumentNotification,
+  DidChangeWatchedFilesNotification,
   DidOpenTextDocumentNotification,
   InitializeParams,
   InitializeRequest,
@@ -200,14 +201,25 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
   return clientConnection
 }
 
+function extToGlobs(exts: string[]) {
+  return exts.map((e) => '**/*' + e).join(',')
+}
+
+const watchedDidChangeContent = ['.vue']
+const watchedDidChangeWatchedFiles = ['.js', '.ts', '.json']
+const watchedDidChangeContentGlob = extToGlobs(watchedDidChangeContent)
+const watchedDidChangeWatchedFilesGlob = extToGlobs(watchedDidChangeWatchedFiles)
+
 async function getDiagnostics(
   workspaceUri: URI,
   severity: DiagnosticSeverity,
   options: DiagnosticOptions
 ) {
   const clientConnection = await prepareClientConnection(workspaceUri, options)
-
-  const files = glob.sync('**/*.vue', { cwd: workspaceUri.fsPath, ignore: ['node_modules/**'] })
+  const files = glob.sync(`{${watchedDidChangeContentGlob},${watchedDidChangeWatchedFilesGlob}}`, {
+    cwd: workspaceUri.fsPath,
+    ignore: ['node_modules/**'],
+  })
 
   if (files.length === 0) {
     console.log('No input files')
@@ -289,17 +301,32 @@ async function getDiagnostics(
   // watched diagnostics report
   if (options.watch) {
     Checker.watcher.add(workspaceUri.fsPath)
-    Checker.watcher.on('all', async (event, path) => {
-      if (!path.endsWith('.vue')) return
-      const fileContent = await fs.promises.readFile(path, 'utf-8')
-      // TODO: watch js change
-      clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
-        textDocument: {
-          uri: URI.file(path).toString(),
-          version: Date.now(),
-        },
-        contentChanges: [{ text: fileContent }],
-      })
+    Checker.watcher.on('all', async (event, filePath) => {
+      const extname = path.extname(filePath)
+
+      // .vue file changed
+      if (watchedDidChangeContent.includes(extname)) {
+        const fileContent = await fs.promises.readFile(filePath, 'utf-8')
+        clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
+          textDocument: {
+            uri: URI.file(filePath).toString(),
+            version: Date.now(),
+          },
+          contentChanges: [{ text: fileContent }],
+        })
+      }
+
+      // .js,.ts,.json file changed
+      if (watchedDidChangeWatchedFiles.includes(extname)) {
+        clientConnection.sendNotification(DidChangeWatchedFilesNotification.type, {
+          changes: [
+            {
+              uri: URI.file(filePath).toString(),
+              type: event === 'add' ? 1 : event === 'unlink' ? 3 : 2,
+            },
+          ],
+        })
+      }
     })
   }
 
