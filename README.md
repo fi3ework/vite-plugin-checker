@@ -141,10 +141,11 @@ export default {
 
 ### config.typescript
 
-| field        | Type     | Default value                                         | Description                      |
-| :----------- | -------- | ----------------------------------------------------- | -------------------------------- |
-| root         | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file  |
-| tsconfigPath | `string` | `"tsconfig.json"`                                     | Relative tsconfig path to `root` |
+| field        | Type      | Default value                                         | Description                      |
+| :----------- | --------- | ----------------------------------------------------- | -------------------------------- |
+| root         | `string`  | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file  |
+| tsconfigPath | `string`  | `"tsconfig.json"`                                     | Relative tsconfig path to `root` |
+| buildMode    | `boolean` | `false`                                               | Add `--build` flag to compailer  |
 
 ### config.vls
 
