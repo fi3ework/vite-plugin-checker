@@ -10,7 +10,7 @@ export type TscConfig =
       /** path to tsconfig.json file */
       tsconfigPath: string
       /** root path of cwd */
-      root: string,
+      root: string
       /** root path of cwd */
       buildMode: boolean
     }>

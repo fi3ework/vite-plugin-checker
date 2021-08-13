@@ -124,21 +124,21 @@ export class TscChecker extends Checker<'typescript'> {
       build: {
         buildBin: (config) => {
           if (typeof config.typescript === 'object') {
-            const { root, tsconfigPath, buildMode } = config.typescript;
+            const { root, tsconfigPath, buildMode } = config.typescript
 
             // Compiler option '--noEmit' may not be used with '--build'
-            let args = [buildMode ? '-b' : '--noEmit'];
+            let args = [buildMode ? '-b' : '--noEmit']
 
             // Custom config path
             if (tsconfigPath) {
-              const fullConfigPath = root ? path.join(root, tsconfigPath) : tsconfigPath;
-              args = args.concat(['-p', fullConfigPath]);
+              const fullConfigPath = root ? path.join(root, tsconfigPath) : tsconfigPath
+              args = args.concat(['-p', fullConfigPath])
             }
 
-            return ['tsc', args];
+            return ['tsc', args]
           }
 
-          return ['tsc', ['--noEmit']];
+          return ['tsc', ['--noEmit']]
         },
       },
       createDiagnostic,
