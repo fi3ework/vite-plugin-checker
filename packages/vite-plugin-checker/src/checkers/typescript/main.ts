@@ -137,6 +137,8 @@ export class TscChecker extends Checker<'typescript'> {
             const fullConfigPath = root ? path.join(root, tsconfigPath) : tsconfigPath;
             args = args.concat(['-p', fullConfigPath]);
           }
+
+          return ['tsc', args];
         },
       },
       createDiagnostic,
