@@ -1,9 +1,10 @@
+import chokidar from 'chokidar'
 import invariant from 'tiny-invariant'
 import { isMainThread } from 'worker_threads'
 
-import { ServeAndBuildChecker, BuildInCheckerNames } from './types'
+import { NormalizedDiagnostic } from './logger'
+import { BuildInCheckerNames, ServeAndBuildChecker } from './types'
 import { createScript, Script } from './worker'
-import chokidar from 'chokidar'
 
 // still an only issue https://github.com/microsoft/TypeScript/issues/29808#issuecomment-829750974
 import type {} from 'vite'
@@ -14,7 +15,7 @@ if (!isMainThread) {
 }
 
 export interface CheckerMeta<T extends BuildInCheckerNames> {
-  name: string
+  name: T
   absFilePath: string
   createDiagnostic: CreateDiagnostic<T>
   build: ServeAndBuildChecker['build']
@@ -26,7 +27,7 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
     ignored: (path: string) => path.includes('node_modules'),
   })
 
-  public name: string
+  public name: T
   public absFilePath: string
   public createDiagnostic: CreateDiagnostic<T>
   public build: ServeAndBuildChecker['build']
@@ -37,7 +38,6 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
     this.absFilePath = absFilePath
     this.build = build
     this.createDiagnostic = createDiagnostic
-    this.build = build
   }
 
   public prepare() {

@@ -5,7 +5,6 @@ import os from 'os'
 import path from 'path'
 import { Duplex } from 'stream'
 import { VLS } from 'vls'
-import { Checker } from '../../Checker'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import {
   createConnection,
@@ -26,6 +25,8 @@ import {
 } from 'vscode-languageserver/node'
 import { URI } from 'vscode-uri'
 
+import { Checker } from '../../Checker'
+import { DiagnosticCache } from '../../DiagnosticCache'
 import {
   diagnosticToTerminalLog,
   diagnosticToViteError,
@@ -44,6 +45,8 @@ export type LogLevel = typeof logLevels[number]
 export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 
 let disposeSuppressConsole: ReturnType<typeof suppressConsole>
+
+const diagnosticCache = new DiagnosticCache()
 
 const logLevel2Severity = {
   ERROR: DiagnosticSeverity.Error,
@@ -150,18 +153,24 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
       return
     }
 
-    if (!publishDiagnostics.diagnostics.length) {
-      return
-    }
+    // if (!publishDiagnostics.diagnostics.length) {
+    //   return
+    // }
+    const absFilePath = URI.parse(publishDiagnostics.uri).fsPath
+    const next = await normalizePublishDiagnosticParams(publishDiagnostics)
+    // console.log(absFilePath, next)
+    diagnosticCache.set(absFilePath, next)
 
-    if (!publishDiagnostics.diagnostics.length) return
-
-    const res = await normalizePublishDiagnosticParams(publishDiagnostics)
-    const normalized = diagnosticToViteError(res)
-    console.log(os.EOL)
+    // log in terminal
+    // console.log(os.EOL)
+    const res = diagnosticCache.get()
     console.log(res.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
-
-    options.errorCallback?.(publishDiagnostics, normalized)
+    // console.log(next.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
+    // log to error overlay
+    if (diagnosticCache.last) {
+      const normalized = diagnosticToViteError(diagnosticCache.last)
+      options.errorCallback?.(publishDiagnostics, normalized)
+    }
   }
 
   const vls = new VLS(serverConnection as any)
@@ -254,7 +263,7 @@ async function getDiagnostics(
         },
       })
 
-      // logout in build mode
+      // log out in build mode
       if (!options.watch) {
         try {
           let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {

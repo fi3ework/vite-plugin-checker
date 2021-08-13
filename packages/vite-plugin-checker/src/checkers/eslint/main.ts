@@ -6,10 +6,10 @@ import invariant from 'tiny-invariant'
 import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker'
+import { DiagnosticCache } from '../../DiagnosticCache'
 import {
   diagnosticToTerminalLog,
   diagnosticToViteError,
-  NormalizedDiagnostic,
   normalizeEslintDiagnostic,
 } from '../../logger'
 
@@ -45,14 +45,14 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           ? [pluginConfig.eslint.files]
           : pluginConfig.eslint.files
 
-      let diagnosticsCache: NormalizedDiagnostic[] = []
+      const diagnosticsCache = new DiagnosticCache()
 
       const dispatchDiagnostics = () => {
-        diagnosticsCache.forEach((n) => {
+        diagnosticsCache.get().forEach((n) => {
           console.log(diagnosticToTerminalLog(n, 'ESLint'))
         })
 
-        const lastErr = diagnosticsCache[0]
+        const lastErr = diagnosticsCache.last
 
         if (!lastErr) return
 
@@ -69,17 +69,19 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
         if (!extensions.includes(path.extname(filePath))) return
+        const absPath = path.resolve(root, filePath)
 
         if (type === 'unlink') {
-          const absPath = path.resolve(root, filePath)
-          diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath)
-        } else if (type === 'change') {
+          diagnosticsCache.set(absPath, null)
+        }
+
+        if (type === 'change') {
           const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
           const newDiagnostics = diagnosticsOfChangedFile
             .map((d) => normalizeEslintDiagnostic(d))
             .flat(1)
           const absPath = diagnosticsOfChangedFile[0].filePath
-          diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath).concat(newDiagnostics)
+          diagnosticsCache.set(absPath, newDiagnostics)
         }
 
         dispatchDiagnostics()
@@ -87,7 +89,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       // initial lint
       const diagnostics = await eslint.lintFiles(paths)
-      diagnosticsCache = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
+      diagnosticsCache.initWith(diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1))
       dispatchDiagnostics()
 
       // watch lint
@@ -105,7 +107,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 export class EslintChecker extends Checker<'eslint'> {
   public constructor() {
     super({
-      name: 'typescript',
+      name: 'eslint',
       absFilePath: __filename,
       build: {
         buildBin: (pluginConfig) => {
