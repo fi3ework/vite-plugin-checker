@@ -116,8 +116,13 @@ export class EslintChecker extends Checker<'eslint'> {
           let ext = ['.js']
           let files: string[] = []
           let overrideConfigFile: string[] = []
+          let maxWarnings = ''
+
           if (pluginConfig.eslint) {
             ext = pluginConfig.eslint.extensions ?? ext
+            if (pluginConfig.eslint.maxWarnings !== undefined) {
+              maxWarnings = `--max-warnings=${pluginConfig.eslint.maxWarnings}`
+            }
             files =
               typeof pluginConfig.eslint.files === 'string'
                 ? [pluginConfig.eslint.files]
@@ -127,7 +132,10 @@ export class EslintChecker extends Checker<'eslint'> {
               : []
           }
 
-          return ['eslint', ['--ext', ext.join(','), ...overrideConfigFile, ...files]]
+          return [
+            'eslint',
+            ['--ext', ext.join(','), maxWarnings, ...overrideConfigFile, ...files].filter(Boolean),
+          ]
         },
       },
       createDiagnostic,
