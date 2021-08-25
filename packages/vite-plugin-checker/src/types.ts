@@ -43,6 +43,10 @@ export type EslintConfig =
        * @defaultValue: 300
        */
       // watchDelay?: number
+      /**
+       * Specify path to ESLint config file, if you wish to override ESLint's default configuration discovery.
+       */
+      configPath?: string
     }
 
 /** checkers shared configuration */
