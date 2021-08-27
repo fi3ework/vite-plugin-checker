@@ -30,8 +30,8 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       if (!pluginConfig.eslint) return
 
       const extensions = pluginConfig.eslint.extensions ?? ['.js']
-      const overrideConfigFile = pluginConfig.eslint.configPath
-        ? { overrideConfigFile: pluginConfig.eslint.configPath }
+      const overrideConfigFile = pluginConfig.eslint.configFile
+        ? { configFile: pluginConfig.eslint.configFile }
         : {}
       const eslint = new ESLint({
         cwd: root,
@@ -122,8 +122,8 @@ export class EslintChecker extends Checker<'eslint'> {
               typeof pluginConfig.eslint.files === 'string'
                 ? [pluginConfig.eslint.files]
                 : pluginConfig.eslint.files
-            overrideConfigFile = pluginConfig.eslint.configPath
-              ? ['--config', pluginConfig.eslint.configPath]
+            overrideConfigFile = pluginConfig.eslint.configFile
+              ? ['--config', pluginConfig.eslint.configFile]
               : []
           }
 
