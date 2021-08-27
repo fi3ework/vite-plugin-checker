@@ -31,7 +31,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       const extensions = pluginConfig.eslint.extensions ?? ['.js']
       const overrideConfigFile = pluginConfig.eslint.configFile
-        ? { configFile: pluginConfig.eslint.configFile }
+        ? { overrideConfigFile: pluginConfig.eslint.configFile }
         : {}
       const eslint = new ESLint({
         cwd: root,
