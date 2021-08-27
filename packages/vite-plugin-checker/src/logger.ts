@@ -53,7 +53,7 @@ export enum DiagnosticLevel {
 
 export function diagnosticToTerminalLog(
   d: NormalizedDiagnostic,
-  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint'
+  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint' | 'svelte'
 ): string {
   const nameInLabel = name ? `(${name})` : ''
   const boldBlack = chalk.bold.rgb(0, 0, 0)
@@ -180,10 +180,12 @@ export function normalizeLspDiagnostic({
   diagnostic,
   absFilePath,
   fileText,
+  checker = 'VLS',
 }: {
   diagnostic: LspDiagnostic
   absFilePath: string
   fileText: string
+  checker?: string
 }): NormalizedDiagnostic {
   let level = DiagnosticLevel.Error
   const loc = lspRange2Location(diagnostic.range)
@@ -210,7 +212,7 @@ export function normalizeLspDiagnostic({
     codeFrame,
     stripedCodeFrame: codeFrame && strip(codeFrame),
     id: absFilePath,
-    checker: 'VLS',
+    checker,
     loc,
     level,
   }

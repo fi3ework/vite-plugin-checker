@@ -55,6 +55,7 @@
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
     "strip-ansi": "^7.0.0",
+    "svelte-language-server": "^0.14.7",
     "ts-jest": "^27.0.3",
     "typescript": "^4.2.2",
     "vite": "^2.3.8",

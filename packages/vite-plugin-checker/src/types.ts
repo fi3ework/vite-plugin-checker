@@ -45,6 +45,13 @@ export type EslintConfig =
       // watchDelay?: number
     }
 
+export type SvelteConfig =
+  | boolean
+  | Partial<{
+      root?: string
+      // TODO: support svelte config
+    }>
+
 /** checkers shared configuration */
 export interface SharedConfig {
   /**
@@ -65,6 +72,7 @@ export interface BuildInCheckers {
   vueTsc: VueTscConfig
   vls: VlsConfig
   eslint: EslintConfig
+  svelte: SvelteConfig
 }
 
 export type BuildInCheckerNames = keyof BuildInCheckers
