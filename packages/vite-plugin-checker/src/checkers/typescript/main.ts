@@ -123,12 +123,21 @@ export class TscChecker extends Checker<'typescript'> {
       absFilePath: __filename,
       build: {
         buildBin: (config) => {
-          if (typeof config.typescript === 'object' && config.typescript.tsconfigPath) {
-            const tsconfig = config.typescript.root
-              ? path.join(config.typescript.root, config.typescript.tsconfigPath)
-              : config.typescript.tsconfigPath
-            return ['tsc', ['--noEmit', '-p', tsconfig]]
+          if (typeof config.typescript === 'object') {
+            const { root, tsconfigPath, buildMode } = config.typescript
+
+            // Compiler option '--noEmit' may not be used with '--build'
+            let args = [buildMode ? '-b' : '--noEmit']
+
+            // Custom config path
+            if (tsconfigPath) {
+              const fullConfigPath = root ? path.join(root, tsconfigPath) : tsconfigPath
+              args = args.concat(['-p', fullConfigPath])
+            }
+
+            return ['tsc', args]
           }
+
           return ['tsc', ['--noEmit']]
         },
       },

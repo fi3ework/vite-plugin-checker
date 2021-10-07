@@ -11,6 +11,8 @@ export type TscConfig =
       tsconfigPath: string
       /** root path of cwd */
       root: string
+      /** root path of cwd */
+      buildMode: boolean
     }>
 
 /** vue-tsc checker configuration */
