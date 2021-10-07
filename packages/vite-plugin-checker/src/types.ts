@@ -50,6 +50,10 @@ export type EslintConfig =
        * Equivalent to ESLint's "--config" option.
        */
       configFile?: string
+      /*
+       * Fail a build if there are more than this many warnings.
+       */
+      maxWarnings?: number
     }
 
 /** checkers shared configuration */
