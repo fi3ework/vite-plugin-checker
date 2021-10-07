@@ -19,7 +19,13 @@ export * from './codeFrame'
 export * from './worker'
 
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
-const buildInCheckerKeys: BuildInCheckerNames[] = ['typescript', 'vueTsc', 'vls', 'eslint']
+const buildInCheckerKeys: BuildInCheckerNames[] = [
+  'typescript',
+  'vueTsc',
+  'vls',
+  'eslint',
+  'svelte',
+]
 
 function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndBuildChecker[] {
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
