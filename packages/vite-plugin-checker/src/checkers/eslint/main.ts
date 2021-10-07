@@ -30,9 +30,13 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       if (!pluginConfig.eslint) return
 
       const extensions = pluginConfig.eslint.extensions ?? ['.js']
+      const overrideConfigFile = pluginConfig.eslint.configFile
+        ? { overrideConfigFile: pluginConfig.eslint.configFile }
+        : {}
       const eslint = new ESLint({
         cwd: root,
         extensions,
+        ...overrideConfigFile,
       })
       invariant(pluginConfig.eslint, 'config.eslint should not be `false`')
       invariant(
@@ -111,15 +115,19 @@ export class EslintChecker extends Checker<'eslint'> {
         buildBin: (pluginConfig) => {
           let ext = ['.js']
           let files: string[] = []
+          let overrideConfigFile: string[] = []
           if (pluginConfig.eslint) {
             ext = pluginConfig.eslint.extensions ?? ext
             files =
               typeof pluginConfig.eslint.files === 'string'
                 ? [pluginConfig.eslint.files]
                 : pluginConfig.eslint.files
+            overrideConfigFile = pluginConfig.eslint.configFile
+              ? ['--config', pluginConfig.eslint.configFile]
+              : []
           }
 
-          return ['eslint', ['--ext', ext.join(','), ...files]]
+          return ['eslint', ['--ext', ext.join(','), ...overrideConfigFile, ...files]]
         },
       },
       createDiagnostic,
