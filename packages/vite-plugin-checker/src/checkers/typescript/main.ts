@@ -105,16 +105,22 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       // https://github.com/microsoft/TypeScript/pull/33082/files
       const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram
 
-      const host = ts.createWatchCompilerHost(
-        configFile,
-        { noEmit: true },
-        ts.sys,
-        createProgram,
-        reportDiagnostic,
-        reportWatchStatusChanged
-      )
+      if (typeof pluginConfig.typescript === 'object' &&  pluginConfig.typescript.buildMode) {
+        const host = ts.createSolutionBuilderWithWatchHost(ts.sys, createProgram, reportDiagnostic, undefined, reportWatchStatusChanged)
 
-      ts.createWatchProgram(host)
+        ts.createSolutionBuilderWithWatch(host, [configFile], {}).build()
+      } else {
+        const host = ts.createWatchCompilerHost(
+          configFile,
+          { noEmit: true },
+          ts.sys,
+          createProgram,
+          reportDiagnostic,
+          reportWatchStatusChanged
+        )
+  
+        ts.createWatchProgram(host)
+      }
     },
   }
 }
