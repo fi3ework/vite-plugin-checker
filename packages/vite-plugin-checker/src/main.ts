@@ -152,8 +152,8 @@ function spawnChecker(
       // Command line args constructed by checkers therefore need to escape double quotes
       // to have them not striped out by cmd.exe. Using shell on all platforms lets us avoid
       // having to perform platform-specific logic around escaping quotes since all platform
-      // shells will strip out unescaped double quotes. shell=false on linux would result
-      // on escaped quotes not being unescaped.
+      // shells will strip out unescaped double quotes. E.g. shell=false on linux only would 
+      // result in escaped quotes not being unescaped.
       shell: true,
     })
 
