@@ -2,6 +2,8 @@ import { URI } from 'vscode-uri'
 
 import type { InitializeParams } from 'vscode-languageserver/node'
 
+export type VlsOptions = ReturnType<typeof getDefaultVLSConfig>;
+
 export function getInitParams(workspaceUri: URI): InitializeParams {
   const defaultVLSConfig = getDefaultVLSConfig()
 

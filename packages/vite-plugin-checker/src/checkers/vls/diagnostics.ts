@@ -32,9 +32,10 @@ import {
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
 } from '../../logger'
-import { getInitParams } from './initParams'
+import { getInitParams, VlsOptions } from './initParams'
 
 import type { ErrorPayload } from 'vite'
+import { DeepPartial } from '../../types'
 
 enum DOC_VERSION {
   init = -1,
@@ -55,13 +56,14 @@ const logLevel2Severity = {
 export interface DiagnosticOptions {
   watch: boolean
   verbose: boolean
+  config: DeepPartial<VlsOptions> | null
   errorCallback?: (diagnostic: PublishDiagnosticsParams, viteError: ErrorPayload['err']) => void
 }
 
 export async function diagnostics(
   workspace: string | null,
   logLevel: LogLevel,
-  options: DiagnosticOptions = { watch: false, verbose: false }
+  options: DiagnosticOptions = { watch: false, verbose: false, config: null }
 ) {
   const { watch, errorCallback } = options
   if (options.verbose) {
@@ -200,6 +202,11 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
 
   const init = getInitParams(workspaceUri)
 
+  if (options.config) {
+    // Merge in used-provided VLS settings if present
+    mergeDeep(init.initializationOptions.config, options.config);
+  }
+
   await clientConnection.sendRequest(InitializeRequest.type, init)
 
   return clientConnection
@@ -314,4 +321,24 @@ async function getDiagnostics(
 
   consoleLogVls(logChunk)
   return initialErrCount
+}
+
+
+function isObject(item: any): item is {} {
+  return item && typeof item === 'object' && !Array.isArray(item);
+}
+
+function mergeDeep<T>(target: T, source: DeepPartial<T> | undefined) {
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) Object.assign(target, { [key]: {} });
+        mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
+      }
+    }
+  }
+
+  return target;
 }
