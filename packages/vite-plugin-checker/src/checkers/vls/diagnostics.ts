@@ -160,6 +160,8 @@ export async function prepareClientConnection(
       return
     }
 
+    publishDiagnostics.diagnostics = filterDiagnostics(publishDiagnostics.diagnostics, severity)
+
     if (!publishDiagnostics.diagnostics.length) {
       return
     }
