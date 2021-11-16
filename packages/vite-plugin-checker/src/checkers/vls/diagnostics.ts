@@ -133,7 +133,11 @@ function suppressConsole() {
   }
 }
 
-export async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOptions) {
+export async function prepareClientConnection(
+  workspaceUri: URI,
+  severity: DiagnosticSeverity,
+  options: DiagnosticOptions
+) {
   const up = new TestStream()
   const down = new TestStream()
   const logger = new NullLogger()
@@ -160,8 +164,7 @@ export async function prepareClientConnection(workspaceUri: URI, options: Diagno
       return
     }
 
-    if (!publishDiagnostics.diagnostics.length) return
-
+    publishDiagnostics.diagnostics = filterDiagnostics(publishDiagnostics.diagnostics, severity)
     const res = await normalizePublishDiagnosticParams(publishDiagnostics)
     const normalized = diagnosticToViteError(res)
     consoleLogVls(os.EOL)
@@ -217,7 +220,7 @@ async function getDiagnostics(
   severity: DiagnosticSeverity,
   options: DiagnosticOptions
 ) {
-  const { clientConnection } = await prepareClientConnection(workspaceUri, options)
+  const { clientConnection } = await prepareClientConnection(workspaceUri, severity, options)
 
   const files = glob.sync('**/*.vue', { cwd: workspaceUri.fsPath, ignore: ['node_modules/**'] })
 
@@ -262,12 +265,7 @@ async function getDiagnostics(
             version: DOC_VERSION.init,
           })) as Diagnostic[]
 
-          /**
-           * Ignore eslint errors for now
-           */
-          diagnostics = diagnostics
-            .filter((r) => r.source !== 'eslint-plugin-vue')
-            .filter((r) => r.severity && r.severity <= severity)
+          diagnostics = filterDiagnostics(diagnostics, severity)
 
           if (diagnostics.length > 0) {
             logChunk +=
@@ -340,4 +338,13 @@ function mergeDeep<T>(target: T, source: DeepPartial<T> | undefined) {
   }
 
   return target
+}
+
+function filterDiagnostics(diagnostics: Diagnostic[], severity: number): Diagnostic[] {
+  /**
+   * Ignore eslint errors for now
+   */
+  return diagnostics
+    .filter((r) => r.source !== 'eslint-plugin-vue')
+    .filter((r) => r.severity && r.severity <= severity)
 }
