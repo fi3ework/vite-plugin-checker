@@ -1,4 +1,4 @@
-import type { HMRPayload, ServerOptions, ConfigEnv } from 'vite'
+import type { ConfigEnv, HMRPayload } from 'vite'
 import type { Worker } from 'worker_threads'
 
 /* ----------------------------- userland plugin options ----------------------------- */
@@ -106,7 +106,10 @@ export interface OverlayErrorAction extends Action {
 
 export interface ConfigAction extends Action {
   type: ACTION_TYPES.config
-  payload: Pick<ServerOptions, 'hmr'> & { env: ConfigEnv }
+  payload: {
+    hmr?: { overlay?: boolean } | boolean
+    env: ConfigEnv
+  }
 }
 
 export interface ConfigureServerAction extends Action {
@@ -150,7 +153,7 @@ export interface ServeChecker<T extends BuildInCheckerNames = any> {
 }
 
 export interface CheckerDiagnostic {
-  config: (options: Pick<ServerOptions, 'hmr'> & { env: ConfigEnv }) => unknown
+  config: (options: { hmr?: { overlay?: boolean } | boolean; env: ConfigEnv }) => unknown
   configureServer: (options: { root: string }) => unknown
 }
 
