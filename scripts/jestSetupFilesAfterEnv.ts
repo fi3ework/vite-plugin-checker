@@ -96,7 +96,7 @@ beforeAll(async () => {
       // await page.waitForLoadState('domcontentloaded')
       // await page.waitForSelector('body', { state: 'visible' })
     }
-  } catch (e) {
+  } catch (e: any) {
     // jest doesn't exit if our setup has error here
     // https://github.com/facebook/jest/issues/2713
     err = e

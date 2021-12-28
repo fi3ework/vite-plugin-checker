@@ -1,21 +1,20 @@
 import { ESLint } from 'eslint'
-// import debounce from 'lodash.debounce'
-// import os from 'os'
 import path from 'path'
 import invariant from 'tiny-invariant'
 import { parentPort } from 'worker_threads'
+import chokidar from 'chokidar'
 
 import { Checker } from '../../Checker'
 import {
+  consoleLog,
   diagnosticToTerminalLog,
   diagnosticToViteError,
   NormalizedDiagnostic,
   normalizeEslintDiagnostic,
 } from '../../logger'
+import { ACTION_TYPES } from '../../types'
 
 import type { CreateDiagnostic } from '../../types'
-import type { ErrorPayload } from 'vite'
-
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
   let overlay = true // Vite defaults to true
 
@@ -53,7 +52,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       const dispatchDiagnostics = () => {
         diagnosticsCache.forEach((n) => {
-          console.log(diagnosticToTerminalLog(n, 'ESLint'))
+          consoleLog(diagnosticToTerminalLog(n, 'ESLint'))
         })
 
         const lastErr = diagnosticsCache[0]
@@ -62,7 +61,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
         if (overlay) {
           parentPort?.postMessage({
-            type: 'ERROR',
+            type: ACTION_TYPES.overlayError,
             payload: {
               type: 'error',
               err: diagnosticToViteError(lastErr),
@@ -95,11 +94,15 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       dispatchDiagnostics()
 
       // watch lint
-      Checker.watcher.add(paths)
-      Checker.watcher.on('change', async (filePath) => {
+      const watcher = chokidar.watch([], {
+        cwd: root,
+        ignored: (path: string) => path.includes('node_modules'),
+      })
+      watcher.add(paths)
+      watcher.on('change', async (filePath) => {
         handleFileChange(filePath, 'change')
       })
-      Checker.watcher.on('unlink', async (filePath) => {
+      watcher.on('unlink', async (filePath) => {
         handleFileChange(filePath, 'unlink')
       })
     },

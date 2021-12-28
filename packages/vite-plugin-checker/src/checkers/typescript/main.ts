@@ -6,13 +6,14 @@ import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker'
 import {
+  consoleLog,
   diagnosticToTerminalLog,
   diagnosticToViteError,
   ensureCall,
   normalizeTsDiagnostic,
 } from '../../logger'
+import { ACTION_TYPES, CreateDiagnostic } from '../../types'
 
-import type { CreateDiagnostic } from '../../types'
 import type { ErrorPayload } from 'vite'
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
@@ -80,7 +81,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           case 6194: // 0 errors or 2+ errors
             if (currErr && overlay) {
               parentPort?.postMessage({
-                type: 'ERROR',
+                type: ACTION_TYPES.overlayError,
                 payload: {
                   type: 'error',
                   err: currErr,
@@ -94,7 +95,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             logChunk = ''
           }
 
-          console.log(logChunk + os.EOL + diagnostic.messageText.toString())
+          consoleLog(logChunk + os.EOL + diagnostic.messageText.toString())
         })
       }
 

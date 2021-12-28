@@ -2,14 +2,16 @@ import chalk from 'chalk'
 import fs from 'fs'
 import os from 'os'
 import strip from 'strip-ansi'
-import { URI } from 'vscode-uri'
 import { ErrorPayload } from 'vite'
+import { URI } from 'vscode-uri'
+import { parentPort, isMainThread } from 'worker_threads'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
+import { ACTION_TYPES } from './types'
+
 import type { Range } from 'vscode-languageclient'
 import type { ESLint } from 'eslint'
-
 import type {
   Diagnostic as LspDiagnostic,
   PublishDiagnosticsParams,
@@ -20,8 +22,6 @@ import type {
   flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
   LineAndCharacter,
 } from 'typescript'
-import type { BuildInCheckerNames } from './types'
-
 export interface NormalizedDiagnostic {
   /** error message */
   message?: string
@@ -313,4 +313,15 @@ export function ensureCall(callback: CallableFunction) {
   setTimeout(() => {
     callback()
   })
+}
+
+export function consoleLog(value: string) {
+  if (isMainThread) {
+    console.log(value)
+  } else {
+    parentPort?.postMessage({
+      type: ACTION_TYPES.console,
+      payload: value,
+    })
+  }
 }

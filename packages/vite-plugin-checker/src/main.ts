@@ -3,8 +3,9 @@ import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
 import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
+import { Checker } from './Checker'
 
-import type {
+import {
   OverlayErrorAction,
   BuildInCheckerNames,
   ServeAndBuildChecker,
@@ -12,11 +13,13 @@ import type {
   SharedConfig,
   BuildCheckBinStr,
   PluginConfig,
+  ACTION_TYPES,
 } from './types'
 
 export * from './types'
 export * from './codeFrame'
 export * from './worker'
+export { Checker } from './Checker'
 
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: BuildInCheckerNames[] = ['typescript', 'vueTsc', 'vls', 'eslint']
@@ -59,6 +62,14 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         })
       })
     },
+    buildEnd() {
+      if (viteMode === 'serve') {
+        checkers.forEach((checker) => {
+          const { worker } = checker.serve
+          worker.terminate()
+        })
+      }
+    },
     buildStart: () => {
       // for build mode
       // run a bin command in a separated process
@@ -89,7 +100,11 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         const { worker, configureServer: workerConfigureServer } = checker.serve
         workerConfigureServer({ root: server.config.root })
         worker.on('message', (action: OverlayErrorAction) => {
-          server.ws.send(action.payload)
+          if (action.type === ACTION_TYPES.overlayError) {
+            server.ws.send(action.payload)
+          } else if (action.type === ACTION_TYPES.console) {
+            Checker.log(action)
+          }
         })
       })
 

@@ -3,7 +3,6 @@ import { isMainThread } from 'worker_threads'
 
 import { ServeAndBuildChecker, BuildInCheckerNames } from './types'
 import { createScript, Script } from './worker'
-import chokidar from 'chokidar'
 
 // still an only issue https://github.com/microsoft/TypeScript/issues/29808#issuecomment-829750974
 import type {} from 'vite'
@@ -22,9 +21,15 @@ export interface CheckerMeta<T extends BuildInCheckerNames> {
 }
 
 export abstract class Checker<T extends BuildInCheckerNames> implements CheckerMeta<T> {
-  public static watcher: chokidar.FSWatcher = chokidar.watch([], {
-    ignored: (path: string) => path.includes('node_modules'),
-  })
+  public static logger: ((...args: any[]) => void)[] = [
+    (...args: any[]) => {
+      console.log(args[0].payload)
+    },
+  ]
+
+  public static log(...args: any[]) {
+    this.logger.forEach((fn) => fn(...args))
+  }
 
   public name: string
   public absFilePath: string
