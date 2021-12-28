@@ -1,10 +1,10 @@
 import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker'
+import { ACTION_TYPES } from '../../types'
 import { DiagnosticOptions, diagnostics } from './diagnostics'
 
 import type { CreateDiagnostic } from '../../types'
-
 export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
   let overlay = true // Vite defaults to true
 
@@ -21,16 +21,14 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
       const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics, overlayErr) => {
         if (!overlay) return
         if (!overlayErr) return
-
         parentPort?.postMessage({
-          type: 'ERROR',
+          type: ACTION_TYPES.overlayError,
           payload: {
             type: 'error',
             err: overlayErr,
           },
         })
       }
-
       await diagnostics(workDir, 'WARN', { watch: true, errorCallback, verbose: false })
     },
   }

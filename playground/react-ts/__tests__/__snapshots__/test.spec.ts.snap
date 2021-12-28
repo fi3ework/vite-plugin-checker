@@ -1,115 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`typescript serve get initial error and subsequent error 1`] = `"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'."`;
+exports[`typescript serve get initial error and subsequent error 1`] = `"{\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   const [count, setCount] = useState<string>(1)/n      |                                              ^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/temp/react-ts/src/App.tsx\\",\\"loc\\":{\\"column\\":46,\\"file\\":\\"<PROJECT_ROOT>/temp/react-ts/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.\\",\\"plugin\\":\\"vite-plugin-checker(TypeScript)\\",\\"stack\\":\\"\\"}"`;
 
-exports[`typescript serve get initial error and subsequent error 2`] = `"<PROJECT_ROOT>/temp/react-ts/src/App.tsx:7:46"`;
+exports[`typescript serve get initial error and subsequent error 2`] = `
+"
+ ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
+ FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:6:46
 
-exports[`typescript serve get initial error and subsequent error 3`] = `
-"5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(1)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">"
+    4 |
+    5 | function App() {
+  > 6 |   const [count, setCount] = useState<string>(1)
+      |                                              ^
+    7 |   return (
+    8 |     <div className=\\"App\\">
+    9 |       <header className=\\"App-header\\">
+
+Found 1 error. Watching for file changes."
 `;
+
+exports[`typescript serve get initial error and subsequent error 3`] = `"{\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   const [count, setCount] = useState<string>(2)/n      |                                              ^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/temp/react-ts/src/App.tsx\\",\\"loc\\":{\\"column\\":46,\\"file\\":\\"<PROJECT_ROOT>/temp/react-ts/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.\\",\\"plugin\\":\\"vite-plugin-checker(TypeScript)\\",\\"stack\\":\\"\\"}"`;
 
 exports[`typescript serve get initial error and subsequent error 4`] = `
-"Pre-bundling dependencies:
-  react
-  react-dom
-(this will be run only when your dependencies or config have changed)
-
-  vite v2.3.8 dev server running at:
-
-  > Local: http://localhost:3000/
-  > Network: use \`--host\` to expose
-
-  ready in XXXms
-
-
+"
  ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:7:46
+ FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:6:46
 
-     5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(1)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">
+    4 |
+    5 | function App() {
+  > 6 |   const [count, setCount] = useState<string>(2)
+      |                                              ^
+    7 |   return (
+    8 |     <div className=\\"App\\">
+    9 |       <header className=\\"App-header\\">
 
-Found 1 error. Watching for file changes.
-"
-`;
-
-exports[`typescript serve get initial error and subsequent error 5`] = `
-"5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(2)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">"
-`;
-
-exports[`typescript serve get initial error and subsequent error 6`] = `
-"HH:MM:SS AM [vite] hmr update /src/App.tsx
-
- ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:7:46
-
-     5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(2)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">
-
-Found 1 error. Watching for file changes.
-"
-`;
-
-exports[`typescript serve overlay: false 1`] = `
-"
-  vite v2.3.8 dev server running at:
-
-  > Local: http://localhost:3000/
-  > Network: use \`--host\` to expose
-
-  ready in XXXms
-
-
- ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:7:46
-
-     5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(1)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">
-
-Found 1 error. Watching for file changes.
-"
-`;
-
-exports[`typescript serve overlay: false 2`] = `
-"HH:MM:SS AM [vite] hmr update /src/App.tsx
-
- ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/temp/react-ts/src/App.tsx:7:46
-
-     5 | function App() {
-     6 |   // Try change <string> to <number> and the overlay will gone.
-  >  7 |   const [count, setCount] = useState<string>(2)
-       |                                              ^
-     8 |   return (
-     9 |     <div className=\\"App\\">
-    10 |       <header className=\\"App-header\\">
-
-Found 1 error. Watching for file changes.
-"
+Found 1 error. Watching for file changes."
 `;

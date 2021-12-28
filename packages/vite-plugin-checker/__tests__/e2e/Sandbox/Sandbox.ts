@@ -1,26 +1,37 @@
 import execa from 'execa'
 import path from 'path'
-import playwright, { chromium } from 'playwright-chromium'
-import type { ElementHandleForTag } from 'playwright-chromium/types/structs'
+import playwright from 'playwright-chromium'
 import strip from 'strip-ansi'
 import invariant from 'tiny-invariant'
-// import fs from 'fs'
-// import os from 'os'
+import { build, createServer, HMRPayload, ViteDevServer } from 'vite'
+import { Checker } from 'vite-plugin-checker'
 
-// @ts-ignore
-// const page = global.page!
-// const DIR = path.join(os.tmpdir(), 'jest_playwright_global_setup')
 import { expectStdoutNotContains, sleep, testDir } from '../testUtils'
 
-let devServer: any
-let browser: playwright.Browser
-// const page: playwright.Page
+import type { ElementHandleForTag } from 'playwright-chromium/types/structs'
+let devServer: ViteDevServer
 let binPath: string
-
 export let log = ''
 export let stripedLog = ''
 
-export function resetTerminalLog() {
+export function proxyConsoleInTest() {
+  Checker.logger = [
+    (...args: any[]) => {
+      log = args[0].payload
+      stripedLog = strip(args[0].payload)
+    },
+  ]
+}
+
+export async function sleepForServerReady(ratio = 1) {
+  await sleep(process.env.CI ? 10000 * ratio : 5000 * ratio)
+}
+
+export async function sleepForEdit() {
+  await sleep(process.env.CI ? 4000 : 2000)
+}
+
+export function resetReceivedLog() {
   log = ''
   stripedLog = ''
 }
@@ -35,54 +46,46 @@ export async function viteServe({
   cwd = process.cwd(),
   port = 3000,
   path: _path = '',
-}: { cwd?: string; port?: number; path?: string } = {}) {
-  sleep(2000)
-  // @ts-ignore
-  // const devServer = global.devServer!
-  // browser = await chromium.launch({
-  //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  // })
+  wsSend,
+  proxyConsole = proxyConsoleInTest,
+  launchPage = false,
+}: {
+  cwd?: string
+  port?: number
+  path?: string
+  wsSend?: (payload: HMRPayload) => void
+  proxyConsole?: () => void
+  launchPage?: boolean
+} = {}) {
+  await sleep(3000)
+  if (proxyConsole) {
+    proxyConsole()
+  }
 
-  // const wsEndpoint = fs.readFileSync(path.join(DIR, 'wsEndpoint'), 'utf-8')
-  // const browser = await chromium.connect({
-  //   wsEndpoint,
-  // })
-
-  // // @ts-ignore
-  // global.page = await browser.newPage()
-
-  console.log('launching browser')
-  // page = await browser.newPage()
-
-  devServer = execa(binPath, {
-    cwd: cwd ?? testDir,
+  devServer = await createServer({
+    root: cwd,
   })
+  await devServer.listen()
 
-  await new Promise((resolve) => {
-    devServer.stdout.on('data', (data: Buffer) => {
-      log += data.toString()
-      stripedLog += strip(data.toString())
-      if (data.toString().match('running')) {
-        console.log('dev server running.')
-        resolve('')
-      }
-    })
-  })
+  if (wsSend) {
+    devServer.ws.send = (payload) => {
+      wsSend(payload)
+    }
+  }
 
-  await sleep(6000)
-  await page.goto(`http://localhost:${port}${_path}`)
-  await page.waitForLoadState('domcontentloaded')
-  // await page.waitForSelector('body', { state: 'attached' })
+  if (launchPage) {
+    console.log('-- launching page --')
+    await page.goto(`http://localhost:${port}${_path}`)
+    console.log('-- page launched --')
+    await page.waitForLoadState('domcontentloaded')
+    console.log('-- page loaded --')
+  }
 }
 
 export async function killServer() {
-  // @ts-ignore
-  // const devServer = global.devServer!
-  // if (page) await page.close()
   if (devServer) {
-    devServer.kill('SIGTERM', {
-      forceKillAfterTimeout: 1,
-    })
+    await devServer.close()
+    console.log('-- dev server closed --')
   }
 }
 

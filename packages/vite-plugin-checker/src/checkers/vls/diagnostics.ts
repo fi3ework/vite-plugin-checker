@@ -1,11 +1,11 @@
 import chalk from 'chalk'
+import chokidar from 'chokidar'
 import glob from 'fast-glob'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import { Duplex } from 'stream'
 import { VLS } from 'vls'
-import { Checker } from '../../Checker'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import {
   createConnection,
@@ -26,6 +26,7 @@ import {
 import { URI } from 'vscode-uri'
 
 import {
+  consoleLog,
   diagnosticToTerminalLog,
   diagnosticToViteError,
   normalizeLspDiagnostic,
@@ -86,12 +87,14 @@ export async function diagnostics(
 
   // initial report
   if (!errCount) {
-    console.log(chalk.green(`[VLS checker] No error found`))
+    consoleLogVls(chalk.green(`[VLS checker] No error found`))
     if (!watch) {
       process.exit(0)
     }
   } else {
-    console.log(chalk.red(`[VLS checker] Found ${errCount} ${errCount === 1 ? 'error' : 'errors'}`))
+    consoleLogVls(
+      chalk.red(`[VLS checker] Found ${errCount} ${errCount === 1 ? 'error' : 'errors'}`)
+    )
     if (!watch) {
       process.exit(1)
     }
@@ -113,16 +116,18 @@ class TestStream extends Duplex {
   public _read(_size: number) {}
 }
 
+let consoleLogVls = consoleLog
+
 function suppressConsole() {
   let disposed = false
-  const rawConsoleLog = globalThis.console.log
-  globalThis.console.log = () => {}
+  const rawConsoleLog = consoleLogVls
+  consoleLogVls = () => {}
 
   return () => {
     if (disposed) return
 
     disposed = true
-    globalThis.console.log = rawConsoleLog
+    consoleLogVls = rawConsoleLog
   }
 }
 
@@ -157,8 +162,8 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
 
     const res = await normalizePublishDiagnosticParams(publishDiagnostics)
     const normalized = diagnosticToViteError(res)
-    console.log(os.EOL)
-    console.log(res.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
+    consoleLogVls(os.EOL)
+    consoleLogVls(res.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
 
     options.errorCallback?.(publishDiagnostics, normalized)
   }
@@ -288,8 +293,12 @@ async function getDiagnostics(
 
   // watched diagnostics report
   if (options.watch) {
-    Checker.watcher.add(workspaceUri.fsPath)
-    Checker.watcher.on('all', async (event, path) => {
+    const watcher = chokidar.watch([], {
+      ignored: (path: string) => path.includes('node_modules'),
+    })
+
+    watcher.add(workspaceUri.fsPath)
+    watcher.on('all', async (event, path) => {
       if (!path.endsWith('.vue')) return
       const fileContent = await fs.promises.readFile(path, 'utf-8')
       // TODO: watch js change
@@ -303,6 +312,6 @@ async function getDiagnostics(
     })
   }
 
-  console.log(logChunk)
+  consoleLogVls(logChunk)
   return initialErrCount
 }

@@ -1,10 +1,11 @@
+import stringify from 'fast-json-stable-stringify'
+
 import {
-  getHmrOverlay,
-  getHmrOverlayText,
   killServer,
-  pollingUntil,
+  sleepForEdit,
+  sleepForServerReady,
   preTest,
-  resetTerminalLog,
+  resetReceivedLog,
   stripedLog,
   viteBuild,
   viteServe,
@@ -16,74 +17,53 @@ import {
   WORKER_CLEAN_TIMEOUT,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
 import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
-import { logTimeSerializers } from '../../../scripts/logTimeSerializers'
+import { serializers } from '../../../scripts/serializers'
 
 beforeAll(async () => {
   await preTest()
 })
 
-expect.addSnapshotSerializer(logTimeSerializers)
+expect.addSnapshotSerializer(serializers)
 
 afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
 describe('eslint', () => {
-  describe('serve', () => {
-    beforeEach(async () => {
-      await copyCode()
-    })
+  beforeEach(async () => {
+    await copyCode()
+  })
 
+  describe('serve', () => {
     afterEach(async () => {
       await killServer()
     })
 
     it('get initial error and subsequent error', async () => {
-      await viteServe({ cwd: testDir })
-      await pollingUntil(getHmrOverlay, (dom) => !!dom)
-      const [message1, file1, frame1] = await getHmrOverlayText()
-      expect(message1).toMatchSnapshot()
-      expect(file1).toMatchSnapshot()
-      expect(frame1).toMatchSnapshot()
+      let err: any
+      // @ts-expect-error
+      await viteServe({ cwd: testDir, wsSend: (_payload) => (err = _payload.err) })
+      await sleepForServerReady()
+      expect(stringify(err)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit error file --')
-      resetTerminalLog()
+      resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
-      await sleep(process.env.CI ? 5000 : 2000)
+      await sleepForEdit()
+      expect(stringify(err)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit non error file --')
-      resetTerminalLog()
+      resetReceivedLog()
       editFile('src/text.ts', (code) => code.replace(`Vanilla`, `vanilla`))
-      await sleep(process.env.CI ? 5000 : 2000)
-      expect(stripedLog).toMatchSnapshot()
-    })
-
-    it('overlay: false', async () => {
-      resetTerminalLog()
-      editFile('vite.config.ts', (code) => code.replace('eslint: {', 'overlay: false, eslint: {'))
-
-      await viteServe({ cwd: testDir })
-      await sleep(6000)
-      await expect(getHmrOverlayText()).rejects.toThrow(
-        '<vite-error-overlay> shadow dom is expected to be found, but got null'
-      )
-
-      expect(stripedLog).toMatchSnapshot()
-
-      resetTerminalLog()
-      editFile('src/main.ts', (code) => code.replace('var hello', 'const hello'))
-      await sleep(process.env.CI ? 5000 : 2000)
+      await sleepForEdit()
+      expect(stringify(err)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })
 
   describe('build', () => {
-    beforeEach(async () => {
-      await copyCode()
-    })
-
     const expectedMsg = 'Unexpected var, use let or const instead  no-var'
 
     it('enableBuild: true', async () => {

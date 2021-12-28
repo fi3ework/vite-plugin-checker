@@ -69,6 +69,10 @@ export interface SharedConfig {
    * Same as [Vite config](https://vitejs.dev/config/#root)
    */
   overlay: boolean
+  /**
+   * logger
+   */
+  // logger: ((...args: any[]) => void)[]
 }
 
 export interface BuildInCheckers {
@@ -91,6 +95,7 @@ export enum ACTION_TYPES {
   config = 'config',
   configureServer = 'configureServer',
   overlayError = 'overlayError',
+  console = 'console',
   unref = 'unref',
 }
 
