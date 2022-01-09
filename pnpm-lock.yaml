@@ -90,6 +90,7 @@ importers:
       lodash.debounce: ^4.0.8
       lodash.pick: ^4.4.0
       npm-run-path: ^4.0.1
+      optionator: ^0.9.1
       strip-ansi: ^6.0.0
       tiny-invariant: ^1.1.0
       vls: ^0.7.2
@@ -117,6 +118,7 @@ importers:
       '@types/eslint': 7.2.14
       '@types/lodash.debounce': 4.0.6
       '@types/lodash.pick': 4.4.6
+      optionator: 0.9.1
       vls: 0.7.4
 
   playground/react-ts:
