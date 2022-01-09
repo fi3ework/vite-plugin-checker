@@ -1,5 +1,6 @@
 import type { HMRPayload, ServerOptions, ConfigEnv } from 'vite'
 import type { Worker } from 'worker_threads'
+import type { ESLint } from 'eslint'
 
 /* ----------------------------- userland plugin options ----------------------------- */
 
@@ -33,28 +34,40 @@ export type VlsConfig =
 export type EslintConfig =
   | false
   | {
-      /** The lint target files. This can contain any of file paths, directory paths, and glob patterns. ([Details](https://eslint.org/docs/developer-guide/nodejs-api#parameters-1)). */
-      files: string | string[]
       /**
-       * Specify linted file extensions, 'extensions' must be an array of non-empty strings, e.g. `['.jsx', '.js']`. ([Details](https://eslint.org/docs/developer-guide/nodejs-api#parameters)).
-       * @defaultValue: ['.js']
+       * lintCommand will be executed at build mode, and will also be used as
+       * default config for dev mode when options.eslint.devOptions.eslint is nullable.
        */
-      extensions?: string[]
-      /**
-       * millisecond for watcher to wait to trigger re-lint
-       * @defaultValue: 300
-       */
-      // watchDelay?: number
-      /**
-       * Specify path to ESLint config file, if you wish to override ESLint's default configuration discovery.
-       * Equivalent to ESLint's "--config" option.
-       */
-      configFile?: string
-      /*
-       * Fail a build if there are more than this many warnings.
-       */
-      maxWarnings?: number
+      lintCommand: string
+      devOptions?: {
+        /** You can override the options of translated from lintCommand. */
+        eslint?: ESLint.Options
+      }
     }
+
+// {
+//     /** The lint target files. This can contain any of file paths, directory paths, and glob patterns. ([Details](https://eslint.org/docs/developer-guide/nodejs-api#parameters-1)). */
+//     files: string | string[]
+//     /**
+//      * Specify linted file extensions, 'extensions' must be an array of non-empty strings, e.g. `['.jsx', '.js']`. ([Details](https://eslint.org/docs/developer-guide/nodejs-api#parameters)).
+//      * @defaultValue: ['.js']
+//      */
+//     extensions?: string[]
+//     /**
+//      * millisecond for watcher to wait to trigger re-lint
+//      * @defaultValue: 300
+//      */
+//     // watchDelay?: number
+//     /**
+//      * Specify path to ESLint config file, if you wish to override ESLint's default configuration discovery.
+//      * Equivalent to ESLint's "--config" option.
+//      */
+//     configFile?: string
+//     /*
+//      * Fail a build if there are more than this many warnings.
+//      */
+//     maxWarnings?: number
+//   }
 
 /** checkers shared configuration */
 export interface SharedConfig {

@@ -1,8 +1,10 @@
+import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
+// @ts-ignore
+import optionator from 'eslint/lib/options'
 import path from 'path'
 import invariant from 'tiny-invariant'
 import { parentPort } from 'worker_threads'
-import chokidar from 'chokidar'
 
 import { Checker } from '../../Checker'
 import {
@@ -13,6 +15,7 @@ import {
   normalizeEslintDiagnostic,
 } from '../../logger'
 import { ACTION_TYPES } from '../../types'
+import { translateOptions } from './cli'
 
 import type { CreateDiagnostic } from '../../types'
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
@@ -28,25 +31,32 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
     async configureServer({ root }) {
       if (!pluginConfig.eslint) return
 
-      const extensions = pluginConfig.eslint.extensions ?? ['.js']
-      const overrideConfigFile = pluginConfig.eslint.configFile
-        ? { overrideConfigFile: pluginConfig.eslint.configFile }
-        : {}
+      const options = optionator.parse(pluginConfig.eslint.lintCommand)
+      const translatedOptions = translateOptions(options) as ESLint.Options
+
+      // const extensions = config.extensions ?? ['.js']
+      // const overrideConfigFile = pluginConfig.eslint.configFile
+      //   ? { overrideConfigFile: pluginConfig.eslint.configFile }
+      //   : {}
       const eslint = new ESLint({
         cwd: root,
-        extensions,
-        ...overrideConfigFile,
+        ...translatedOptions,
+        ...pluginConfig.eslint.devOptions,
+        // extensions,
+        // ...overrideConfigFile,
       })
-      invariant(pluginConfig.eslint, 'config.eslint should not be `false`')
-      invariant(
-        pluginConfig.eslint.files,
-        `eslint.files is required, but got ${pluginConfig.eslint.files}`
-      )
 
-      const paths =
-        typeof pluginConfig.eslint.files === 'string'
-          ? [pluginConfig.eslint.files]
-          : pluginConfig.eslint.files
+      // invariant(pluginConfig.eslint, 'config.eslint should not be `false`')
+      // invariant(
+      //   pluginConfig.eslint.files,
+      //   `eslint.files is required, but got ${pluginConfig.eslint.files}`
+      // )
+
+      // const paths =
+      //   typeof pluginConfig.eslint.files === 'string'
+      //     ? [pluginConfig.eslint.files]
+      //     : pluginConfig.eslint.files
+      // const paths = config.
 
       let diagnosticsCache: NormalizedDiagnostic[] = []
 
@@ -71,12 +81,13 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       }
 
       const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
-        if (!extensions.includes(path.extname(filePath))) return
+        // if (!extensions.includes(path.extname(filePath))) return
 
         if (type === 'unlink') {
           const absPath = path.resolve(root, filePath)
           diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath)
         } else if (type === 'change') {
+          console.log(filePath)
           const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
           const newDiagnostics = diagnosticsOfChangedFile
             .map((d) => normalizeEslintDiagnostic(d))
@@ -89,7 +100,8 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       }
 
       // initial lint
-      const diagnostics = await eslint.lintFiles(paths)
+      const files = options._.slice(1)
+      const diagnostics = await eslint.lintFiles(files)
       diagnosticsCache = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
       dispatchDiagnostics()
 
@@ -98,7 +110,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         cwd: root,
         ignored: (path: string) => path.includes('node_modules'),
       })
-      watcher.add(paths)
+      watcher.add(files)
       watcher.on('change', async (filePath) => {
         handleFileChange(filePath, 'change')
       })
@@ -116,29 +128,13 @@ export class EslintChecker extends Checker<'eslint'> {
       absFilePath: __filename,
       build: {
         buildBin: (pluginConfig) => {
-          let ext = ['.js']
-          let files: string[] = []
-          let overrideConfigFile: string[] = []
-          let maxWarnings = ''
-
           if (pluginConfig.eslint) {
-            ext = pluginConfig.eslint.extensions ?? ext
-            if (pluginConfig.eslint.maxWarnings !== undefined) {
-              maxWarnings = `--max-warnings=${pluginConfig.eslint.maxWarnings}`
-            }
-            files =
-              typeof pluginConfig.eslint.files === 'string'
-                ? [pluginConfig.eslint.files]
-                : pluginConfig.eslint.files
-            overrideConfigFile = pluginConfig.eslint.configFile
-              ? ['--config', pluginConfig.eslint.configFile]
-              : []
-          }
+            const { lintCommand } = pluginConfig.eslint
+            // const { _ } = cmdToOptions(lintCommand)
 
-          return [
-            'eslint',
-            ['--ext', ext.join(','), maxWarnings, ...overrideConfigFile, ...files].filter(Boolean),
-          ]
+            return ['eslint', lintCommand.split(' ').slice(1)]
+          }
+          return ['eslint', ['']]
         },
       },
       createDiagnostic,
