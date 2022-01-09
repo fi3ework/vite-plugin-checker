@@ -20,13 +20,14 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
       const workDir: string = root
       const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics, overlayErr) => {
         if (!overlay) return
-        if (!overlayErr) return
         parentPort?.postMessage({
           type: ACTION_TYPES.overlayError,
-          payload: {
-            type: 'error',
-            err: overlayErr,
-          },
+          payload: overlayErr
+            ? {
+                type: 'error',
+                err: overlayErr,
+              }
+            : null,
         })
       }
       await diagnostics(workDir, 'WARN', { watch: true, errorCallback, verbose: false })

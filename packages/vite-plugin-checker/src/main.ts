@@ -94,14 +94,19 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       })()
     },
     configureServer(server) {
+      let connectedTimes = 0
+      let latestOverlayErrors: OverlayErrorAction['payload'][] = new Array(checkers.length)
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
-      checkers.forEach((checker) => {
+      checkers.forEach((checker, index) => {
         const { worker, configureServer: workerConfigureServer } = checker.serve
         workerConfigureServer({ root: server.config.root })
         worker.on('message', (action: OverlayErrorAction) => {
           if (action.type === ACTION_TYPES.overlayError) {
-            server.ws.send(action.payload)
+            latestOverlayErrors[index] = action.payload
+            if (action.payload) {
+              server.ws.send(action.payload)
+            }
           } else if (action.type === ACTION_TYPES.console) {
             Checker.log(action)
           }
@@ -109,6 +114,18 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       })
 
       return () => {
+        // sometimes Vite will trigger a full-reload instead of HMR, but the checker
+        // may update the overlay before full-reload fired. So we make sure the overlay
+        // will be displayed again after full-reload.
+        server.ws.on('connection', () => {
+          connectedTimes++
+          // if connectedCount !== 1, means Vite is doing a full-reload, so we don't need to send overlay again
+          const latestOverlayError = latestOverlayErrors.filter(Boolean).slice(-1)[0]
+          if (connectedTimes > 1 && latestOverlayError) {
+            server.ws.send(latestOverlayError)
+          }
+        })
+
         server.middlewares.use((req, res, next) => {
           next()
         })

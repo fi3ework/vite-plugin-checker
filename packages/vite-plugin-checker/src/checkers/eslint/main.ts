@@ -57,15 +57,15 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
         const lastErr = diagnosticsCache[0]
 
-        if (!lastErr) return
-
         if (overlay) {
           parentPort?.postMessage({
             type: ACTION_TYPES.overlayError,
-            payload: {
-              type: 'error',
-              err: diagnosticToViteError(lastErr),
-            },
+            payload: lastErr
+              ? {
+                  type: 'error',
+                  err: diagnosticToViteError(lastErr),
+                }
+              : null,
           })
         }
       }
