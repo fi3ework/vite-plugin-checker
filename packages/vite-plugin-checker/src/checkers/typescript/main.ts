@@ -79,13 +79,15 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             return
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
-            if (currErr && overlay) {
+            if (overlay) {
               parentPort?.postMessage({
                 type: ACTION_TYPES.overlayError,
-                payload: {
-                  type: 'error',
-                  err: currErr,
-                },
+                payload: currErr
+                  ? {
+                      type: 'error',
+                      err: currErr,
+                    }
+                  : null,
               })
             }
         }

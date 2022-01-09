@@ -106,7 +106,11 @@ interface Action {
 
 export interface OverlayErrorAction extends Action {
   type: ACTION_TYPES.overlayError
-  payload: HMRPayload
+  /**
+   * send `HMRPayload` to raise error overlay provided by Vite
+   * send `null` to clear overlay for current checker
+   */
+  payload: HMRPayload | null
 }
 
 export interface ConfigAction extends Action {
