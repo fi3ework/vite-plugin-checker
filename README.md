@@ -165,12 +165,10 @@ _coming soon._
 
 ### config.eslint
 
-| field       | Type                 | Default value          | Description                                                                                                                                                                             |
-| :---------- | -------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| files       | `string \| string[]` | This value is required | The lint target files. This can contain any of file paths, directory paths, and glob patterns. ([Details](https://eslint.org/docs/developer-guide/nodejs-api#parameters-1)).            |
-| extensions  | `string[]`           | `['.js']`              | Specify linted file extensions, 'extensions' must be an array of non-empty strings, e.g. `['.jsx', '.js']`. ([Details](https://eslint.org/docs/developer-guide/nodejs-api#parameters)). |
-| configFile  | `string`             | `undefined`            | Specify path to ESLint config file, if you wish to override ESLint's default configuration discovery. Equivalent to ESLint's "--config" option.                                         |
-
+| field                | Type                                                                                                       | Default value          | Description                                                                                                                                                                              |
+| :------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| lintCommand          | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.overrideConfig` is nullable.                                         |
+| `dev.overrideConfig` | [`ESLint.Options`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) | `undefined`            | You can override the options of the translated from `lintCommand`. Config priority: `const eslint = new ESLint({cwd: root, ...translatedOptions, ...pluginConfig.eslint.devOptions, })`. |
 
 ## Playground
 
