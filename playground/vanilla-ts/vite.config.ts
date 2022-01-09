@@ -8,8 +8,7 @@ export default defineConfig({
     reactRefresh(),
     checker({
       eslint: {
-        files: ['./src'],
-        extensions: ['.ts'],
+        lintCommand: 'eslint ./src --ext .ts',
       },
     }),
   ],
