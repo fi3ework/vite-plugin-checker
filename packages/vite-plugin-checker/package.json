@@ -55,6 +55,7 @@
     "@types/eslint": "^7.2.14",
     "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.pick": "^4.4.6",
+    "optionator": "^0.9.1",
     "vls": "^0.7.2"
   }
 }
