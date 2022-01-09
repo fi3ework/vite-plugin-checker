@@ -18,9 +18,6 @@ afterAll(async () => {
 })
 
 describe('vue3-vue-tsc', () => {
-  // describe('dev', () => {
-  // })
-
   describe('build', () => {
     it('enableBuild: true', async () => {
       await viteBuild({ expectedErrorMsg: 'error TS2322', cwd: testDir })

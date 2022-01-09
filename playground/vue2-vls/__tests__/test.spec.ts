@@ -57,18 +57,6 @@ describe('vue2-vls', () => {
       editFile('src/components/HelloWorld.vue', (code) => code.replace('msg1', 'msg2'))
       await sleepForEdit()
 
-      // console.log('🐷 1')
-      // let data = stringify(err)
-      // let buff = Buffer.from(data)
-      // let base64data = buff.toString('base64')
-      // console.log(base64data)
-
-      // console.log('🐷 2')
-      // let data2 = stripedLog
-      // let buff2 = Buffer.from(data2)
-      // let base64data2 = buff2.toString('base64')
-      // console.log(base64data2)
-
       expect(stringify(err)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
