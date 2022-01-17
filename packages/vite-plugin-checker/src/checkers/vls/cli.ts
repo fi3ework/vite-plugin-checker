@@ -23,8 +23,9 @@ function validateLogLevel(logLevelInput: unknown): logLevelInput is LogLevel {
     .command('diagnostics [workspace]')
     .description('Print all diagnostics')
     .addOption(
-      new Option('-c, --checker-config <checkerConfig>', 'Option overrides to pass to VTI')
-        .default('{}')
+      new Option('-c, --checker-config <checkerConfig>', 'Option overrides to pass to VTI').default(
+        '{}'
+      )
     )
     .addOption(
       new Option('-l, --log-level <logLevel>', 'Log level to print')
@@ -39,14 +40,18 @@ function validateLogLevel(logLevelInput: unknown): logLevelInput is LogLevel {
         throw new Error(`Invalid log level: ${logLevelOption}`)
       }
 
-      let parsedConfig;
+      let parsedConfig
       try {
         parsedConfig = JSON.parse(options.checkerConfig) as any
       } catch {
         throw new Error(`Unable to parse checker-config JSON: ${options.checkerConfig}`)
       }
 
-      await diagnostics(workspace, logLevelOption, { watch: false, verbose: false, config: parsedConfig })
+      await diagnostics(workspace, logLevelOption, {
+        watch: false,
+        verbose: false,
+        config: parsedConfig,
+      })
     })
 
   program.parse(process.argv)
