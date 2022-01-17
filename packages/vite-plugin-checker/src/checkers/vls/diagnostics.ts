@@ -204,7 +204,7 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
 
   if (options.config) {
     // Merge in used-provided VLS settings if present
-    mergeDeep(init.initializationOptions.config, options.config);
+    mergeDeep(init.initializationOptions.config, options.config)
   }
 
   await clientConnection.sendRequest(InitializeRequest.type, init)
@@ -323,22 +323,21 @@ async function getDiagnostics(
   return initialErrCount
 }
 
-
 function isObject(item: any): item is {} {
-  return item && typeof item === 'object' && !Array.isArray(item);
+  return item && typeof item === 'object' && !Array.isArray(item)
 }
 
 function mergeDeep<T>(target: T, source: DeepPartial<T> | undefined) {
   if (isObject(target) && isObject(source)) {
     for (const key in source) {
       if (isObject(source[key])) {
-        if (!target[key]) Object.assign(target, { [key]: {} });
-        mergeDeep(target[key], source[key]);
+        if (!target[key]) Object.assign(target, { [key]: {} })
+        mergeDeep(target[key], source[key])
       } else {
-        Object.assign(target, { [key]: source[key] });
+        Object.assign(target, { [key]: source[key] })
       }
     }
   }
 
-  return target;
+  return target
 }
