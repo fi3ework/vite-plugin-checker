@@ -17,6 +17,7 @@ const config = {
   },
   watchPathIgnorePatterns: ['<rootDir>/temp'],
   snapshotSerializers: ['jest-serializer-path'],
+  forceExit: true,
 }
 
 module.exports = config
