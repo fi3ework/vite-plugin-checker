@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VLS config customized config 1`] = `
+Object {
+  "css": Object {},
+  "emmet": Object {},
+  "html": Object {
+    "suggest": Object {},
+  },
+  "javascript": Object {
+    "format": Object {},
+  },
+  "stylusSupremacy": Object {},
+  "typescript": Object {
+    "format": Object {},
+    "tsdk": null,
+  },
+  "vetur": Object {
+    "completion": Object {
+      "autoImport": false,
+      "scaffoldSnippetSources": Object {
+        "user": "🗒️",
+        "vetur": "✌",
+        "workspace": "💼",
+      },
+      "tagCasing": "initial",
+    },
+    "dev": Object {
+      "logLevel": "INFO",
+      "vlsPath": "",
+      "vlsPort": -1,
+    },
+    "experimental": Object {
+      "templateInterpolationService": true,
+    },
+    "format": Object {
+      "defaultFormatter": Object {},
+      "defaultFormatterOptions": Object {},
+      "enable": true,
+      "options": Object {
+        "tabSize": 2,
+        "useTabs": false,
+      },
+      "scriptInitialIndent": false,
+      "styleInitialIndent": false,
+    },
+    "grammar": Object {
+      "customBlocks": Object {},
+    },
+    "ignoreProjectWarning": false,
+    "languageFeatures": Object {
+      "codeActions": true,
+      "semanticTokens": true,
+      "updateImportOnFileMove": true,
+    },
+    "trace": Object {
+      "server": "off",
+    },
+    "useWorkspaceDependencies": false,
+    "validation": Object {
+      "interpolation": false,
+      "script": true,
+      "style": false,
+      "template": false,
+      "templateProps": false,
+    },
+  },
+}
+`;
+
+exports[`VLS config default config 1`] = `
+Object {
+  "css": Object {},
+  "emmet": Object {},
+  "html": Object {
+    "suggest": Object {},
+  },
+  "javascript": Object {
+    "format": Object {},
+  },
+  "stylusSupremacy": Object {},
+  "typescript": Object {
+    "format": Object {},
+    "tsdk": null,
+  },
+  "vetur": Object {
+    "completion": Object {
+      "autoImport": false,
+      "scaffoldSnippetSources": Object {
+        "user": "🗒️",
+        "vetur": "✌",
+        "workspace": "💼",
+      },
+      "tagCasing": "initial",
+    },
+    "dev": Object {
+      "logLevel": "INFO",
+      "vlsPath": "",
+      "vlsPort": -1,
+    },
+    "experimental": Object {
+      "templateInterpolationService": true,
+    },
+    "format": Object {
+      "defaultFormatter": Object {},
+      "defaultFormatterOptions": Object {},
+      "enable": true,
+      "options": Object {
+        "tabSize": 2,
+        "useTabs": false,
+      },
+      "scriptInitialIndent": false,
+      "styleInitialIndent": false,
+    },
+    "grammar": Object {
+      "customBlocks": Object {},
+    },
+    "ignoreProjectWarning": false,
+    "languageFeatures": Object {
+      "codeActions": true,
+      "semanticTokens": true,
+      "updateImportOnFileMove": true,
+    },
+    "trace": Object {
+      "server": "off",
+    },
+    "useWorkspaceDependencies": false,
+    "validation": Object {
+      "interpolation": true,
+      "script": true,
+      "style": true,
+      "template": true,
+      "templateProps": true,
+    },
+  },
+}
+`;
