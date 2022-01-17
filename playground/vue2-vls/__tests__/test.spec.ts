@@ -44,7 +44,7 @@ describe('vue2-vls', () => {
 
       await viteServe({
         cwd: testDir,
-        // @ts-expect-error
+        // @ts-expect-errorƒ
         wsSend: (_payload) => (err = _payload.err),
       })
 

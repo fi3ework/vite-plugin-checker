@@ -110,7 +110,7 @@ class NullLogger implements Logger {
   public log(_message: string): void {}
 }
 
-class TestStream extends Duplex {
+export class TestStream extends Duplex {
   public _write(chunk: string, _encoding: string, done: () => void) {
     this.emit('data', chunk)
     done()
@@ -133,7 +133,7 @@ function suppressConsole() {
   }
 }
 
-async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOptions) {
+export async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOptions) {
   const up = new TestStream()
   const down = new TestStream()
   const logger = new NullLogger()
@@ -200,16 +200,16 @@ async function prepareClientConnection(workspaceUri: URI, options: DiagnosticOpt
   vls.listen()
   clientConnection.listen()
 
-  const init = getInitParams(workspaceUri)
+  const initParams = getInitParams(workspaceUri)
 
   if (options.config) {
     // Merge in used-provided VLS settings if present
-    mergeDeep(init.initializationOptions.config, options.config)
+    mergeDeep(initParams.initializationOptions.config, options.config)
   }
 
-  await clientConnection.sendRequest(InitializeRequest.type, init)
+  await clientConnection.sendRequest(InitializeRequest.type, initParams)
 
-  return clientConnection
+  return { clientConnection, serverConnection, vls, up, down, logger }
 }
 
 async function getDiagnostics(
@@ -217,7 +217,7 @@ async function getDiagnostics(
   severity: DiagnosticSeverity,
   options: DiagnosticOptions
 ) {
-  const clientConnection = await prepareClientConnection(workspaceUri, options)
+  const { clientConnection } = await prepareClientConnection(workspaceUri, options)
 
   const files = glob.sync('**/*.vue', { cwd: workspaceUri.fsPath, ignore: ['node_modules/**'] })
 
