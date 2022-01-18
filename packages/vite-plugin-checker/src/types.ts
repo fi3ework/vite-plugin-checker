@@ -123,12 +123,14 @@ export interface OverlayErrorAction extends Action {
   payload: HMRPayload | null
 }
 
+interface ConfigActionPayload {
+  hmr?: { overlay?: boolean } | boolean
+  env: ConfigEnv
+}
+
 export interface ConfigAction extends Action {
   type: ACTION_TYPES.config
-  payload: {
-    hmr?: { overlay?: boolean } | boolean
-    env: ConfigEnv
-  }
+  payload: ConfigActionPayload
 }
 
 export interface ConfigureServerAction extends Action {
@@ -172,7 +174,7 @@ export interface ServeChecker<T extends BuildInCheckerNames = any> {
 }
 
 export interface CheckerDiagnostic {
-  config: (options: { hmr?: { overlay?: boolean } | boolean; env: ConfigEnv }) => unknown
+  config: (options: ConfigActionPayload) => unknown
   configureServer: (options: { root: string }) => unknown
 }
 
