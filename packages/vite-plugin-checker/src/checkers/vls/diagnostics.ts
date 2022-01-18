@@ -46,7 +46,7 @@ export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 
 let disposeSuppressConsole: ReturnType<typeof suppressConsole>
 
-const logLevel2Severity = {
+export const logLevel2Severity = {
   ERROR: DiagnosticSeverity.Error,
   WARN: DiagnosticSeverity.Warning,
   INFO: DiagnosticSeverity.Information,
