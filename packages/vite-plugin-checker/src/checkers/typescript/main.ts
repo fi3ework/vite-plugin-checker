@@ -105,8 +105,14 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       // https://github.com/microsoft/TypeScript/pull/33082/files
       const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram
 
-      if (typeof pluginConfig.typescript === 'object' &&  pluginConfig.typescript.buildMode) {
-        const host = ts.createSolutionBuilderWithWatchHost(ts.sys, createProgram, reportDiagnostic, undefined, reportWatchStatusChanged)
+      if (typeof pluginConfig.typescript === 'object' && pluginConfig.typescript.buildMode) {
+        const host = ts.createSolutionBuilderWithWatchHost(
+          ts.sys,
+          createProgram,
+          reportDiagnostic,
+          undefined,
+          reportWatchStatusChanged
+        )
 
         ts.createSolutionBuilderWithWatch(host, [configFile], {}).build()
       } else {
@@ -118,7 +124,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           reportDiagnostic,
           reportWatchStatusChanged
         )
-  
+
         ts.createWatchProgram(host)
       }
     },
