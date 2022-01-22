@@ -13,7 +13,7 @@ if (!isMainThread) {
 }
 
 export interface CheckerMeta<T extends BuildInCheckerNames> {
-  name: string
+  name: T
   absFilePath: string
   createDiagnostic: CreateDiagnostic<T>
   build: ServeAndBuildChecker['build']
@@ -31,7 +31,7 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
     this.logger.forEach((fn) => fn(...args))
   }
 
-  public name: string
+  public name: T
   public absFilePath: string
   public createDiagnostic: CreateDiagnostic<T>
   public build: ServeAndBuildChecker['build']
