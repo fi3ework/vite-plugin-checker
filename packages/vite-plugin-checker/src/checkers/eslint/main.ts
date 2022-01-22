@@ -124,7 +124,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 export class EslintChecker extends Checker<'eslint'> {
   public constructor() {
     super({
-      name: 'typescript',
+      name: 'eslint',
       absFilePath: __filename,
       build: {
         buildBin: (pluginConfig) => {

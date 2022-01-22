@@ -13,6 +13,7 @@ import {
   Diagnostic,
   DiagnosticSeverity,
   DidChangeTextDocumentNotification,
+  DidChangeWatchedFilesNotification,
   DidOpenTextDocumentNotification,
   InitializeParams,
   InitializeRequest,
@@ -32,11 +33,11 @@ import {
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
 } from '../../logger'
+import { DeepPartial } from '../../types'
 import { getInitParams, VlsOptions } from './initParams'
 
 import type { ErrorPayload } from 'vite'
-import { DeepPartial } from '../../types'
-
+import { FileDiagnosticCache } from '../../DiagnosticCache'
 enum DOC_VERSION {
   init = -1,
 }
@@ -45,6 +46,7 @@ export type LogLevel = typeof logLevels[number]
 export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 
 let disposeSuppressConsole: ReturnType<typeof suppressConsole>
+const diagnosticCache = new FileDiagnosticCache()
 
 export const logLevel2Severity = {
   ERROR: DiagnosticSeverity.Error,
@@ -89,12 +91,12 @@ export async function diagnostics(
 
   // initial report
   if (!errCount) {
-    consoleLogVls(chalk.green(`[VLS checker] No error found`))
+    vlsConsoleLog(chalk.green(`[VLS checker] No error found`))
     if (!watch) {
       process.exit(0)
     }
   } else {
-    consoleLogVls(
+    vlsConsoleLog(
       chalk.red(`[VLS checker] Found ${errCount} ${errCount === 1 ? 'error' : 'errors'}`)
     )
     if (!watch) {
@@ -118,18 +120,18 @@ export class TestStream extends Duplex {
   public _read(_size: number) {}
 }
 
-let consoleLogVls = consoleLog
+let vlsConsoleLog = consoleLog
 
 function suppressConsole() {
   let disposed = false
-  const rawConsoleLog = consoleLogVls
-  consoleLogVls = () => {}
+  const rawConsoleLog = vlsConsoleLog
+  vlsConsoleLog = () => {}
 
   return () => {
     if (disposed) return
 
     disposed = true
-    consoleLogVls = rawConsoleLog
+    vlsConsoleLog = rawConsoleLog
   }
 }
 
@@ -160,19 +162,19 @@ export async function prepareClientConnection(
       return
     }
 
+    const absFilePath = URI.parse(publishDiagnostics.uri).fsPath
     publishDiagnostics.diagnostics = filterDiagnostics(publishDiagnostics.diagnostics, severity)
+    const nextDiagnosticInFile = await normalizePublishDiagnosticParams(publishDiagnostics)
+    diagnosticCache.setFile(absFilePath, nextDiagnosticInFile)
 
-    if (!publishDiagnostics.diagnostics.length) {
-      return
+    const res = diagnosticCache.getDiagnostics()
+    vlsConsoleLog(os.EOL)
+    vlsConsoleLog(res.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
+
+    if (diagnosticCache.lastDiagnostic) {
+      const normalized = diagnosticToViteError(diagnosticCache.lastDiagnostic)
+      options.errorCallback?.(publishDiagnostics, normalized)
     }
-
-    publishDiagnostics.diagnostics = filterDiagnostics(publishDiagnostics.diagnostics, severity)
-    const res = await normalizePublishDiagnosticParams(publishDiagnostics)
-    const normalized = diagnosticToViteError(res)
-    consoleLogVls(os.EOL)
-    consoleLogVls(res.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
-
-    options.errorCallback?.(publishDiagnostics, normalized)
   }
 
   const vls = new VLS(serverConnection as any)
@@ -180,7 +182,7 @@ export async function prepareClientConnection(
   vls.validateTextDocument = async (textDocument: TextDocument, cancellationToken?: any) => {
     const diagnostics = await vls.doValidate(textDocument, cancellationToken)
     if (diagnostics) {
-      // @ts-ignore
+      // @ts-expect-error
       vls.lspConnection.sendDiagnostics({
         uri: textDocument.uri,
         version: textDocument.version,
@@ -217,6 +219,15 @@ export async function prepareClientConnection(
   return { clientConnection, serverConnection, vls, up, down, logger }
 }
 
+function extToGlobs(exts: string[]) {
+  return exts.map((e) => '**/*' + e)
+}
+
+const watchedDidChangeContent = ['.vue']
+const watchedDidChangeWatchedFiles = ['.js', '.ts', '.json']
+const watchedDidChangeContentGlob = extToGlobs(watchedDidChangeContent)
+const watchedDidChangeWatchedFilesGlob = extToGlobs(watchedDidChangeWatchedFiles)
+
 async function getDiagnostics(
   workspaceUri: URI,
   severity: DiagnosticSeverity,
@@ -224,7 +235,10 @@ async function getDiagnostics(
 ) {
   const { clientConnection } = await prepareClientConnection(workspaceUri, severity, options)
 
-  const files = glob.sync('**/*.vue', { cwd: workspaceUri.fsPath, ignore: ['node_modules/**'] })
+  const files = glob.sync([...watchedDidChangeContentGlob, ...watchedDidChangeWatchedFilesGlob], {
+    cwd: workspaceUri.fsPath,
+    ignore: ['node_modules/**'],
+  })
 
   if (files.length === 0) {
     console.log('No input files')
@@ -259,7 +273,7 @@ async function getDiagnostics(
         },
       })
 
-      // logout in build mode
+      // log in build mode
       if (!options.watch) {
         try {
           let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
@@ -305,21 +319,34 @@ async function getDiagnostics(
     })
 
     watcher.add(workspaceUri.fsPath)
-    watcher.on('all', async (event, path) => {
-      if (!path.endsWith('.vue')) return
-      const fileContent = await fs.promises.readFile(path, 'utf-8')
-      // TODO: watch js change
+    watcher.on('all', async (event, filePath) => {
+      const extname = path.extname(filePath)
+      // .vue file changed
+      if (!filePath.endsWith('.vue')) return
+      const fileContent = await fs.promises.readFile(filePath, 'utf-8')
       clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
         textDocument: {
-          uri: URI.file(path).toString(),
+          uri: URI.file(filePath).toString(),
           version: Date.now(),
         },
         contentChanges: [{ text: fileContent }],
       })
+
+      // .js,.ts,.json file changed
+      if (watchedDidChangeWatchedFiles.includes(extname)) {
+        clientConnection.sendNotification(DidChangeWatchedFilesNotification.type, {
+          changes: [
+            {
+              uri: URI.file(filePath).toString(),
+              type: event === 'add' ? 1 : event === 'unlink' ? 3 : 2,
+            },
+          ],
+        })
+      }
     })
   }
 
-  consoleLogVls(logChunk)
+  vlsConsoleLog(logChunk)
   return initialErrCount
 }
 
