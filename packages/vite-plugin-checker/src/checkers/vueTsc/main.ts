@@ -17,7 +17,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
 export class VueTscChecker extends Checker<'vueTsc'> {
   public constructor() {
     super({
-      name: 'typescript',
+      name: 'vueTsc',
       absFilePath: __filename,
       build: { buildBin: ['vue-tsc', ['--noEmit']] },
       createDiagnostic,
