@@ -20,14 +20,11 @@ import { translateOptions } from './cli'
 
 import type { CreateDiagnostic } from '../../types'
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
-  let overlay = true // Vite defaults to true
+  let overlay = true
 
   return {
-    config: async ({ hmr }) => {
-      const viteOverlay = !(typeof hmr === 'object' && hmr.overlay === false)
-      if (pluginConfig.overlay === false || !viteOverlay) {
-        overlay = false
-      }
+    config: async ({ enableOverlay }) => {
+      overlay = enableOverlay
     },
     async configureServer({ root }) {
       if (!pluginConfig.eslint) return

@@ -42,6 +42,7 @@ function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndB
 
 export default function Plugin(userConfig: UserPluginConfig): Plugin {
   const enableBuild = userConfig?.enableBuild ?? true
+  const enableOverlay = userConfig?.overlay ?? true
   let checkers: ServeAndBuildChecker[] = []
   let viteMode: ConfigEnv['command'] | undefined
 
@@ -54,11 +55,12 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       checkers = createCheckers(userConfig || {}, env)
       if (viteMode !== 'serve') return
 
-      const hmr = config.server?.hmr
+      // const hmr = config.server?.hmr
       checkers.forEach((checker) => {
         const workerConfig = checker.serve.config
         workerConfig({
-          hmr: typeof hmr === 'object' ? { overlay: hmr.overlay } : hmr,
+          // hmr: typeof hmr === 'object' ? { overlay: hmr.overlay } : hmr,
+          enableOverlay,
           env,
         })
       })

@@ -41,7 +41,7 @@ describe('overlay', () => {
     await viteServe({ cwd: testDir, launchPage: true })
     await sleep(6000)
     await expect(getHmrOverlayText()).rejects.toThrow(
-      '<vite-error-overlay> shadow dom is expected to be found, but got null'
+      'Invariant failed: <vite-plugin-checker-error-overlay> shadow dom is expected to be found, but got null'
     )
   })
 })
