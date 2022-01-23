@@ -7,15 +7,11 @@ import { toViteCustomPayload } from '../../logger'
 
 import type { CreateDiagnostic } from '../../types'
 export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
-  let overlay = true // Vite defaults to true
+  let overlay = true
 
   return {
-    config: ({ hmr }) => {
-      const viteOverlay = !(typeof hmr === 'object' && hmr.overlay === false)
-
-      if (pluginConfig.overlay === false || !viteOverlay) {
-        overlay = false
-      }
+    config: ({ enableOverlay }) => {
+      overlay = enableOverlay
     },
     async configureServer({ root }) {
       const workDir: string = root

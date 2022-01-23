@@ -124,7 +124,8 @@ export interface OverlayErrorAction extends Action {
 }
 
 interface ConfigActionPayload {
-  hmr?: { overlay?: boolean } | boolean
+  // hmr?: { overlay?: boolean } | boolean
+  enableOverlay: boolean
   env: ConfigEnv
 }
 
