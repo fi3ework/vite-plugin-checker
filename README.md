@@ -120,9 +120,9 @@ export default {
 
 ### config.overlay
 
-| field   | Type      | Default value                                                         | Description                                   |
-| :------ | --------- | --------------------------------------------------------------------- | --------------------------------------------- |
-| overlay | `boolean` | Same as [`server.hmr.overlay`](https://vitejs.dev/config/#server-hmr) | Show Vite error overlay when there's an error |
+| field   | Type      | Default value | Description               |
+| :------ | --------- | ------------- | ------------------------- |
+| overlay | `boolean` | true          | Show error prompt overlay |
 
 ### config.enableBuild
 
