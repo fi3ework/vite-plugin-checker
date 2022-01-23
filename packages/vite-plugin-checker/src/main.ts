@@ -2,18 +2,18 @@ import { spawn } from 'child_process'
 import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
 import { ConfigEnv, Plugin } from 'vite'
-import { Checker } from './Checker'
-import { runtimeCode, RUNTIME_PUBLIC_PATH } from './client/index'
 
+import { Checker } from './Checker'
+import { RUNTIME_PUBLIC_PATH, runtimeCode, WS_CHECKER_ERROR_TYPE } from './client/index'
 import {
-  OverlayErrorAction,
-  BuildInCheckerNames,
-  ServeAndBuildChecker,
-  UserPluginConfig,
-  SharedConfig,
-  BuildCheckBinStr,
-  PluginConfig,
   ACTION_TYPES,
+  BuildCheckBinStr,
+  BuildInCheckerNames,
+  OverlayErrorAction,
+  PluginConfig,
+  ServeAndBuildChecker,
+  SharedConfig,
+  UserPluginConfig,
 } from './types'
 
 export * from './types'
@@ -83,27 +83,11 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
     },
     transformIndexHtml() {
       return [
-        //         {
-        //           tag: 'script',
-        //           attrs: { type: 'module' },
-        //           children: `
-        //       const socketProtocol = null || (location.protocol === 'https:' ? 'wss' : 'ws');
-        //       const socketHost = \`\${null || location.hostname}:\${'3000'}\`;
-        //       const socket = new WebSocket(\`\${socketProtocol}://\${socketHost}\`, 'vite-hmr');
-        //       socket.addEventListener('message', async ({ data }) => {
-        //         console.log(data)
-        //       });
-        // `,
-        //         },
         {
           tag: 'script',
           attrs: { type: 'module' },
           children: `import { inject } from "${RUNTIME_PUBLIC_PATH}"; inject();`,
         },
-        // {
-        //   tag: 'script',
-        //   attrs: { type: 'module', src: `/vue-template/vite-plugin-checker/lib/client/index.js` },
-        // },
       ]
     },
     buildStart: () => {
@@ -142,7 +126,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
             latestOverlayErrors[index] = action.payload
             if (action.payload) {
               // @ts-ignore
-              action.payload.type = 'checker-error'
+              action.payload.type = WS_CHECKER_ERROR_TYPE
               server.ws.send(action.payload)
             }
           } else if (action.type === ACTION_TYPES.console) {

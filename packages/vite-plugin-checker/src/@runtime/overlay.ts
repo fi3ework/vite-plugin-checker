@@ -1,10 +1,10 @@
 import type { ErrorPayload } from 'vite'
 
-const template = `
+const template = (errors: string[]) => `
 <style>
 :host {
   position: fixed;
-  z-index: 99999;
+  z-index: 9999; 
   top: 0;
   left: 0;
   width: 100%;
@@ -26,21 +26,21 @@ const template = `
   line-height: 1.5;
   width: 800px;
   color: #d8d8d8;
-  margin: 30px auto;
-  padding: 25px 40px;
+  margin: 40px auto;
+  padding: 8px 16px;
   position: relative;
-  background: #181818;
+  background: #0D1117;
   border-radius: 6px 6px 8px 8px;
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
-  overflow: hidden;
-  border-top: 8px solid var(--red);
+  overflow: scroll;
   direction: ltr;
   text-align: left;
+  max-height: 80vh;
 }
 
 pre {
   font-family: var(--monospace);
-  font-size: 16px;
+  font-size: 14px;
   margin-top: 0;
   margin-bottom: 1em;
   overflow-x: scroll;
@@ -49,6 +49,15 @@ pre {
 
 pre::-webkit-scrollbar {
   display: none;
+}
+
+.message-item {
+  border-top: 1px dotted #666;
+  padding: 12px 0 0 0;
+}
+
+.message-item:first-child {
+  border-top: none;
 }
 
 .message {
@@ -100,10 +109,7 @@ code {
 }
 </style>
 <div class="window">
-  <pre class="message"><span class="plugin"></span><span class="message-body"></span></pre>
-  <pre class="file"></pre>
-  <pre class="frame"></pre>
-  <pre class="stack"></pre>
+  ${errors.join('\n')}
   <div class="tip">
     Click outside or fix the code to dismiss.<br>
     You can also disable this overlay by setting
@@ -112,36 +118,50 @@ code {
 </div>
 `
 
+const errorTemplate = `
+  <div class="message-item">
+    <pre class="message"><span class="plugin"></span><span class="message-body"></span></pre>
+    <pre class="file"></pre>
+    <pre class="frame"></pre>
+    <pre class="stack"></pre>
+
+  </div>
+`
+
 const fileRE = /(?:[a-zA-Z]:\\|\/).*?:\d+:\d+/g
 const codeframeRE = /^(?:>?\s+\d+\s+\|.*|\s+\|\s*\^.*)\r?\n/gm
 
 export class ErrorOverlay extends HTMLElement {
   public root: ShadowRoot
 
-  public constructor(err: ErrorPayload['err']) {
+  public constructor(errs: ErrorPayload['err'][]) {
     super()
     this.root = this.attachShadow({ mode: 'open' })
-    this.root.innerHTML = template
+    this.root.innerHTML = template(new Array(errs.length).fill(errorTemplate))
 
-    codeframeRE.lastIndex = 0
-    const hasFrame = err.frame && codeframeRE.test(err.frame)
-    const message = hasFrame ? err.message.replace(codeframeRE, '') : err.message
-    if (err.plugin) {
-      this.text('.plugin', `[plugin:${err.plugin}] `)
-    }
-    this.text('.message-body', message.trim())
+    errs.forEach((err, index) => {
+      codeframeRE.lastIndex = 0
+      const hasFrame = err.frame && codeframeRE.test(err.frame)
+      const message = hasFrame ? err.message.replace(codeframeRE, '') : err.message
+      const selectorPrefix = `.message-item:nth-child(${index + 1}) `
 
-    const [file] = (err.loc?.file || err.id || 'unknown file').split(`?`)
-    if (err.loc) {
-      this.text('.file', `${file}:${err.loc.line}:${err.loc.column}`, true)
-    } else if (err.id) {
-      this.text('.file', file)
-    }
+      if (err.plugin) {
+        this.text(selectorPrefix + '.plugin', `[plugin:${err.plugin}] `)
+      }
+      this.text(selectorPrefix + '.message-body', message.trim())
 
-    if (hasFrame) {
-      this.text('.frame', err.frame!.trim())
-    }
-    this.text('.stack', err.stack, true)
+      const [file] = (err.loc?.file || err.id || 'unknown file').split(`?`)
+      if (err.loc) {
+        this.text(selectorPrefix + '.file', `${file}:${err.loc.line}:${err.loc.column}`, true)
+      } else if (err.id) {
+        this.text(selectorPrefix + '.file', file)
+      }
+
+      if (hasFrame) {
+        this.text(selectorPrefix + '.frame', err.frame!.trim())
+      }
+      this.text(selectorPrefix + '.stack', err.stack, true)
+    })
 
     this.root.querySelector('.window')!.addEventListener('click', (e) => {
       e.stopPropagation()
