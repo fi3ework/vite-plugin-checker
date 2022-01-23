@@ -14,8 +14,9 @@
     "watch:node": "tsc -p tsconfig.build.json --watch",
     "watch:runtime": "esbuild src/@runtime/main.ts --outfile=./lib/@runtime/main.js --bundle --format=esm --watch",
     "dev": "run-p watch:node watch:runtime",
-    "build": "tsc -p tsconfig.build.json && esbuild src/@runtime/main.ts --outfile=./lib/@runtime/main.js --bundle --format=esm",
-    "build:test": "tsc -p tsconfig.test.json",
+    "build:runtime": "esbuild src/@runtime/main.ts --outfile=./lib/@runtime/main.js --bundle --format=esm",
+    "build": "tsc -p tsconfig.build.json && pnpm run build:runtime",
+    "build:test": "tsc -p tsconfig.test.json && pnpm run build:runtime",
     "prepublishOnly": "rimraf lib && npm run build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . --lerna-package vite-plugin-checker",
     "release": "zx ../../scripts/release.mjs"
