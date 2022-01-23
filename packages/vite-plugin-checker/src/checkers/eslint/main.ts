@@ -12,6 +12,7 @@ import {
   diagnosticToTerminalLog,
   diagnosticToViteError,
   NormalizedDiagnostic,
+  toViteCustomPayload,
   normalizeEslintDiagnostic,
 } from '../../logger'
 import { ACTION_TYPES } from '../../types'
@@ -70,12 +71,14 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         if (overlay) {
           parentPort?.postMessage({
             type: ACTION_TYPES.overlayError,
-            payload: lastErr
-              ? {
-                  type: 'error',
-                  err: diagnosticToViteError(lastErr),
-                }
-              : null,
+            payload: toViteCustomPayload('eslint', lastErr ? [diagnosticToViteError(lastErr)] : []),
+
+            // payload: lastErr
+            //   ? {
+            //       type: 'error',
+            //       err: diagnosticToViteError(lastErr),
+            //     }
+            //   : null,
           })
         }
       }

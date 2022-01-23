@@ -125,8 +125,6 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
           if (action.type === ACTION_TYPES.overlayError) {
             latestOverlayErrors[index] = action.payload
             if (action.payload) {
-              // @ts-ignore
-              action.payload.type = WS_CHECKER_ERROR_TYPE
               server.ws.send(action.payload)
             }
           } else if (action.type === ACTION_TYPES.console) {

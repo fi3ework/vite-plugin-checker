@@ -2,12 +2,13 @@ import chalk from 'chalk'
 import fs from 'fs'
 import os from 'os'
 import strip from 'strip-ansi'
-import { ErrorPayload } from 'vite'
+import { ErrorPayload, CustomPayload } from 'vite'
 import { URI } from 'vscode-uri'
-import { parentPort, isMainThread } from 'worker_threads'
+import { isMainThread, parentPort } from 'worker_threads'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
+import { WS_CHECKER_ERROR_TYPE } from './client/index'
 import { ACTION_TYPES } from './types'
 
 import type { Range } from 'vscode-languageclient'
@@ -81,27 +82,45 @@ export function diagnosticToTerminalLog(
     .join(os.EOL)
 }
 
+export function diagnosticToViteError(d: NormalizedDiagnostic): ErrorPayload['err']
+export function diagnosticToViteError(d: NormalizedDiagnostic[]): ErrorPayload['err'][]
 export function diagnosticToViteError(
   diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[]
-): ErrorPayload['err'] {
-  const d = Array.isArray(diagnostics) ? diagnostics[0] : diagnostics
-  let loc: ErrorPayload['err']['loc']
-  if (d.loc) {
-    loc = {
-      file: d.id,
-      line: d.loc.start.line,
-      column: typeof d.loc.start.column === 'number' ? d.loc.start.column : 0,
-    }
-  }
+): ErrorPayload['err'] | ErrorPayload['err'][] {
+  const diagnosticsArray = Array.isArray(diagnostics) ? diagnostics : [diagnostics]
 
+  const results = diagnosticsArray.map((d) => {
+    let loc: ErrorPayload['err']['loc']
+    if (d.loc) {
+      loc = {
+        file: d.id,
+        line: d.loc.start.line,
+        column: typeof d.loc.start.column === 'number' ? d.loc.start.column : 0,
+      }
+    }
+
+    return {
+      message: d.message ?? '',
+      stack:
+        typeof d.stack === 'string' ? d.stack : Array.isArray(d.stack) ? d.stack.join(os.EOL) : '',
+      id: d.id,
+      frame: d.stripedCodeFrame,
+      plugin: `vite-plugin-checker(${d.checker})`,
+      loc,
+    }
+  })
+
+  return Array.isArray(diagnostics) ? results : results[0]
+}
+
+export function toViteCustomPayload(id: string, errors: ErrorPayload['err'][]): CustomPayload {
   return {
-    message: d.message ?? '',
-    stack:
-      typeof d.stack === 'string' ? d.stack : Array.isArray(d.stack) ? d.stack.join(os.EOL) : '',
-    id: d.id,
-    frame: d.stripedCodeFrame,
-    plugin: `vite-plugin-checker(${d.checker})`,
-    loc,
+    type: 'custom',
+    event: WS_CHECKER_ERROR_TYPE,
+    data: {
+      checkerId: id,
+      errors,
+    },
   }
 }
 

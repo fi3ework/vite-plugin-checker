@@ -6,4 +6,6 @@ module.exports = async () => {
   if (!process.env.VITE_PRESERVE_BUILD_ARTIFACTS) {
     await fs.remove(path.resolve(__dirname, '../temp'))
   }
+
+  await fs.remove(path.resolve(__dirname, '../packages/vite-plugin-checker/src/@runtime/main.js'))
 }
