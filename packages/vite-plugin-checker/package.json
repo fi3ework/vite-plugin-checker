@@ -11,8 +11,10 @@
     "lib"
   ],
   "scripts": {
-    "dev": "tsc -p tsconfig.build.json --watch",
-    "build": "tsc -p tsconfig.build.json",
+    "watch:node": "tsc -p tsconfig.build.json --watch",
+    "watch:runtime": "esbuild src/@runtime/main.ts --outfile=./lib/@runtime/main.js --bundle --format=esm --watch",
+    "dev": "run-p watch:node watch:runtime",
+    "build": "tsc -p tsconfig.build.json && esbuild src/@runtime/main.ts --outfile=./lib/@runtime/main.js --bundle --format=esm",
     "build:test": "tsc -p tsconfig.test.json",
     "prepublishOnly": "rimraf lib && npm run build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . --lerna-package vite-plugin-checker",
@@ -55,6 +57,8 @@
     "@types/eslint": "^7.2.14",
     "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.pick": "^4.4.6",
+    "esbuild": "^0.14.13",
+    "npm-run-all": "^4.1.5",
     "optionator": "^0.9.1",
     "vls": "^0.7.2"
   }

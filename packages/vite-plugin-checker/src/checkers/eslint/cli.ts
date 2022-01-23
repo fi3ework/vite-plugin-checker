@@ -2,6 +2,7 @@
 
 // Copied from /eslint@7.28.0/node_modules/eslint/lib/cli.js
 
+// @ts-expect-error
 function quietFixPredicate(message) {
   return message.severity === 2
 }
@@ -32,7 +33,7 @@ export function translateOptions({
   resolvePluginsRelativeTo,
   rule,
   rulesdir,
-}) {
+}: any) {
   return {
     allowInlineConfig: inlineConfig,
     cache,
@@ -47,12 +48,14 @@ export function translateOptions({
     overrideConfig: {
       env:
         env &&
+        // @ts-expect-error
         env.reduce((obj, name) => {
           obj[name] = true
           return obj
         }, {}),
       globals:
         global &&
+        // @ts-expect-error
         global.reduce((obj, name) => {
           if (name.endsWith(':true')) {
             obj[name.slice(0, -5)] = 'writable'
