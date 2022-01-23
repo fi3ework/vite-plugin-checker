@@ -1,9 +1,9 @@
 import { spawn } from 'child_process'
 import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
-import os from 'os'
 import { ConfigEnv, Plugin } from 'vite'
 import { Checker } from './Checker'
+import { runtimeCode, RUNTIME_PUBLIC_PATH } from './client/index'
 
 import {
   OverlayErrorAction,
@@ -71,6 +71,41 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         })
       }
     },
+    resolveId(id) {
+      if (id === RUNTIME_PUBLIC_PATH) {
+        return id
+      }
+    },
+    load(id) {
+      if (id === RUNTIME_PUBLIC_PATH) {
+        return runtimeCode
+      }
+    },
+    transformIndexHtml() {
+      return [
+        //         {
+        //           tag: 'script',
+        //           attrs: { type: 'module' },
+        //           children: `
+        //       const socketProtocol = null || (location.protocol === 'https:' ? 'wss' : 'ws');
+        //       const socketHost = \`\${null || location.hostname}:\${'3000'}\`;
+        //       const socket = new WebSocket(\`\${socketProtocol}://\${socketHost}\`, 'vite-hmr');
+        //       socket.addEventListener('message', async ({ data }) => {
+        //         console.log(data)
+        //       });
+        // `,
+        //         },
+        {
+          tag: 'script',
+          attrs: { type: 'module' },
+          children: `import { inject } from "${RUNTIME_PUBLIC_PATH}"; inject();`,
+        },
+        // {
+        //   tag: 'script',
+        //   attrs: { type: 'module', src: `/vue-template/vite-plugin-checker/lib/client/index.js` },
+        // },
+      ]
+    },
     buildStart: () => {
       // for build mode
       // run a bin command in a separated process
@@ -106,6 +141,8 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
           if (action.type === ACTION_TYPES.overlayError) {
             latestOverlayErrors[index] = action.payload
             if (action.payload) {
+              // @ts-ignore
+              action.payload.type = 'checker-error'
               server.ws.send(action.payload)
             }
           } else if (action.type === ACTION_TYPES.console) {
@@ -118,14 +155,14 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         // sometimes Vite will trigger a full-reload instead of HMR, but the checker
         // may update the overlay before full-reload fired. So we make sure the overlay
         // will be displayed again after full-reload.
-        server.ws.on('connection', () => {
-          connectedTimes++
-          // if connectedCount !== 1, means Vite is doing a full-reload, so we don't need to send overlay again
-          const latestOverlayError = latestOverlayErrors.filter(Boolean).slice(-1)[0]
-          if (connectedTimes > 1 && latestOverlayError) {
-            server.ws.send(latestOverlayError)
-          }
-        })
+        // server.ws.on('connection', () => {
+        //   connectedTimes++
+        //   // if connectedCount !== 1, means Vite is doing a full-reload, so we don't need to send overlay again
+        //   const latestOverlayError = latestOverlayErrors.filter(Boolean).slice(-1)[0]
+        //   if (connectedTimes > 1 && latestOverlayError) {
+        //     server.ws.send(latestOverlayError)
+        //   }
+        // })
 
         server.middlewares.use((req, res, next) => {
           next()
