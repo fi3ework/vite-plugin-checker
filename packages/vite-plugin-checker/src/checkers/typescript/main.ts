@@ -18,17 +18,13 @@ import { ACTION_TYPES, CreateDiagnostic } from '../../types'
 import type { ErrorPayload } from 'vite'
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
-  let overlay = true // Vite defaults to true
+  let overlay = true
   // let currErr: ErrorPayload['err'] | null = null
   let currErrs: ErrorPayload['err'][] = []
 
   return {
-    config: ({ hmr }) => {
-      const viteOverlay = !(typeof hmr === 'object' && hmr.overlay === false)
-
-      if (pluginConfig.overlay === false || !viteOverlay) {
-        overlay = false
-      }
+    config: async ({ enableOverlay }) => {
+      overlay = enableOverlay
     },
     configureServer({ root }) {
       invariant(pluginConfig.typescript, 'config.typescript should be `false`')
