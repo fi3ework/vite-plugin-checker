@@ -2,10 +2,10 @@ import stringify from 'fast-json-stable-stringify'
 
 import {
   killServer,
-  sleepForEdit,
-  sleepForServerReady,
   preTest,
   resetReceivedLog,
+  sleepForEdit,
+  sleepForServerReady,
   stripedLog,
   viteBuild,
   viteServe,
@@ -16,6 +16,7 @@ import {
   testDir,
   WORKER_CLEAN_TIMEOUT,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
+import { WS_CHECKER_ERROR_TYPE } from '../../../packages/vite-plugin-checker/src/client'
 import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
 import { serializers } from '../../../scripts/serializers'
 
@@ -40,25 +41,31 @@ describe('eslint', () => {
     })
 
     it('get initial error and subsequent error', async () => {
-      let err: any
-      // @ts-expect-error
-      await viteServe({ cwd: testDir, wsSend: (_payload) => (err = _payload.err) })
+      let errors: any
+      await viteServe({
+        cwd: testDir,
+        wsSend: (_payload) => {
+          if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_TYPE) {
+            errors = _payload.data.errors
+          }
+        },
+      })
       await sleepForServerReady()
-      expect(stringify(err)).toMatchSnapshot()
+      expect(stringify(errors)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit error file --')
       resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
       await sleepForEdit()
-      expect(stringify(err)).toMatchSnapshot()
+      expect(stringify(errors)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit non error file --')
       resetReceivedLog()
       editFile('src/text.ts', (code) => code.replace(`Vanilla`, `vanilla`))
       await sleepForEdit()
-      expect(stringify(err)).toMatchSnapshot()
+      expect(stringify(errors)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })

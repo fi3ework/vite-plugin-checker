@@ -16,6 +16,7 @@ import {
   testDir,
   WORKER_CLEAN_TIMEOUT,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
+import { WS_CHECKER_ERROR_TYPE } from '../../../packages/vite-plugin-checker/src/client'
 import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
 import { serializers } from '../../../scripts/serializers'
 
@@ -40,16 +41,19 @@ describe('vue2-vls', () => {
     })
 
     it('get initial error and subsequent error', async () => {
-      let err: any
+      let errors: any
 
       await viteServe({
         cwd: testDir,
-        // @ts-expect-errorƒ
-        wsSend: (_payload) => (err = _payload.err),
+        wsSend: (_payload) => {
+          if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_TYPE) {
+            errors = _payload.data.errors
+          }
+        },
       })
 
       await sleepForServerReady(2)
-      expect(stringify(err)).toMatchSnapshot()
+      expect(stringify(errors)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit file --')
@@ -57,7 +61,7 @@ describe('vue2-vls', () => {
       editFile('src/components/HelloWorld.vue', (code) => code.replace('msg1', 'msg2'))
       await sleepForEdit()
 
-      expect(stringify(err)).toMatchSnapshot()
+      expect(stringify(errors)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })

@@ -3,6 +3,7 @@ import { parentPort, workerData } from 'worker_threads'
 import { Checker } from '../../Checker'
 import { ACTION_TYPES } from '../../types'
 import { DiagnosticOptions, diagnostics } from './diagnostics'
+import { toViteCustomPayload } from '../../logger'
 
 import type { CreateDiagnostic } from '../../types'
 export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
@@ -22,12 +23,13 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
         if (!overlay) return
         parentPort?.postMessage({
           type: ACTION_TYPES.overlayError,
-          payload: overlayErr
-            ? {
-                type: 'error',
-                err: overlayErr,
-              }
-            : null,
+          payload: toViteCustomPayload('vls', overlayErr ? [overlayErr] : []),
+          // payload: overlayErr
+          //   ? {
+          //       type: 'error',
+          //       err: overlayErr,
+          //     }
+          //   : null,
         })
       }
 

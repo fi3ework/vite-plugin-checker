@@ -20,8 +20,10 @@ export function inject() {
         break
     }
 
-    if (data.type === WS_CHECKER_ERROR_TYPE) {
-      createErrorOverlay([data.err])
+    if (data.event === WS_CHECKER_ERROR_TYPE) {
+      if (data.data.errors.length > 0) {
+        createErrorOverlay(data.data.errors)
+      }
     }
   })
 }

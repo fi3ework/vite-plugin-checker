@@ -11,6 +11,7 @@ import {
   diagnosticToViteError,
   ensureCall,
   normalizeTsDiagnostic,
+  toViteCustomPayload,
 } from '../../logger'
 import { ACTION_TYPES, CreateDiagnostic } from '../../types'
 
@@ -18,7 +19,8 @@ import type { ErrorPayload } from 'vite'
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true // Vite defaults to true
-  let currErr: ErrorPayload['err'] | null = null
+  // let currErr: ErrorPayload['err'] | null = null
+  let currErrs: ErrorPayload['err'][] = []
 
   return {
     config: ({ hmr }) => {
@@ -52,12 +54,13 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
-        const formattedDiagnostics = normalizeTsDiagnostic(diagnostic)
-        if (!currErr) {
-          currErr = diagnosticToViteError(formattedDiagnostics)
-        }
+        const normalizedDiagnostics = normalizeTsDiagnostic(diagnostic)
+        currErrs.push(diagnosticToViteError(normalizedDiagnostics))
+        // if (!currErr) {
+        //   currErr = diagnosticToViteError(normalizedDiagnostics)
+        // }
 
-        logChunk += os.EOL + diagnosticToTerminalLog(formattedDiagnostics, 'TypeScript')
+        logChunk += os.EOL + diagnosticToTerminalLog(normalizedDiagnostics, 'TypeScript')
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
@@ -75,19 +78,17 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           case 6032:
             // clear current error and use the newer errors
             logChunk = ''
-            currErr = null
+            // currErr = null
+            currErrs = []
             return
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
             if (overlay) {
+              // const normalizedDiagnostics = normalizeTsDiagnostic(diagnostic)
+              // parentPort?.postMessage(toWsPayload(currErrs))
               parentPort?.postMessage({
                 type: ACTION_TYPES.overlayError,
-                payload: currErr
-                  ? {
-                      type: 'error',
-                      err: currErr,
-                    }
-                  : null,
+                payload: toViteCustomPayload('typescript', currErrs),
               })
             }
         }
