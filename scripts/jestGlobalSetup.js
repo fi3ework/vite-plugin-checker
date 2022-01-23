@@ -17,4 +17,9 @@ module.exports = async () => {
   await fs.mkdirp(DIR)
   await fs.writeFile(path.join(DIR, 'wsEndpoint'), browserServer.wsEndpoint())
   await fs.remove(path.resolve(__dirname, '../temp'))
+
+  await fs.copy(
+    path.resolve(__dirname, '../packages/vite-plugin-checker/lib/@runtime/main.js'),
+    path.resolve(__dirname, '../packages/vite-plugin-checker/src/@runtime/main.js')
+  )
 }

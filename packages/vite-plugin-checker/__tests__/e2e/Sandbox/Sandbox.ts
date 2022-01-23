@@ -3,7 +3,7 @@ import path from 'path'
 import playwright from 'playwright-chromium'
 import strip from 'strip-ansi'
 import invariant from 'tiny-invariant'
-import { build, createServer, HMRPayload, ViteDevServer } from 'vite'
+import { build, createServer, HMRPayload, ViteDevServer, CustomPayload } from 'vite'
 import { Checker } from 'vite-plugin-checker'
 
 import { expectStdoutNotContains, sleep, testDir } from '../testUtils'
@@ -53,7 +53,7 @@ export async function viteServe({
   cwd?: string
   port?: number
   path?: string
-  wsSend?: (payload: HMRPayload) => void
+  wsSend?: (payload: CustomPayload) => void
   proxyConsole?: () => void
   launchPage?: boolean
 } = {}) {
@@ -68,7 +68,7 @@ export async function viteServe({
   await devServer.listen()
 
   if (wsSend) {
-    devServer.ws.send = (payload) => {
+    devServer.ws.send = (payload: CustomPayload) => {
       wsSend(payload)
     }
   }
@@ -105,27 +105,29 @@ export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T)
 }
 
 export async function waitForHmrOverlay() {
-  const element = await page.waitForSelector('vite-error-overlay', { state: 'attached' })
+  const element = await page.waitForSelector('vite-plugin-checker-error-overlay', {
+    state: 'attached',
+  })
   return element
 }
 
 export async function getHmrOverlay() {
-  const dom = await page.$('vite-error-overlay')
-  if (dom) console.log('found vite-error-overlay')
+  const dom = await page.$('vite-plugin-checker-error-overlay')
+  if (dom) console.log('found vite-plugin-checker-error-overlay')
   return dom
 }
 
 export async function getHmrOverlayText(
-  element?: ElementHandleForTag<'vite-error-overlay'> | null
+  element?: ElementHandleForTag<'vite-plugin-checker-error-overlay'> | null
 ) {
-  let shadowRoot: ElementHandleForTag<'vite-error-overlay'> | undefined | null
+  let shadowRoot: ElementHandleForTag<'vite-plugin-checker-error-overlay'> | undefined | null
   if (element) {
     shadowRoot = element
   } else {
     shadowRoot = await getHmrOverlay()
     invariant(
       shadowRoot,
-      `<vite-error-overlay> shadow dom is expected to be found, but got ${shadowRoot}`
+      `<vite-plugin-checker-error-overlay> shadow dom is expected to be found, but got ${shadowRoot}`
     )
   }
 

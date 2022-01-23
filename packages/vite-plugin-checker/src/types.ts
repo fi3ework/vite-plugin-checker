@@ -1,4 +1,4 @@
-import type { ConfigEnv, HMRPayload } from 'vite'
+import type { ConfigEnv, CustomPayload } from 'vite'
 import type { Worker } from 'worker_threads'
 import type { ESLint } from 'eslint'
 import type { VlsOptions } from './checkers/vls/initParams'
@@ -117,10 +117,10 @@ interface Action {
 export interface OverlayErrorAction extends Action {
   type: ACTION_TYPES.overlayError
   /**
-   * send `HMRPayload` to raise error overlay provided by Vite
+   * send `CustomPayload` to raise error overlay provided by Vite
    * send `null` to clear overlay for current checker
    */
-  payload: HMRPayload | null
+  payload: CustomPayload | null
 }
 
 interface ConfigActionPayload {
