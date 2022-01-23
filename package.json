@@ -51,6 +51,7 @@
     "jest-serializer-path": "^0.1.15",
     "lint-staged": "^11.0.0",
     "minimist": "^1.2.5",
+    "nodemon": "^2.0.15",
     "playwright-chromium": "^1.12.3",
     "prettier": "^2.3.2",
     "prompts": "^2.4.1",
