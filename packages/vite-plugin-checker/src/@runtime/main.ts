@@ -10,6 +10,16 @@ export function inject() {
 
   socket.addEventListener('message', async ({ data: dataStr }) => {
     const data = JSON.parse(dataStr)
+    switch (data.type) {
+      case 'update':
+        clearErrorOverlay()
+        break
+      case 'full-reload':
+        break
+      default:
+        break
+    }
+
     if (data.type === WS_CHECKER_ERROR_TYPE) {
       createErrorOverlay([data.err])
     }
