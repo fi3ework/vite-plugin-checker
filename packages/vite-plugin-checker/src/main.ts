@@ -4,7 +4,7 @@ import npmRunPath from 'npm-run-path'
 import { ConfigEnv, Plugin } from 'vite'
 
 import { Checker } from './Checker'
-import { RUNTIME_PUBLIC_PATH, runtimeCode, WS_CHECKER_ERROR_TYPE } from './client/index'
+import { RUNTIME_PUBLIC_PATH, runtimeCode, WS_CHECKER_RECONNECT_EVENT } from './client/index'
 import {
   ACTION_TYPES,
   BuildCheckBinStr,
@@ -139,14 +139,17 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         // sometimes Vite will trigger a full-reload instead of HMR, but the checker
         // may update the overlay before full-reload fired. So we make sure the overlay
         // will be displayed again after full-reload.
-        // server.ws.on('connection', () => {
-        //   connectedTimes++
-        //   // if connectedCount !== 1, means Vite is doing a full-reload, so we don't need to send overlay again
-        //   const latestOverlayError = latestOverlayErrors.filter(Boolean).slice(-1)[0]
-        //   if (connectedTimes > 1 && latestOverlayError) {
-        //     server.ws.send(latestOverlayError)
-        //   }
-        // })
+        server.ws.on('connection', () => {
+          connectedTimes++
+          // if connectedCount !== 1, means Vite is doing a full-reload, so we don't need to send overlay again
+          if (connectedTimes > 1) {
+            server.ws.send({
+              type: 'custom',
+              event: WS_CHECKER_RECONNECT_EVENT,
+              data: latestOverlayErrors.filter(Boolean),
+            })
+          }
+        })
 
         server.middlewares.use((req, res, next) => {
           next()
