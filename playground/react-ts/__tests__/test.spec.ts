@@ -15,7 +15,7 @@ import {
   testDir,
   WORKER_CLEAN_TIMEOUT,
 } from 'vite-plugin-checker/__tests__/e2e/testUtils'
-import { WS_CHECKER_ERROR_TYPE } from 'vite-plugin-checker/src/client'
+import { WS_CHECKER_ERROR_EVENT } from 'vite-plugin-checker/src/client'
 
 import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
 import { serializers } from '../../../scripts/serializers'
@@ -45,7 +45,7 @@ describe('typescript', () => {
       await viteServe({
         cwd: testDir,
         wsSend: (_payload) => {
-          if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_TYPE) {
+          if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_EVENT) {
             errors = _payload.data.errors
           }
         },

@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [
     reactRefresh(),
     checker({
+      // typescript: true,
       eslint: {
         lintCommand: 'eslint ./src --ext .ts',
       },

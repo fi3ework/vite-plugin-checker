@@ -8,7 +8,7 @@ import { isMainThread, parentPort } from 'worker_threads'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
-import { WS_CHECKER_ERROR_TYPE } from './client/index'
+import { WS_CHECKER_ERROR_EVENT } from './client/index'
 import { ACTION_TYPES } from './types'
 
 import type { Range } from 'vscode-languageclient'
@@ -105,7 +105,7 @@ export function diagnosticToViteError(
         typeof d.stack === 'string' ? d.stack : Array.isArray(d.stack) ? d.stack.join(os.EOL) : '',
       id: d.id,
       frame: d.stripedCodeFrame,
-      plugin: `vite-plugin-checker(${d.checker})`,
+      plugin: d.checker,
       loc,
     }
   })
@@ -116,7 +116,7 @@ export function diagnosticToViteError(
 export function toViteCustomPayload(id: string, errors: ErrorPayload['err'][]): CustomPayload {
   return {
     type: 'custom',
-    event: WS_CHECKER_ERROR_TYPE,
+    event: WS_CHECKER_ERROR_EVENT,
     data: {
       checkerId: id,
       errors,

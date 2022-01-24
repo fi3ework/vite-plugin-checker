@@ -1,5 +1,28 @@
 import type { ErrorPayload } from 'vite'
 
+export type OverlayPayload =
+  | {
+      type: 'full-reload' | 'update'
+    }
+  | (WsErrorPayload | WsReconnectPayload)
+
+export interface WsErrorPayload {
+  type: 'custom'
+  event: 'vite-plugin-checker:error'
+  data: OverlayData
+}
+
+export interface WsReconnectPayload {
+  type: 'custom'
+  event: 'vite-plugin-checker:reconnect'
+  data: WsErrorPayload[]
+}
+
+export interface OverlayData {
+  checkerId: string
+  errors: ErrorPayload['err'][]
+}
+
 const template = (errors: string[]) => `
 <style>
 :host {
@@ -91,7 +114,7 @@ pre::-webkit-scrollbar {
 }
 
 .tip {
-  font-size: 13px;
+  font-size: 12px;
   color: #999;
   border-top: 1px dotted #999;
   padding-top: 13px;
@@ -109,11 +132,12 @@ code {
 }
 </style>
 <div class="window">
-  ${errors.join('\n')}
+  <div class="message-list">
+    ${errors.join('\n')}
+  </div>
   <div class="tip">
-    Click outside or fix the code to dismiss.<br>
-    You can also disable this overlay by setting
-    <code>server.hmr.overlay</code> to <code>false</code> in <code>vite.config.js.</code>
+    Click outside or fix the code to dismiss. You can also disable this overlay by setting
+    <code>config.overlay</code> to <code>false</code> in <code>vite.config.js.</code>
   </div>
 </div>
 `
@@ -124,7 +148,6 @@ const errorTemplate = `
     <pre class="file"></pre>
     <pre class="frame"></pre>
     <pre class="stack"></pre>
-
   </div>
 `
 
@@ -134,19 +157,52 @@ const codeframeRE = /^(?:>?\s+\d+\s+\|.*|\s+\|\s*\^.*)\r?\n/gm
 export class ErrorOverlay extends HTMLElement {
   public root: ShadowRoot
 
-  public constructor(errs: ErrorPayload['err'][]) {
+  public constructor(data: OverlayData | OverlayData[]) {
     super()
-    this.root = this.attachShadow({ mode: 'open' })
-    this.root.innerHTML = template(new Array(errs.length).fill(errorTemplate))
 
-    errs.forEach((err, index) => {
+    this.root = this.attachShadow({ mode: 'open' })
+    this.prepareWindow()
+    // this.root.innerHTML = template(new Array(errors.length).fill(errorTemplate))
+
+    if (Array.isArray(data)) {
+      if (data.length) {
+        data.forEach((item) => this.appendErrors(item))
+      } else {
+        return
+      }
+    } else {
+      this.appendErrors(data)
+    }
+
+    this.root.querySelector('.window')!.addEventListener('click', (e) => {
+      e.stopPropagation()
+    })
+
+    this.addEventListener('click', () => {
+      this.close()
+    })
+  }
+
+  public clearErrors(checkerId: string) {
+    this.root.querySelectorAll(`.message-list .${checkerId}`).forEach((el) => el.remove())
+  }
+
+  public prepareWindow() {
+    this.root.innerHTML = template([])
+  }
+
+  public appendErrors({ errors, checkerId }: OverlayData) {
+    const toAppend = new Array(errors.length).fill(errorTemplate)
+    this.root.querySelector('.message-list')!.innerHTML += toAppend
+    errors.forEach((err, index) => {
       codeframeRE.lastIndex = 0
       const hasFrame = err.frame && codeframeRE.test(err.frame)
       const message = hasFrame ? err.message.replace(codeframeRE, '') : err.message
       const selectorPrefix = `.message-item:nth-child(${index + 1}) `
 
+      this.root.querySelectorAll(selectorPrefix).forEach((el) => el.classList.add(checkerId))
       if (err.plugin) {
-        this.text(selectorPrefix + '.plugin', `[plugin:${err.plugin}] `)
+        this.text(selectorPrefix + '.plugin', `[${err.plugin}] `)
       }
       this.text(selectorPrefix + '.message-body', message.trim())
 
@@ -162,13 +218,15 @@ export class ErrorOverlay extends HTMLElement {
       }
       this.text(selectorPrefix + '.stack', err.stack, true)
     })
+  }
 
-    this.root.querySelector('.window')!.addEventListener('click', (e) => {
-      e.stopPropagation()
-    })
-    this.addEventListener('click', () => {
-      this.close()
-    })
+  public updateErrors({ errors, checkerId }: OverlayData) {
+    this.clearErrors(checkerId)
+    this.appendErrors({ errors, checkerId })
+  }
+
+  public getErrorCount() {
+    return this.root.querySelectorAll('.message-item').length
   }
 
   public text(selector: string, text: string, linkFiles = false): void {
