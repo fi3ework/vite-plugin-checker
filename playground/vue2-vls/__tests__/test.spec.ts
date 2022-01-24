@@ -16,7 +16,7 @@ import {
   testDir,
   WORKER_CLEAN_TIMEOUT,
 } from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
-import { WS_CHECKER_ERROR_TYPE } from '../../../packages/vite-plugin-checker/src/client'
+import { WS_CHECKER_ERROR_EVENT } from '../../../packages/vite-plugin-checker/src/client'
 import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
 import { serializers } from '../../../scripts/serializers'
 
@@ -46,7 +46,7 @@ describe('vue2-vls', () => {
       await viteServe({
         cwd: testDir,
         wsSend: (_payload) => {
-          if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_TYPE) {
+          if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_EVENT) {
             errors = _payload.data.errors
           }
         },
