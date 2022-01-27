@@ -142,8 +142,8 @@ code {
 </div>
 `
 
-const errorTemplate = `
-  <div class="message-item">
+const errorItemTemplate = (checkerId: string) => `
+  <div class="message-item checker-${checkerId}">
     <pre class="message"><span class="plugin"></span><span class="message-body"></span></pre>
     <pre class="file"></pre>
     <pre class="frame"></pre>
@@ -192,31 +192,59 @@ export class ErrorOverlay extends HTMLElement {
   }
 
   public appendErrors({ errors, checkerId }: OverlayData) {
-    const toAppend = new Array(errors.length).fill(errorTemplate)
+    const toAppend: string[] = new Array(errors.length).fill(errorItemTemplate(checkerId))
     this.root.querySelector('.message-list')!.innerHTML += toAppend
     errors.forEach((err, index) => {
       codeframeRE.lastIndex = 0
       const hasFrame = err.frame && codeframeRE.test(err.frame)
       const message = hasFrame ? err.message.replace(codeframeRE, '') : err.message
-      const selectorPrefix = `.message-item:nth-child(${index + 1}) `
+      const ele = this.root.querySelectorAll(`.checker-${checkerId}.message-item`)[
+        index
+      ] as HTMLElement
 
-      this.root.querySelectorAll(selectorPrefix).forEach((el) => el.classList.add(checkerId))
       if (err.plugin) {
-        this.text(selectorPrefix + '.plugin', `[${err.plugin}] `)
+        this.text({
+          ele,
+          selector: '.plugin',
+          text: `[${err.plugin}] `,
+        })
       }
-      this.text(selectorPrefix + '.message-body', message.trim())
+      this.text({
+        ele,
+        selector: '.message-body',
+        text: message.trim(),
+      })
 
       const [file] = (err.loc?.file || err.id || 'unknown file').split(`?`)
       if (err.loc) {
-        this.text(selectorPrefix + '.file', `${file}:${err.loc.line}:${err.loc.column}`, true)
+        this.text({
+          ele,
+          selector: '.file',
+          text: `${file}:${err.loc.line}:${err.loc.column}`,
+          linkFiles: true,
+        })
       } else if (err.id) {
-        this.text(selectorPrefix + '.file', file)
+        this.text({
+          ele,
+          selector: '.file',
+          text: file,
+        })
       }
 
       if (hasFrame) {
-        this.text(selectorPrefix + '.frame', err.frame!.trim())
+        this.text({
+          ele,
+          selector: '.frame',
+          text: err.frame!.trim(),
+        })
       }
-      this.text(selectorPrefix + '.stack', err.stack, true)
+
+      this.text({
+        ele,
+        selector: '.stack',
+        text: err.stack,
+        linkFiles: true,
+      })
     })
   }
 
@@ -229,8 +257,19 @@ export class ErrorOverlay extends HTMLElement {
     return this.root.querySelectorAll('.message-item').length
   }
 
-  public text(selector: string, text: string, linkFiles = false): void {
-    const el = this.root.querySelector(selector)!
+  // eslint-disable-next-line max-params
+  public text({
+    ele,
+    selector,
+    text,
+    linkFiles = false,
+  }: {
+    ele: HTMLElement
+    selector: string
+    text: string
+    linkFiles?: boolean
+  }): void {
+    const el = ele.querySelector(selector)!
     if (!linkFiles) {
       el.textContent = text
     } else {
