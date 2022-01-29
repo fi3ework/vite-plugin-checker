@@ -17,6 +17,9 @@ import {
 } from '../../logger'
 import { ACTION_TYPES } from '../../types'
 import { translateOptions } from './cli'
+import { FileDiagnosticManager } from '../../FileDiagnosticManager'
+
+const manager = new FileDiagnosticManager()
 
 import type { CreateDiagnostic } from '../../types'
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
@@ -56,19 +59,23 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       //     : pluginConfig.eslint.files
       // const paths = config.
 
-      let diagnosticsCache: NormalizedDiagnostic[] = []
+      // let diagnosticsCache: NormalizedDiagnostic[] = []
 
       const dispatchDiagnostics = () => {
-        diagnosticsCache.forEach((n) => {
-          consoleLog(diagnosticToTerminalLog(n, 'ESLint'))
+        const diagnostics = manager.getDiagnostics()
+        diagnostics.forEach((d) => {
+          consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
         })
 
-        const lastErr = diagnosticsCache[0]
+        // const lastErr = diagnosticsCache[0]
 
         if (overlay) {
           parentPort?.postMessage({
             type: ACTION_TYPES.overlayError,
-            payload: toViteCustomPayload('eslint', lastErr ? [diagnosticToViteError(lastErr)] : []),
+            payload: toViteCustomPayload(
+              'eslint',
+              diagnostics.map((d) => diagnosticToViteError(d))
+            ),
 
             // payload: lastErr
             //   ? {
@@ -82,18 +89,19 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
         // if (!extensions.includes(path.extname(filePath))) return
+        const absPath = path.resolve(root, filePath)
 
         if (type === 'unlink') {
-          const absPath = path.resolve(root, filePath)
-          diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath)
+          manager.setFile(absPath, [])
+          // diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath)
         } else if (type === 'change') {
-          console.log(filePath)
           const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
           const newDiagnostics = diagnosticsOfChangedFile
             .map((d) => normalizeEslintDiagnostic(d))
             .flat(1)
-          const absPath = diagnosticsOfChangedFile[0].filePath
-          diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath).concat(newDiagnostics)
+          // const absPath = diagnosticsOfChangedFile[0].filePath
+          // diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath).concat(newDiagnostics)
+          manager.setFile(absPath, newDiagnostics)
         }
 
         dispatchDiagnostics()
@@ -102,7 +110,8 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       // initial lint
       const files = options._.slice(1)
       const diagnostics = await eslint.lintFiles(files)
-      diagnosticsCache = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
+      manager.initWith(diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1))
+      // diagnosticsCache = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
       dispatchDiagnostics()
 
       // watch lint
