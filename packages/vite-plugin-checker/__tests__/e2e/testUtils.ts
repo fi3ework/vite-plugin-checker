@@ -22,6 +22,13 @@ export function editFile(
   fs.writeFileSync(filePath, modified)
 }
 
+export function expectStderrContains(str: string, expectedErrorMsg: string | string[]) {
+  const errorMsgArr = Array.isArray(expectedErrorMsg) ? expectedErrorMsg : [expectedErrorMsg]
+  errorMsgArr.forEach((msg) => {
+    expect(str).toContain(msg)
+  })
+}
+
 export function expectStdoutNotContains(str: string, unexpectedErrorMsg: string | string[]) {
   expect.objectContaining({
     stdout: expect(str).not.toContain(unexpectedErrorMsg),
