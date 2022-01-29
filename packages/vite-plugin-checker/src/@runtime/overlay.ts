@@ -142,8 +142,7 @@ code {
 </div>
 `
 
-const errorItemTemplate = (checkerId: string) => `
-  <div class="message-item checker-${checkerId}">
+const errorItemTemplate = (checkerId: string) => `  <div class="message-item checker-${checkerId}">
     <pre class="message"><span class="plugin"></span><span class="message-body"></span></pre>
     <pre class="file"></pre>
     <pre class="frame"></pre>
@@ -192,8 +191,12 @@ export class ErrorOverlay extends HTMLElement {
   }
 
   public appendErrors({ errors, checkerId }: OverlayData) {
+    if (!errors.length) {
+      return
+    }
+
     const toAppend: string[] = new Array(errors.length).fill(errorItemTemplate(checkerId))
-    this.root.querySelector('.message-list')!.innerHTML += toAppend
+    this.root.querySelector('.message-list')!.innerHTML += toAppend.join('')
     errors.forEach((err, index) => {
       codeframeRE.lastIndex = 0
       const hasFrame = err.frame && codeframeRE.test(err.frame)

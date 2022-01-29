@@ -6,7 +6,7 @@ import invariant from 'tiny-invariant'
 import { build, createServer, HMRPayload, ViteDevServer, CustomPayload } from 'vite'
 import { Checker } from 'vite-plugin-checker'
 
-import { expectStdoutNotContains, sleep, testDir } from '../testUtils'
+import { expectStdoutNotContains, expectStderrContains, sleep, testDir } from '../testUtils'
 
 import type { ElementHandleForTag } from 'playwright-chromium/types/structs'
 let devServer: ViteDevServer
@@ -14,11 +14,16 @@ let binPath: string
 export let log = ''
 export let stripedLog = ''
 
-export function proxyConsoleInTest() {
+export function proxyConsoleInTest(accumulate = false) {
   Checker.logger = [
     (...args: any[]) => {
-      log = args[0].payload
-      stripedLog = strip(args[0].payload)
+      if (accumulate) {
+        log += args[0].payload
+        stripedLog += strip(args[0].payload)
+      } else {
+        log = args[0].payload
+        stripedLog = strip(args[0].payload)
+      }
     },
   ]
 }
@@ -156,7 +161,7 @@ export async function viteBuild({
   cwd = process.cwd(),
 }: {
   unexpectedErrorMsg?: string | string[]
-  expectedErrorMsg?: string
+  expectedErrorMsg?: string | string[]
   cwd?: string
 } = {}) {
   const promise = execa(binPath, ['build'], {
@@ -164,7 +169,12 @@ export async function viteBuild({
   })
 
   if (expectedErrorMsg) {
-    await expect(promise).rejects.toThrow(expectedErrorMsg)
+    try {
+      await promise
+      throw new Error('Fail! Should failed with error message')
+    } catch (e) {
+      expectStderrContains(e.toString(), expectedErrorMsg)
+    }
     return
   }
 
