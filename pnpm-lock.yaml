@@ -127,6 +127,27 @@ importers:
       optionator: 0.9.1
       vls: 0.7.4
 
+  playground/multiple:
+    specifiers:
+      '@types/react': ^17.0.0
+      '@types/react-dom': ^17.0.0
+      '@vitejs/plugin-react-refresh': ^1.3.1
+      react: ^17.0.0
+      react-dom: ^17.0.0
+      typescript: ^4.1.2
+      vite: ^2.7.13
+      vite-plugin-checker: workspace:*
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    devDependencies:
+      '@types/react': 17.0.11
+      '@types/react-dom': 17.0.7
+      '@vitejs/plugin-react-refresh': 1.3.3
+      typescript: 4.3.2
+      vite: 2.7.13
+      vite-plugin-checker: link:../../packages/vite-plugin-checker
+
   playground/react-ts:
     specifiers:
       '@types/react': ^17.0.0
