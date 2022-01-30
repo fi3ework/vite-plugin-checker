@@ -20,7 +20,7 @@
     }
   },
   "lint-staged": {
-    "{packages}/**/*.{js,ts}": [
+    "{packages}/vite-plugin-checker/*.{js,ts}": [
       "eslint --fix",
       "prettier --write",
       "git add"
