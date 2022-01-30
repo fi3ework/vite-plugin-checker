@@ -19,13 +19,7 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
         if (!overlay) return
         parentPort?.postMessage({
           type: ACTION_TYPES.overlayError,
-          payload: toViteCustomPayload('vls', overlayErr ? [overlayErr] : []),
-          // payload: overlayErr
-          //   ? {
-          //       type: 'error',
-          //       err: overlayErr,
-          //     }
-          //   : null,
+          payload: toViteCustomPayload('vls', overlayErr ? overlayErr : []),
         })
       }
 

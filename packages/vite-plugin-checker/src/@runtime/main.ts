@@ -6,7 +6,7 @@ const WS_CHECKER_RECONNECT_EVENT = 'vite-plugin-checker:reconnect'
 
 export function inject() {
   const socketProtocol = null || (location.protocol === 'https:' ? 'wss' : 'ws')
-  const socketHost = `${null || location.hostname}:${'3000'}`
+  const socketHost = `${location.hostname}:${location.port}`
   const socket = new WebSocket(`${socketProtocol}://${socketHost}`, 'vite-hmr')
 
   socket.addEventListener('message', async ({ data: dataStr }) => {

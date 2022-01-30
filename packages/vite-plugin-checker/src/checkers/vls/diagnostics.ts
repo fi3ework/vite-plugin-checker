@@ -37,7 +37,7 @@ import { DeepPartial } from '../../types'
 import { getInitParams, VlsOptions } from './initParams'
 
 import type { ErrorPayload } from 'vite'
-import { FileDiagnosticCache } from '../../DiagnosticCache'
+import { FileDiagnosticManager } from '../../FileDiagnosticManager'
 enum DOC_VERSION {
   init = -1,
 }
@@ -46,7 +46,7 @@ export type LogLevel = typeof logLevels[number]
 export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 
 let disposeSuppressConsole: ReturnType<typeof suppressConsole>
-const diagnosticCache = new FileDiagnosticCache()
+const fileDiagnosticManager = new FileDiagnosticManager()
 
 export const logLevel2Severity = {
   ERROR: DiagnosticSeverity.Error,
@@ -59,7 +59,7 @@ export interface DiagnosticOptions {
   watch: boolean
   verbose: boolean
   config: DeepPartial<VlsOptions> | null
-  errorCallback?: (diagnostic: PublishDiagnosticsParams, viteError: ErrorPayload['err']) => void
+  errorCallback?: (diagnostic: PublishDiagnosticsParams, viteError: ErrorPayload['err'][]) => void
 }
 
 export async function diagnostics(
@@ -165,14 +165,14 @@ export async function prepareClientConnection(
     const absFilePath = URI.parse(publishDiagnostics.uri).fsPath
     publishDiagnostics.diagnostics = filterDiagnostics(publishDiagnostics.diagnostics, severity)
     const nextDiagnosticInFile = await normalizePublishDiagnosticParams(publishDiagnostics)
-    diagnosticCache.setFile(absFilePath, nextDiagnosticInFile)
+    fileDiagnosticManager.updateByFileId(absFilePath, nextDiagnosticInFile)
 
-    const res = diagnosticCache.getDiagnostics()
+    const res = fileDiagnosticManager.getDiagnostics()
     vlsConsoleLog(os.EOL)
     vlsConsoleLog(res.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
 
-    if (diagnosticCache.lastDiagnostic) {
-      const normalized = diagnosticToViteError(diagnosticCache.lastDiagnostic)
+    if (res) {
+      const normalized = diagnosticToViteError(res)
       options.errorCallback?.(publishDiagnostics, normalized)
     }
   }

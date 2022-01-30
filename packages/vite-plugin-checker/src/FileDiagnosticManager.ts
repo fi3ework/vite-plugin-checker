@@ -2,11 +2,21 @@ import type { NormalizedDiagnostic } from './logger'
 
 class FileDiagnosticManager {
   public diagnostics: NormalizedDiagnostic[] = []
+  private initialized = false
 
+  /**
+   * Only used when initializing the manager
+   */
   public initWith(diagnostics: NormalizedDiagnostic[]) {
+    if (this.initialized) {
+      throw new Error('FileDiagnosticManager is already initialized')
+    }
+
     diagnostics.forEach((d) => {
       this.diagnostics.push(d)
     })
+
+    this.initialized = true
   }
 
   public getDiagnostics(fileName?: string) {
@@ -17,13 +27,9 @@ class FileDiagnosticManager {
     return this.diagnostics
   }
 
-  // public get lastDiagnostic() {
-  //   return this.diagnostics[this.diagnostics.length - 1]
-  // }
-
-  public setFile(fileName: string, next: NormalizedDiagnostic[] | null) {
+  public updateByFileId(fileId: string, next: NormalizedDiagnostic[] | null) {
     for (let i = 0; i < this.diagnostics.length; i++) {
-      if (this.diagnostics[i].id === fileName) {
+      if (this.diagnostics[i].id === fileId) {
         this.diagnostics.splice(i, 1)
         i--
       }
@@ -33,19 +39,6 @@ class FileDiagnosticManager {
       this.diagnostics.push(...next)
     }
   }
-
-  // public updateFile(next: NormalizedDiagnostic[] | null) {
-  //   for (let i = 0; i < this.diagnostics.length; i++) {
-  //     if (this.diagnostics[i].loc?.start.line === fileName) {
-  //       this.diagnostics.splice(i, 1)
-  //       i--
-  //     }
-  //   }
-
-  //   if (next?.length) {
-  //     this.diagnostics.push(...next)
-  //   }
-  // }
 }
 
 export { FileDiagnosticManager }

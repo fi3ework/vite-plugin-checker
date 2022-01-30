@@ -11,7 +11,6 @@ import {
   consoleLog,
   diagnosticToTerminalLog,
   diagnosticToViteError,
-  NormalizedDiagnostic,
   toViteCustomPayload,
   normalizeEslintDiagnostic,
 } from '../../logger'
@@ -35,39 +34,17 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const options = optionator.parse(pluginConfig.eslint.lintCommand)
       const translatedOptions = translateOptions(options) as ESLint.Options
 
-      // const extensions = config.extensions ?? ['.js']
-      // const overrideConfigFile = pluginConfig.eslint.configFile
-      //   ? { overrideConfigFile: pluginConfig.eslint.configFile }
-      //   : {}
       const eslint = new ESLint({
         cwd: root,
         ...translatedOptions,
         ...pluginConfig.eslint.devOptions,
-        // extensions,
-        // ...overrideConfigFile,
       })
-
-      // invariant(pluginConfig.eslint, 'config.eslint should not be `false`')
-      // invariant(
-      //   pluginConfig.eslint.files,
-      //   `eslint.files is required, but got ${pluginConfig.eslint.files}`
-      // )
-
-      // const paths =
-      //   typeof pluginConfig.eslint.files === 'string'
-      //     ? [pluginConfig.eslint.files]
-      //     : pluginConfig.eslint.files
-      // const paths = config.
-
-      // let diagnosticsCache: NormalizedDiagnostic[] = []
 
       const dispatchDiagnostics = () => {
         const diagnostics = manager.getDiagnostics()
         diagnostics.forEach((d) => {
           consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
         })
-
-        // const lastErr = diagnosticsCache[0]
 
         if (overlay) {
           parentPort?.postMessage({
@@ -76,32 +53,21 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
               'eslint',
               diagnostics.map((d) => diagnosticToViteError(d))
             ),
-
-            // payload: lastErr
-            //   ? {
-            //       type: 'error',
-            //       err: diagnosticToViteError(lastErr),
-            //     }
-            //   : null,
           })
         }
       }
 
       const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
-        // if (!extensions.includes(path.extname(filePath))) return
         const absPath = path.resolve(root, filePath)
 
         if (type === 'unlink') {
-          manager.setFile(absPath, [])
-          // diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath)
+          manager.updateByFileId(absPath, [])
         } else if (type === 'change') {
           const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
           const newDiagnostics = diagnosticsOfChangedFile
             .map((d) => normalizeEslintDiagnostic(d))
             .flat(1)
-          // const absPath = diagnosticsOfChangedFile[0].filePath
-          // diagnosticsCache = diagnosticsCache.filter((d) => d.id !== absPath).concat(newDiagnostics)
-          manager.setFile(absPath, newDiagnostics)
+          manager.updateByFileId(absPath, newDiagnostics)
         }
 
         dispatchDiagnostics()
