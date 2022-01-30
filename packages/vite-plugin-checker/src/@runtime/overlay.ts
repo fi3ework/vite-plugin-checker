@@ -35,13 +35,13 @@ const template = (errors: string[]) => `
   overflow-y: scroll;
   margin: 0;
   background: rgba(0, 0, 0, 0.66);
-  --monospace: 'SFM√ono-Regular', Consolas,
+  --monospace: 'SFMono-Regular', Consolas,
               'Liberation Mono', Menlo, Courier, monospace;
   --red: #ff5555;
   --yellow: #e2aa53;
   --purple: #cfa4ff;
   --cyan: #2dd9da;
-  --dim: #c9c9c9;√
+  --dim: #c9c9c9;
 }
 
 .window {
@@ -223,8 +223,8 @@ export class ErrorOverlay extends HTMLElement {
         this.text({
           ele,
           selector: '.file',
-          text: `${file}:${err.loc.line}:${err.loc.column}`,
           linkFiles: true,
+          text: `${file}:${err.loc.line}:${err.loc.column}`,
         })
       } else if (err.id) {
         this.text({
