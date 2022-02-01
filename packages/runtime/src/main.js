@@ -38,7 +38,8 @@ function updateErrorOverlay(payloads) {
   const hasErrorToShowInOverlay = checkerResultsStore.some((p) => p.errors.length)
 
   if (!hasErrorToShowInOverlay) {
-    overlayEle.close()
+    overlayEle?.close() // TODO: remove optional chaining
+    overlayEle = null
     app = null
     return
   }

@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "node ./scripts/build.js",
+    "build:test": "pnpm run build",
     "dev": "node ./scripts/build.js --watch",
     "preview": "sirv public --no-clear"
   },
