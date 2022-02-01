@@ -5,6 +5,10 @@
 
 <main class="window" on:click|stopPropagation>
   <List {checkerResults} />
+  <div class="tip">
+    Click outside or fix the code to dismiss. You can also disable this overlay by setting
+    <code>config.overlay</code> to <code>false</code> in <code>vite.config.js.</code>
+  </div>
 </main>
 
 <style>
@@ -32,9 +36,9 @@
     width: 800px;
     color: #d8d8d8;
     margin: 40px auto;
-    padding: 32px 32px;
+    padding: 16px 32px 32px;
     position: relative;
-    background: #0d1117;
+    background: #24272e;
     border-radius: 6px 6px 8px 8px;
     box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
     overflow: scroll;
@@ -48,6 +52,13 @@
     padding: 1em;
     max-width: 240px;
     margin: 0 auto;
+  }
+
+  .tip {
+    font-size: 12px;
+    color: #999;
+    border-top: 1px dotted #999;
+    padding-top: 13px;
   }
 
   @media (min-width: 640px) {
