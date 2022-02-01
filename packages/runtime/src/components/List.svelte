@@ -4,10 +4,10 @@
 </script>
 
 <ul>
-  {#each checkerResults as checkerResult}
+  {#each checkerResults as checkerResult, index}
     <li>
       {(console.log(checkerResult), '')}
-      <Checker diagnostics={checkerResult.errors} />
+      <Checker diagnostics={checkerResult.errors} {index} />
     </li>
   {/each}
 </ul>
