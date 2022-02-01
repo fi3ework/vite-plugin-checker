@@ -8,7 +8,7 @@
   $: message = hasFrame ? diagnostic.message.replace(codeframeRE, '') : diagnostic.message
   // TODO: stackLinks not used
   $: stackLinks = calcLink(diagnostic.stack)
-  $: [file] = (diagnostic.loc?.file || err.id || 'unknown file').split(`?`)
+  $: [file] = (diagnostic.loc?.file || diagnostic.id || 'unknown file').split(`?`)
 
   $: errorSource = diagnostic.loc
     ? { ...calcLink(`${file}:${diagnostic.loc.line}:${diagnostic.loc.column}`)[0], linkFiles: true }
@@ -53,7 +53,11 @@
     {/if}
   </pre>
   {#if hasFrame}
-    <pre class="frame">{diagnostic.frame.trim()}</pre>
+    <pre class="frame">
+      <code>
+         {diagnostic.frame}
+      </code>
+    </pre>
   {/if}
   <pre class="stack">{diagnostic.stack}</pre>
 </li>
@@ -64,13 +68,12 @@
   }
 
   .message-item {
-    border-top: 1px dotted #666;
+    border-bottom: 1px dotted #666;
     padding: 12px 0 0 0;
   }
 
   .message {
-    line-height: 1.3;
-    font-weight: 600;
+    font-size: 1.1em;
     white-space: initial;
   }
 
@@ -81,6 +84,13 @@
     margin-bottom: 0;
     overflow-x: scroll;
     scrollbar-width: none;
+  }
+
+  .frame {
+    padding: 6px 8px;
+    background: #16181d;
+    margin-top: 4px;
+    border-radius: 8px;
   }
 
   pre::-webkit-scrollbar {
