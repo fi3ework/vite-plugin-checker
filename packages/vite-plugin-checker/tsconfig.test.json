@@ -5,6 +5,5 @@
     "rootDir": "src",
     "inlineSourceMap": true
   },
-  "include": ["src"],
-  "exclude": ["src/@runtime"]
+  "include": ["src"]
 }
