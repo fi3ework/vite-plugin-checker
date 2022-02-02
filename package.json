@@ -59,6 +59,7 @@
     "prompts": "^2.4.1",
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
+    "sort-deep-object-arrays": "^1.1.2",
     "strip-ansi": "^7.0.0",
     "svelte": "^3.46.3",
     "ts-jest": "^27.1.3",
