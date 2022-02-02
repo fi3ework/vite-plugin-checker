@@ -52,7 +52,7 @@ describe('multiple-hmr', () => {
         proxyConsole: () => proxyConsoleInTest(true),
       })
       await sleepForServerReady()
-      expect(stringify(errors)).toMatchSnapshot()
+      expect(stringify(errors.sort())).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit with error --')
@@ -60,7 +60,7 @@ describe('multiple-hmr', () => {
       resetReceivedLog()
       editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
       await sleepForEdit()
-      expect(stringify(errors)).toMatchSnapshot()
+      expect(stringify(errors.sort())).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- fix typescript error --')
@@ -70,7 +70,7 @@ describe('multiple-hmr', () => {
         code.replace('useState<string>(2)', `useState<string>('x')`)
       )
       await sleepForEdit()
-      expect(stringify(errors)).toMatchSnapshot()
+      expect(stringify(errors.sort())).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- fix eslint error --')
@@ -78,7 +78,7 @@ describe('multiple-hmr', () => {
       resetReceivedLog()
       editFile('src/App.tsx', (code) => code.replace('var', 'const'))
       await sleepForEdit()
-      expect(stringify(errors)).toMatchSnapshot()
+      expect(stringify(errors.sort())).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })

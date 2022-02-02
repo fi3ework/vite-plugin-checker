@@ -1,29 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`multiple-reload serve get initial error and subsequent error 1`] = `"[{\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello1: number = 'Hello1'/n      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    4 | var hello2: boolean = 'Hello2'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    2 |/n    3 | var hello1: number = 'Hello1'/n  > 4 | var hello2: boolean = 'Hello2'/n      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello1 + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":4},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello1: number = 'Hello1'/n      |     ^^^^^^/n    4 | var hello2: boolean = 'Hello2'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Type 'string' is not assignable to type 'number'.\\",\\"plugin\\":\\"TypeScript\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    2 |/n    3 | var hello1: number = 'Hello1'/n  > 4 | var hello2: boolean = 'Hello2'/n      |     ^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello1 + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":4},\\"message\\":\\"Type 'string' is not assignable to type 'boolean'.\\",\\"plugin\\":\\"TypeScript\\",\\"stack\\":\\"\\"}]"`;
+exports[`multiple-reload serve get initial error and subsequent error 1`] = `"[{\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello1: number = 'Hello1'/n      |     ^^^^^^/n    4 | var hello2: boolean = 'Hello2'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Type 'string' is not assignable to type 'number'.\\",\\"plugin\\":\\"TypeScript\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    2 |/n    3 | var hello1: number = 'Hello1'/n  > 4 | var hello2: boolean = 'Hello2'/n      |     ^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello1 + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":4},\\"message\\":\\"Type 'string' is not assignable to type 'boolean'.\\",\\"plugin\\":\\"TypeScript\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello1: number = 'Hello1'/n      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    4 | var hello2: boolean = 'Hello2'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    2 |/n    3 | var hello1: number = 'Hello1'/n  > 4 | var hello2: boolean = 'Hello2'/n      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello1 + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":4},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"}]"`;
 
 exports[`multiple-reload serve get initial error and subsequent error 2`] = `
-" ERROR(ESLint)  Unexpected var, use let or const instead.
- FILE  <PROJECT_ROOT>/temp/multiple-reload/src/main.ts:3:1
-
-    1 | import { text } from './text'
-    2 |
-  > 3 | var hello1: number = 'Hello1'
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    4 | var hello2: boolean = 'Hello2'
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  Unexpected var, use let or const instead.
- FILE  <PROJECT_ROOT>/temp/multiple-reload/src/main.ts:4:1
-
-    2 |
-    3 | var hello1: number = 'Hello1'
-  > 4 | var hello2: boolean = 'Hello2'
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-    7 | rootDom.innerHTML = hello1 + text
-
+"
  ERROR(TypeScript)  Type 'string' is not assignable to type 'number'.
  FILE  <PROJECT_ROOT>/temp/multiple-reload/src/main.ts:3:5
 
@@ -46,7 +26,27 @@ exports[`multiple-reload serve get initial error and subsequent error 2`] = `
     6 | const rootDom = document.querySelector('#root')!
     7 | rootDom.innerHTML = hello1 + text
 
-Found 2 errors. Watching for file changes."
+Found 2 errors. Watching for file changes. ERROR(ESLint)  Unexpected var, use let or const instead.
+ FILE  <PROJECT_ROOT>/temp/multiple-reload/src/main.ts:3:1
+
+    1 | import { text } from './text'
+    2 |
+  > 3 | var hello1: number = 'Hello1'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4 | var hello2: boolean = 'Hello2'
+    5 |
+    6 | const rootDom = document.querySelector('#root')!
+ ERROR(ESLint)  Unexpected var, use let or const instead.
+ FILE  <PROJECT_ROOT>/temp/multiple-reload/src/main.ts:4:1
+
+    2 |
+    3 | var hello1: number = 'Hello1'
+  > 4 | var hello2: boolean = 'Hello2'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5 |
+    6 | const rootDom = document.querySelector('#root')!
+    7 | rootDom.innerHTML = hello1 + text
+"
 `;
 
 exports[`multiple-reload serve get initial error and subsequent error 3`] = `"[{\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello1: number = 'Hello1~'/n      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    4 | var hello2: boolean = 'Hello2'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    2 |/n    3 | var hello1: number = 'Hello1~'/n  > 4 | var hello2: boolean = 'Hello2'/n      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello1 + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":4},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello1: number = 'Hello1~'/n      |     ^^^^^^/n    4 | var hello2: boolean = 'Hello2'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Type 'string' is not assignable to type 'number'.\\",\\"plugin\\":\\"TypeScript\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    2 |/n    3 | var hello1: number = 'Hello1~'/n  > 4 | var hello2: boolean = 'Hello2'/n      |     ^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello1 + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-reload/src/main.ts\\",\\"line\\":4},\\"message\\":\\"Type 'string' is not assignable to type 'boolean'.\\",\\"plugin\\":\\"TypeScript\\",\\"stack\\":\\"\\"}]"`;
