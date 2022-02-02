@@ -44,11 +44,18 @@ describe('overlay', () => {
     expect(file1).toMatchSnapshot()
     expect(frame1).toMatchSnapshot()
 
-    console.log('-- edit file --')
+    console.log('-- overlay update after edit --')
     editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
     await sleepForEdit()
     await pollingUntil(getHmrOverlay, (dom) => !!dom)
     const [, , frame2] = await getHmrOverlayText()
     expect(frame2).toMatchSnapshot()
+
+    console.log('-- overlay dismiss after fix error --')
+    editFile('src/App.tsx', (code) => code.replace('useState<string>(2)', `useState<string>('x')`))
+    await sleep(6000)
+    await expect(getHmrOverlayText()).rejects.toThrow(
+      'Invariant failed: <vite-plugin-checker-error-overlay> shadow dom is expected to be found, but got null'
+    )
   })
 })

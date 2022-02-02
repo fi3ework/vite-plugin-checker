@@ -73,7 +73,6 @@
   }
 
   .message {
-    font-size: 1.1em;
     white-space: initial;
   }
 
