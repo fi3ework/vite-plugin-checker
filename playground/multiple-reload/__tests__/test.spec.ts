@@ -1,4 +1,6 @@
 import stringify from 'fast-json-stable-stringify'
+// @ts-expect-error
+import stable from 'sort-deep-object-arrays'
 
 import {
   killServer,
@@ -53,7 +55,7 @@ describe('multiple-reload', () => {
         proxyConsole: () => proxyConsoleInTest(true),
       })
       await sleepForServerReady()
-      expect(stringify(errors.sort())).toMatchSnapshot()
+      expect(stringify(stable(errors))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit with error --')
@@ -61,7 +63,7 @@ describe('multiple-reload', () => {
       resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello1'`, `'Hello1~'`))
       await sleepForEdit()
-      expect(stringify(errors.sort())).toMatchSnapshot()
+      expect(stringify(stable(errors))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit on non-error file --')
@@ -69,7 +71,7 @@ describe('multiple-reload', () => {
       resetReceivedLog()
       editFile('src/text.ts', (code) => code.replace(`Multiple`, `multiple`))
       await sleepForEdit()
-      expect(stringify(errors.sort())).toMatchSnapshot()
+      expect(stringify(stable(errors))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })
