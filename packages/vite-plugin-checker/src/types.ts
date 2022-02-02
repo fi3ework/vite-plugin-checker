@@ -33,10 +33,10 @@ export type EslintConfig =
   | {
       /**
        * lintCommand will be executed at build mode, and will also be used as
-       * default config for dev mode when options.eslint.devOptions.eslint is nullable.
+       * default config for dev mode when options.eslint.dev.eslint is nullable.
        */
       lintCommand: string
-      devOptions?: {
+      dev?: {
         /** You can override the options of translated from lintCommand. */
         eslint?: ESLint.Options
       }
