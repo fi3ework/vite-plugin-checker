@@ -28,7 +28,7 @@ exports[`logger diagnosticToTerminalLog get warning 1`] = `
 "
 `;
 
-exports[`logger normalizeEslintDiagnostic get multiple errors 1`] = `
+exports[`logger normalizeEslintDiagnostic get multiple diagnostics 1`] = `
 Array [
   Object {
     "checker": "ESLint",

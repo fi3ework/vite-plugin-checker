@@ -33,10 +33,9 @@ import {
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
 } from '../../logger'
-import { DeepPartial } from '../../types'
+import { DeepPartial, DiagnosticToRuntime } from '../../types'
 import { getInitParams, VlsOptions } from './initParams'
 
-import type { ErrorPayload } from 'vite'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager'
 enum DOC_VERSION {
   init = -1,
@@ -59,7 +58,7 @@ export interface DiagnosticOptions {
   watch: boolean
   verbose: boolean
   config: DeepPartial<VlsOptions> | null
-  errorCallback?: (diagnostic: PublishDiagnosticsParams, viteError: ErrorPayload['err'][]) => void
+  errorCallback?: (diagnostic: PublishDiagnosticsParams, viteError: DiagnosticToRuntime[]) => void
 }
 
 export async function diagnostics(

@@ -13,14 +13,11 @@ import {
   normalizeTsDiagnostic,
   toViteCustomPayload,
 } from '../../logger'
-import { ACTION_TYPES, CreateDiagnostic } from '../../types'
-
-import type { ErrorPayload } from 'vite'
+import { ACTION_TYPES, CreateDiagnostic, DiagnosticToRuntime } from '../../types'
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true
-  // let currErr: ErrorPayload['err'] | null = null
-  let currErrs: ErrorPayload['err'][] = []
+  let currErrs: DiagnosticToRuntime[] = []
 
   return {
     config: async ({ enableOverlay }) => {

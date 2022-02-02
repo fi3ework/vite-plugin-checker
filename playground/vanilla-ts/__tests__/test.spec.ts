@@ -41,31 +41,31 @@ describe('eslint', () => {
     })
 
     it('get initial error and subsequent error', async () => {
-      let errors: any
+      let diagnostics: any
       await viteServe({
         cwd: testDir,
         wsSend: (_payload) => {
           if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_EVENT) {
-            errors = _payload.data.errors
+            diagnostics = _payload.data.diagnostics
           }
         },
       })
       await sleepForServerReady()
-      expect(stringify(errors)).toMatchSnapshot()
+      expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit error file --')
       resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
       await sleepForEdit()
-      expect(stringify(errors)).toMatchSnapshot()
+      expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit non error file --')
       resetReceivedLog()
       editFile('src/text.ts', (code) => code.replace(`Vanilla`, `vanilla`))
       await sleepForEdit()
-      expect(stringify(errors)).toMatchSnapshot()
+      expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })

@@ -45,10 +45,10 @@
 
 <li class="message-item">
   <pre class="message">
-    <span class="plugin" style="color: {checkerColorMap[diagnostic.plugin]}"
-      >{`[${diagnostic.plugin}] `}</span
+    <span class="plugin" style="color: {checkerColorMap[diagnostic.checkerId]}"
+      >{`[${diagnostic.checkerId}] `}</span
     >
-    <span class="message-body">{message}</span>
+    <span class={`message-body message-body-${diagnostic.level}`}>{message}</span>
   </pre>
   <pre class="file">
     {#if errorSource.linkFiles}
@@ -83,6 +83,7 @@
 
   .message {
     white-space: initial;
+    font-weight: 600;
   }
 
   pre {
@@ -113,6 +114,26 @@
 
   .message-body {
     color: var(--red);
+  }
+
+  /* warning */
+  .message-body-0 {
+    color: var(--yellow);
+  }
+
+  /* error */
+  .message-body-1 {
+    color: var(--red);
+  }
+
+  /* suggestion */
+  .message-body-2 {
+    color: var(--blue);
+  }
+
+  /* message */
+  .message-body-3 {
+    color: var(--dim);
   }
 
   .file {

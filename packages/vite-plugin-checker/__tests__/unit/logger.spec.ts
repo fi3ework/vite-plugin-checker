@@ -25,7 +25,7 @@ describe('logger', () => {
   })
 
   describe('normalizeEslintDiagnostic', () => {
-    it('get multiple errors', () => {
+    it('get multiple diagnostics', () => {
       const received = normalizeEslintDiagnostic(eslintResult1)
       expect(received).toMatchSnapshot()
     })

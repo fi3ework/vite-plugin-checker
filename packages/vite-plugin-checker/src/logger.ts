@@ -2,14 +2,14 @@ import chalk from 'chalk'
 import fs from 'fs'
 import os from 'os'
 import strip from 'strip-ansi'
-import { ErrorPayload, CustomPayload } from 'vite'
+import { CustomPayload } from 'vite'
 import { URI } from 'vscode-uri'
 import { isMainThread, parentPort } from 'worker_threads'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index'
-import { ACTION_TYPES } from './types'
+import { ACTION_TYPES, DiagnosticToRuntime, DiagnosticLevel } from './types'
 
 import type { Range } from 'vscode-languageclient'
 import type { ESLint } from 'eslint'
@@ -23,6 +23,7 @@ import type {
   flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
   LineAndCharacter,
 } from 'typescript'
+
 export interface NormalizedDiagnostic {
   /** error message */
   message?: string
@@ -42,14 +43,6 @@ export interface NormalizedDiagnostic {
   loc?: SourceLocation
   /** error level */
   level?: DiagnosticLevel
-}
-
-// copied from TypeScript because we used `import type`.
-export enum DiagnosticLevel {
-  Warning = 0,
-  Error = 1,
-  Suggestion = 2,
-  Message = 3,
 }
 
 export function diagnosticToTerminalLog(
@@ -82,15 +75,15 @@ export function diagnosticToTerminalLog(
     .join(os.EOL)
 }
 
-export function diagnosticToViteError(d: NormalizedDiagnostic): ErrorPayload['err']
-export function diagnosticToViteError(d: NormalizedDiagnostic[]): ErrorPayload['err'][]
+export function diagnosticToViteError(d: NormalizedDiagnostic): DiagnosticToRuntime
+export function diagnosticToViteError(d: NormalizedDiagnostic[]): DiagnosticToRuntime[]
 export function diagnosticToViteError(
   diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[]
-): ErrorPayload['err'] | ErrorPayload['err'][] {
+): DiagnosticToRuntime | DiagnosticToRuntime[] {
   const diagnosticsArray = Array.isArray(diagnostics) ? diagnostics : [diagnostics]
 
-  const results = diagnosticsArray.map((d) => {
-    let loc: ErrorPayload['err']['loc']
+  const results: DiagnosticToRuntime[] = diagnosticsArray.map((d) => {
+    let loc: DiagnosticToRuntime['loc']
     if (d.loc) {
       loc = {
         file: d.id,
@@ -105,8 +98,8 @@ export function diagnosticToViteError(
         typeof d.stack === 'string' ? d.stack : Array.isArray(d.stack) ? d.stack.join(os.EOL) : '',
       id: d.id,
       frame: d.stripedCodeFrame,
-      // TODO: do not use Vite's error payload
-      plugin: d.checker,
+      checkerId: d.checker,
+      level: d.level,
       loc,
     }
   })
@@ -114,13 +107,13 @@ export function diagnosticToViteError(
   return Array.isArray(diagnostics) ? results : results[0]
 }
 
-export function toViteCustomPayload(id: string, errors: ErrorPayload['err'][]): CustomPayload {
+export function toViteCustomPayload(id: string, diagnostics: DiagnosticToRuntime[]): CustomPayload {
   return {
     type: 'custom',
     event: WS_CHECKER_ERROR_EVENT,
     data: {
       checkerId: id,
-      errors,
+      diagnostics,
     },
   }
 }
