@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`multiple-hmr serve get initial error and subsequent error 1`] = `"[{\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   var [count, setCount] = useState<string>(1)/n      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"loc\\":{\\"column\\":3,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   var [count, setCount] = useState<string>(1)/n      |                                            ^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"loc\\":{\\"column\\":44,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.\\",\\"plugin\\":\\"TypeScript\\",\\"stack\\":\\"\\"}]"`;
+
+exports[`multiple-hmr serve get initial error and subsequent error 2`] = `
+" ERROR(ESLint)  Unexpected var, use let or const instead.
+ FILE  <PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx:6:3
+
+    4 |
+    5 | function App() {
+  > 6 |   var [count, setCount] = useState<string>(1)
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    7 |   return (
+    8 |     <div className=\\"App\\">
+    9 |       <header className=\\"App-header\\">
+
+ ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
+ FILE  <PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx:6:44
+
+    4 |
+    5 | function App() {
+  > 6 |   var [count, setCount] = useState<string>(1)
+      |                                            ^
+    7 |   return (
+    8 |     <div className=\\"App\\">
+    9 |       <header className=\\"App-header\\">
+
+Found 1 error. Watching for file changes."
+`;
+
+exports[`multiple-hmr serve get initial error and subsequent error 3`] = `"[{\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   var [count, setCount] = useState<string>(2)/n      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"loc\\":{\\"column\\":3,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"},{\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   var [count, setCount] = useState<string>(2)/n      |                                            ^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"loc\\":{\\"column\\":44,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.\\",\\"plugin\\":\\"TypeScript\\",\\"stack\\":\\"\\"}]"`;
+
+exports[`multiple-hmr serve get initial error and subsequent error 4`] = `
+" ERROR(ESLint)  Unexpected var, use let or const instead.
+ FILE  <PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx:6:3
+
+    4 |
+    5 | function App() {
+  > 6 |   var [count, setCount] = useState<string>(2)
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    7 |   return (
+    8 |     <div className=\\"App\\">
+    9 |       <header className=\\"App-header\\">
+
+ ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
+ FILE  <PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx:6:44
+
+    4 |
+    5 | function App() {
+  > 6 |   var [count, setCount] = useState<string>(2)
+      |                                            ^
+    7 |   return (
+    8 |     <div className=\\"App\\">
+    9 |       <header className=\\"App-header\\">
+
+Found 1 error. Watching for file changes."
+`;
+
+exports[`multiple-hmr serve get initial error and subsequent error 5`] = `"[{\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   var [count, setCount] = useState<string>('x')/n      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"loc\\":{\\"column\\":3,\\"file\\":\\"<PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"}]"`;
+
+exports[`multiple-hmr serve get initial error and subsequent error 6`] = `
+" ERROR(ESLint)  Unexpected var, use let or const instead.
+ FILE  <PROJECT_ROOT>/temp/multiple-hmr/src/App.tsx:6:3
+
+    4 |
+    5 | function App() {
+  > 6 |   var [count, setCount] = useState<string>('x')
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    7 |   return (
+    8 |     <div className=\\"App\\">
+    9 |       <header className=\\"App-header\\">
+
+Found 0 errors. Watching for file changes."
+`;
+
+exports[`multiple-hmr serve get initial error and subsequent error 7`] = `"[]"`;
+
+exports[`multiple-hmr serve get initial error and subsequent error 8`] = `
+"
+Found 0 errors. Watching for file changes."
+`;

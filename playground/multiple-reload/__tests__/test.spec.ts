@@ -10,14 +10,14 @@ import {
   stripedLog,
   viteBuild,
   viteServe,
-} from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
+} from 'vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
 import {
   editFile,
   sleep,
   testDir,
   WORKER_CLEAN_TIMEOUT,
-} from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
-import { WS_CHECKER_ERROR_EVENT } from '../../../packages/vite-plugin-checker/src/client'
+} from 'vite-plugin-checker/__tests__/e2e/testUtils'
+import { WS_CHECKER_ERROR_EVENT } from 'vite-plugin-checker/src/client'
 import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
 import { serializers } from '../../../scripts/serializers'
 
@@ -31,7 +31,7 @@ afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
-describe('multiple', () => {
+describe('multiple-reload', () => {
   beforeEach(async () => {
     await copyCode()
   })
@@ -56,7 +56,7 @@ describe('multiple', () => {
       expect(stringify(errors.sort())).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
-      console.log('-- edit error file --')
+      console.log('-- edit with error --')
       errors = []
       resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello1'`, `'Hello1~'`))
@@ -64,7 +64,7 @@ describe('multiple', () => {
       expect(stringify(errors.sort())).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
-      console.log('-- edit non error file --')
+      console.log('-- edit on non-error file --')
       errors = []
       resetReceivedLog()
       editFile('src/text.ts', (code) => code.replace(`Multiple`, `multiple`))
