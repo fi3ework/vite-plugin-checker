@@ -41,19 +41,19 @@ describe('vue2-vls', () => {
     })
 
     it('get initial error and subsequent error', async () => {
-      let errors: any
+      let diagnostics: any
 
       await viteServe({
         cwd: testDir,
         wsSend: (_payload) => {
           if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_EVENT) {
-            errors = _payload.data.errors
+            diagnostics = _payload.data.diagnostics
           }
         },
       })
 
       await sleepForServerReady(2)
-      expect(stringify(errors)).toMatchSnapshot()
+      expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit file --')
@@ -61,7 +61,7 @@ describe('vue2-vls', () => {
       editFile('src/components/HelloWorld.vue', (code) => code.replace('msg1', 'msg2'))
       await sleepForEdit()
 
-      expect(stringify(errors)).toMatchSnapshot()
+      expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })

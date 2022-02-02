@@ -44,34 +44,34 @@ describe('multiple-reload', () => {
     })
 
     it('get initial error and subsequent error', async () => {
-      let errors: any[] = []
+      let diagnostics: any[] = []
       await viteServe({
         cwd: testDir,
         wsSend: (_payload) => {
           if (_payload.type === 'custom' && _payload.event === WS_CHECKER_ERROR_EVENT) {
-            errors = errors.concat(_payload.data.errors)
+            diagnostics = diagnostics.concat(_payload.data.diagnostics)
           }
         },
         proxyConsole: () => proxyConsoleInTest(true),
       })
       await sleepForServerReady()
-      expect(stringify(stable(errors))).toMatchSnapshot()
+      expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit with error --')
-      errors = []
+      diagnostics = []
       resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello1'`, `'Hello1~'`))
       await sleepForEdit()
-      expect(stringify(stable(errors))).toMatchSnapshot()
+      expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit on non-error file --')
-      errors = []
+      diagnostics = []
       resetReceivedLog()
       editFile('src/text.ts', (code) => code.replace(`Multiple`, `multiple`))
       await sleepForEdit()
-      expect(stringify(stable(errors))).toMatchSnapshot()
+      expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`eslint serve get initial error and subsequent error 1`] = `"[{\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello = 'Hello'/n      | ^^^^^^^^^^^^^^^^^^^/n    4 |/n    5 | const rootDom = document.querySelector('#root')!/n    6 | rootDom.innerHTML = hello + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"}]"`;
+exports[`eslint serve get initial error and subsequent error 1`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello = 'Hello'/n      | ^^^^^^^^^^^^^^^^^^^/n    4 |/n    5 | const rootDom = document.querySelector('#root')!/n    6 | rootDom.innerHTML = hello + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"stack\\":\\"\\"}]"`;
 
 exports[`eslint serve get initial error and subsequent error 2`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead.
@@ -16,7 +16,7 @@ exports[`eslint serve get initial error and subsequent error 2`] = `
 "
 `;
 
-exports[`eslint serve get initial error and subsequent error 3`] = `"[{\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    4 |/n    5 | const rootDom = document.querySelector('#root')!/n    6 | rootDom.innerHTML = hello + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"}]"`;
+exports[`eslint serve get initial error and subsequent error 3`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    4 |/n    5 | const rootDom = document.querySelector('#root')!/n    6 | rootDom.innerHTML = hello + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"stack\\":\\"\\"}]"`;
 
 exports[`eslint serve get initial error and subsequent error 4`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead.
@@ -32,7 +32,7 @@ exports[`eslint serve get initial error and subsequent error 4`] = `
 "
 `;
 
-exports[`eslint serve get initial error and subsequent error 5`] = `"[{\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    4 |/n    5 | const rootDom = document.querySelector('#root')!/n    6 | rootDom.innerHTML = hello + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"plugin\\":\\"ESLint\\",\\"stack\\":\\"\\"}]"`;
+exports[`eslint serve get initial error and subsequent error 5`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    4 |/n    5 | const rootDom = document.querySelector('#root')!/n    6 | rootDom.innerHTML = hello + text\\",\\"id\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/temp/vanilla-ts/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead.\\",\\"stack\\":\\"\\"}]"`;
 
 exports[`eslint serve get initial error and subsequent error 6`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead.
