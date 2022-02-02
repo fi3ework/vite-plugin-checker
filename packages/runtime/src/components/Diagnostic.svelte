@@ -1,6 +1,13 @@
 <script>
   export let diagnostic
 
+  const checkerColorMap = {
+    TypeScript: '#3178c6',
+    ESLint: '#7b7fe3',
+    VLS: '#64b587',
+    'vue-tsc': '#64b587',
+  }
+
   const fileRE = /(?:[a-zA-Z]:\\|\/).*?:\d+:\d+/g
   const codeframeRE = /^(?:>?\s+\d+\s+\|.*|\s+\|\s*\^.*)\r?\n/gm
   codeframeRE.lastIndex = 0
@@ -38,7 +45,9 @@
 
 <li class="message-item">
   <pre class="message">
-    <span class="plugin">{`[${diagnostic.plugin}] `}</span>
+    <span class="plugin" style="color: {checkerColorMap[diagnostic.plugin]}"
+      >{`[${diagnostic.plugin}] `}</span
+    >
     <span class="message-body">{message}</span>
   </pre>
   <pre class="file">
@@ -54,7 +63,7 @@
   </pre>
   {#if hasFrame}
     <pre class="frame">
-      <code>
+      <code class="frame-code">
          {diagnostic.frame}
       </code>
     </pre>
@@ -86,10 +95,16 @@
   }
 
   .frame {
+    margin: 1em 0;
     padding: 6px 8px;
     background: #16181d;
-    margin-top: 4px;
+    margin-top: 8px;
     border-radius: 8px;
+  }
+
+  .frame-code {
+    color: var(--yellow);
+    font-family: var(--monospace);
   }
 
   pre::-webkit-scrollbar {
@@ -100,20 +115,11 @@
     color: var(--red);
   }
 
-  .plugin {
-    color: var(--purple);
-  }
-
   .file {
     color: var(--cyan);
     margin-bottom: 0;
     white-space: pre-wrap;
     word-break: break-all;
-  }
-
-  .frame {
-    margin: 1em 0;
-    color: var(--yellow);
   }
 
   .stack {

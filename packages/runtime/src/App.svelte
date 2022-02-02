@@ -57,8 +57,11 @@
   .tip {
     font-size: 12px;
     color: #999;
-    border-top: 1px dotted #999;
     padding-top: 13px;
+  }
+
+  code {
+    color: var(--yellow);
   }
 
   @media (min-width: 640px) {
