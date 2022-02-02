@@ -5,7 +5,7 @@ exports[`overlay overlay prompts and changes 1`] = `"Argument of type 'number' i
 exports[`overlay overlay prompts and changes 2`] = `"<PROJECT_ROOT>/temp/react-ts/src/App.tsx:6:46"`;
 
 exports[`overlay overlay prompts and changes 3`] = `
-"4 |
+"    4 |
     5 | function App() {
   > 6 |   const [count, setCount] = useState<string>(1)
       |                                              ^
@@ -15,7 +15,7 @@ exports[`overlay overlay prompts and changes 3`] = `
 `;
 
 exports[`overlay overlay prompts and changes 4`] = `
-"4 |
+"    4 |
     5 | function App() {
   > 6 |   const [count, setCount] = useState<string>(2)
       |                                              ^
