@@ -105,6 +105,7 @@ export function diagnosticToViteError(
         typeof d.stack === 'string' ? d.stack : Array.isArray(d.stack) ? d.stack.join(os.EOL) : '',
       id: d.id,
       frame: d.stripedCodeFrame,
+      // TODO: do not use Vite's error payload
       plugin: d.checker,
       loc,
     }
