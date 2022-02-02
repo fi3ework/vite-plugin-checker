@@ -37,7 +37,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const eslint = new ESLint({
         cwd: root,
         ...translatedOptions,
-        ...pluginConfig.eslint.devOptions,
+        ...pluginConfig.eslint.dev,
       })
 
       const dispatchDiagnostics = () => {

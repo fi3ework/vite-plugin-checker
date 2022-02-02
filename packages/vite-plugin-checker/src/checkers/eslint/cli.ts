@@ -1,6 +1,15 @@
 /* eslint-disable */
 
-// Copied from /eslint@7.28.0/node_modules/eslint/lib/cli.js
+/**
+ * This file is directly copied from https://github.com/eslint/eslint/blob/6f940c3ce715327f282c197d0f71b91848e5d83d/lib/cli.js
+ *
+ * Usually, developer rarely use JS programming API to run ESLint. So we let
+ * developers to write their own ESLint commands just like in CI or lint-staged.
+ * And the config will be translated and pass to `new ESLint(translatedOptions)`.
+ * So in build mode, it's the same as the command you pass in.
+ * In dev mode, some flag will be ignored (such as `max-warnings`) because it
+ * will be only respected in ESLint CLI.
+ */
 
 // @ts-expect-error
 function quietFixPredicate(message) {
