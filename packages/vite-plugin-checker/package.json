@@ -12,9 +12,7 @@
   ],
   "scripts": {
     "watch:node": "tsc -p tsconfig.build.json --watch",
-    "watch:runtime": "esbuild src/@runtime/main.ts --outfile=./lib/@runtime/main.js --bundle --format=esm --watch",
-    "dev": "run-p watch:node watch:runtime",
-    "build:runtime": "esbuild src/@runtime/main.ts --outfile=./lib/@runtime/main.js --bundle --format=esm",
+    "dev": "run-p watch:node",
     "build": "tsc -p tsconfig.build.json",
     "build:test": "tsc -p tsconfig.test.json",
     "prepublishOnly": "rimraf lib && npm run build",
