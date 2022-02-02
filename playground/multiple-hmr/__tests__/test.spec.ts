@@ -43,44 +43,44 @@ describe('multiple-hmr', () => {
     })
 
     it('get initial error and subsequent error', async () => {
-      let errors: any[] = []
+      let diagnostics: any[] = []
       await viteServe({
         cwd: testDir,
         wsSend: (_payload) => {
           if (_payload.type === 'custom' && _payload.event === WS_CHECKER_ERROR_EVENT) {
-            errors = errors.concat(_payload.data.errors)
+            diagnostics = diagnostics.concat(_payload.data.diagnostics)
           }
         },
         proxyConsole: () => proxyConsoleInTest(true),
       })
       await sleepForServerReady()
-      expect(stringify(stable(errors))).toMatchSnapshot()
+      expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit with error --')
-      errors = []
+      diagnostics = []
       resetReceivedLog()
       editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
       await sleepForEdit()
-      expect(stringify(stable(errors))).toMatchSnapshot()
+      expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- fix typescript error --')
-      errors = []
+      diagnostics = []
       resetReceivedLog()
       editFile('src/App.tsx', (code) =>
         code.replace('useState<string>(2)', `useState<string>('x')`)
       )
       await sleepForEdit()
-      expect(stringify(stable(errors))).toMatchSnapshot()
+      expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- fix eslint error --')
-      errors = []
+      diagnostics = []
       resetReceivedLog()
       editFile('src/App.tsx', (code) => code.replace('var', 'const'))
       await sleepForEdit()
-      expect(stringify(stable(errors))).toMatchSnapshot()
+      expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })

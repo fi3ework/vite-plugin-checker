@@ -36,10 +36,10 @@ function updateErrorOverlay(payloads) {
   })
 
   checkerResultsStore = [...checkerResultsStore, ...payloadArray]
-  const hasErrorToShowInOverlay = checkerResultsStore.some((p) => p.errors.length)
+  const hasDiagnosticToShowInOverlay = checkerResultsStore.some((p) => p.diagnostics.length)
 
   // remove overlay when no error exists
-  if (!hasErrorToShowInOverlay) {
+  if (!hasDiagnosticToShowInOverlay) {
     clearErrorOverlay()
     overlayEle = null
     app = null
