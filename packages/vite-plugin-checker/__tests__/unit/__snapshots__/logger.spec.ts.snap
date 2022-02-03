@@ -2,7 +2,7 @@
 
 exports[`logger diagnosticToTerminalLog get error 1`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead.
- FILE  /Users/vite-plugin-checker/playground/vanilla-ts/src/main.ts:3:1
+ FILE  /Users/vite-plugin-checker/playground/eslint/src/main.ts:3:1
 
     1 | import { text } from './text'
     2 |
@@ -16,7 +16,7 @@ exports[`logger diagnosticToTerminalLog get error 1`] = `
 
 exports[`logger diagnosticToTerminalLog get warning 1`] = `
 " WARNING(ESLint)  Unexpected var, use let or const instead.
- FILE  /Users/vite-plugin-checker/playground/vanilla-ts/src/main.ts:3:1
+ FILE  /Users/vite-plugin-checker/playground/eslint/src/main.ts:3:1
 
     1 | import { text } from './text'
     2 |
@@ -40,7 +40,7 @@ Array [
   [0m [90m 5 |[39m[0m
   [0m [90m 6 |[39m [36mconst[39m rootDom [33m=[39m document[33m.[39mquerySelector([32m'#root'[39m)[33m![39m[0m",
     "conclusion": "",
-    "id": "/Users/vite-plugin-checker/playground/vanilla-ts/src/main.ts",
+    "id": "/Users/vite-plugin-checker/playground/eslint/src/main.ts",
     "level": 1,
     "loc": Object {
       "end": Object {
@@ -71,7 +71,7 @@ Array [
   [0m [90m 6 |[39m [36mconst[39m rootDom [33m=[39m document[33m.[39mquerySelector([32m'#root'[39m)[33m![39m[0m
   [0m [90m 7 |[39m rootDom[33m.[39minnerHTML [33m=[39m hello [33m+[39m text[0m",
     "conclusion": "",
-    "id": "/Users/vite-plugin-checker/playground/vanilla-ts/src/main.ts",
+    "id": "/Users/vite-plugin-checker/playground/eslint/src/main.ts",
     "level": 1,
     "loc": Object {
       "end": Object {

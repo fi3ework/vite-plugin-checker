@@ -36,10 +36,12 @@ export type EslintConfig =
        * default config for dev mode when options.eslint.dev.eslint is nullable.
        */
       lintCommand: string
-      dev?: {
+      dev?: Partial<{
         /** You can override the options of translated from lintCommand. */
-        eslint?: ESLint.Options
-      }
+        overrideConfig: ESLint.Options
+        /** which level of the diagnostic will be emitted from plugin */
+        logLevel: ('error' | 'warning')[]
+      }>
     }
 
 export enum DiagnosticLevel {

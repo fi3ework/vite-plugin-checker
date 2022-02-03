@@ -7,16 +7,17 @@ import invariant from 'tiny-invariant'
 import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker'
+import { FileDiagnosticManager } from '../../FileDiagnosticManager'
 import {
   consoleLog,
   diagnosticToTerminalLog,
-  diagnosticToViteError,
-  toViteCustomPayload,
+  diagnosticToRuntimeError,
+  filterLogLevel,
   normalizeEslintDiagnostic,
+  toViteCustomPayload,
 } from '../../logger'
-import { ACTION_TYPES } from '../../types'
+import { ACTION_TYPES, DiagnosticLevel } from '../../types'
 import { translateOptions } from './cli'
-import { FileDiagnosticManager } from '../../FileDiagnosticManager'
 
 const manager = new FileDiagnosticManager()
 
@@ -34,14 +35,27 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const options = optionator.parse(pluginConfig.eslint.lintCommand)
       const translatedOptions = translateOptions(options) as ESLint.Options
 
+      const logLevel = (() => {
+        if (typeof pluginConfig.eslint !== 'object') return undefined
+        const userLogLevel = pluginConfig.eslint.dev?.logLevel
+        if (!userLogLevel) return undefined
+        const map = {
+          error: DiagnosticLevel.Error,
+          warning: DiagnosticLevel.Warning,
+        } as const
+
+        return userLogLevel.map((l) => map[l])
+      })()
+
       const eslint = new ESLint({
         cwd: root,
         ...translatedOptions,
-        ...pluginConfig.eslint.dev,
+        ...pluginConfig.eslint.dev?.overrideConfig,
       })
 
       const dispatchDiagnostics = () => {
-        const diagnostics = manager.getDiagnostics()
+        const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
+
         diagnostics.forEach((d) => {
           consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
         })
@@ -51,7 +65,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
             type: ACTION_TYPES.overlayError,
             payload: toViteCustomPayload(
               'eslint',
-              diagnostics.map((d) => diagnosticToViteError(d))
+              diagnostics.map((d) => diagnosticToRuntimeError(d))
             ),
           })
         }

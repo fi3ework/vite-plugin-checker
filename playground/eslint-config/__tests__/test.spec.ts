@@ -9,14 +9,14 @@ import {
   stripedLog,
   viteBuild,
   viteServe,
-} from '../../../packages/vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
+} from 'vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
 import {
   editFile,
   sleep,
   testDir,
   WORKER_CLEAN_TIMEOUT,
-} from '../../../packages/vite-plugin-checker/__tests__/e2e/testUtils'
-import { WS_CHECKER_ERROR_EVENT } from '../../../packages/vite-plugin-checker/src/client'
+} from 'vite-plugin-checker/__tests__/e2e/testUtils'
+import { WS_CHECKER_ERROR_EVENT } from 'vite-plugin-checker/src/client'
 import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
 import { serializers } from '../../../scripts/serializers'
 
@@ -30,7 +30,7 @@ afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
-describe('eslint', () => {
+describe('eslint-config', () => {
   beforeEach(async () => {
     await copyCode()
   })
@@ -45,7 +45,7 @@ describe('eslint', () => {
       await viteServe({
         cwd: testDir,
         wsSend: (_payload) => {
-          if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_EVENT) {
+          if (_payload.type === 'custom' && _payload.event === WS_CHECKER_ERROR_EVENT) {
             diagnostics = _payload.data.diagnostics
           }
         },

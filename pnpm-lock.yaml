@@ -17,7 +17,7 @@ importers:
       chalk: ^4.1.1
       conventional-changelog-cli: ^2.1.1
       cross-env: ^7.0.3
-      eslint: ^7.20.0
+      eslint: ^7.28.0
       eslint-config-alloy: ^3.10.0
       eslint-plugin-svelte3: ^3.4.0
       execa: ^5.1.1
@@ -147,6 +147,52 @@ importers:
       optionator: 0.9.1
       vls: 0.7.4
 
+  playground/eslint:
+    specifiers:
+      '@types/react': ^17.0.0
+      '@types/react-dom': ^17.0.0
+      '@typescript-eslint/eslint-plugin': ^4.15.2
+      eslint: ^7.28.0
+      react: ^17.0.0
+      react-dom: ^17.0.0
+      typescript: ^4.1.2
+      vite: ^2.7.13
+      vite-plugin-checker: workspace:*
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    devDependencies:
+      '@types/react': 17.0.11
+      '@types/react-dom': 17.0.7
+      '@typescript-eslint/eslint-plugin': 4.26.1_c8cbd5e7f5f92609ec78d991aced454b
+      eslint: 7.28.0
+      typescript: 4.3.2
+      vite: 2.7.13
+      vite-plugin-checker: link:../../packages/vite-plugin-checker
+
+  playground/eslint-config:
+    specifiers:
+      '@types/react': ^17.0.0
+      '@types/react-dom': ^17.0.0
+      '@typescript-eslint/eslint-plugin': ^4.15.2
+      eslint: ^7.28.0
+      react: ^17.0.0
+      react-dom: ^17.0.0
+      typescript: ^4.1.2
+      vite: ^2.7.13
+      vite-plugin-checker: workspace:*
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    devDependencies:
+      '@types/react': 17.0.11
+      '@types/react-dom': 17.0.7
+      '@typescript-eslint/eslint-plugin': 4.26.1_c8cbd5e7f5f92609ec78d991aced454b
+      eslint: 7.28.0
+      typescript: 4.3.2
+      vite: 2.7.13
+      vite-plugin-checker: link:../../packages/vite-plugin-checker
+
   playground/multiple-hmr:
     specifiers:
       '@types/react': ^17.0.0
@@ -210,25 +256,6 @@ importers:
       vite: 2.7.13
       vite-plugin-checker: link:../../packages/vite-plugin-checker
 
-  playground/vanilla-ts:
-    specifiers:
-      '@types/react': ^17.0.0
-      '@types/react-dom': ^17.0.0
-      react: ^17.0.0
-      react-dom: ^17.0.0
-      typescript: ^4.1.2
-      vite: ^2.7.13
-      vite-plugin-checker: workspace:*
-    dependencies:
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-    devDependencies:
-      '@types/react': 17.0.11
-      '@types/react-dom': 17.0.7
-      typescript: 4.3.2
-      vite: 2.7.13
-      vite-plugin-checker: link:../../packages/vite-plugin-checker
-
   playground/vue2-vls:
     specifiers:
       '@types/node': ^15.0.0
@@ -236,7 +263,7 @@ importers:
       '@typescript-eslint/parser': ^4.16.1
       '@vue/eslint-config-prettier': 6.0.0
       '@vue/eslint-config-typescript': ^7.0.0
-      eslint: ^7.21.0
+      eslint: ^7.28.0
       eslint-plugin-prettier: ^3.3.1
       eslint-plugin-vue: ^7.6.0
       prettier: 2.3.0
