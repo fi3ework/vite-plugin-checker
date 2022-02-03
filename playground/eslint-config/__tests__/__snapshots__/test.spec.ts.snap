@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`eslint-config serve get initial error and subsequent error 1`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"    3 | var hello = 'Hello'/n    4 |/n  > 5 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    6 | rootDom.innerHTML = hello + text/n    7 |/n    8 | export {}\\",\\"id\\":\\"<PROJECT_ROOT>/temp/eslint-config/src/main.ts\\",\\"level\\":0,\\"loc\\":{\\"column\\":17,\\"file\\":\\"<PROJECT_ROOT>/temp/eslint-config/src/main.ts\\",\\"line\\":5},\\"message\\":\\"Forbidden non-null assertion.\\",\\"stack\\":\\"\\"}]"`;
+
+exports[`eslint-config serve get initial error and subsequent error 2`] = `
+" WARNING(ESLint)  Forbidden non-null assertion.
+ FILE  <PROJECT_ROOT>/temp/eslint-config/src/main.ts:5:17
+
+    3 | var hello = 'Hello'
+    4 |
+  > 5 | const rootDom = document.querySelector('#root')!
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    6 | rootDom.innerHTML = hello + text
+    7 |
+    8 | export {}
+"
+`;
+
+exports[`eslint-config serve get initial error and subsequent error 3`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"    3 | var hello = 'Hello~'/n    4 |/n  > 5 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    6 | rootDom.innerHTML = hello + text/n    7 |/n    8 | export {}\\",\\"id\\":\\"<PROJECT_ROOT>/temp/eslint-config/src/main.ts\\",\\"level\\":0,\\"loc\\":{\\"column\\":17,\\"file\\":\\"<PROJECT_ROOT>/temp/eslint-config/src/main.ts\\",\\"line\\":5},\\"message\\":\\"Forbidden non-null assertion.\\",\\"stack\\":\\"\\"}]"`;
+
+exports[`eslint-config serve get initial error and subsequent error 4`] = `
+" WARNING(ESLint)  Forbidden non-null assertion.
+ FILE  <PROJECT_ROOT>/temp/eslint-config/src/main.ts:5:17
+
+    3 | var hello = 'Hello~'
+    4 |
+  > 5 | const rootDom = document.querySelector('#root')!
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    6 | rootDom.innerHTML = hello + text
+    7 |
+    8 | export {}
+"
+`;
+
+exports[`eslint-config serve get initial error and subsequent error 5`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"    3 | var hello = 'Hello~'/n    4 |/n  > 5 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    6 | rootDom.innerHTML = hello + text/n    7 |/n    8 | export {}\\",\\"id\\":\\"<PROJECT_ROOT>/temp/eslint-config/src/main.ts\\",\\"level\\":0,\\"loc\\":{\\"column\\":17,\\"file\\":\\"<PROJECT_ROOT>/temp/eslint-config/src/main.ts\\",\\"line\\":5},\\"message\\":\\"Forbidden non-null assertion.\\",\\"stack\\":\\"\\"}]"`;
+
+exports[`eslint-config serve get initial error and subsequent error 6`] = `
+" WARNING(ESLint)  Forbidden non-null assertion.
+ FILE  <PROJECT_ROOT>/temp/eslint-config/src/main.ts:5:17
+
+    3 | var hello = 'Hello~'
+    4 |
+  > 5 | const rootDom = document.querySelector('#root')!
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    6 | rootDom.innerHTML = hello + text
+    7 |
+    8 | export {}
+"
+`;

@@ -1,4 +1,5 @@
 import stringify from 'fast-json-stable-stringify'
+
 import {
   killServer,
   preTest,
@@ -16,21 +17,20 @@ import {
   WORKER_CLEAN_TIMEOUT,
 } from 'vite-plugin-checker/__tests__/e2e/testUtils'
 import { WS_CHECKER_ERROR_EVENT } from 'vite-plugin-checker/src/client'
-
 import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
 import { serializers } from '../../../scripts/serializers'
-
-expect.addSnapshotSerializer(serializers)
 
 beforeAll(async () => {
   await preTest()
 })
 
+expect.addSnapshotSerializer(serializers)
+
 afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
-describe('typescript', () => {
+describe('eslint', () => {
   beforeEach(async () => {
     await copyCode()
   })
@@ -54,9 +54,16 @@ describe('typescript', () => {
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
-      console.log('-- edit file --')
+      console.log('-- edit error file --')
       resetReceivedLog()
-      editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
+      editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
+      await sleepForEdit()
+      expect(stringify(diagnostics)).toMatchSnapshot()
+      expect(stripedLog).toMatchSnapshot()
+
+      console.log('-- edit non error file --')
+      resetReceivedLog()
+      editFile('src/text.ts', (code) => code.replace(`Vanilla`, `vanilla`))
       await sleepForEdit()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
@@ -64,15 +71,17 @@ describe('typescript', () => {
   })
 
   describe('build', () => {
+    const expectedMsg = 'Unexpected var, use let or const instead  no-var'
+
     it('enableBuild: true', async () => {
-      await viteBuild({ expectedErrorMsg: 'error TS2345', cwd: testDir })
+      await viteBuild({ expectedErrorMsg: expectedMsg, cwd: testDir })
     })
 
     it('enableBuild: false', async () => {
       editFile('vite.config.ts', (code) =>
-        code.replace('typescript: true,', 'typescript: true, enableBuild: false,')
+        code.replace('eslint: {', 'enableBuild: false, eslint: {')
       )
-      await viteBuild({ unexpectedErrorMsg: 'error TS2345', cwd: testDir })
+      await viteBuild({ unexpectedErrorMsg: expectedMsg, cwd: testDir })
     })
   })
 })

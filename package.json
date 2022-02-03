@@ -40,7 +40,7 @@
     "chalk": "^4.1.1",
     "conventional-changelog-cli": "^2.1.1",
     "cross-env": "^7.0.3",
-    "eslint": "^7.20.0",
+    "eslint": "^7.28.0",
     "eslint-config-alloy": "^3.10.0",
     "eslint-plugin-svelte3": "^3.4.0",
     "execa": "^5.1.1",

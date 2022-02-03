@@ -8,16 +8,16 @@ import { Checker } from '../../Checker'
 import {
   consoleLog,
   diagnosticToTerminalLog,
-  diagnosticToViteError,
+  diagnosticToRuntimeError,
   ensureCall,
   normalizeTsDiagnostic,
   toViteCustomPayload,
 } from '../../logger'
-import { ACTION_TYPES, CreateDiagnostic, DiagnosticToRuntime } from '../../types'
+import { ACTION_TYPES, CreateDiagnostic, DiagnosticLevel, DiagnosticToRuntime } from '../../types'
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true
-  let currErrs: DiagnosticToRuntime[] = []
+  let currDiagnostics: DiagnosticToRuntime[] = []
 
   return {
     config: async ({ enableOverlay }) => {
@@ -47,13 +47,13 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
-        const normalizedDiagnostics = normalizeTsDiagnostic(diagnostic)
-        currErrs.push(diagnosticToViteError(normalizedDiagnostics))
-        // if (!currErr) {
-        //   currErr = diagnosticToViteError(normalizedDiagnostics)
-        // }
+        const normalizedDiagnostic = normalizeTsDiagnostic(diagnostic)
+        if (normalizedDiagnostic === null) {
+          return
+        }
 
-        logChunk += os.EOL + diagnosticToTerminalLog(normalizedDiagnostics, 'TypeScript')
+        currDiagnostics.push(diagnosticToRuntimeError(normalizedDiagnostic))
+        logChunk += os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'TypeScript')
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
@@ -72,7 +72,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             // clear current error and use the newer errors
             logChunk = ''
             // currErr = null
-            currErrs = []
+            currDiagnostics = []
             return
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
@@ -81,7 +81,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
               // parentPort?.postMessage(toWsPayload(currErrs))
               parentPort?.postMessage({
                 type: ACTION_TYPES.overlayError,
-                payload: toViteCustomPayload('typescript', currErrs),
+                payload: toViteCustomPayload('typescript', currDiagnostics),
               })
             }
         }

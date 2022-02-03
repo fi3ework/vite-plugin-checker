@@ -182,6 +182,7 @@ _coming soon._
 ### config.eslint
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 | field                | Type                                                                                                       | Default value          | Description                                                                                                                                                                              |
 | :------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | lintCommand          | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.overrideConfig` is nullable.                                         |
@@ -192,6 +193,13 @@ _coming soon._
 | lintCommand  | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.eslint` is nullable.                                          |
 | `dev.eslint` | [`ESLint.Options`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) | `undefined`            | You can override the options of the translated from `lintCommand`. Config priority: `const eslint = new ESLint({cwd: root, ...translatedOptions, ...pluginConfig.eslint.dev, })`. |
 >>>>>>> refactor: change ESLint property
+=======
+| field                | Type                                                                                                       | Default value          | Description                                                                                                                                                                                              |
+| :------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| lintCommand          | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.eslint` is nullable.                                                                 |
+| `dev.overrideConfig` | [`ESLint.Options`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) | `undefined`            | **(Only in dev mode)** You can override the options of the translated from `lintCommand`. Config priority: `const eslint = new ESLint({cwd: root, ...translatedOptions, ...pluginConfig.eslint.dev, })`. |
+| dev.logLevel         | `('error' \| 'warning')[]`                                                                                 | `['error', 'warning']` | **(Only in dev mode)** Which level of ESLint should be emitted to terminal and overlay in dev mode                                                                                                       |
+>>>>>>> feat: support log level of ESLint
 
 ## Playground
 
