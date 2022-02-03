@@ -45,6 +45,36 @@ export interface NormalizedDiagnostic {
   level?: DiagnosticLevel
 }
 
+const defaultLogLevel = [
+  DiagnosticLevel.Warning,
+  DiagnosticLevel.Error,
+  DiagnosticLevel.Suggestion,
+  DiagnosticLevel.Message,
+]
+
+export function filterLogLevel(
+  diagnostics: NormalizedDiagnostic,
+  level?: DiagnosticLevel[]
+): NormalizedDiagnostic | null
+export function filterLogLevel(
+  diagnostics: NormalizedDiagnostic[],
+  level?: DiagnosticLevel[]
+): NormalizedDiagnostic[]
+export function filterLogLevel(
+  diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[],
+  level: DiagnosticLevel[] = defaultLogLevel
+): NormalizedDiagnostic | null | NormalizedDiagnostic[] {
+  if (Array.isArray(diagnostics)) {
+    return diagnostics.filter((d) => {
+      if (typeof d.level !== 'number') return false
+      return level.includes(d.level)
+    })
+  } else {
+    if (!diagnostics.level) return null
+    return level.includes(diagnostics.level) ? diagnostics : null
+  }
+}
+
 export function diagnosticToTerminalLog(
   d: NormalizedDiagnostic,
   name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint'
@@ -75,9 +105,9 @@ export function diagnosticToTerminalLog(
     .join(os.EOL)
 }
 
-export function diagnosticToViteError(d: NormalizedDiagnostic): DiagnosticToRuntime
-export function diagnosticToViteError(d: NormalizedDiagnostic[]): DiagnosticToRuntime[]
-export function diagnosticToViteError(
+export function diagnosticToRuntimeError(d: NormalizedDiagnostic): DiagnosticToRuntime
+export function diagnosticToRuntimeError(d: NormalizedDiagnostic[]): DiagnosticToRuntime[]
+export function diagnosticToRuntimeError(
   diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[]
 ): DiagnosticToRuntime | DiagnosticToRuntime[] {
   const diagnosticsArray = Array.isArray(diagnostics) ? diagnostics : [diagnostics]
@@ -280,7 +310,7 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
     .map((d) => {
       let level = DiagnosticLevel.Error
       switch (d.severity) {
-        case 0: // off, ignore
+        case 0: // off, ignore this
           level = DiagnosticLevel.Error
           return null
         case 1: // warn

@@ -46,7 +46,7 @@ describe('vue2-vls', () => {
       await viteServe({
         cwd: testDir,
         wsSend: (_payload) => {
-          if (_payload.type === 'custom' && _payload.event == WS_CHECKER_ERROR_EVENT) {
+          if (_payload.type === 'custom' && _payload.event === WS_CHECKER_ERROR_EVENT) {
             diagnostics = _payload.data.diagnostics
           }
         },
