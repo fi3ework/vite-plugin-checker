@@ -3,5 +3,5 @@ node_modules
 playground/react-ts
 playground/vue2-vls
 playground/vue3-vue-tsc
-playground/vanilla-ts/__tests__
-playground/vanilla-ts/dist
+playground/eslint/__tests__
+playground/eslint/dist

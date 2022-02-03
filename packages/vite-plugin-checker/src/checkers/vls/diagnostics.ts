@@ -29,7 +29,7 @@ import { URI } from 'vscode-uri'
 import {
   consoleLog,
   diagnosticToTerminalLog,
-  diagnosticToViteError,
+  diagnosticToRuntimeError,
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
 } from '../../logger'
@@ -166,12 +166,13 @@ export async function prepareClientConnection(
     const nextDiagnosticInFile = await normalizePublishDiagnosticParams(publishDiagnostics)
     fileDiagnosticManager.updateByFileId(absFilePath, nextDiagnosticInFile)
 
-    const res = fileDiagnosticManager.getDiagnostics()
-    vlsConsoleLog(os.EOL)
-    vlsConsoleLog(res.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
+    const diagnostics = fileDiagnosticManager.getDiagnostics()
 
-    if (res) {
-      const normalized = diagnosticToViteError(res)
+    vlsConsoleLog(os.EOL)
+    vlsConsoleLog(diagnostics.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
+
+    if (diagnostics) {
+      const normalized = diagnosticToRuntimeError(diagnostics)
       options.errorCallback?.(publishDiagnostics, normalized)
     }
   }
