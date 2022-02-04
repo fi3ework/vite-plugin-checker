@@ -70,10 +70,19 @@ export interface SharedConfig {
    * Same as [Vite config](https://vitejs.dev/config/#root)
    */
   overlay: boolean
-  /**
-   * logger
-   */
-  // logger: ((...args: any[]) => void)[]
+  // TODO: not implemented
+  // | {
+  //     /**
+  //      * Set this true if you want the overlay to default to being open if errors/warnings are found.
+  //      * @defaultValue `true`
+  //      */
+  //     initialIsOpen?: boolean
+  //     /**
+  //      * The position of the vite-plugin-checker badge to open and close the diagnostics panel
+  //      * @default `bottom-left`
+  //      */
+  //     position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+  //   }
 }
 
 export interface BuildInCheckers {
