@@ -6,7 +6,7 @@
     "build": "pnpm -r --filter ./packages run build",
     "build:test": "pnpm -r --filter ./packages run build:test",
     "format": "prettier --check \"packages/*/src/**/*.{ts,js,svelte}\"",
-    "lint": "eslint --ext .js,.ts,.svelte packages/*/src/**",
+    "lint": "eslint --ext .js,.ts,.svelte packages/*/src",
     "test": "jest --clearCache && cross-env jest --runInBand",
     "test:coverage": "jest --clearCache && jest --runInBand --coverage=true",
     "changelog": "pnpm -r --filter ./packages run changelog",

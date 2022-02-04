@@ -1,9 +1,10 @@
 <script>
   import Checker from './Checker.svelte'
   export let checkerResults
+  export let ulStyle
 </script>
 
-<ul>
+<ul style={ulStyle}>
   {#each checkerResults as checkerResult, index}
     <li>
       {(console.log(checkerResult), '')}

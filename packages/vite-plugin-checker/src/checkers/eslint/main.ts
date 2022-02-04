@@ -90,6 +90,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       // initial lint
       const files = options._.slice(1)
       const diagnostics = await eslint.lintFiles(files)
+
       manager.initWith(diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1))
       // diagnosticsCache = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
       dispatchDiagnostics()
