@@ -2,6 +2,7 @@
   export let collapsed
   export let checkerResults
   export let onClick
+  export let position = 'bl'
 
   function calcSummary(results) {
     let errorCount = 0
@@ -28,7 +29,9 @@
 </script>
 
 <button
-  class={`badge-button ${collapsed ? `to-uncollpase ${bgColorClass}` : 'to-collpase'}`}
+  class={`badge-base ${
+    collapsed ? `to-uncollpase ${bgColorClass}` : 'to-collpase'
+  } badge-${position}`}
   on:click|stopPropagation={onClick}
 >
   {#if collapsed}
@@ -42,7 +45,7 @@
 </button>
 
 <style>
-  .badge-button {
+  .badge-base {
     appearance: none;
     font-size: 0.9em;
     font-weight: bold;
@@ -53,8 +56,26 @@
     position: fixed;
     z-index: 99999;
     margin: 0.5em;
+  }
+
+  .badge-bl {
     bottom: 0px;
     left: 0px;
+  }
+
+  .badge-br {
+    bottom: 0px;
+    right: 0px;
+  }
+
+  .badge-tl {
+    top: 0px;
+    left: 0px;
+  }
+
+  .badge-tr {
+    top: 0px;
+    right: 0px;
   }
 
   .to-collpase {

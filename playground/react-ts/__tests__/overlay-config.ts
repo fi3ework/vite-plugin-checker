@@ -24,7 +24,7 @@ afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
-describe('overlay-false', () => {
+describe('overlay-config', () => {
   beforeEach(async () => {
     await copyCode()
   })
@@ -33,9 +33,12 @@ describe('overlay-false', () => {
     await killServer()
   })
 
-  it('overlay: false', async () => {
+  it('overlay: config', async () => {
     editFile('vite.config.ts', (code) =>
-      code.replace('typescript: true,', 'typescript: true, overlay: false,')
+      code.replace(
+        'typescript: true,',
+        `typescript: true, overlay: { position: 'br', initialIsOpen: false, },`
+      )
     )
 
     await viteServe({ cwd: testDir, launchPage: true })
