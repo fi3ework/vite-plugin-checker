@@ -4,7 +4,12 @@ import npmRunPath from 'npm-run-path'
 import { ConfigEnv, Plugin } from 'vite'
 
 import { Checker } from './Checker'
-import { RUNTIME_PUBLIC_PATH, runtimeCode, WS_CHECKER_RECONNECT_EVENT } from './client/index'
+import {
+  RUNTIME_PUBLIC_PATH,
+  runtimeCode,
+  WS_CHECKER_RECONNECT_EVENT,
+  WS_CHECKER_CONFIG_RUNTIME_EVENT,
+} from './client/index'
 import {
   ACTION_TYPES,
   BuildCheckBinStr,
@@ -42,7 +47,8 @@ function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndB
 
 export default function Plugin(userConfig: UserPluginConfig): Plugin {
   const enableBuild = userConfig?.enableBuild ?? true
-  const enableOverlay = userConfig?.overlay ?? true
+  const enableOverlay = userConfig?.overlay !== false
+  const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : null
   let checkers: ServeAndBuildChecker[] = []
   let viteMode: ConfigEnv['command'] | undefined
 
@@ -59,7 +65,6 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       checkers.forEach((checker) => {
         const workerConfig = checker.serve.config
         workerConfig({
-          // hmr: typeof hmr === 'object' ? { overlay: hmr.overlay } : hmr,
           enableOverlay,
           env,
         })
@@ -120,6 +125,13 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       let latestOverlayErrors: OverlayErrorAction['payload'][] = new Array(checkers.length)
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
+      if (overlayConfig) {
+        server.ws.send({
+          type: 'custom',
+          event: WS_CHECKER_CONFIG_RUNTIME_EVENT,
+          data: overlayConfig,
+        })
+      }
       checkers.forEach((checker, index) => {
         const { worker, configureServer: workerConfigureServer } = checker.serve
         workerConfigureServer({ root: server.config.root })
@@ -143,6 +155,13 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
           connectedTimes++
           // if connectedCount !== 1, means Vite is doing a full-reload, so we don't need to send overlay again
           if (connectedTimes > 1) {
+            if (overlayConfig) {
+              server.ws.send({
+                type: 'custom',
+                event: WS_CHECKER_CONFIG_RUNTIME_EVENT,
+                data: overlayConfig,
+              })
+            }
             server.ws.send({
               type: 'custom',
               event: WS_CHECKER_RECONNECT_EVENT,

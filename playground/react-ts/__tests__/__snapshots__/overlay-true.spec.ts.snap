@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`overlay overlay prompts and changes 1`] = `"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'."`;
+exports[`overlay-true overlay prompts and changes 1`] = `"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'."`;
 
-exports[`overlay overlay prompts and changes 2`] = `"<PROJECT_ROOT>/temp/react-ts/src/App.tsx:6:46"`;
+exports[`overlay-true overlay prompts and changes 2`] = `"<PROJECT_ROOT>/temp/react-ts/src/App.tsx:6:46"`;
 
-exports[`overlay overlay prompts and changes 3`] = `
+exports[`overlay-true overlay prompts and changes 3`] = `
 "    4 |
     5 | function App() {
   > 6 |   const [count, setCount] = useState<string>(1)
@@ -14,7 +14,7 @@ exports[`overlay overlay prompts and changes 3`] = `
     9 |       <header className=\\"App-header\\">"
 `;
 
-exports[`overlay overlay prompts and changes 4`] = `
+exports[`overlay-true overlay prompts and changes 4`] = `
 "    4 |
     5 | function App() {
   > 6 |   const [count, setCount] = useState<string>(2)

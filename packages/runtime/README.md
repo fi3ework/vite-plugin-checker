@@ -10,6 +10,7 @@ Watch and compile code with mock diagnostics and html without vite-plugin-checke
 
 ```sh
 pnpm dev-local
+pnpm preview
 ```
 
 ### with vite-plugin-checker

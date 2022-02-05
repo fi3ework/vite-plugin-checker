@@ -27,7 +27,7 @@ afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
-describe('overlay', () => {
+describe('overlay-true', () => {
   beforeEach(async () => {
     await copyCode()
   })
