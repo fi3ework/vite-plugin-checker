@@ -69,20 +69,24 @@ export interface SharedConfig {
    * @defaultValue
    * Same as [Vite config](https://vitejs.dev/config/#root)
    */
-  overlay: boolean
-  // TODO: not implemented
-  // | {
-  //     /**
-  //      * Set this true if you want the overlay to default to being open if errors/warnings are found.
-  //      * @defaultValue `true`
-  //      */
-  //     initialIsOpen?: boolean
-  //     /**
-  //      * The position of the vite-plugin-checker badge to open and close the diagnostics panel
-  //      * @default `bottom-left`
-  //      */
-  //     position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
-  //   }
+  overlay:
+    | boolean
+    | {
+        /**
+         * Set this true if you want the overlay to default to being open if errors/warnings are found.
+         * @defaultValue `true`
+         */
+        initialIsOpen?: boolean
+        /**
+         * The position of the vite-plugin-checker badge to open and close the diagnostics panel
+         * @default `bl`
+         */
+        position?: 'tl' | 'tr' | 'bl' | 'br'
+        /**
+         * Use this to add extra style to the badge button
+         */
+        badgeStyle?: string
+      }
 }
 
 export interface BuildInCheckers {
@@ -124,7 +128,6 @@ export interface OverlayErrorAction extends Action {
 }
 
 interface ConfigActionPayload {
-  // hmr?: { overlay?: boolean } | boolean
   enableOverlay: boolean
   env: ConfigEnv
 }

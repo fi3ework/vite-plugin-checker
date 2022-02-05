@@ -1,18 +1,20 @@
 <script>
   import List from './components/List.svelte'
   import Badge from './components/Badge.svelte'
-  let collapsed = false
+  export let overlayConfig = {}
+  export let initialIsOpen = true
+  export let checkerResults
+
+  let collapsed = !initialIsOpen
   const toggle = () => {
     collapsed = !collapsed
   }
-
-  export let checkerResults
 </script>
 
-<Badge {checkerResults} {collapsed} onClick={toggle} />
+<Badge {checkerResults} {collapsed} position={overlayConfig.position} onClick={toggle} />
 <main class={`window ${collapsed ? 'window-collapsed' : ''}`} on:click|stopPropagation>
   <div class="list-scroll">
-    <List {checkerResults} ulStyle="margin-bottom: 48px;" />
+    <List {checkerResults} ulStyle="margin-bottom: 36px;" />
   </div>
 </main>
 
