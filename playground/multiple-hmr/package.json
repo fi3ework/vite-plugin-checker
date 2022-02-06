@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "vite-react-typescript-starter",
+  "name": "@playground/multiple-hmr",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",

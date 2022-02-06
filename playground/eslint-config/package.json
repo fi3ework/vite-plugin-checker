@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "vite-react-typescript-starter",
+  "name": "@playground/eslint-config",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
