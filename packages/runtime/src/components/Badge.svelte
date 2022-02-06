@@ -3,6 +3,7 @@
   export let checkerResults
   export let onClick
   export let position = 'bl'
+  export let badgeStyle = ''
 
   function calcSummary(results) {
     let errorCount = 0
@@ -32,6 +33,7 @@
   class={`badge-base ${
     collapsed ? `to-uncollpase ${bgColorClass}` : 'to-collpase'
   } badge-${position}`}
+  style={badgeStyle}
   on:click|stopPropagation={onClick}
 >
   {#if collapsed}

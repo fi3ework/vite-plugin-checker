@@ -11,7 +11,13 @@
   }
 </script>
 
-<Badge {checkerResults} {collapsed} position={overlayConfig.position} onClick={toggle} />
+<Badge
+  {checkerResults}
+  {collapsed}
+  position={overlayConfig.position}
+  badgeStyle={overlayConfig.badgeStyle}
+  onClick={toggle}
+/>
 <main class={`window ${collapsed ? 'window-collapsed' : ''}`} on:click|stopPropagation>
   <div class="list-scroll">
     <List {checkerResults} ulStyle="margin-bottom: 36px;" />

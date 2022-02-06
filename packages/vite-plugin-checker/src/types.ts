@@ -5,15 +5,28 @@ import type { VlsOptions } from './checkers/vls/initParams'
 
 /* ----------------------------- userland plugin options ----------------------------- */
 
-/** TypeScript checker configuration */
+/**
+ * TypeScript checker configuration
+ * @default true
+ */
 export type TscConfig =
+  /**
+   * - set to `true` to enable type checking with default configuration
+   * - set to `false` to disable type checking, you can also remove `config.typescript` directly
+   */
   | boolean
   | Partial<{
-      /** path to tsconfig.json file */
+      /**
+       * path to tsconfig.json file
+       */
       tsconfigPath: string
-      /** root path of cwd */
+      /**
+       * root path of cwd
+       */
       root: string
-      /** root path of cwd */
+      /**
+       * root path of cwd
+       */
       buildMode: boolean
     }>
 
@@ -65,9 +78,12 @@ export interface SharedConfig {
    */
   enableBuild: boolean
   /**
-   * Show overlay when has TypeScript error
-   * @defaultValue
-   * Same as [Vite config](https://vitejs.dev/config/#root)
+   * Show overlay on UI view when there are errors or warnings
+   * - Set `true` to show overlay in dev mode
+   * - Set `false` to disable overlay in dev mode
+   * - Set with a object to customize overlay
+   *
+   * @defaultValue `true`
    */
   overlay:
     | boolean
@@ -84,6 +100,7 @@ export interface SharedConfig {
         position?: 'tl' | 'tr' | 'bl' | 'br'
         /**
          * Use this to add extra style to the badge button
+         * For example, if you want to want with react-query devtool, you can pass 'margin-left: 100px;' to avoid the badge overlap with the react-query's
          */
         badgeStyle?: string
       }
