@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "vite-vue-typescript-starter",
+  "name": "@playground/vue3-vue-tsc",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",

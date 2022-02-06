@@ -8,6 +8,7 @@
     "format": "prettier --check \"packages/*/src/**/*.{ts,js,svelte}\"",
     "lint": "eslint \"packages/*/src/**/*.{ts,js,svelte}\"",
     "test": "jest --clearCache && cross-env jest --runInBand",
+    "test-win": "jest --clearCache && cross-env jest --runInBand --testPathIgnorePatterns=multiple-hmr",
     "test:coverage": "jest --clearCache && jest --runInBand --coverage=true",
     "changelog": "pnpm -r --filter ./packages run changelog",
     "test:watch": "jest -w",

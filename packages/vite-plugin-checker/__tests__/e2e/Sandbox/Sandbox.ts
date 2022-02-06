@@ -62,10 +62,11 @@ export async function viteServe({
   proxyConsole?: () => void
   launchPage?: boolean
 } = {}) {
-  await sleep(3000)
   if (proxyConsole) {
     proxyConsole()
   }
+
+  await sleep(3000)
 
   devServer = await createServer({
     root: cwd,

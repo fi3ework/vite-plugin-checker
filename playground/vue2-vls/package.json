@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "vue-template",
+  "name": "@playground/vue2-vls",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
