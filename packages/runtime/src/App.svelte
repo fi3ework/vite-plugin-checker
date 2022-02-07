@@ -2,10 +2,10 @@
   import List from './components/List.svelte'
   import Badge from './components/Badge.svelte'
   export let overlayConfig = {}
-  export let initialIsOpen = true
   export let checkerResults
 
-  let collapsed = !initialIsOpen
+  const initialIsOpen = overlayConfig?.initialIsOpen ?? true
+  $: collapsed = !initialIsOpen
   const toggle = () => {
     collapsed = !collapsed
   }

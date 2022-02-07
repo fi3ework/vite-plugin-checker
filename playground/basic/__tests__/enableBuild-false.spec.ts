@@ -18,12 +18,12 @@ afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
-describe('enableBuild', () => {
+describe('enableBuild-false', () => {
   beforeEach(async () => {
     await copyCode()
   })
 
-  it('enableBuild: false', async () => {
+  it('test', async () => {
     editFile('vite.config.ts', (code) => code.replace(`// edit-slot`, `enableBuild: false,`))
     await viteBuild({
       unexpectedErrorMsg: 'error',
