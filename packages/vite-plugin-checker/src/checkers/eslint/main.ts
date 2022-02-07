@@ -92,7 +92,6 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const diagnostics = await eslint.lintFiles(files)
 
       manager.initWith(diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1))
-      // diagnosticsCache = diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1)
       dispatchDiagnostics()
 
       // watch lint
@@ -120,8 +119,6 @@ export class EslintChecker extends Checker<'eslint'> {
         buildBin: (pluginConfig) => {
           if (pluginConfig.eslint) {
             const { lintCommand } = pluginConfig.eslint
-            // const { _ } = cmdToOptions(lintCommand)
-
             return ['eslint', lintCommand.split(' ').slice(1)]
           }
           return ['eslint', ['']]

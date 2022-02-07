@@ -61,7 +61,6 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       checkers = createCheckers(userConfig || {}, env)
       if (viteMode !== 'serve') return
 
-      // const hmr = config.server?.hmr
       checkers.forEach((checker) => {
         const workerConfig = checker.serve.config
         workerConfig({
