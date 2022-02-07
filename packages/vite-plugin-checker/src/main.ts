@@ -48,6 +48,7 @@ function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndB
 export default function Plugin(userConfig: UserPluginConfig): Plugin {
   const enableBuild = userConfig?.enableBuild ?? true
   const enableOverlay = userConfig?.overlay !== false
+  const enableTerminal = userConfig?.terminal !== false
   const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : null
   let checkers: ServeAndBuildChecker[] = []
   let viteMode: ConfigEnv['command'] | undefined
@@ -65,6 +66,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
         const workerConfig = checker.serve.config
         workerConfig({
           enableOverlay,
+          enableTerminal,
           env,
         })
       })

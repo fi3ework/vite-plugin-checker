@@ -80,7 +80,7 @@ describe('vue2-vls', () => {
 
     it('enableBuild: false', async () => {
       editFile('vite.config.ts', (code) =>
-        code.replace('checker({ vls: {} })', 'checker({ vls: {}, enableBuild: false })')
+        code.replace('checker({ vls: true })', 'checker({ vls: true, enableBuild: false })')
       )
 
       await viteBuild({

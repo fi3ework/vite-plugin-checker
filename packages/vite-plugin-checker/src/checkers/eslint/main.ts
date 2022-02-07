@@ -24,10 +24,12 @@ const manager = new FileDiagnosticManager()
 import type { CreateDiagnostic } from '../../types'
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
   let overlay = true
+  let terminal = true
 
   return {
-    config: async ({ enableOverlay }) => {
+    config: async ({ enableOverlay, enableTerminal }) => {
       overlay = enableOverlay
+      terminal = enableTerminal
     },
     async configureServer({ root }) {
       if (!pluginConfig.eslint) return
@@ -56,9 +58,11 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
-        diagnostics.forEach((d) => {
-          consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
-        })
+        if (terminal) {
+          diagnostics.forEach((d) => {
+            consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
+          })
+        }
 
         if (overlay) {
           parentPort?.postMessage({

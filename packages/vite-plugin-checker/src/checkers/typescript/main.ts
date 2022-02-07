@@ -17,11 +17,13 @@ import { ACTION_TYPES, CreateDiagnostic, DiagnosticLevel, DiagnosticToRuntime } 
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true
+  let terminal = true
   let currDiagnostics: DiagnosticToRuntime[] = []
 
   return {
-    config: async ({ enableOverlay }) => {
+    config: async ({ enableOverlay, enableTerminal }) => {
       overlay = enableOverlay
+      terminal = enableTerminal
     },
     configureServer({ root }) {
       invariant(pluginConfig.typescript, 'config.typescript should be `false`')
@@ -89,7 +91,9 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             logChunk = ''
           }
 
-          consoleLog(logChunk + os.EOL + diagnostic.messageText.toString())
+          if (terminal) {
+            consoleLog(logChunk + os.EOL + diagnostic.messageText.toString())
+          }
         })
       }
 
