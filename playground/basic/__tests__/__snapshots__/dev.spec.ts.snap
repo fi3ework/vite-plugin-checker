@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`config-dev serve get initial error and subsequent error 1`] = `undefined`;
+
+exports[`config-dev serve get initial error and subsequent error 2`] = `""`;
