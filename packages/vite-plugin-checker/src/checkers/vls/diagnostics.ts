@@ -27,13 +27,12 @@ import {
 import { URI } from 'vscode-uri'
 
 import {
-  consoleLog,
   diagnosticToTerminalLog,
-  diagnosticToRuntimeError,
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
+  NormalizedDiagnostic,
 } from '../../logger'
-import { DeepPartial, DiagnosticToRuntime } from '../../types'
+import { DeepPartial } from '../../types'
 import { getInitParams, VlsOptions } from './initParams'
 
 import { FileDiagnosticManager } from '../../FileDiagnosticManager'
@@ -58,7 +57,8 @@ export interface DiagnosticOptions {
   watch: boolean
   verbose: boolean
   config: DeepPartial<VlsOptions> | null
-  errorCallback?: (diagnostic: PublishDiagnosticsParams, viteError: DiagnosticToRuntime[]) => void
+  onDispatch?: (normalized: NormalizedDiagnostic[]) => void
+  onDispatchInitialSummary?: (errorCount: number) => void
 }
 
 export async function diagnostics(
@@ -66,7 +66,7 @@ export async function diagnostics(
   logLevel: LogLevel,
   options: DiagnosticOptions = { watch: false, verbose: false, config: null }
 ) {
-  const { watch, errorCallback } = options
+  const { watch, onDispatch } = options
   if (options.verbose) {
     console.log('====================================')
     console.log('Getting Vetur diagnostics')
@@ -88,19 +88,10 @@ export async function diagnostics(
     console.log('====================================')
   }
 
-  // initial report
-  if (!errCount) {
-    vlsConsoleLog(chalk.green(`[VLS checker] No error found`))
-    if (!watch) {
-      process.exit(0)
-    }
-  } else {
-    vlsConsoleLog(
-      chalk.red(`[VLS checker] Found ${errCount} ${errCount === 1 ? 'error' : 'errors'}`)
-    )
-    if (!watch) {
-      process.exit(1)
-    }
+  // dispatch error summary in build mode
+  if (!options.watch && typeof errCount === 'number') {
+    options?.onDispatchInitialSummary?.(errCount)
+    process.exit(errCount > 0 ? 1 : 0)
   }
 }
 
@@ -119,18 +110,15 @@ export class TestStream extends Duplex {
   public _read(_size: number) {}
 }
 
-let vlsConsoleLog = consoleLog
-
 function suppressConsole() {
   let disposed = false
-  const rawConsoleLog = vlsConsoleLog
-  vlsConsoleLog = () => {}
+  const rawConsoleLog = console.log
+  console.log = () => {}
 
   return () => {
     if (disposed) return
-
     disposed = true
-    vlsConsoleLog = rawConsoleLog
+    console.log = rawConsoleLog
   }
 }
 
@@ -166,15 +154,8 @@ export async function prepareClientConnection(
     const nextDiagnosticInFile = await normalizePublishDiagnosticParams(publishDiagnostics)
     fileDiagnosticManager.updateByFileId(absFilePath, nextDiagnosticInFile)
 
-    const diagnostics = fileDiagnosticManager.getDiagnostics()
-
-    vlsConsoleLog(os.EOL)
-    vlsConsoleLog(diagnostics.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
-
-    if (diagnostics) {
-      const normalized = diagnosticToRuntimeError(diagnostics)
-      options.errorCallback?.(publishDiagnostics, normalized)
-    }
+    const normalized = fileDiagnosticManager.getDiagnostics()
+    options.onDispatch?.(normalized)
   }
 
   const vls = new VLS(serverConnection as any)
@@ -232,7 +213,7 @@ async function getDiagnostics(
   workspaceUri: URI,
   severity: DiagnosticSeverity,
   options: DiagnosticOptions
-) {
+): Promise<number | null> {
   const { clientConnection } = await prepareClientConnection(workspaceUri, severity, options)
 
   const files = glob.sync([...watchedDidChangeContentGlob, ...watchedDidChangeWatchedFilesGlob], {
@@ -241,7 +222,7 @@ async function getDiagnostics(
   })
 
   if (files.length === 0) {
-    console.log('No input files')
+    console.log('[VLS checker] No input files')
     return 0
   }
 
@@ -252,17 +233,15 @@ async function getDiagnostics(
 
   const absFilePaths = files.map((f) => path.resolve(workspaceUri.fsPath, f))
 
-  // initial diagnostics report
-  // watch mode will run this full diagnostic at starting
+  // VLS will stdout verbose log, suppress console before any serverConnection
+  disposeSuppressConsole = suppressConsole()
+
   let initialErrCount = 0
-  let logChunk = ''
-
-  if (options.watch) {
-    disposeSuppressConsole = suppressConsole()
-  }
-
   await Promise.all(
     absFilePaths.map(async (absFilePath) => {
+      // serve mode - step 1
+      // build mode - step 1
+      // report all existing files from client side to server with type `DidOpenTextDocumentNotification.type`
       const fileText = await fs.promises.readFile(absFilePath, 'utf-8')
       clientConnection.sendNotification(DidOpenTextDocumentNotification.type, {
         textDocument: {
@@ -273,7 +252,8 @@ async function getDiagnostics(
         },
       })
 
-      // log in build mode
+      // build mode - step 2
+      // use $/getDiagnostics to get diagnostics from server side directly
       if (!options.watch) {
         try {
           let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
@@ -282,7 +262,7 @@ async function getDiagnostics(
           })) as Diagnostic[]
 
           diagnostics = filterDiagnostics(diagnostics, severity)
-
+          let logChunk = ''
           if (diagnostics.length > 0) {
             logChunk +=
               os.EOL +
@@ -305,49 +285,69 @@ async function getDiagnostics(
               }
             })
           }
+
+          console.log(logChunk)
+          return initialErrCount
         } catch (err) {
           console.error(err.stack)
+          return initialErrCount
         }
       }
     })
   )
 
-  // watched diagnostics report
-  if (options.watch) {
-    const watcher = chokidar.watch([], {
-      ignored: (path: string) => path.includes('node_modules'),
-    })
-
-    watcher.add(workspaceUri.fsPath)
-    watcher.on('all', async (event, filePath) => {
-      const extname = path.extname(filePath)
-      // .vue file changed
-      if (!filePath.endsWith('.vue')) return
-      const fileContent = await fs.promises.readFile(filePath, 'utf-8')
-      clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
-        textDocument: {
-          uri: URI.file(filePath).toString(),
-          version: Date.now(),
-        },
-        contentChanges: [{ text: fileContent }],
-      })
-
-      // .js,.ts,.json file changed
-      if (watchedDidChangeWatchedFiles.includes(extname)) {
-        clientConnection.sendNotification(DidChangeWatchedFilesNotification.type, {
-          changes: [
-            {
-              uri: URI.file(filePath).toString(),
-              type: event === 'add' ? 1 : event === 'unlink' ? 3 : 2,
-            },
-          ],
-        })
-      }
-    })
+  if (!options.watch) {
+    return initialErrCount
   }
 
-  vlsConsoleLog(logChunk)
-  return initialErrCount
+  // serve mode - step 2
+  // watch files (.vue,.js,.ts,.json) change and send notification to server
+  await Promise.all(
+    absFilePaths.map(async (absFilePath) => {
+      const fileText = await fs.promises.readFile(absFilePath, 'utf-8')
+      clientConnection.sendNotification(DidOpenTextDocumentNotification.type, {
+        textDocument: {
+          languageId: 'vue',
+          uri: URI.file(absFilePath).toString(),
+          version: DOC_VERSION.init,
+          text: fileText,
+        },
+      })
+    })
+  )
+
+  const watcher = chokidar.watch([], {
+    ignored: (path: string) => path.includes('node_modules'),
+  })
+
+  watcher.add(workspaceUri.fsPath)
+  watcher.on('all', async (event, filePath) => {
+    const extname = path.extname(filePath)
+    // .vue file changed
+    if (!filePath.endsWith('.vue')) return
+    const fileContent = await fs.promises.readFile(filePath, 'utf-8')
+    clientConnection.sendNotification(DidChangeTextDocumentNotification.type, {
+      textDocument: {
+        uri: URI.file(filePath).toString(),
+        version: Date.now(),
+      },
+      contentChanges: [{ text: fileContent }],
+    })
+
+    // .js,.ts,.json file changed
+    if (watchedDidChangeWatchedFiles.includes(extname)) {
+      clientConnection.sendNotification(DidChangeWatchedFilesNotification.type, {
+        changes: [
+          {
+            uri: URI.file(filePath).toString(),
+            type: event === 'add' ? 1 : event === 'unlink' ? 3 : 2,
+          },
+        ],
+      })
+    }
+  })
+
+  return null
 }
 
 function isObject(item: any): item is {} {
