@@ -147,7 +147,7 @@ importers:
       optionator: 0.9.1
       vls: 0.7.4
 
-  playground/eslint:
+  playground/basic:
     specifiers:
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
@@ -170,7 +170,7 @@ importers:
       vite: 2.7.13
       vite-plugin-checker: link:../../packages/vite-plugin-checker
 
-  playground/eslint-config:
+  playground/eslint:
     specifiers:
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0

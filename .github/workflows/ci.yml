@@ -53,25 +53,25 @@ jobs:
           run_install: true
 
       - name: Build
-        run: npm run build:test
+        run: pnpm run build:test
 
       - name: Format
-        run: npm run format
+        run: pnpm run format
 
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Type check
-        run: npm run type-check
+        run: pnpm run type-check
 
       - name: Test
         if: runner.os != 'Windows'
-        run: npm run test
+        run: pnpm run test
 
       # ignore some test case on Windows until we can fix it
       - name: Test-Windows
         if: runner.os == 'Windows'
-        run: npm run test-win
+        run: pnpm run test-win
         shell: bash
 
   coverage:
@@ -104,10 +104,10 @@ jobs:
           run_install: true
 
       - name: Build
-        run: npm run build:test
+        run: pnpm run build:test
 
       - name: Coverage
-        run: npm run test:coverage
+        run: pnpm run test:coverage
 
       - uses: codecov/codecov-action@v2 # https://github.com/codecov/codecov-action
         with:
