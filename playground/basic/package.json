@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@playground/eslint-config",
+  "name": "@playground/config",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",

@@ -3,6 +3,7 @@ import stringify from 'fast-json-stable-stringify'
 import {
   killServer,
   preTest,
+  proxyConsoleInTest,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
@@ -30,7 +31,7 @@ afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
-describe('eslint-config', () => {
+describe('config-default', () => {
   beforeEach(async () => {
     await copyCode()
   })
@@ -44,6 +45,7 @@ describe('eslint-config', () => {
       let diagnostics: any
       await viteServe({
         cwd: testDir,
+        proxyConsole: () => proxyConsoleInTest(true),
         wsSend: (_payload) => {
           if (_payload.type === 'custom' && _payload.event === WS_CHECKER_ERROR_EVENT) {
             diagnostics = _payload.data.diagnostics
@@ -53,35 +55,13 @@ describe('eslint-config', () => {
       await sleepForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
-
-      console.log('-- edit error file --')
-      resetReceivedLog()
-      editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
-      await sleepForEdit()
-      expect(stringify(diagnostics)).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
-
-      console.log('-- edit non error file --')
-      resetReceivedLog()
-      editFile('src/text.ts', (code) => code.replace(`Vanilla`, `vanilla`))
-      await sleepForEdit()
-      expect(stringify(diagnostics)).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
     })
   })
 
   describe('build', () => {
-    const expectedMsg = 'Unexpected var, use let or const instead  no-var'
-
-    it('enableBuild: true', async () => {
+    it('default', async () => {
+      const expectedMsg = 'Unexpected var, use let or const instead  no-var'
       await viteBuild({ expectedErrorMsg: expectedMsg, cwd: testDir })
-    })
-
-    it('enableBuild: false', async () => {
-      editFile('vite.config.ts', (code) =>
-        code.replace('eslint: {', 'enableBuild: false, eslint: {')
-      )
-      await viteBuild({ unexpectedErrorMsg: expectedMsg, cwd: testDir })
     })
   })
 })
