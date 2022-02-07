@@ -13,39 +13,39 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 - 🌗 Support both serve and build mode
 
 <p align="center">
-  <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/126038209-81901247-86f1-4129-86c6-e1f8a13417e7.png">
+  <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/152739742-7444ee62-9ca7-4379-8f02-495c612ecc5c.png">
 </p>
 
-> History version documentations [0.1](https://github.com/fi3ework/vite-plugin-checker/tree/v0.1.x) | [0.2](https://github.com/fi3ework/vite-plugin-checker/tree/v0.2)
+> History version documentations [0.1](https://github.com/fi3ework/vite-plugin-checker/tree/v0.1.x), [0.2](https://github.com/fi3ework/vite-plugin-checker/tree/v0.2), [0.3](https://github.com/fi3ework/vite-plugin-checker/tree/v0.3.x). It's highly recommended to use latest version before 1.0.0, although there's some breaking changes, the plugin configuration is quite simple.
 
 ## Getting Started
 
-Install plugin.
+1. Install plugin.
 
-```bash
-yarn add vite-plugin-checker -D
-```
+   ```bash
+   pnpm add vite-plugin-checker -D
+   ```
 
-Add it to Vite config file.
+2. Add it to Vite config file. Add the checker property you need. We add TypeScript below for example.
 
-```ts
-// vite.config.js
-import checker from 'vite-plugin-checker'
+   ```ts
+   // vite.config.js
+   import checker from 'vite-plugin-checker'
 
-export default {
-  plugins: [checker({ typescript: true })], // e.g. use TypeScript check
-}
-```
+   export default {
+     plugins: [checker({ typescript: true })], // e.g. use TypeScript check
+   }
+   ```
 
-Open localhost page and start development 🚀.
+3. Open localhost page and start development 🚀.
 
-_It's recommended to open browser for a better terminal display, see [#27](https://github.com/fi3ework/vite-plugin-checker/pull/27)._
+   _It's recommended to open browser for a better terminal display, see [#27](https://github.com/fi3ework/vite-plugin-checker/pull/27)._
 
-## Configuration
+## Available checkers
 
-Detailed configuration is in [advanced config](#advanced-config) section.
+You can add following supported checkers. Detailed configuration for each checker is in [advanced config](#advanced-config) section.
 
-### React / Vanilla TypeScript
+### TypeScript (React / Vanilla TS)
 
 1. Make sure [typescript](https://www.npmjs.com/package/typescript) is installed as a peer dependency.
 
@@ -61,17 +61,17 @@ export default {
 
 1. Make sure [vls](https://www.npmjs.com/package/vls) is installed as a peer dependency, plugin will use vls as the check server.
 
-```bash
-yarn add vls -D
-```
+   ```bash
+   pnpm add vls -D
+   ```
 
 2. Add `vls` field to plugin config.
 
-```js
-module.exports = {
-  plugins: [checker({ vls: true })],
-}
-```
+   ```js
+   module.exports = {
+     plugins: [checker({ vls: true })],
+   }
+   ```
 
 ### Vue (use Volar / vue-tsc)
 
@@ -79,15 +79,19 @@ _Only support checking in **build mode** since `vue-tsc` doesn't support watch m
 
 1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) is installed as a peer dependency.
 
+   ```bash
+   pnpm add vue-tsc -D
+   ```
+
 2. Add `vueTsc` field to plugin config.
 
 3. (Optional) The type check is powered by `vue-tsc` so it supports Vue2 according to the [documentation](https://github.com/johnsoncodehk/volar#using), you need to install `@vue/runtime-dom` by yourself.
 
-```js
-export default {
-  plugins: [checker({ vueTsc: true })],
-}
-```
+   ```js
+   export default {
+     plugins: [checker({ vueTsc: true })],
+   }
+   ```
 
 ### ESLint
 
@@ -95,22 +99,21 @@ export default {
 
 2. Add `eslint` field to plugin config.
 
-```js
-export default {
-  plugins: [
-    checker({
-      eslint: {
-        files: ['./src'],
-        extensions: ['.ts'],
-      },
-    }),
-  ],
-}
-```
+   ```js
+   export default {
+     plugins: [
+       checker({
+         eslint: {
+           lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+         },
+       }),
+     ],
+   }
+   ```
 
-## Advanced config
+## Advanced configuration
 
-Plugin can accept an object configuration.
+Plugin can accept an object with detailed configuration.
 
 ```js
 export default {
@@ -221,7 +224,7 @@ Run projects in [`playground/*`](./playground) to try it out.
 ```bash
 pnpm i
 pnpm run build
-cd ./playground/<ONE_EXAMPLE>    # choose one example
+cd ./playground/<one_exapmple>    # choose one example
 pnpm run dev                     # test in serve mode
 pnpm run build                   # test in build mode
 ```

@@ -77,8 +77,6 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
             if (overlay) {
-              // const normalizedDiagnostics = normalizeTsDiagnostic(diagnostic)
-              // parentPort?.postMessage(toWsPayload(currErrs))
               parentPort?.postMessage({
                 type: ACTION_TYPES.overlayError,
                 payload: toViteCustomPayload('typescript', currDiagnostics),
