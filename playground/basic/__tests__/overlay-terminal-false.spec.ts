@@ -7,7 +7,6 @@ import {
   proxyConsoleInTest,
   sleepForServerReady,
   stripedLog,
-  viteBuild,
   viteServe,
 } from 'vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
 import {
@@ -30,7 +29,7 @@ afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
-describe('config-dev', () => {
+describe('overlay-terminal-false', () => {
   beforeEach(async () => {
     await copyCode()
   })
@@ -42,9 +41,7 @@ describe('config-dev', () => {
 
     it('get initial error and subsequent error', async () => {
       let diagnostics: any
-      editFile('vite.config.ts', (code) =>
-        code.replace(`// edit-slot`, `overlay: false, terminal: false,`)
-      )
+      editFile('vite.config.ts', (code) => code.replace(`// edit-slot`, `terminal: false,`))
       await viteServe({
         cwd: testDir,
         proxyConsole: () => proxyConsoleInTest(true),
@@ -57,13 +54,6 @@ describe('config-dev', () => {
       await sleepForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
-    })
-  })
-
-  describe('build', () => {
-    it('enableBuild: false', async () => {
-      const expectedMsg = 'Unexpected var, use let or const instead  no-var'
-      await viteBuild({ expectedErrorMsg: expectedMsg, cwd: testDir })
     })
   })
 })

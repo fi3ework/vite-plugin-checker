@@ -7,7 +7,6 @@
 <ul style={ulStyle}>
   {#each checkerResults as checkerResult, index}
     <li>
-      {(console.log(checkerResult), '')}
       <Checker diagnostics={checkerResult.diagnostics} {index} />
     </li>
   {/each}
