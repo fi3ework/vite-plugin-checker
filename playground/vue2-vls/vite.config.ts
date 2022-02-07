@@ -14,7 +14,7 @@ const config = defineConfig({
   build: {
     minify: true,
   },
-  plugins: [createVuePlugin({}), ViteComponents({ transformer: 'vue2' }), checker({ vls: {} })],
+  plugins: [createVuePlugin({}), ViteComponents({ transformer: 'vue2' }), checker({ vls: true })],
   server: {
     port: 3001,
   },

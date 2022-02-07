@@ -73,14 +73,9 @@ export interface DiagnosticToRuntime extends ErrorPayloadErr {
 /** checkers shared configuration */
 export interface SharedConfig {
   /**
-   * Enable checking in build mode
-   * @defaultValue `true`
-   */
-  enableBuild: boolean
-  /**
-   * Show overlay on UI view when there are errors or warnings
-   * - Set `true` to show overlay in dev mode
-   * - Set `false` to disable overlay in dev mode
+   * Show overlay on UI view when there are errors or warnings in dev mode.
+   * - Set `true` to show overlay
+   * - Set `false` to disable overlay
    * - Set with a object to customize overlay
    *
    * @defaultValue `true`
@@ -89,7 +84,7 @@ export interface SharedConfig {
     | boolean
     | {
         /**
-         * Set this true if you want the overlay to default to being open if errors/warnings are found.
+         * Set this true if you want the overlay to default to being open if errors/warnings are found
          * @defaultValue `true`
          */
         initialIsOpen?: boolean
@@ -104,6 +99,19 @@ export interface SharedConfig {
          */
         badgeStyle?: string
       }
+  /**
+   * stdout in terminal which starts the Vite server in dev mode.
+   * - Set `true` to enable
+   * - Set `false` to disable
+   *
+   * @defaultValue `true`
+   */
+  terminal: boolean
+  /**
+   * Enable checking in build mode
+   * @defaultValue `true`
+   */
+  enableBuild: boolean
 }
 
 export interface BuildInCheckers {
@@ -146,6 +154,7 @@ export interface OverlayErrorAction extends Action {
 
 interface ConfigActionPayload {
   enableOverlay: boolean
+  enableTerminal: boolean
   env: ConfigEnv
 }
 

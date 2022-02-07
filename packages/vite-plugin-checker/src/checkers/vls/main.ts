@@ -1,34 +1,66 @@
-import { parentPort, workerData } from 'worker_threads'
+import chalk from 'chalk'
+import os from 'os'
+import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker'
+import {
+  consoleLog,
+  diagnosticToRuntimeError,
+  diagnosticToTerminalLog,
+  toViteCustomPayload,
+} from '../../logger'
 import { ACTION_TYPES } from '../../types'
 import { DiagnosticOptions, diagnostics } from './diagnostics'
-import { toViteCustomPayload } from '../../logger'
+
+import type { ConfigEnv } from 'vite'
 
 import type { CreateDiagnostic } from '../../types'
 export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
   let overlay = true
+  let terminal = true
+  let command: ConfigEnv['command']
 
   return {
-    config: ({ enableOverlay }) => {
+    config: ({ enableOverlay, enableTerminal, env }) => {
       overlay = enableOverlay
+      terminal = enableTerminal
+      command = env.command
     },
     async configureServer({ root }) {
       const workDir: string = root
-      const errorCallback: DiagnosticOptions['errorCallback'] = (diagnostics, overlayErr) => {
-        if (!overlay) return
-        parentPort?.postMessage({
-          type: ACTION_TYPES.overlayError,
-          payload: toViteCustomPayload('vls', overlayErr ? overlayErr : []),
-        })
+
+      const onDispatch: DiagnosticOptions['onDispatch'] = (normalized) => {
+        if (overlay && command === 'serve') {
+          parentPort?.postMessage({
+            type: ACTION_TYPES.overlayError,
+            payload: toViteCustomPayload('vls', diagnosticToRuntimeError(normalized)),
+          })
+        }
+
+        if (terminal) {
+          consoleLog(normalized.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
+        }
       }
 
-      const vlsConfig = workerData?.checkerConfig?.vls
+      const onDispatchInitialSummary: DiagnosticOptions['onDispatchInitialSummary'] = (
+        errCount
+      ) => {
+        if (!errCount) {
+          consoleLog(chalk.green(`[VLS checker] No error found`))
+        } else {
+          consoleLog(
+            chalk.red(`[VLS checker] Found ${errCount} ${errCount === 1 ? 'error' : 'errors'}`)
+          )
+        }
+      }
+
+      const vlsConfig = pluginConfig?.vls
       await diagnostics(workDir, 'WARN', {
-        errorCallback,
+        onDispatch,
+        onDispatchInitialSummary,
         watch: true,
         verbose: false,
-        config: typeof vlsConfig === 'object' ? vlsConfig : undefined,
+        config: typeof vlsConfig === 'object' ? vlsConfig : null,
       })
     },
   }
