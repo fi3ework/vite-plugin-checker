@@ -8,9 +8,9 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 ## Features
 
 - ⚡️ Speeds up TypeScript, VLS, etc. checkers by running in worker thread in serve mode
-- 🌈 Works good with vanilla JS / TS, React, Vue2, Vue3
-- ❄️ Prompt errors in Vite HMR overlay and terminal console
-- 🌗 Support both serve and build mode
+- 🍀 Works good with vanilla JS / TS, React, Vue2, Vue3
+- 💬 Prompt errors in an overlay UI and terminal console
+- 🌗 Works both in Vite serve and build mode
 
 <p align="center">
   <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/152739742-7444ee62-9ca7-4379-8f02-495c612ecc5c.png">
@@ -97,7 +97,7 @@ _Only support checking in **build mode** since `vue-tsc` doesn't support watch m
 
 1. Make sure [eslint](https://www.npmjs.com/package/eslint) is installed as a peer dependency.
 
-2. Add `eslint` field to plugin config.
+2. Add `eslint` field to plugin config, the `lintCommand` is required, it's quite like the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
 
    ```js
    export default {
@@ -173,9 +173,9 @@ export default {
 **For each checker config fields below:**
 
 - If the filed is not falsy. The corresponding checker server should be installed as a peer dependency.
-- Set to `true` to use checker with it's default values
-- Leave the field blank or a falsy value to disable the checker
-- Enable with an object advanced config
+- Set to `true` to use checker with it's default values.
+- Leave the field blank or `false` to disable the checker.
+- Enable with an advanced object config.
 
 ### config.typescript
 
@@ -184,6 +184,14 @@ export default {
 | root         | `string`  | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file                                                                                                                                                                                                 |
 | tsconfigPath | `string`  | `"tsconfig.json"`                                     | Relative tsconfig path to `root`                                                                                                                                                                                                |
 | buildMode    | `boolean` | `false`                                               | Add [`--build`](https://www.typescriptlang.org/docs/handbook/project-references.html) to `tsc` flag, note that `noEmit` does NOT work if `buildMode` is `true` ([#36917](https://github.com/microsoft/TypeScript/issues/36917)) |
+
+### config.eslint
+
+| field              | Type                                                                                                       | Default value          | Description                                                                                                                                                                                                              |
+| :----------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| lintCommand        | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.eslint` is nullable.                                                                                 |
+| dev.overrideConfig | [`ESLint.Options`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) | `undefined`            | **(Only in dev mode)** You can override the options of the translated from `lintCommand`. Config priority: `const eslint = new ESLint({cwd: root, ...translatedOptions, ...pluginConfig.eslint.dev?.overrideConfig, })`. |
+| dev.logLevel       | `('error' \| 'warning')[]`                                                                                 | `['error', 'warning']` | **(Only in dev mode)** Which level of ESLint should be emitted to terminal and overlay in dev mode                                                                                                                       |
 
 ### config.vls
 
@@ -216,14 +224,6 @@ no available params for now.
 <!-- | field | Type | Default value | Description |
 | :---- | ---- | ------------- | ----------- |
 |       |      |               |             | -->
-
-### config.eslint
-
-| field              | Type                                                                                                       | Default value          | Description                                                                                                                                                                                              |
-| :----------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| lintCommand        | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.eslint` is nullable.                                                                 |
-| dev.overrideConfig | [`ESLint.Options`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) | `undefined`            | **(Only in dev mode)** You can override the options of the translated from `lintCommand`. Config priority: `const eslint = new ESLint({cwd: root, ...translatedOptions, ...pluginConfig.eslint.dev, })`. |
-| dev.logLevel       | `('error' \| 'warning')[]`                                                                                 | `['error', 'warning']` | **(Only in dev mode)** Which level of ESLint should be emitted to terminal and overlay in dev mode                                                                                                       |
 
 ## Playground
 
