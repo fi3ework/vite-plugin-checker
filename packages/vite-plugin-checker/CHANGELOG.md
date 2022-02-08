@@ -1,3 +1,8 @@
+## 0.4.0-beta.6 (2022-02-08)
+
+* fix: show warning for version below vite@2.6.8 ([252b6d0](https://github.com/fi3ework/vite-plugin-checker/commit/252b6d0))
+* fix: support eslint 8 ([fb2bca5](https://github.com/fi3ework/vite-plugin-checker/commit/fb2bca5))
+
 ## 0.4.0-beta.5 (2022-02-08)
 
 * ci: fuck Windows ([1424f39](https://github.com/fi3ework/vite-plugin-checker/commit/1424f39))
