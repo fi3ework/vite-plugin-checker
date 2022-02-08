@@ -1,3 +1,55 @@
+## 0.4.0-beta.5 (2022-02-08)
+
+* ci: fuck Windows ([1424f39](https://github.com/fi3ework/vite-plugin-checker/commit/1424f39))
+* ci: update scripts ([e5eab0b](https://github.com/fi3ework/vite-plugin-checker/commit/e5eab0b))
+* fix: add log level to vls test case ([70dc07a](https://github.com/fi3ework/vite-plugin-checker/commit/70dc07a))
+* fix: DataCloneError at worker.postMessage ([e07269e](https://github.com/fi3ework/vite-plugin-checker/commit/e07269e))
+* fix: do not crash for showing muliple checker results ([9226130](https://github.com/fi3ework/vite-plugin-checker/commit/9226130))
+* fix: ESLint can report multiple errors ([e1bcfb4](https://github.com/fi3ework/vite-plugin-checker/commit/e1bcfb4))
+* fix: overlay.initialIsOpen is not work ([9383440](https://github.com/fi3ework/vite-plugin-checker/commit/9383440))
+* fix: resume overlay after Vite full-reload ([60aaa93](https://github.com/fi3ework/vite-plugin-checker/commit/60aaa93))
+* fix: vls can report multiple errors ([db5f73c](https://github.com/fi3ework/vite-plugin-checker/commit/db5f73c))
+* fix(vls): should preserve error after editing file without error ([13e97be](https://github.com/fi3ework/vite-plugin-checker/commit/13e97be))
+* feat: add `maxWarnings` option to eslint (#69) ([8fc5d7f](https://github.com/fi3ework/vite-plugin-checker/commit/8fc5d7f)), closes [#69](https://github.com/fi3ework/vite-plugin-checker/issues/69)
+* feat: add buildMode flag to ts checker configruration. resolve #65 (#66) ([96fc4b4](https://github.com/fi3ework/vite-plugin-checker/commit/96fc4b4)), closes [#65](https://github.com/fi3ework/vite-plugin-checker/issues/65) [#66](https://github.com/fi3ework/vite-plugin-checker/issues/66) [#65](https://github.com/fi3ework/vite-plugin-checker/issues/65)
+* feat: distinguish message color for checkers ([7aa5674](https://github.com/fi3ework/vite-plugin-checker/commit/7aa5674))
+* feat: new ESLint config API ([aace273](https://github.com/fi3ework/vite-plugin-checker/commit/aace273))
+* feat: resume overlay when reload page ([7939381](https://github.com/fi3ework/vite-plugin-checker/commit/7939381))
+* feat: rewrite overlay ([bdbe7f7](https://github.com/fi3ework/vite-plugin-checker/commit/bdbe7f7))
+* feat: support log level of ESLint ([256ba5a](https://github.com/fi3ework/vite-plugin-checker/commit/256ba5a))
+* feat: support overlay configuration ([eed4464](https://github.com/fi3ework/vite-plugin-checker/commit/eed4464))
+* feat: support show multiple errors ([963fb65](https://github.com/fi3ework/vite-plugin-checker/commit/963fb65))
+* feat: support terminal log control ([d3db2b2](https://github.com/fi3ework/vite-plugin-checker/commit/d3db2b2))
+* feat: use customized overlay ([132cd4e](https://github.com/fi3ework/vite-plugin-checker/commit/132cd4e))
+* feat: use Svelte to write runtime code ([6960f3d](https://github.com/fi3ework/vite-plugin-checker/commit/6960f3d))
+* feat(eslint): allow specifying eslint config file (#71) ([60ab2d0](https://github.com/fi3ework/vite-plugin-checker/commit/60ab2d0)), closes [#71](https://github.com/fi3ework/vite-plugin-checker/issues/71)
+* docs: update README ([d3002de](https://github.com/fi3ework/vite-plugin-checker/commit/d3002de))
+* docs: update README ([8aa0dae](https://github.com/fi3ework/vite-plugin-checker/commit/8aa0dae))
+* feat : support build option of tsc in watch mode ([7a0316a](https://github.com/fi3ework/vite-plugin-checker/commit/7a0316a))
+* Fix #85 - add support for passing configuration to VLS. ([afd5b9b](https://github.com/fi3ework/vite-plugin-checker/commit/afd5b9b)), closes [#85](https://github.com/fi3ework/vite-plugin-checker/issues/85)
+* Fix typo ([142983c](https://github.com/fi3ework/vite-plugin-checker/commit/142983c))
+* Make log level filters respected in serve/watch mode with VLS. ([b1df12f](https://github.com/fi3ework/vite-plugin-checker/commit/b1df12f)), closes [#63](https://github.com/fi3ework/vite-plugin-checker/issues/63)
+* Put empty check in the correct order ([c22f1d4](https://github.com/fi3ework/vite-plugin-checker/commit/c22f1d4))
+* refactor ([d59030c](https://github.com/fi3ework/vite-plugin-checker/commit/d59030c))
+* refactor: bump vite and plugin versoin ([63c77af](https://github.com/fi3ework/vite-plugin-checker/commit/63c77af))
+* refactor: change ESLint property ([02b96cf](https://github.com/fi3ework/vite-plugin-checker/commit/02b96cf))
+* refactor: format code ([3111c46](https://github.com/fi3ework/vite-plugin-checker/commit/3111c46))
+* refactor: remove old runtime ([74d9be1](https://github.com/fi3ework/vite-plugin-checker/commit/74d9be1))
+* refactor: simplify test process ([6542594](https://github.com/fi3ework/vite-plugin-checker/commit/6542594))
+* refactor: types ([ccd1ef5](https://github.com/fi3ework/vite-plugin-checker/commit/ccd1ef5))
+* build: add lint and format for Svelte ([b8951f2](https://github.com/fi3ework/vite-plugin-checker/commit/b8951f2))
+* build: exclude @runtime ([9681f32](https://github.com/fi3ework/vite-plugin-checker/commit/9681f32))
+* build: fix build command ([a7dc6e0](https://github.com/fi3ework/vite-plugin-checker/commit/a7dc6e0))
+* test: add test for vls config ([c6501f2](https://github.com/fi3ework/vite-plugin-checker/commit/c6501f2))
+* test: pass overlay test ([4285d54](https://github.com/fi3ework/vite-plugin-checker/commit/4285d54))
+* test: pass test case except overlay control ([458e4cc](https://github.com/fi3ework/vite-plugin-checker/commit/458e4cc))
+
+
+### BREAKING CHANGE
+
+* eslint configs is changed. We made it full configurable of ESLint and remove all the hard coding config properties in 0.3.x. Now, you are allowed to write lint command which you're more familar with rather than JS config.
+
+
 ## [0.3.4](https://github.com/fi3ework/vite-plugin-checker/compare/vite-plugin-checker@0.3.3...vite-plugin-checker@0.3.4) (2021-07-31)
 
 
