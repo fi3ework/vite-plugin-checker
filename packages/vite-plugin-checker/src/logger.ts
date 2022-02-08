@@ -176,6 +176,25 @@ export function tsLocationToBabelLocation(
   }
 }
 
+export function wrapCheckerSummary(checkerName: string, rawSummary: string): string {
+  return `[${checkerName}] ${rawSummary}`
+}
+
+export function composeCheckerSummary(
+  checkerName: string,
+  errorCount: number,
+  warningCount: number
+): string {
+  const message = `Found ${errorCount} error${
+    errorCount > 1 ? 's' : ''
+  } and ${warningCount} warning${warningCount > 1 ? 's' : ''}`
+
+  const hasError = errorCount > 0
+  const hasWarning = warningCount > 0
+  const color = hasError ? 'red' : hasWarning ? 'yellow' : 'green'
+  return chalk[color](wrapCheckerSummary(checkerName, message))
+}
+
 /* ------------------------------- TypeScript ------------------------------- */
 
 export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {

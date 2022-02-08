@@ -12,6 +12,7 @@ import {
   ensureCall,
   normalizeTsDiagnostic,
   toViteCustomPayload,
+  composeCheckerSummary,
 } from '../../logger'
 import { ACTION_TYPES, CreateDiagnostic, DiagnosticLevel, DiagnosticToRuntime } from '../../types'
 
@@ -92,7 +93,8 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           }
 
           if (terminal) {
-            consoleLog(logChunk + os.EOL + diagnostic.messageText.toString())
+            consoleLog(logChunk)
+            consoleLog(composeCheckerSummary('TypeScript', 1, 2))
           }
         })
       }
