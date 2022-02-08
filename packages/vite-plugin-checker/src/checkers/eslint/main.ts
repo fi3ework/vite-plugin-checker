@@ -15,6 +15,7 @@ import {
   filterLogLevel,
   normalizeEslintDiagnostic,
   toViteCustomPayload,
+  composeCheckerSummary,
 } from '../../logger'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types'
 import { translateOptions } from './cli'
@@ -62,6 +63,9 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           diagnostics.forEach((d) => {
             consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
           })
+          const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
+          const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
+          consoleLog(composeCheckerSummary('ESLint', errorCount, warningCount))
         }
 
         if (overlay) {

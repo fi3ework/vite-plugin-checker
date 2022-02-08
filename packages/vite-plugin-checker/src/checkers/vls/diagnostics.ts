@@ -44,6 +44,8 @@ export type LogLevel = typeof logLevels[number]
 export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 
 let disposeSuppressConsole: ReturnType<typeof suppressConsole>
+let initialVueFilesCount = 0
+let initialVueFilesTick = 0
 const fileDiagnosticManager = new FileDiagnosticManager()
 
 export const logLevel2Severity = {
@@ -57,8 +59,8 @@ export interface DiagnosticOptions {
   watch: boolean
   verbose: boolean
   config: DeepPartial<VlsOptions> | null
-  onDispatch?: (normalized: NormalizedDiagnostic[]) => void
-  onDispatchInitialSummary?: (errorCount: number) => void
+  onDispatchDiagnostics?: (normalized: NormalizedDiagnostic[]) => void
+  onDispatchDiagnosticsSummary?: (errorCount: number, warningCount: number) => void
 }
 
 export async function diagnostics(
@@ -66,7 +68,7 @@ export async function diagnostics(
   logLevel: LogLevel,
   options: DiagnosticOptions = { watch: false, verbose: false, config: null }
 ) {
-  const { watch, onDispatch } = options
+  const { watch, onDispatchDiagnostics: onDispatch } = options
   if (options.verbose) {
     console.log('====================================')
     console.log('Getting Vetur diagnostics')
@@ -82,16 +84,17 @@ export async function diagnostics(
     workspaceUri = URI.file(process.cwd())
   }
 
-  const errCount = await getDiagnostics(workspaceUri, logLevel2Severity[logLevel], options)
+  const result = await getDiagnostics(workspaceUri, logLevel2Severity[logLevel], options)
 
   if (options.verbose) {
     console.log('====================================')
   }
 
   // dispatch error summary in build mode
-  if (!options.watch && typeof errCount === 'number') {
-    options?.onDispatchInitialSummary?.(errCount)
-    process.exit(errCount > 0 ? 1 : 0)
+  if (!options.watch && typeof result === 'object' && result !== null) {
+    const { initialErrorCount, initialWarningCount } = result
+    options?.onDispatchDiagnosticsSummary?.(initialErrorCount, initialWarningCount)
+    process.exit(initialErrorCount > 0 ? 1 : 0)
   }
 }
 
@@ -155,7 +158,14 @@ export async function prepareClientConnection(
     fileDiagnosticManager.updateByFileId(absFilePath, nextDiagnosticInFile)
 
     const normalized = fileDiagnosticManager.getDiagnostics()
-    options.onDispatch?.(normalized)
+    const errorCount = normalized.filter((d) => d.level === DiagnosticSeverity.Error).length
+    const warningCount = normalized.filter((d) => d.level === DiagnosticSeverity.Warning).length
+    initialVueFilesTick++
+    options.onDispatchDiagnostics?.(normalized)
+    // only starts to log summary when all .vue files are loaded
+    if (initialVueFilesTick >= initialVueFilesCount) {
+      options.onDispatchDiagnosticsSummary?.(errorCount, warningCount)
+    }
   }
 
   const vls = new VLS(serverConnection as any)
@@ -207,23 +217,22 @@ function extToGlobs(exts: string[]) {
 const watchedDidChangeContent = ['.vue']
 const watchedDidChangeWatchedFiles = ['.js', '.ts', '.json']
 const watchedDidChangeContentGlob = extToGlobs(watchedDidChangeContent)
-const watchedDidChangeWatchedFilesGlob = extToGlobs(watchedDidChangeWatchedFiles)
 
 async function getDiagnostics(
   workspaceUri: URI,
   severity: DiagnosticSeverity,
   options: DiagnosticOptions
-): Promise<number | null> {
+): Promise<{ initialErrorCount: number; initialWarningCount: number } | null> {
   const { clientConnection } = await prepareClientConnection(workspaceUri, severity, options)
 
-  const files = glob.sync([...watchedDidChangeContentGlob, ...watchedDidChangeWatchedFilesGlob], {
+  const files = glob.sync([...watchedDidChangeContentGlob], {
     cwd: workspaceUri.fsPath,
     ignore: ['node_modules/**'],
   })
 
   if (files.length === 0) {
     console.log('[VLS checker] No input files')
-    return 0
+    return { initialWarningCount: 0, initialErrorCount: 0 }
   }
 
   if (options.verbose) {
@@ -235,8 +244,9 @@ async function getDiagnostics(
 
   // VLS will stdout verbose log, suppress console before any serverConnection
   disposeSuppressConsole = suppressConsole()
-
-  let initialErrCount = 0
+  initialVueFilesCount = absFilePaths.length
+  let initialErrorCount = 0
+  let initialWarningCount = 0
   await Promise.all(
     absFilePaths.map(async (absFilePath) => {
       // serve mode - step 1
@@ -281,23 +291,26 @@ async function getDiagnostics(
 
             diagnostics.forEach((d) => {
               if (d.severity === DiagnosticSeverity.Error) {
-                initialErrCount++
+                initialErrorCount++
+              }
+              if (d.severity === DiagnosticSeverity.Warning) {
+                initialWarningCount++
               }
             })
           }
 
           console.log(logChunk)
-          return initialErrCount
+          return { initialErrorCount, initialWarningCount }
         } catch (err) {
           console.error(err.stack)
-          return initialErrCount
+          return { initialErrorCount, initialWarningCount }
         }
       }
     })
   )
 
   if (!options.watch) {
-    return initialErrCount
+    return { initialErrorCount, initialWarningCount }
   }
 
   // serve mode - step 2
