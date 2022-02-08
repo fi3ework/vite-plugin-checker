@@ -3,9 +3,6 @@
 ## Development
 
 ```bash
-# fork
-# git clone
-# cd vite-plugin-checker
 pnpm i
 pnpm build
 pnpm dev
@@ -13,7 +10,7 @@ pnpm dev
 
 ## Release
 
-cd to `packages/vite-plugin-checker`.
+`cd` to `packages/vite-plugin-checker`.
 
 Release with interactive CLI
 
