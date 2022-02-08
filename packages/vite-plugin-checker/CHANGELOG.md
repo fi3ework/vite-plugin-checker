@@ -1,3 +1,5 @@
+## 0.4.0 (2022-02-08)
+
 ## 0.4.0-beta.6 (2022-02-08)
 
 * fix: show warning for version below vite@2.6.8 ([252b6d0](https://github.com/fi3ework/vite-plugin-checker/commit/252b6d0))
