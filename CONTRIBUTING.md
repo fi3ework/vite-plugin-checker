@@ -18,10 +18,10 @@ Release with interactive CLI
 npm run release
 ```
 
-or release with an explicit version
+or release with an explicit version or dry run flag
 
 ```bash
-npm run release -- --version=1.2.3
+npm run release -- --version=1.2.3 --dry
 ```
 
 ## Publish

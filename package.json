@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "pnpm -r --filter ./packages --parallel run dev",
     "build": "pnpm -r --filter ./packages run build",
+    "clean": "pnpm -r --filter ./packages run clean",
     "build:test": "pnpm -r --filter ./packages run build:test",
     "format": "prettier --check \"packages/*/src/**/*.{ts,js,svelte}\"",
     "lint": "eslint \"packages/*/src/**/*.{ts,js,svelte}\"",
