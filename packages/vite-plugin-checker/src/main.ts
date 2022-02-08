@@ -20,6 +20,7 @@ import {
   SharedConfig,
   UserPluginConfig,
 } from './types'
+import chalk from 'chalk'
 
 export * from './types'
 export * from './codeFrame'
@@ -149,27 +150,38 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       })
 
       return () => {
-        // sometimes Vite will trigger a full-reload instead of HMR, but the checker
-        // may update the overlay before full-reload fired. So we make sure the overlay
-        // will be displayed again after full-reload.
-        server.ws.on('connection', () => {
-          connectedTimes++
-          // if connectedCount !== 1, means Vite is doing a full-reload, so we don't need to send overlay again
-          if (connectedTimes > 1) {
-            if (overlayConfig) {
+        if (server.ws.on) {
+          // sometimes Vite will trigger a full-reload instead of HMR, but the checker
+          // may update the overlay before full-reload fired. So we make sure the overlay
+          // will be displayed again after full-reload.
+          server.ws.on('connection', () => {
+            connectedTimes++
+            // if connectedCount !== 1, means Vite is doing a full-reload, so we don't need to send overlay again
+            if (connectedTimes > 1) {
+              if (overlayConfig) {
+                server.ws.send({
+                  type: 'custom',
+                  event: WS_CHECKER_CONFIG_RUNTIME_EVENT,
+                  data: overlayConfig,
+                })
+              }
               server.ws.send({
                 type: 'custom',
-                event: WS_CHECKER_CONFIG_RUNTIME_EVENT,
-                data: overlayConfig,
+                event: WS_CHECKER_RECONNECT_EVENT,
+                data: latestOverlayErrors.filter(Boolean),
               })
             }
-            server.ws.send({
-              type: 'custom',
-              event: WS_CHECKER_RECONNECT_EVENT,
-              data: latestOverlayErrors.filter(Boolean),
-            })
-          }
-        })
+          })
+        } else {
+          setTimeout(() => {
+            console.warn(
+              chalk.yellow(
+                "[vite-plugin-checker]: `server.ws.on` is introduced to Vite in 2.6.8, see [PR](https://github.com/vitejs/vite/pull/5273) and [changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). \nvite-plugin-checker relies on `server.ws.on` to bring diagnostics back after a full reload and it' not available for you now due to the old version of Vite. You can upgrade Vite to latest version to eliminate this warning."
+              )
+            )
+            // make a delay to avoid flush by Vite's console
+          }, 5000)
+        }
 
         server.middlewares.use((req, res, next) => {
           next()
