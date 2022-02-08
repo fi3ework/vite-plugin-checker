@@ -11,6 +11,7 @@ async function main() {
   await $`npm run format`
   await $`npm run lint`
   await $`npm run type-check`
+  await $`npm run clean`
   await $`npm run build`
   const tagPart = distTag ? `--tag ${distTag}` : ''
   // https://github.com/google/zx/issues/144#issuecomment-859745076
