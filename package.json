@@ -55,6 +55,7 @@
     "lint-staged": "^11.0.0",
     "minimist": "^1.2.5",
     "nodemon": "^2.0.15",
+    "optionator": "^0.9.1",
     "playwright-chromium": "^1.12.3",
     "prettier": "^2.3.2",
     "prettier-plugin-svelte": "^2.6.0",

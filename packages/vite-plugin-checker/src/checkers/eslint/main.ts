@@ -1,7 +1,7 @@
 import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
 // @ts-ignore
-import optionator from 'eslint/lib/options'
+import optionator from './options'
 import path from 'path'
 import invariant from 'tiny-invariant'
 import { parentPort } from 'worker_threads'
