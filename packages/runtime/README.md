@@ -8,7 +8,7 @@ Runtime code for vite-plugin-checker, this package will be directly bundled into
 
 Watch and compile code with mock diagnostics and html without vite-plugin-checker.
 
-```sh
+```bash
 pnpm dev-local
 pnpm preview
 ```
@@ -17,6 +17,6 @@ pnpm preview
 
 Watch and compile bundled JS to `../vite-plugin-checker/lib/@runtime/main.js`. Run `pnpm dev` in monorepo root will invoke below scripts.
 
-```sh
+```bash
 pnpm dev
 ```
