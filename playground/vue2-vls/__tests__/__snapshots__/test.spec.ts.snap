@@ -13,7 +13,7 @@ exports[`vue2-vls serve get initial error and subsequent error 2`] = `
   4 |     <p>
   5 |       For a guide and recipes on how to configure / customize this project,<br />
   6 |       check out the
-"
+[VLS] Found 1 error and 0 warning"
 `;
 
 exports[`vue2-vls serve get initial error and subsequent error 3`] = `"[{\\"checkerId\\":\\"VLS\\",\\"frame\\":\\"  1 | <template>/n  2 |   <div class=/\\"hello/\\">/n> 3 |     <h1>{{ msg2 }}</h1>/n    |            ^^^^/n  4 |     <p>/n  5 |       For a guide and recipes on how to configure / customize this project,<br />/n  6 |       check out the\\",\\"id\\":\\"<PROJECT_ROOT>/temp/vue2-vls/src/components/HelloWorld.vue\\",\\"level\\":1,\\"loc\\":{\\"column\\":12,\\"file\\":\\"<PROJECT_ROOT>/temp/vue2-vls/src/components/HelloWorld.vue\\",\\"line\\":3},\\"message\\":\\"Property 'msg2' does not exist on type 'CombinedVueInstance<{ msg: string; } & Vue, object, object, object, Record<never, any>>'. Did you mean 'msg'?\\",\\"stack\\":\\"\\"}]"`;
@@ -29,5 +29,5 @@ exports[`vue2-vls serve get initial error and subsequent error 4`] = `
   4 |     <p>
   5 |       For a guide and recipes on how to configure / customize this project,<br />
   6 |       check out the
-"
+[VLS] Found 1 error and 0 warning"
 `;

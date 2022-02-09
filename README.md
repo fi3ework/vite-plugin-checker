@@ -39,7 +39,9 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 
 3. Open localhost page and start development 🚀.
 
-   _It's recommended to open browser for a better terminal display, see [#27](https://github.com/fi3ework/vite-plugin-checker/pull/27)._
+💡 **Caveats**:
+
+1. It's recommended to open browser for a better terminal flush, see [#27](https://github.com/fi3ework/vite-plugin-checker/pull/27).
 
 ## Available checkers
 

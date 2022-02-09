@@ -1,4 +1,3 @@
-import chalk from 'chalk'
 import os from 'os'
 import { parentPort } from 'worker_threads'
 
@@ -37,14 +36,6 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
         if (!terminal) return
 
         consoleLog(composeCheckerSummary('VLS', errorCount, warningCount))
-
-        // if (!errorCount) {
-        //   consoleLog(chalk.green(`[VLS checker] No error found`))
-        // } else {
-        //   consoleLog(
-        //     chalk.red(`[VLS checker] Found ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`)
-        //   )
-        // }
       }
 
       const onDispatchDiagnostics: DiagnosticOptions['onDispatchDiagnostics'] = (normalized) => {

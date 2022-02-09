@@ -14,7 +14,7 @@ let binPath: string
 export let log = ''
 export let stripedLog = ''
 
-export function proxyConsoleInTest(accumulate = false) {
+export function proxyConsoleInTest(accumulate = true) {
   Checker.logger = [
     (...args: any[]) => {
       if (accumulate) {

@@ -4,7 +4,6 @@ import stringify from 'fast-json-stable-stringify'
 import {
   killServer,
   preTest,
-  proxyConsoleInTest,
   sleepForServerReady,
   stripedLog,
   viteServe,
@@ -44,7 +43,6 @@ describe('overlay-terminal-false', () => {
       editFile('vite.config.ts', (code) => code.replace(`// edit-slot`, `terminal: false,`))
       await viteServe({
         cwd: testDir,
-        proxyConsole: () => proxyConsoleInTest(true),
         wsSend: (_payload) => {
           if (_payload.type === 'custom' && _payload.event === WS_CHECKER_ERROR_EVENT) {
             diagnostics = _payload.data.diagnostics
