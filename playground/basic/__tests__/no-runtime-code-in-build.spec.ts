@@ -1,4 +1,4 @@
-import fs from 'fs/promises'
+import fs from 'fs'
 import klaw from 'klaw'
 import path from 'path'
 import { preTest, viteBuild } from 'vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
@@ -35,7 +35,7 @@ describe('no-runtime-code-in-build', () => {
 
     for await (const file of klaw(path.resolve(testDir, 'dist'))) {
       if (file.stats.isFile()) {
-        const content = await fs.readFile(file.path, 'utf-8')
+        const content = await fs.promises.readFile(file.path, 'utf-8')
         expect(content).not.toContain('vite-plugin-checker')
       }
     }

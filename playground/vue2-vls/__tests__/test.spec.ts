@@ -6,6 +6,7 @@ import {
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
+  proxyConsoleInTest,
   stripedLog,
   viteBuild,
   viteServe,

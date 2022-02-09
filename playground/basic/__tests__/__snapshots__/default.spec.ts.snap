@@ -23,5 +23,5 @@ exports[`config-default serve get initial error and subsequent error 2`] = `
     6 | rootDom.innerHTML = hello + text
     7 |
     8 | export {}
-"
+[ESLint] Found 1 error and 1 warning"
 `;

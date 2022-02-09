@@ -3,7 +3,6 @@ import stringify from 'fast-json-stable-stringify'
 import {
   killServer,
   preTest,
-  proxyConsoleInTest,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
@@ -45,7 +44,6 @@ describe('config-default', () => {
       let diagnostics: any
       await viteServe({
         cwd: testDir,
-        proxyConsole: () => proxyConsoleInTest(true),
         wsSend: (_payload) => {
           if (_payload.type === 'custom' && _payload.event === WS_CHECKER_ERROR_EVENT) {
             diagnostics = _payload.data.diagnostics

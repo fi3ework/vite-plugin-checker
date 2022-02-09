@@ -68,7 +68,6 @@ export async function diagnostics(
   logLevel: LogLevel,
   options: DiagnosticOptions = { watch: false, verbose: false, config: null }
 ) {
-  const { watch, onDispatchDiagnostics: onDispatch } = options
   if (options.verbose) {
     console.log('====================================')
     console.log('Getting Vetur diagnostics')
@@ -161,9 +160,10 @@ export async function prepareClientConnection(
     const errorCount = normalized.filter((d) => d.level === DiagnosticSeverity.Error).length
     const warningCount = normalized.filter((d) => d.level === DiagnosticSeverity.Warning).length
     initialVueFilesTick++
-    options.onDispatchDiagnostics?.(normalized)
-    // only starts to log summary when all .vue files are loaded
+    // only starts to log when all .vue files are loaded
+    // onDispatchDiagnostics will dispatch diagnostics of all watched files
     if (initialVueFilesTick >= initialVueFilesCount) {
+      options.onDispatchDiagnostics?.(normalized)
       options.onDispatchDiagnosticsSummary?.(errorCount, warningCount)
     }
   }

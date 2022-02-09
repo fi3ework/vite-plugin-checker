@@ -5,7 +5,6 @@ import stable from 'sort-deep-object-arrays'
 import {
   killServer,
   preTest,
-  proxyConsoleInTest,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
@@ -52,7 +51,6 @@ describe('multiple-reload', () => {
             diagnostics = diagnostics.concat(_payload.data.diagnostics)
           }
         },
-        proxyConsole: () => proxyConsoleInTest(true),
       })
       await sleepForServerReady()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
