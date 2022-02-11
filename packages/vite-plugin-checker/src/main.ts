@@ -81,23 +81,29 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       }
     },
     resolveId(id) {
-      if (id === RUNTIME_PUBLIC_PATH) {
-        return id
+      if (viteMode === 'serve') {
+        if (id === RUNTIME_PUBLIC_PATH) {
+          return id
+        }
       }
     },
     load(id) {
-      if (id === RUNTIME_PUBLIC_PATH) {
-        return runtimeCode
+      if (viteMode === 'serve') {
+        if (id === RUNTIME_PUBLIC_PATH) {
+          return runtimeCode
+        }
       }
     },
     transformIndexHtml() {
-      return [
-        {
-          tag: 'script',
-          attrs: { type: 'module' },
-          children: `import { inject } from "${RUNTIME_PUBLIC_PATH}"; inject();`,
-        },
-      ]
+      if (viteMode === 'serve') {
+        return [
+          {
+            tag: 'script',
+            attrs: { type: 'module' },
+            children: `import { inject } from "${RUNTIME_PUBLIC_PATH}"; inject();`,
+          },
+        ]
+      }
     },
     buildStart: () => {
       // for build mode
