@@ -8,6 +8,7 @@ importers:
       '@types/debug': ^4.1.5
       '@types/fs-extra': ^9.0.11
       '@types/jest': ^27.4.0
+      '@types/klaw': ^3.0.3
       '@types/node': ^14.14.31
       '@types/prompts': ^2.0.13
       '@types/rimraf': ^3.0.0
@@ -27,6 +28,7 @@ importers:
       jest: ^27.4.7
       jest-environment-node: ^27.4.6
       jest-serializer-path: ^0.1.15
+      klaw: ^4.0.1
       lint-staged: ^11.0.0
       minimist: ^1.2.5
       nodemon: ^2.0.15
@@ -50,6 +52,7 @@ importers:
       '@types/debug': 4.1.5
       '@types/fs-extra': 9.0.11
       '@types/jest': 27.4.0
+      '@types/klaw': 3.0.3
       '@types/node': 14.17.3
       '@types/prompts': 2.0.13
       '@types/rimraf': 3.0.0
@@ -69,6 +72,7 @@ importers:
       jest: 27.4.7
       jest-environment-node: 27.4.6
       jest-serializer-path: 0.1.15
+      klaw: 4.0.1
       lint-staged: 11.0.0
       minimist: 1.2.5
       nodemon: 2.0.15
@@ -1274,6 +1278,12 @@ packages:
     resolution: {integrity: sha512-YSBPTLTVm2e2OoQIDYx8HaeWJ5tTToLH67kXR7zYNGupXMEHa2++G8k+DczX2cFVgalypqtyZIcU19AFcmOpmg==}
     dev: true
 
+  /@types/klaw/3.0.3:
+    resolution: {integrity: sha512-mXlRDFbTLpVysvxahXUQav0hFctgu3Fqr2xmSrpf/ptO/FwOp7SFEGsJkEihwshMbof3/BIiVJ/o42cuOOuv6g==}
+    dependencies:
+      '@types/node': 15.12.5
+    dev: true
+
   /@types/lodash.debounce/4.0.6:
     resolution: {integrity: sha512-4WTmnnhCfDvvuLMaF3KV4Qfki93KebocUF45msxhYyjMttZDQYzHkO639ohhk8+oco2cluAFL3t5+Jn4mleylQ==}
     dependencies:
@@ -1312,11 +1322,6 @@ packages:
   /@types/node/14.17.4:
     resolution: {integrity: sha512-8kQ3+wKGRNN0ghtEn7EGps/B8CzuBz1nXZEIGGLP2GnwbqYn4dbTs7k+VKLTq1HvZLRCIDtN3Snx1Ege8B7L5A==}
     dev: true
-
-  /@types/node/14.17.5:
-    resolution: {integrity: sha512-bjqH2cX/O33jXT/UmReo2pM7DIJREPMnarixbQ57DOOzzFaI6D2+IcwaJQaJpv0M1E9TIhPCYVxrkcityLjlqA==}
-    dev: true
-    optional: true
 
   /@types/node/15.12.2:
     resolution: {integrity: sha512-zjQ69G564OCIWIOHSXyQEEDpdpGl+G348RAKY0XXy9Z5kU9Vzv1GMNnkar/ZJ8dzXB3COzD9Mo9NtRZ4xfgUww==}
@@ -1395,7 +1400,7 @@ packages:
     resolution: {integrity: sha512-8uALY5LTvSuHgloDVUvWP3pIauILm+8/0pDMokuDYIoNsOkSwd5AiHBTSEJjKTDcZr5z8UpgOWZkxBF4iJftoA==}
     requiresBuild: true
     dependencies:
-      '@types/node': 14.17.5
+      '@types/node': 15.12.5
     dev: true
     optional: true
 
@@ -5416,6 +5421,11 @@ packages:
   /kind-of/6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
+    dev: true
+
+  /klaw/4.0.1:
+    resolution: {integrity: sha512-pgsE40/SvC7st04AHiISNewaIMUbY5V/K8b21ekiPiFoYs/EYSdsGa+FJArB1d441uq4Q8zZyIxvAzkGNlBdRw==}
+    engines: {node: '>=14.14.0'}
     dev: true
 
   /kleur/3.0.3:

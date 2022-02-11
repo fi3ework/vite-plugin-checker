@@ -10,16 +10,16 @@ export const testPath = expect.getState().testPath
 export const testName = slash(testPath).match(/playground\/([\w-]+)\//)?.[1]
 export const testDir = path.resolve(process.env.JEST_ROOT_DIR!, `./temp/${testName}`)
 
-export function editFile(
-  filename: string,
-  replacer: (str: string) => string
-  // runInBuild: boolean = false
-): void {
-  // if (isBuild && !runInBuild) return
+export function editFile(filename: string, replacer: (str: string) => string): void {
   const filePath = path.resolve(testDir, filename)
   const content = fs.readFileSync(filePath, 'utf-8')
   const modified = replacer(content)
   fs.writeFileSync(filePath, modified)
+}
+
+export function editFileTo(filename: string, content: string): void {
+  const filePath = path.resolve(testDir, filename)
+  fs.writeFileSync(filePath, content)
 }
 
 export function expectStderrContains(str: string, expectedErrorMsg: string | string[]) {
