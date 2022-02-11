@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-checker",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
   "main": "lib/main.js",
   "bin": {

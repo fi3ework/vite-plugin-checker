@@ -1,3 +1,9 @@
+## <small>0.4.1 (2022-02-11)</small>
+
+* fix: runtime should not be bundled in build mode (#112) ([0330ab2](https://github.com/fi3ework/vite-plugin-checker/commit/0330ab2)), closes [#112](https://github.com/fi3ework/vite-plugin-checker/issues/112)
+
+
+
 ## 0.4.0 (2022-02-08)
 
 ## 0.4.0-beta.6 (2022-02-08)
