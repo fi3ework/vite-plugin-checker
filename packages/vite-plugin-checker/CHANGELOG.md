@@ -1,3 +1,11 @@
+## <small>0.4.2 (2022-02-12)</small>
+
+* test: add case for no runtime code in build ([0a7a1e7](https://github.com/fi3ework/vite-plugin-checker/commit/0a7a1e7))
+* test: update snapshot ([d1b6c0f](https://github.com/fi3ework/vite-plugin-checker/commit/d1b6c0f))
+* feat: support diagnostic summary for ESLint & VLS ([904d49d](https://github.com/fi3ework/vite-plugin-checker/commit/904d49d))
+
+
+
 ## <small>0.4.1 (2022-02-11)</small>
 
 * fix: runtime should not be bundled in build mode (#112) ([0330ab2](https://github.com/fi3ework/vite-plugin-checker/commit/0330ab2)), closes [#112](https://github.com/fi3ework/vite-plugin-checker/issues/112)
