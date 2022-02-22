@@ -150,8 +150,8 @@ export default {
          */
         position?: 'tl' | 'tr' | 'bl' | 'br'
         /**
-         * Use this to add extra style to the badge button
-         * For example, if you want to want with react-query devtool, you can pass 'margin-left: 100px;' to avoid the badge overlap with the react-query's
+         * Use this to add extra style to the badge button, see details of [Svelte style](https://svelte.dev/docs#template-syntax-element-directives-style-property)
+         * For example, if you want to hide the badge, you can pass `display: none;` to the badgeStyle property
          */
         badgeStyle?: string
       }
