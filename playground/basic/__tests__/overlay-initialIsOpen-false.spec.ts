@@ -37,7 +37,7 @@ describe('overlay-initialIsOpen-false', () => {
 
     it('get initial error and subsequent error', async () => {
       editFile('vite.config.ts', (code) =>
-        code.replace(`// edit-slot`, `overlay: { initialIsOpen: false },`)
+        code.replace(`// checker-edit-slot`, `overlay: { initialIsOpen: false },`)
       )
       await viteServe({
         cwd: testDir,

@@ -1,14 +1,16 @@
+import chalk from 'chalk'
 import { spawn } from 'child_process'
 import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
-import { ConfigEnv, Plugin } from 'vite'
+import path from 'path'
+import { ConfigEnv, Plugin, ResolvedConfig } from 'vite'
 
 import { Checker } from './Checker'
 import {
   RUNTIME_PUBLIC_PATH,
   runtimeCode,
-  WS_CHECKER_RECONNECT_EVENT,
   WS_CHECKER_CONFIG_RUNTIME_EVENT,
+  WS_CHECKER_RECONNECT_EVENT,
 } from './client/index'
 import {
   ACTION_TYPES,
@@ -20,7 +22,6 @@ import {
   SharedConfig,
   UserPluginConfig,
 } from './types'
-import chalk from 'chalk'
 
 export * from './types'
 export * from './codeFrame'
@@ -53,6 +54,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
   const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : null
   let checkers: ServeAndBuildChecker[] = []
   let viteMode: ConfigEnv['command'] | undefined
+  let resolvedConfig: ResolvedConfig | undefined
 
   return {
     name: 'vite-plugin-checker',
@@ -71,6 +73,9 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
           env,
         })
       })
+    },
+    configResolved(config) {
+      resolvedConfig = config
     },
     buildEnd() {
       if (viteMode === 'serve') {
@@ -93,6 +98,43 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
           return runtimeCode
         }
       }
+    },
+    transform(code, id) {
+      if (id === RUNTIME_PUBLIC_PATH) {
+        if (!resolvedConfig) return
+
+        // #region
+        // copied from https://github.dev/vitejs/vite/blob/76bbcd09985f85f7786b7e2e2d5ce177ee7d1916/packages/vite/src/client/client.ts#L25
+        let options = resolvedConfig.server.hmr
+        options = options && typeof options !== 'boolean' ? options : {}
+        const host = options.host || null
+        const protocol = options.protocol || null
+        let port: number | string | false | undefined
+        if (isObject(resolvedConfig.server.hmr)) {
+          port = resolvedConfig.server.hmr.clientPort || resolvedConfig.server.hmr.port
+        }
+        if (resolvedConfig.server.middlewareMode) {
+          port = String(port || 24678)
+        } else {
+          port = String(port || options.port || resolvedConfig.server.port!)
+        }
+
+        let hmrBase = resolvedConfig.base
+        if (options.path) {
+          hmrBase = path.posix.join(hmrBase, options.path)
+        }
+        if (hmrBase !== '/') {
+          port = path.posix.normalize(`${port}${hmrBase}`)
+        }
+
+        return code
+          .replace(/__HMR_PROTOCOL__/g, JSON.stringify(protocol))
+          .replace(/__HMR_HOSTNAME__/g, JSON.stringify(host))
+          .replace(/__HMR_PORT__/g, JSON.stringify(port))
+        // #endregion
+      }
+
+      return null
     },
     transformIndexHtml() {
       if (viteMode === 'serve') {
@@ -228,4 +270,8 @@ function spawnChecker(
       }
     })
   })
+}
+
+export function isObject(value: unknown): value is Record<string, any> {
+  return Object.prototype.toString.call(value) === '[object Object]'
 }

@@ -40,7 +40,7 @@ describe('overlay-terminal-false', () => {
 
     it('get initial error and subsequent error', async () => {
       let diagnostics: any
-      editFile('vite.config.ts', (code) => code.replace(`// edit-slot`, `terminal: false,`))
+      editFile('vite.config.ts', (code) => code.replace(`// checker-edit-slot`, `terminal: false,`))
       await viteServe({
         cwd: testDir,
         wsSend: (_payload) => {
