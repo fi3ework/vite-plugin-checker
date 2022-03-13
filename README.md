@@ -100,7 +100,9 @@ _Only support checking in **build mode** since `vue-tsc` doesn't support watch m
 
 1. Make sure [eslint](https://www.npmjs.com/package/eslint) is installed as a peer dependency.
 
-2. Add `eslint` field to plugin config, the `lintCommand` is required, it's quite like the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
+2. (optional but highly recommended) Install `optionator@^0.9.1` with your package manager. It's needed because of ESLint dependents on it. It's probably working fine even it's not installed as it's accessed as a phantom dependency(not recommended). But when you set `hoist=false` of pnpm. It won't be accessed anymore without explicit installation.
+
+3. Add `eslint` field to plugin config, the `lintCommand` is required, it's quite like the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
 
    ```js
    export default {
