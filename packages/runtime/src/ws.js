@@ -1,6 +1,12 @@
-const socketProtocol = null || (location.protocol === 'https:' ? 'wss' : 'ws')
-const socketHost = `${location.hostname}:${location.port}`
+// #region
+// copied from https://github.dev/vitejs/vite/blob/76bbcd09985f85f7786b7e2e2d5ce177ee7d1916/packages/vite/src/client/client.ts#L25
+// use server configuration, then fallback to inference
+const socketProtocol = __HMR_PROTOCOL__ || (location.protocol === 'https:' ? 'wss' : 'ws')
+const socketHost = __HMR_PORT__
+  ? `${__HMR_HOSTNAME__ || location.hostname}:${__HMR_PORT__}`
+  : `${__HMR_HOSTNAME__ || location.hostname}`
 const socket = new WebSocket(`${socketProtocol}://${socketHost}`, 'vite-hmr')
+// #endregion
 
 // #region
 // NOTE: sync modification with packages/vite-plugin-checker/client/index.ts

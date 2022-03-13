@@ -24,7 +24,9 @@ describe('enableBuild-false', () => {
   })
 
   it('test', async () => {
-    editFile('vite.config.ts', (code) => code.replace(`// edit-slot`, `enableBuild: false,`))
+    editFile('vite.config.ts', (code) =>
+      code.replace(`// checker-edit-slot`, `enableBuild: false,`)
+    )
     await viteBuild({
       unexpectedErrorMsg: 'error',
       cwd: testDir,

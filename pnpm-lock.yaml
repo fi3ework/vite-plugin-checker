@@ -13,6 +13,7 @@ importers:
       '@types/prompts': ^2.0.13
       '@types/rimraf': ^3.0.0
       '@types/semver': ^7.3.6
+      '@types/ws': ^8.5.3
       '@typescript-eslint/eslint-plugin': ^4.15.2
       '@typescript-eslint/parser': ^4.15.2
       chalk: ^4.1.1
@@ -46,6 +47,7 @@ importers:
       typescript: ^4.2.2
       vite: ^2.7.13
       vite-plugin-checker: workspace:*
+      ws: ^8.5.0
       zx: ^1.14.2
     devDependencies:
       '@types/babel__code-frame': 7.0.2
@@ -57,6 +59,7 @@ importers:
       '@types/prompts': 2.0.13
       '@types/rimraf': 3.0.0
       '@types/semver': 7.3.6
+      '@types/ws': 8.5.3
       '@typescript-eslint/eslint-plugin': 4.26.1_c8cbd5e7f5f92609ec78d991aced454b
       '@typescript-eslint/parser': 4.26.1_eslint@7.28.0+typescript@4.3.2
       chalk: 4.1.1
@@ -90,6 +93,7 @@ importers:
       typescript: 4.3.2
       vite: 2.7.13
       vite-plugin-checker: link:packages/vite-plugin-checker
+      ws: 8.5.0
       zx: 1.14.2
 
   packages/runtime:
@@ -1384,6 +1388,12 @@ packages:
 
   /@types/stack-utils/2.0.0:
     resolution: {integrity: sha512-RJJrrySY7A8havqpGObOB4W92QXKJo63/jFLLgpvOtsGUqbQZ9Sbgl35KMm1DjC6j7AvmmU2bIno+3IyEaemaw==}
+    dev: true
+
+  /@types/ws/8.5.3:
+    resolution: {integrity: sha512-6YOoWjruKj1uLf3INHH7D3qTXwFfEsg1kf3c0uDdSBJwfa/llkwIjrAGV7j7mVgGNbzTQ3HiHKKDXl6bJPD97w==}
+    dependencies:
+      '@types/node': 15.12.5
     dev: true
 
   /@types/yargs-parser/20.2.0:
@@ -8054,6 +8064,19 @@ packages:
 
   /ws/8.4.2:
     resolution: {integrity: sha512-Kbk4Nxyq7/ZWqr/tarI9yIt/+iNNFOjBXEWgTb4ydaNHBNGgvf2QHbS9fdfsndfjFlFwEd4Al+mw83YkaD10ZA==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: true
+
+  /ws/8.5.0:
+    resolution: {integrity: sha512-BWX0SWVgLPzYwF8lTzEy1egjhS4S4OEAHfsO8o65WOVsrnSRGaSiUaa9e0ggGlkMTtBlmOpEXiie9RUcBO86qg==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1

@@ -34,7 +34,7 @@ describe('overlay-false', () => {
   })
 
   it('overlay: false', async () => {
-    editFile('vite.config.ts', (code) => code.replace('// edit-slot', 'overlay: false,'))
+    editFile('vite.config.ts', (code) => code.replace('// checker-edit-slot', 'overlay: false,'))
 
     await viteServe({ cwd: testDir, launchPage: true })
     await sleep(6000)

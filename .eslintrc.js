@@ -5,8 +5,11 @@ module.exports = {
     jest: true,
   },
   globals: {
-    page: 'readable',
-    globalThis: 'readable',
+    page: 'readonly',
+    globalThis: 'readonly',
+    __HMR_HOSTNAME__: 'readonly',
+    __HMR_PORT__: 'readonly',
+    __HMR_PROTOCOL__: 'readonly',
   },
   plugins: ['svelte3'],
   overrides: [

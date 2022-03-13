@@ -39,7 +39,7 @@ describe('overlay-position-style', () => {
   it('get initial error and subsequent error', async () => {
     editFile('vite.config.ts', (code) =>
       code.replace(
-        `// edit-slot`,
+        `// checker-edit-slot`,
         `overlay: { position: 'tr', badgeStyle: 'background-color: #E799B0', },`
       )
     )
