@@ -1,14 +1,13 @@
 import execa from 'execa'
 import path from 'path'
-import playwright from 'playwright-chromium'
 import strip from 'strip-ansi'
 import invariant from 'tiny-invariant'
-import { build, createServer, HMRPayload, ViteDevServer, CustomPayload } from 'vite'
+import { createServer, ViteDevServer, CustomPayload } from 'vite'
 import { Checker } from 'vite-plugin-checker'
 
 import { expectStdoutNotContains, expectStderrContains, sleep, testDir } from '../testUtils'
 
-import type { ElementHandleForTag } from 'playwright-chromium/types/structs'
+import type { ElementHandle } from 'playwright-chromium'
 let devServer: ViteDevServer
 let binPath: string
 export let log = ''
@@ -110,23 +109,25 @@ export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T)
   }
 }
 
-export async function waitForHmrOverlay() {
+export async function waitForHmrOverlay(): Promise<
+  ElementHandle<'vite-plugin-checker-error-overlay'>
+> {
   const element = await page.waitForSelector('vite-plugin-checker-error-overlay', {
     state: 'attached',
   })
   return element
 }
 
-export async function getHmrOverlay() {
+export async function getHmrOverlay(): Promise<ElementHandle<'vite-plugin-checker-error-overlay'> | null> {
   const dom = await page.$('vite-plugin-checker-error-overlay')
   if (dom) console.log('found vite-plugin-checker-error-overlay')
   return dom
 }
 
 export async function getHmrOverlayText(
-  element?: ElementHandleForTag<'vite-plugin-checker-error-overlay'> | null
+  element?: ElementHandle<'vite-plugin-checker-error-overlay'> | null
 ) {
-  let shadowRoot: ElementHandleForTag<'vite-plugin-checker-error-overlay'> | undefined | null
+  let shadowRoot: ElementHandle<'vite-plugin-checker-error-overlay'> | undefined | null
   if (element) {
     shadowRoot = element
   } else {
@@ -174,7 +175,7 @@ export async function viteBuild({
       await promise
       throw new Error('Fail! Should failed with error message')
     } catch (e) {
-      expectStderrContains(e.toString(), expectedErrorMsg)
+      expectStderrContains((e as any).toString(), expectedErrorMsg)
     }
     return
   }
