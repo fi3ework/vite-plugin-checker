@@ -50,7 +50,7 @@ body:
       label: Validations
       description: Before submitting the issue, please make sure you do the following
       options:
-        - label: Read the [docs](https://github.com/fi3ework/vite-plugin-checker).
+        - label: Read the [docs](https://github.com/fi3ework/vite-plugin-checker#readme).
           required: true
         - label: Check that there isn't already an issue that reports the same bug to avoid creating a duplicate.
           required: true
