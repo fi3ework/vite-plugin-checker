@@ -1,3 +1,10 @@
+## <small>0.4.3 (2022-03-13)</small>
+
+* feat: support customized config.server.hmr (fix #119) ([c1bfa21](https://github.com/fi3ework/vite-plugin-checker/commit/c1bfa21)), closes [#119](https://github.com/fi3ework/vite-plugin-checker/issues/119)
+* chore: bump playwright-chromium for macos 12 ([2dd7406](https://github.com/fi3ework/vite-plugin-checker/commit/2dd7406))
+
+
+
 ## <small>0.4.2 (2022-02-12)</small>
 
 * test: add case for no runtime code in build ([0a7a1e7](https://github.com/fi3ework/vite-plugin-checker/commit/0a7a1e7))
