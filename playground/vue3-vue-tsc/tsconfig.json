@@ -6,6 +6,7 @@
     "strict": true,
     "jsx": "preserve",
     "sourceMap": true,
+    "noEmit": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],

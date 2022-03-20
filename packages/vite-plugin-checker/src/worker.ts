@@ -60,6 +60,7 @@ export function createScript<T extends Partial<BuildInCheckers>>({
               type: ACTION_TYPES.configureServer,
               payload: serverConfig,
             }
+
             worker.postMessage(configureServerAction)
           },
         }
