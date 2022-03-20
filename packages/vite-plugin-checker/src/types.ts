@@ -5,6 +5,21 @@ import type { VlsOptions } from './checkers/vls/initParams'
 
 /* ----------------------------- userland plugin options ----------------------------- */
 
+interface TsConfigOptions {
+  /**
+   * path to tsconfig.json file
+   */
+  tsconfigPath: string
+  /**
+   * root path of cwd
+   */
+  root: string
+  /**
+   * root path of cwd
+   */
+  buildMode: boolean
+}
+
 /**
  * TypeScript checker configuration
  * @default true
@@ -14,28 +29,15 @@ export type TscConfig =
    * - set to `true` to enable type checking with default configuration
    * - set to `false` to disable type checking, you can also remove `config.typescript` directly
    */
-  | boolean
-  | Partial<{
-      /**
-       * path to tsconfig.json file
-       */
-      tsconfigPath: string
-      /**
-       * root path of cwd
-       */
-      root: string
-      /**
-       * root path of cwd
-       */
-      buildMode: boolean
-    }>
+  boolean | Partial<TsConfigOptions>
 
 /** vue-tsc checker configuration */
 export type VueTscConfig =
-  | boolean
-  | Partial<{
-      // TODO: support vue-tsc config
-    }>
+  /**
+   * - set to `true` to enable type checking with default configuration
+   * - set to `false` to disable type checking, you can also remove `config.vueTsc` directly
+   */
+  boolean | Partial<Omit<TsConfigOptions, 'build'>>
 
 /** vls checker configuration */
 export type VlsConfig = boolean | DeepPartial<VlsOptions>

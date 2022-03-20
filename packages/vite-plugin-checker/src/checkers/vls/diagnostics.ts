@@ -301,7 +301,7 @@ async function getDiagnostics(
 
           console.log(logChunk)
           return { initialErrorCount, initialWarningCount }
-        } catch (err) {
+        } catch (err: any) {
           console.error(err.stack)
           return { initialErrorCount, initialWarningCount }
         }
