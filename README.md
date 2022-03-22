@@ -60,7 +60,7 @@ export default {
 }
 ```
 
-### Vue (use Vetur / VLS)
+### Vue with VLS(Vetur)
 
 1. Make sure [vls](https://www.npmjs.com/package/vls) is installed as a peer dependency, plugin will use vls as the check server.
 
@@ -76,14 +76,12 @@ export default {
    }
    ```
 
-### Vue (use Volar / vue-tsc)
+### Vue with vue-tsc (Volar)
 
-_Only support checking in **build mode** since `vue-tsc` doesn't support watch mode for now._
-
-1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) is installed as a peer dependency.
+1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) & TypeScript is installed as a peer dependency to your Vite project.
 
    ```bash
-   pnpm add vue-tsc -D
+   pnpm add vue-tsc typescript -D
    ```
 
 2. Add `vueTsc` field to plugin config.
@@ -224,11 +222,10 @@ checker({
 
 ### config.vueTsc
 
-no available params for now.
-
-<!-- | field | Type | Default value | Description |
-| :---- | ---- | ------------- | ----------- |
-|       |      |               |             | -->
+| field        | Type     | Default value                                         | Description                      |
+| :----------- | -------- | ----------------------------------------------------- | -------------------------------- |
+| root         | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file  |
+| tsconfigPath | `string` | `"tsconfig.json"`                                     | Relative tsconfig path to `root` |
 
 ## Playground
 
