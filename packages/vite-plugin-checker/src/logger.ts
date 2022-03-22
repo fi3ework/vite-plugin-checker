@@ -316,6 +316,12 @@ export function lspRange2Location(range: Range): SourceLocation {
 
 /* --------------------------------- vue-tsc -------------------------------- */
 
+export function normalizeVueTscDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
+  const diagnostic = normalizeTsDiagnostic(d)
+  diagnostic.checker = 'vue-tsc'
+  return diagnostic
+}
+
 /* --------------------------------- ESLint --------------------------------- */
 
 const isNormalizedDiagnostic = (
