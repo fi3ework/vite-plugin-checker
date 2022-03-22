@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`vue3-vue-tsc serve get initial error and subsequent error 1`] = `"[{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    1 | <template>/n    2 |   <img alt=/\\"Vue logo/\\" src=/\\"./assets/logo.png/\\" />/n  > 3 |   <HelloWorld msg1=/\\"Diana/\\" />/n      |    ^^^^^^^^^^/n    4 | </template>/n    5 |/n    6 | <script lang=/\\"ts/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/temp/vue3-vue-tsc/src/App.vue\\",\\"level\\":1,\\"loc\\":{\\"column\\":4,\\"file\\":\\"<PROJECT_ROOT>/temp/vue3-vue-tsc/src/App.vue\\",\\"line\\":3},\\"message\\":\\"Type '{ msg1: string; }' is not assignable to type 'IntrinsicAttributes & Partial<{}> & Omit<Readonly<{ msg?: unknown; } & { msg: string; } & {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'./n  Property 'msg' is missing in type '{ msg1: string; }' but required in type 'Omit<Readonly<{ msg?: unknown; } & { msg: string; } & {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.\\",\\"stack\\":\\"\\"}]"`;
+
+exports[`vue3-vue-tsc serve get initial error and subsequent error 2`] = `
+"
+ ERROR(TypeScript)  Type '{ msg1: string; }' is not assignable to type 'IntrinsicAttributes & Partial<{}> & Omit<Readonly<{ msg?: unknown; } & { msg: string; } & {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.
+  Property 'msg' is missing in type '{ msg1: string; }' but required in type 'Omit<Readonly<{ msg?: unknown; } & { msg: string; } & {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.
+ FILE  <PROJECT_ROOT>/temp/vue3-vue-tsc/src/App.vue:3:4
+
+    1 | <template>
+    2 |   <img alt=\\"Vue logo\\" src=\\"./assets/logo.png\\" />
+  > 3 |   <HelloWorld msg1=\\"Diana\\" />
+      |    ^^^^^^^^^^
+    4 | </template>
+    5 |
+    6 | <script lang=\\"ts\\">
+
+[TypeScript] Found 1 error. Watching for file changes."
+`;
+
+exports[`vue3-vue-tsc serve get initial error and subsequent error 3`] = `"[{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    1 | <template>/n    2 |   <img alt=/\\"Vue logo/\\" src=/\\"./assets/logo.png/\\" />/n  > 3 |   <HelloWorld msg2=/\\"Diana/\\" />/n      |    ^^^^^^^^^^/n    4 | </template>/n    5 |/n    6 | <script lang=/\\"ts/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/temp/vue3-vue-tsc/src/App.vue\\",\\"level\\":1,\\"loc\\":{\\"column\\":4,\\"file\\":\\"<PROJECT_ROOT>/temp/vue3-vue-tsc/src/App.vue\\",\\"line\\":3},\\"message\\":\\"Type '{ msg2: string; }' is not assignable to type 'IntrinsicAttributes & Partial<{}> & Omit<Readonly<{ msg?: unknown; } & { msg: string; } & {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'./n  Property 'msg' is missing in type '{ msg2: string; }' but required in type 'Omit<Readonly<{ msg?: unknown; } & { msg: string; } & {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.\\",\\"stack\\":\\"\\"}]"`;
+
+exports[`vue3-vue-tsc serve get initial error and subsequent error 4`] = `
+"
+ ERROR(TypeScript)  Type '{ msg2: string; }' is not assignable to type 'IntrinsicAttributes & Partial<{}> & Omit<Readonly<{ msg?: unknown; } & { msg: string; } & {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.
+  Property 'msg' is missing in type '{ msg2: string; }' but required in type 'Omit<Readonly<{ msg?: unknown; } & { msg: string; } & {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.
+ FILE  <PROJECT_ROOT>/temp/vue3-vue-tsc/src/App.vue:3:4
+
+    1 | <template>
+    2 |   <img alt=\\"Vue logo\\" src=\\"./assets/logo.png\\" />
+  > 3 |   <HelloWorld msg2=\\"Diana\\" />
+      |    ^^^^^^^^^^
+    4 | </template>
+    5 |
+    6 | <script lang=\\"ts\\">
+
+[TypeScript] Found 1 error. Watching for file changes."
+`;

@@ -115,13 +115,13 @@ export async function waitForHmrOverlay(): Promise<
   const element = await page.waitForSelector('vite-plugin-checker-error-overlay', {
     state: 'attached',
   })
-  return element
+  return element as any
 }
 
 export async function getHmrOverlay(): Promise<ElementHandle<'vite-plugin-checker-error-overlay'> | null> {
   const dom = await page.$('vite-plugin-checker-error-overlay')
   if (dom) console.log('found vite-plugin-checker-error-overlay')
-  return dom
+  return dom as any
 }
 
 export async function getHmrOverlayText(
