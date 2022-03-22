@@ -10,7 +10,7 @@ import {
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   ensureCall,
-  normalizeTsDiagnostic,
+  normalizeVueTscDiagnostic,
   toViteCustomPayload,
   wrapCheckerSummary,
 } from '../../logger'
@@ -28,10 +28,9 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
       terminal = enableTerminal
     },
     configureServer({ root }) {
-      invariant(pluginConfig.vueTsc, 'config.typescript should be `false`')
+      invariant(pluginConfig.vueTsc, 'config.vueTsc should be `false`')
 
       const { tsDirTo } = prepareVueTsc()
-      // const tsDirTo = path.resolve(__dirname, 'typescript-vue-tsc')
 
       const vueTs = require(path.resolve(tsDirTo, 'lib/tsc.js'))
 
@@ -61,13 +60,13 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
-        const normalizedDiagnostic = normalizeTsDiagnostic(diagnostic)
+        const normalizedDiagnostic = normalizeVueTscDiagnostic(diagnostic)
         if (normalizedDiagnostic === null) {
           return
         }
 
         currDiagnostics.push(diagnosticToRuntimeError(normalizedDiagnostic))
-        logChunk += os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'TypeScript')
+        logChunk += os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'vue-tsc')
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
@@ -93,7 +92,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
             if (overlay) {
               parentPort?.postMessage({
                 type: ACTION_TYPES.overlayError,
-                payload: toViteCustomPayload('typescript', currDiagnostics),
+                payload: toViteCustomPayload('vue-tsc', currDiagnostics),
               })
             }
         }
@@ -105,9 +104,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
 
           if (terminal) {
             consoleLog(
-              logChunk +
-                os.EOL +
-                wrapCheckerSummary('TypeScript', diagnostic.messageText.toString())
+              logChunk + os.EOL + wrapCheckerSummary('vue-tsc', diagnostic.messageText.toString())
             )
           }
         })
@@ -117,27 +114,16 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
       // https://github.com/microsoft/TypeScript/pull/33082/files
       const createProgram = vueTs.createSemanticDiagnosticsBuilderProgram
 
-      if (typeof pluginConfig.vueTsc === 'object' && pluginConfig.vueTsc.buildMode) {
-        // const host = ts.createSolutionBuilderWithWatchHost(
-        //   ts.sys,
-        //   createProgram,
-        //   reportDiagnostic,
-        //   undefined,
-        //   reportWatchStatusChanged
-        // )
-        // ts.createSolutionBuilderWithWatch(host, [configFile], {}).build()
-      } else {
-        const host = vueTs.createWatchCompilerHost(
-          configFile,
-          { noEmit: true },
-          vueTs.sys,
-          createProgram,
-          reportDiagnostic,
-          reportWatchStatusChanged
-        )
+      const host = vueTs.createWatchCompilerHost(
+        configFile,
+        { noEmit: true },
+        vueTs.sys,
+        createProgram,
+        reportDiagnostic,
+        reportWatchStatusChanged
+      )
 
-        vueTs.createWatchProgram(host)
-      }
+      vueTs.createWatchProgram(host)
     },
   }
 }
@@ -149,12 +135,10 @@ export class VueTscChecker extends Checker<'vueTsc'> {
       absFilePath: __filename,
       build: {
         buildBin: (config) => {
-          if (typeof config.typescript === 'object') {
-            const { root, tsconfigPath, buildMode } = config.typescript
+          if (typeof config.vueTsc === 'object') {
+            const { root, tsconfigPath } = config.vueTsc
 
-            // Compiler option '--noEmit' may not be used with '--build'
-            let args = [buildMode ? '-b' : '--noEmit']
-
+            let args = ['--noEmit']
             // Custom config path
             if (tsconfigPath) {
               const fullConfigPath = root ? path.join(root, tsconfigPath) : tsconfigPath

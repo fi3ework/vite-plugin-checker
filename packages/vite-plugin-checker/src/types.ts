@@ -37,7 +37,7 @@ export type VueTscConfig =
    * - set to `true` to enable type checking with default configuration
    * - set to `false` to disable type checking, you can also remove `config.vueTsc` directly
    */
-  boolean | Partial<Omit<TsConfigOptions, 'build'>>
+  boolean | Partial<Omit<TsConfigOptions, 'buildMode'>>
 
 /** vls checker configuration */
 export type VlsConfig = boolean | DeepPartial<VlsOptions>
