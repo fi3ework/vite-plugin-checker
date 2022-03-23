@@ -30,6 +30,13 @@ afterAll(async () => {
   await sleep(WORKER_CLEAN_TIMEOUT)
 })
 
+function shouldSkipTest() {
+  const NODE_MAJOR_VERSION = Number(process.versions.node.split('.')[0])
+  // vue-tsc/out/proxy uses optional chaining which is not supported by node12
+  // so we ignore this case on node12 until Vite drop node12 support
+  return NODE_MAJOR_VERSION <= 12
+}
+
 describe('vue3-vue-tsc', () => {
   beforeEach(async () => {
     await copyCode()
@@ -41,6 +48,10 @@ describe('vue3-vue-tsc', () => {
     })
 
     it('get initial error and subsequent error', async () => {
+      if (shouldSkipTest()) {
+        return expect(true).toBe(true)
+      }
+
       let diagnostics: any
       await viteServe({
         cwd: testDir,
@@ -69,6 +80,10 @@ describe('vue3-vue-tsc', () => {
     const errMsg = `src/App.vue(3,4): error TS2322: Type '{ msg1: string; }' is not assignable to type 'IntrinsicAttributes & Partial<{}> & Omit<Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.`
 
     it('enableBuild: true', async () => {
+      if (shouldSkipTest()) {
+        return expect(true).toBe(true)
+      }
+
       await viteBuild({
         expectedErrorMsg: errMsg,
         cwd: testDir,
