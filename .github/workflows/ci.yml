@@ -65,14 +65,7 @@ jobs:
         run: pnpm run type-check
 
       - name: Test
-        if: runner.os != 'Windows'
-        run: pnpm run test
-
-      # ignore some test case on Windows until we can fix it
-      - name: Test-Windows
-        if: runner.os == 'Windows'
-        run: pnpm run test-win
-        shell: bash
+        run: pnpm --silent run test
 
   coverage:
     runs-on: ubuntu-latest
