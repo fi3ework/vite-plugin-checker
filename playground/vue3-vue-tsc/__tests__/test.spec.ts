@@ -59,14 +59,14 @@ describe('vue3-vue-tsc', () => {
       editFile('src/App.vue', (code) =>
         code.replace('<HelloWorld msg1="Diana" />', '<HelloWorld msg2="Diana" />')
       )
-      await sleepForEdit()
+      await sleepForEdit(2)
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
   })
 
   describe('build', () => {
-    const errMsg = `error TS2322: Type '{ msg1: string; }' is not assignable to type 'IntrinsicAttributes & Partial<{}> & Omit<Readonly<{ msg?: unknown; } & { msg: string; } & {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.`
+    const errMsg = `src/App.vue(3,4): error TS2322: Type '{ msg1: string; }' is not assignable to type 'IntrinsicAttributes & Partial<{}> & Omit<Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.`
 
     it('enableBuild: true', async () => {
       await viteBuild({
