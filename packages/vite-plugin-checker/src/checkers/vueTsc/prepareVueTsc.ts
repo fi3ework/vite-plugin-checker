@@ -45,7 +45,7 @@ export function prepareVueTsc() {
     const tsVersion = require('typescript/package.json').version
     if (toDirVersion !== tsVersion) {
       shouldPrepare = true
-      fs.rmdirSync(tsDirTo)
+      rimraf(tsDirTo)
     }
   } else {
     shouldPrepare = true
@@ -87,4 +87,21 @@ function modifyFileText(
     newText = newText.replace(target, replacement)
   }
   fs.writeFileSync(filePath, newText)
+}
+
+/**
+ * https://stackoverflow.com/a/42505874
+ */
+function rimraf(dir_path: string) {
+  if (fs.existsSync(dir_path)) {
+    fs.readdirSync(dir_path).forEach(function (entry) {
+      var entry_path = path.join(dir_path, entry)
+      if (fs.lstatSync(entry_path).isDirectory()) {
+        rimraf(entry_path)
+      } else {
+        fs.unlinkSync(entry_path)
+      }
+    })
+    fs.rmdirSync(dir_path)
+  }
 }

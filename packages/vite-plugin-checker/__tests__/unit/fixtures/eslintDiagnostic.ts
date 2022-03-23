@@ -45,6 +45,7 @@ export const eslintResult1: ESLint.LintResult = {
     },
   ],
   errorCount: 2,
+  fatalErrorCount: 2,
   warningCount: 0,
   fixableErrorCount: 2,
   fixableWarningCount: 0,

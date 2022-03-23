@@ -28,11 +28,11 @@ export function proxyConsoleInTest(accumulate = true) {
 }
 
 export async function sleepForServerReady(ratio = 1) {
-  await sleep(process.env.CI ? 10000 * ratio : 5000 * ratio)
+  await sleep(process.env.CI ? 10e3 * ratio : 5e3 * ratio)
 }
 
-export async function sleepForEdit() {
-  await sleep(process.env.CI ? 4000 : 2000)
+export async function sleepForEdit(ratio = 1) {
+  await sleep(process.env.CI ? 4e3 * ratio : 2e3 * ratio)
 }
 
 export function resetReceivedLog() {

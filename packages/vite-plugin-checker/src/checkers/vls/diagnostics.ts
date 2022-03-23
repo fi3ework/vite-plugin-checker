@@ -36,6 +36,7 @@ import { DeepPartial } from '../../types'
 import { getInitParams, VlsOptions } from './initParams'
 
 import { FileDiagnosticManager } from '../../FileDiagnosticManager'
+
 enum DOC_VERSION {
   init = -1,
 }
