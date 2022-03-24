@@ -7,9 +7,9 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 
 ## Features
 
-- ⚡️ Speeds up TypeScript, VLS, etc. checkers by running in worker thread in serve mode
+- ⚡️ Speeds up TypeScript, vue-tsc, ESLint, etc. checks by running in worker thread in serve mode
 - 🍀 Works good with vanilla JS / TS, React, Vue2, Vue3
-- 💬 Prompt errors in an overlay UI and terminal console
+- 💬 Prompt errors in an overlay UI and terminal
 - 🌗 Works both in Vite serve and build mode
 
 <p align="center">
@@ -26,7 +26,7 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
    pnpm add vite-plugin-checker -D
    ```
 
-2. Add it to Vite config file. Add the checker property you need. We add TypeScript below for example.
+2. Add plugin to Vite config file. Add the checker property you need. We add TypeScript below for example. See all available checkers [here](#Available-checkers).
 
    ```ts
    // vite.config.js
@@ -48,7 +48,7 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 
 You can add following supported checkers. Detailed configuration for each checker is in [advanced config](#advanced-config) section.
 
-### TypeScript (React / Vanilla TS)
+### TypeScript
 
 1. Make sure [typescript](https://www.npmjs.com/package/typescript) is installed as a peer dependency.
 
@@ -60,7 +60,7 @@ export default {
 }
 ```
 
-### Vue with VLS(Vetur)
+### VLS (Vetur)
 
 1. Make sure [vls](https://www.npmjs.com/package/vls) is installed as a peer dependency, plugin will use vls as the check server.
 
@@ -76,9 +76,9 @@ export default {
    }
    ```
 
-### Vue with vue-tsc (Volar)
+### vue-tsc (Volar)
 
-1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) & TypeScript is installed as a peer dependency to your Vite project.
+1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) & TypeScript are installed as a peer dependency of your Vite project.
 
    ```bash
    pnpm add vue-tsc typescript -D
@@ -86,7 +86,7 @@ export default {
 
 2. Add `vueTsc` field to plugin config.
 
-3. (Optional) The type check is powered by `vue-tsc` so it supports Vue2 according to the [documentation](https://github.com/johnsoncodehk/volar#using), you need to install `@vue/runtime-dom` by yourself.
+3. (Optional for Vue2 user) The type check is powered by `vue-tsc` so it supports Vue2 according to the [documentation](https://github.com/johnsoncodehk/volar#using), you need to install `@vue/runtime-dom` by yourself.
 
    ```js
    export default {
@@ -100,14 +100,14 @@ export default {
 
 2. (optional but highly recommended) Install `optionator@^0.9.1` with your package manager. It's needed because of ESLint dependents on it. It's probably working fine even it's not installed as it's accessed as a phantom dependency(not recommended). But when you set `hoist=false` of pnpm. It won't be accessed anymore without explicit installation.
 
-3. Add `eslint` field to plugin config, the `lintCommand` is required, it's quite like the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
+3. Add `eslint` field to plugin config, `eslint.lintCommand` is required, it's quite like the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
 
    ```js
    export default {
      plugins: [
        checker({
          eslint: {
-           lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+           lintCommand: 'eslint "./src/**/*.{ts,tsx}"', // for example, lint .ts & .tsx
          },
        }),
      ],
@@ -235,8 +235,8 @@ Run projects in [`playground/*`](./playground) to try it out.
 pnpm i
 pnpm run build
 cd ./playground/<one_exapmple>    # choose one example
-pnpm run dev                     # test in serve mode
-pnpm run build                   # test in build mode
+pnpm run dev                      # test in serve mode
+pnpm run build                    # test in build mode
 ```
 
 ## License
