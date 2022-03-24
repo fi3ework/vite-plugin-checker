@@ -30,9 +30,9 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
     configureServer({ root }) {
       invariant(pluginConfig.vueTsc, 'config.vueTsc should be `false`')
 
-      const { tsDirTo } = prepareVueTsc()
+      const { targetTsDir } = prepareVueTsc()
 
-      const vueTs = require(path.resolve(tsDirTo, 'lib/tsc.js'))
+      const vueTs = require(path.resolve(targetTsDir, 'lib/tsc.js'))
 
       const finalConfig =
         pluginConfig.vueTsc === true
