@@ -47,26 +47,18 @@
   <pre class="message">
     <span class="plugin" style="color: {checkerColorMap[diagnostic.checkerId]}"
       >{`[${diagnostic.checkerId}] `}</span
-    >
-    <span class={`message-body message-body-${diagnostic.level}`}>{message}</span>
+    ><span class={`message-body message-body-${diagnostic.level}`}>{message}</span>
   </pre>
-  <pre class="file">
-    {#if errorSource.linkFiles}
-      <!-- svelte-ignore a11y-missing-attribute -->
-      <a
-        class="file-link"
-        on:click={errorSource.onclick}>{errorSource.textContent}</a
+  <!-- svelte-ignore a11y-missing-attribute -->
+  <pre class="file">{#if errorSource.linkFiles}<a class="file-link" on:click={errorSource.onclick}
+        >{errorSource.textContent}</a
       >
     {:else}
       {errorSource.text}
     {/if}
   </pre>
   {#if hasFrame}
-    <pre class="frame">
-      <code class="frame-code">
-         {diagnostic.frame}
-      </code>
-    </pre>
+    <pre class="frame"><code class="frame-code">{diagnostic.frame}</code></pre>
   {/if}
   <pre class="stack">{diagnostic.stack}</pre>
 </li>
