@@ -18,6 +18,16 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 
 > History version documentations [0.1](https://github.com/fi3ework/vite-plugin-checker/tree/v0.1.x), [0.2](https://github.com/fi3ework/vite-plugin-checker/tree/v0.2), [0.3](https://github.com/fi3ework/vite-plugin-checker/tree/v0.3.x). It's highly recommended to use latest version before 1.0.0, although there's some breaking changes, the plugin configuration is quite simple.
 
+## Online playground
+
+| Examples           | StackBlitz                                                       |
+| ------------------ | ---------------------------------------------------------------- |
+| Vue3 + vue-tsc     | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-p4qsv6) |
+| React + TypeScript | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-bsdp5b) |
+| ESLint             | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-xkwqvz) |
+| Vue2 + VLS         | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-bqtcau) |
+| Multiple           | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-uetqdg) |
+
 ## Getting Started
 
 1. Install plugin.
@@ -78,7 +88,7 @@ export default {
 
 ### vue-tsc (Volar)
 
-1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) & TypeScript are installed as a peer dependency of your Vite project.
+1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) & TypeScript are installed as a peer dependency of your Vite project. **The `vue-tsc` version must meet `^0.33.5`**.
 
    ```bash
    pnpm add vue-tsc typescript -D
