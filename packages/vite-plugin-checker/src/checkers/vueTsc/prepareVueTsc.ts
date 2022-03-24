@@ -37,30 +37,49 @@ const textToReplace: { target: string; replacement: string }[] = [
 
 export function prepareVueTsc() {
   // 1. copy typescript to folder
-  const tsDirTo = path.resolve(__dirname, 'typescript-vue-tsc')
-  let shouldPrepare = false
-  const exist = fs.existsSync(tsDirTo)
-  if (exist) {
-    const toDirVersion = require(path.resolve(tsDirTo, 'package.json')).version
-    const tsVersion = require('typescript/package.json').version
-    if (toDirVersion !== tsVersion) {
+  const targetTsDir = path.resolve(__dirname, 'typescript-vue-tsc')
+  const vueTscFlagFile = path.resolve(targetTsDir, 'vue-tsc-resolve-path')
+
+  let shouldPrepare = true
+  const targetDirExist = fs.existsSync(targetTsDir)
+  if (targetDirExist) {
+    const targetTsVersion = require(path.resolve(targetTsDir, 'package.json')).version
+    const currTsVersion = require('typescript/package.json').version
+    // check fixture versions before re-use
+    if (
+      targetTsVersion === currTsVersion &&
+      fs.existsSync(vueTscFlagFile) &&
+      fs.readFileSync(vueTscFlagFile, 'utf8') === proxyPath
+    ) {
       shouldPrepare = true
-      rimraf(tsDirTo)
     }
-  } else {
-    shouldPrepare = true
   }
 
   if (shouldPrepare) {
-    fs.mkdirSync(tsDirTo)
-    const tsPath = path.resolve(require.resolve('typescript'), '../..')
-    copyDirRecursively(tsPath, tsDirTo)
+    rimraf(targetTsDir)
+    fs.mkdirSync(targetTsDir)
+    const sourceTsDir = path.resolve(require.resolve('typescript'), '../..')
+    copyDirRecursively(sourceTsDir, targetTsDir)
+    fs.writeFileSync(vueTscFlagFile, proxyPath)
+
     // 2. sync modification of lib/tsc.js with vue-tsc
-    const tscJs = require.resolve(path.resolve(tsDirTo, 'lib/tsc.js'))
+    const tscJs = require.resolve(path.resolve(targetTsDir, 'lib/tsc.js'))
     modifyFileText(tscJs, textToReplace)
   }
 
-  return { tsDirTo }
+  return { targetTsDir: targetTsDir }
+}
+
+function modifyFileText(
+  filePath: string,
+  textToReplace: { target: string; replacement: string }[]
+) {
+  const text = fs.readFileSync(filePath, 'utf8')
+  let newText = text
+  for (const { target, replacement } of textToReplace) {
+    newText = newText.replace(target, replacement)
+  }
+  fs.writeFileSync(filePath, newText)
 }
 
 function copyDirRecursively(src: string, dest: string) {
@@ -75,18 +94,6 @@ function copyDirRecursively(src: string, dest: string) {
       fs.copyFileSync(srcPath, destPath)
     }
   }
-}
-
-function modifyFileText(
-  filePath: string,
-  textToReplace: { target: string; replacement: string }[]
-) {
-  const text = fs.readFileSync(filePath, 'utf8')
-  let newText = text
-  for (const { target, replacement } of textToReplace) {
-    newText = newText.replace(target, replacement)
-  }
-  fs.writeFileSync(filePath, newText)
 }
 
 /**
