@@ -1,3 +1,16 @@
+## <small>0.4.4 (2022-03-24)</small>
+
+* fix: add vue-tsc resolved path flag ([7c4d97f](https://github.com/fi3ework/vite-plugin-checker/commit/7c4d97f))
+* fix: svelte whitespace minification ([c136c43](https://github.com/fi3ework/vite-plugin-checker/commit/c136c43))
+* fix(vue-tsc): runtime error UI ([6c561e8](https://github.com/fi3ework/vite-plugin-checker/commit/6c561e8))
+* build: exclude vue-tsc-typescript fixtures ([740cedf](https://github.com/fi3ework/vite-plugin-checker/commit/740cedf))
+* build: fix typescript version of vls ([4769045](https://github.com/fi3ework/vite-plugin-checker/commit/4769045))
+* refactor: fix lint ([996f6a7](https://github.com/fi3ework/vite-plugin-checker/commit/996f6a7))
+* test: add test for vue-tsc ([e46d327](https://github.com/fi3ework/vite-plugin-checker/commit/e46d327))
+* feat: support vue-tsc watch mode ([6871f55](https://github.com/fi3ework/vite-plugin-checker/commit/6871f55))
+
+
+
 ## <small>0.4.3 (2022-03-13)</small>
 
 * feat: support customized config.server.hmr (fix #119) ([c1bfa21](https://github.com/fi3ework/vite-plugin-checker/commit/c1bfa21)), closes [#119](https://github.com/fi3ework/vite-plugin-checker/issues/119)
