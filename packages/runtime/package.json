@@ -13,8 +13,8 @@
     "preview": "sirv public --no-clear"
   },
   "devDependencies": {
-    "esbuild": "^0.14.13",
-    "esbuild-svelte": "^0.6.2",
+    "esbuild": "^0.14.27",
+    "esbuild-svelte": "^0.6.3",
     "has-flag": "^5.0.1",
     "sirv-cli": "^2.0.0"
   }
