@@ -7,7 +7,7 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 
 ## Features
 
-- ⚡️ Speeds up TypeScript, vue-tsc, ESLint, etc. checks by running in worker thread in serve mode
+- ⚡️ Speeds up TypeScript, vue-tsc, ESLint, etc. checks by running in a worker thread in serve mode
 - 🍀 Works good with vanilla JS / TS, React, Vue2, Vue3
 - 💬 Prompt errors in an overlay UI and terminal
 - 🌗 Works both in Vite serve and build mode
@@ -36,7 +36,7 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
    pnpm add vite-plugin-checker -D
    ```
 
-2. Add plugin to Vite config file. Add the checker property you need. We add TypeScript below for example. See all available checkers [here](#Available-checkers).
+2. Add plugin to Vite config file. Add the checker you need. We add TypeScript below as an example. See all available checkers [here](#Checker-configurations).
 
    ```ts
    // vite.config.js
@@ -51,12 +51,17 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 
 💡 **Caveats**:
 
-1. It's recommended to open browser for a better terminal flush, see [#27](https://github.com/fi3ework/vite-plugin-checker/pull/27).
+1. It's recommended to open a browser for a better terminal flush, see [#27](https://github.com/fi3ework/vite-plugin-checker/pull/27).
 2. `server.ws.on` is introduced to Vite in [2.6.8](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). vite-plugin-checker relies on `server.ws.on` to bring diagnostics back after a full reload and it' not available for older version of Vite.
 
-## Available checkers
+## Checker configurations
 
-You can add following supported checkers. Detailed configuration for each checker is in [advanced config](#advanced-config) section.
+For each checker config field below:
+
+- Set to `true` to use a checker with its default value (except ESLint).
+- Make sure to install the peer dependencies indicated of each checker.
+- Leave the field blank or `false` to disable the checker.
+- Checker can be enabled with an advanced object config.
 
 ### TypeScript
 
@@ -64,13 +69,77 @@ You can add following supported checkers. Detailed configuration for each checke
 
 2. Add `typescript` field to plugin config.
 
-```js
-export default {
-  plugins: [checker({ typescript: true } /** TS options */)],
-}
-```
+   ```js
+   export default {
+     plugins: [checker({ typescript: true /** or an object config */ })],
+   }
+   ```
 
-### VLS (Vetur)
+   Advanced object configuration table of `options.typescript`
+
+   | field        | Type      | Default value                                         | Description                                                                                                                                                                                                                     |
+   | :----------- | --------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | root         | `string`  | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file                                                                                                                                                                                                 |
+   | tsconfigPath | `string`  | `"tsconfig.json"`                                     | Relative tsconfig path to `root`                                                                                                                                                                                                |
+   | buildMode    | `boolean` | `false`                                               | Add [`--build`](https://www.typescriptlang.org/docs/handbook/project-references.html) to `tsc` flag, note that `noEmit` does NOT work if `buildMode` is `true` ([#36917](https://github.com/microsoft/TypeScript/issues/36917)) |
+
+### vue-tsc (Volar)
+
+1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) & [typescript](https://www.npmjs.com/package/typescript) are installed as a peer dependency of your Vite project.
+
+   ⚠️ The `vue-tsc` version must >= `0.33.5`.
+
+   ```bash
+   pnpm add vue-tsc@latest typescript -D
+   ```
+
+2. Add `vueTsc` field to plugin config.
+
+   ```js
+   export default {
+     plugins: [checker({ vueTsc: true /** or an object config */ })],
+   }
+   ```
+
+   Advanced object configuration table of `options.vueTsc`
+
+   | field        | Type     | Default value                                         | Description                      |
+   | :----------- | -------- | ----------------------------------------------------- | -------------------------------- |
+   | root         | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file  |
+   | tsconfigPath | `string` | `"tsconfig.json"`                                     | Relative tsconfig path to `root` |
+
+3. (Optional for Vue2 user) The type check is powered by `vue-tsc` so it supports Vue2 according to the [documentation](https://github.com/johnsoncodehk/volar#using), you need to install `@vue/runtime-dom` by yourself.
+
+### ESLint
+
+1. Make sure [eslint](https://www.npmjs.com/package/eslint) and related plugins for your `eslintrc` are installed as peer dependencies.
+
+2. **(Optional but highly recommended)** Install `optionator@^0.9.1` with your package manager. It's needed because of ESLint dependents on it. It's probably working fine even it's not installed as it's accessed as a phantom dependency. But when you set `hoist=false` of pnpm. It won't be accessible anymore without explicit installation.
+
+3. Add `eslint` field to plugin config and `options.eslint.lintCommand` is required. The `lintCommand` is the same as the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
+
+   ```js
+   // e.g.
+   export default {
+     plugins: [
+       checker({
+         eslint: {
+           lintCommand: 'eslint "./src/**/*.{ts,tsx}"', // for example, lint .ts & .tsx
+         },
+       }),
+     ],
+   }
+   ```
+
+   Advanced object configuration table of `options.eslint`
+
+   | field              | Type                                                                                                       | Default value          | Description                                                                                                                                                                                                              |
+   | :----------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+   | lintCommand        | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.eslint` is nullable.                                                                                 |
+   | dev.overrideConfig | [`ESLint.Options`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) | `undefined`            | **(Only in dev mode)** You can override the options of the translated from `lintCommand`. Config priority: `const eslint = new ESLint({cwd: root, ...translatedOptions, ...pluginConfig.eslint.dev?.overrideConfig, })`. |
+   | dev.logLevel       | `('error' \| 'warning')[]`                                                                                 | `['error', 'warning']` | **(Only in dev mode)** Which level of ESLint should be emitted to terminal and overlay in dev mode                                                                                                                       |
+
+### vls (Vetur)
 
 1. Make sure [vls](https://www.npmjs.com/package/vls) is installed as a peer dependency, plugin will use vls as the check server.
 
@@ -86,55 +155,33 @@ export default {
    }
    ```
 
-### vue-tsc (Volar)
+   Advanced object configuration of `options.vls`
 
-1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) & TypeScript are installed as a peer dependency of your Vite project. **The `vue-tsc` version must meet `^0.33.5`**.
+   VLS configuration accepts the same values that can be configured in VS code with keys that start with `vetur`.
+   These are configured with nested objects rather than dotted string notation. TypeScript intellisense is available.
 
-   ```bash
-   pnpm add vue-tsc typescript -D
-   ```
+   See [`initParams.ts`](https://github.com/fi3ework/vite-plugin-checker/blob/8fc5d7f4a908a4c80d1cb978e0acf1d4e5700e6a/packages/vite-plugin-checker/src/checkers/vls/initParams.ts#L33) for a comprehensive list of the defaults that can be overridden. Unfortunately, Vetur does not provide a single comprehensive document of all its options.
 
-2. Add `vueTsc` field to plugin config.
+   For example, to performing checking only the `<script>` block:
 
-3. (Optional for Vue2 user) The type check is powered by `vue-tsc` so it supports Vue2 according to the [documentation](https://github.com/johnsoncodehk/volar#using), you need to install `@vue/runtime-dom` by yourself.
-
-   ```js
-   export default {
-     plugins: [checker({ vueTsc: true })],
-   }
-   ```
-
-### ESLint
-
-1. Make sure [eslint](https://www.npmjs.com/package/eslint) is installed as a peer dependency.
-
-2. (optional but highly recommended) Install `optionator@^0.9.1` with your package manager. It's needed because of ESLint dependents on it. It's probably working fine even it's not installed as it's accessed as a phantom dependency(not recommended). But when you set `hoist=false` of pnpm. It won't be accessed anymore without explicit installation.
-
-3. Add `eslint` field to plugin config, `eslint.lintCommand` is required, it's quite like the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
-
-   ```js
-   export default {
-     plugins: [
-       checker({
-         eslint: {
-           lintCommand: 'eslint "./src/**/*.{ts,tsx}"', // for example, lint .ts & .tsx
+   ```ts
+   checker({
+     vls: {
+       vetur: {
+         validation: {
+           template: false,
+           templateProps: false,
+           interpolation: false,
+           style: false,
          },
-       }),
-     ],
-   }
+       },
+     },
+   }),
    ```
 
-## Advanced configuration
+## Shared configuration
 
-Plugin can accept an object with detailed configuration.
-
-```js
-export default {
-  plugins: [checker(config /** Object config below */)],
-}
-```
-
-### Checker common config
+Below is some common configuration to control the behaviors of the plugin.
 
 ```ts
 {
@@ -181,62 +228,6 @@ export default {
 }
 ```
 
----
-
-**For each checker config fields below:**
-
-- If the filed is not falsy. The corresponding checker server should be installed as a peer dependency.
-- Set to `true` to use checker with it's default values.
-- Leave the field blank or `false` to disable the checker.
-- Enable with an advanced object config.
-
-### config.typescript
-
-| field        | Type      | Default value                                         | Description                                                                                                                                                                                                                     |
-| :----------- | --------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| root         | `string`  | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file                                                                                                                                                                                                 |
-| tsconfigPath | `string`  | `"tsconfig.json"`                                     | Relative tsconfig path to `root`                                                                                                                                                                                                |
-| buildMode    | `boolean` | `false`                                               | Add [`--build`](https://www.typescriptlang.org/docs/handbook/project-references.html) to `tsc` flag, note that `noEmit` does NOT work if `buildMode` is `true` ([#36917](https://github.com/microsoft/TypeScript/issues/36917)) |
-
-### config.eslint
-
-| field              | Type                                                                                                       | Default value          | Description                                                                                                                                                                                                              |
-| :----------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| lintCommand        | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.eslint` is nullable.                                                                                 |
-| dev.overrideConfig | [`ESLint.Options`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) | `undefined`            | **(Only in dev mode)** You can override the options of the translated from `lintCommand`. Config priority: `const eslint = new ESLint({cwd: root, ...translatedOptions, ...pluginConfig.eslint.dev?.overrideConfig, })`. |
-| dev.logLevel       | `('error' \| 'warning')[]`                                                                                 | `['error', 'warning']` | **(Only in dev mode)** Which level of ESLint should be emitted to terminal and overlay in dev mode                                                                                                                       |
-
-### config.vls
-
-VLS configuration accepts the same values that can be configured in VS code with keys that start with `vetur`.
-These are configured with nested objects rather than dotted string notation. TypeScript intellisense is available.
-
-See [`initParams.ts`](https://github.com/fi3ework/vite-plugin-checker/blob/8fc5d7f4a908a4c80d1cb978e0acf1d4e5700e6a/packages/vite-plugin-checker/src/checkers/vls/initParams.ts#L33) for a comprehensive list of the defaults that can be overridden. Vetur unfortunately does not provide a single comprehensive document of all its options.
-
-For example, to performing checking only the `<script>` block:
-
-```ts
-checker({
-  vls: {
-    vetur: {
-      validation: {
-        template: false,
-        templateProps: false,
-        interpolation: false,
-        style: false,
-      },
-    },
-  },
-}),
-```
-
-### config.vueTsc
-
-| field        | Type     | Default value                                         | Description                      |
-| :----------- | -------- | ----------------------------------------------------- | -------------------------------- |
-| root         | `string` | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file  |
-| tsconfigPath | `string` | `"tsconfig.json"`                                     | Relative tsconfig path to `root` |
-
 ## Playground
 
 Run projects in [`playground/*`](./playground) to try it out.
@@ -252,3 +243,4 @@ pnpm run build                    # test in build mode
 ## License
 
 MIT License © 2022 [fi3ework](https://github.com/fi3ework)
+
