@@ -8,7 +8,8 @@
   },
   "types": "lib/main.d.ts",
   "files": [
-    "lib"
+    "lib",
+    "!lib/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
     "watch:node": "tsc -p tsconfig.build.json --watch",
