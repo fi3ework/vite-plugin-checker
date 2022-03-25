@@ -87,7 +87,7 @@ For each checker config field below:
 
 1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) & [typescript](https://www.npmjs.com/package/typescript) are installed as a peer dependency of your Vite project.
 
-   ⚠️ The `vue-tsc` version must >= `0.33.5`.
+   ⚠️ The `vue-tsc` version must >= `0.33.9`.
 
    ```bash
    pnpm add vue-tsc@latest typescript -D
