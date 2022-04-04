@@ -12,11 +12,10 @@
     "!lib/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
-    "watch:node": "tsc -p tsconfig.build.json --watch",
-    "dev": "run-p watch:node",
+    "dev": "tsup --watch",
     "clean": "rimraf lib",
-    "build": "tsc -p tsconfig.build.json",
-    "build:test": "tsc -p tsconfig.test.json",
+    "build": "tsup",
+    "build:test": "tsup --sourcemap inline",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . --lerna-package vite-plugin-checker",
     "release": "zx ../../scripts/release.mjs"
   },
@@ -57,12 +56,13 @@
     "@types/eslint": "^7.2.14",
     "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.pick": "^4.4.6",
+    "@volar/vue-typescript": "^0.33.0",
     "esbuild": "^0.14.27",
     "npm-run-all": "^4.1.5",
     "optionator": "^0.9.1",
-    "vls": "^0.7.6",
-    "vue-tsc": "0.33.5",
+    "tsup": "^5.12.3",
     "typescript": "~4.5.5",
-    "@volar/vue-typescript": "^0.33.0"
+    "vls": "^0.7.6",
+    "vue-tsc": "0.33.5"
   }
 }

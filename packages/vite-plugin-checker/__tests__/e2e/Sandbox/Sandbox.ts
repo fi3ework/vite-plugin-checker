@@ -3,7 +3,7 @@ import path from 'path'
 import strip from 'strip-ansi'
 import invariant from 'tiny-invariant'
 import { createServer, ViteDevServer, CustomPayload } from 'vite'
-import { Checker } from 'vite-plugin-checker'
+import { Checker } from 'vite-plugin-checker/lib/Checker'
 
 import { expectStdoutNotContains, expectStderrContains, sleep, testDir } from '../testUtils'
 
