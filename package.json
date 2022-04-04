@@ -13,7 +13,7 @@
     "test:coverage": "jest --clearCache && jest --runInBand --coverage=true",
     "changelog": "pnpm -r --filter ./packages run changelog",
     "test:watch": "jest -w",
-    "type-check": "pnpm -r --parallel --filter ./packages/vite-plugin-checker exec -- tsc --noEmit -p tsconfig.build.json",
+    "type-check": "pnpm -r --parallel --filter ./packages/vite-plugin-checker exec -- tsc --noEmit",
     "ci:publish": "zx scripts/publish.mjs"
   },
   "husky": {

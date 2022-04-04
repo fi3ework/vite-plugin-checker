@@ -23,11 +23,6 @@ import {
   UserPluginConfig,
 } from './types'
 
-export * from './types'
-export * from './codeFrame'
-export * from './worker'
-export { Checker } from './Checker'
-
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: BuildInCheckerNames[] = ['typescript', 'vueTsc', 'vls', 'eslint']
 
