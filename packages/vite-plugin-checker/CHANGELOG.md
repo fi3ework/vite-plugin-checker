@@ -1,3 +1,9 @@
+## <small>0.4.5 (2022-04-05)</small>
+
+* build: compatible with ESM import ([922ac6d](https://github.com/fi3ework/vite-plugin-checker/commit/922ac6d))
+
+
+
 ## <small>0.4.4 (2022-03-24)</small>
 
 * fix: add vue-tsc resolved path flag ([7c4d97f](https://github.com/fi3ework/vite-plugin-checker/commit/7c4d97f))
