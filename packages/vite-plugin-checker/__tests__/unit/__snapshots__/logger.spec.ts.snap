@@ -52,7 +52,7 @@ Array [
         "line": 3,
       },
     },
-    "message": "Unexpected var, use let or const instead.",
+    "message": "Unexpected var, use let or const instead. (no-var)",
     "stripedCodeFrame": "    1 | import { text } from './text'
     2 |
   > 3 | var hello = 'Hello'
@@ -83,7 +83,7 @@ Array [
         "line": 4,
       },
     },
-    "message": "Unexpected var, use let or const instead.",
+    "message": "Unexpected var, use let or const instead. (no-var)",
     "stripedCodeFrame": "    2 |
     3 | var hello = 'Hello'
   > 4 | var hello1 = 'Hello1'
