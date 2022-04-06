@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`overlay-true overlay prompts and changes 1`] = `"Unexpected var, use let or const instead."`;
+exports[`overlay-true overlay prompts and changes 1`] = `"Unexpected var, use let or const instead. (no-var)"`;
 
 exports[`overlay-true overlay prompts and changes 2`] = `"<PROJECT_ROOT>/temp/basic/src/main.ts:3:1"`;
 

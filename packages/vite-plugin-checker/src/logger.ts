@@ -363,7 +363,7 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
       })
 
       return {
-        message: d.message,
+        message: `${d.message} (${d.ruleId})`,
         conclusion: '',
         codeFrame,
         stripedCodeFrame: codeFrame && strip(codeFrame),
