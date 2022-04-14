@@ -1,3 +1,10 @@
+## <small>0.4.6 (2022-04-14)</small>
+
+* fix: runtime path should consider base (#135) ([356b664](https://github.com/fi3ework/vite-plugin-checker/commit/356b664)), closes [#135](https://github.com/fi3ework/vite-plugin-checker/issues/135)
+* feat: support show rule ID for ESLint (resolve #132) ([5d9ef30](https://github.com/fi3ework/vite-plugin-checker/commit/5d9ef30)), closes [#132](https://github.com/fi3ework/vite-plugin-checker/issues/132)
+
+
+
 ## <small>0.4.5 (2022-04-05)</small>
 
 * build: compatible with ESM import ([922ac6d](https://github.com/fi3ework/vite-plugin-checker/commit/922ac6d))
