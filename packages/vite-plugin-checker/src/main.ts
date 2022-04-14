@@ -47,6 +47,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
   const enableOverlay = userConfig?.overlay !== false
   const enableTerminal = userConfig?.terminal !== false
   const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : null
+  let resolvedRuntimePath = RUNTIME_PUBLIC_PATH
   let checkers: ServeAndBuildChecker[] = []
   let viteMode: ConfigEnv['command'] | undefined
   let resolvedConfig: ResolvedConfig | undefined
@@ -71,6 +72,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
     },
     configResolved(config) {
       resolvedConfig = config
+      resolvedRuntimePath = config.base + RUNTIME_PUBLIC_PATH.slice(1)
     },
     buildEnd() {
       if (viteMode === 'serve') {
@@ -137,7 +139,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
           {
             tag: 'script',
             attrs: { type: 'module' },
-            children: `import { inject } from "${RUNTIME_PUBLIC_PATH}"; inject();`,
+            children: `import { inject } from "${resolvedRuntimePath}"; inject();`,
           },
         ]
       }
