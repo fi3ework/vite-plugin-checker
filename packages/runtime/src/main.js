@@ -2,17 +2,13 @@
 import App from './App.svelte'
 
 let enableOverlay = true
-import {
-  prepareListen,
-  listenToCustomMessage,
-  listenToReconnectMessage,
-  listenToConfigMessage,
-} from './ws'
+import { prepareListen, listenToCustomMessage, listenToReconnectMessage } from './ws'
 
-let overlayEle = null
 let app = null
+let overlayEle = null
 let checkerResultsStore = []
 let overlayConfig = {}
+let base = null
 
 class ErrorOverlay extends HTMLElement {
   constructor() {
@@ -59,6 +55,7 @@ function updateErrorOverlay(payloads) {
     app = new App({
       target: overlayEle.root,
       props: {
+        base,
         checkerResults: checkerResultsStore,
         overlayConfig,
       },
@@ -76,20 +73,19 @@ function resumeErrorOverlay(data) {
   updateErrorOverlay(payloadsToResume)
 }
 
-function configOverlay(data) {
-  overlayConfig = data
-}
-
 function clearErrorOverlay() {
   document.querySelectorAll(overlayId).forEach((n) => n.close())
   overlayEle = null
   app = null
 }
 
-export function inject() {
+export function inject(params) {
+  base = params.base
+  overlayConfig = params.overlayConfig
   const ws = prepareListen()
+
   listenToCustomMessage(updateErrorOverlay)
   listenToReconnectMessage(resumeErrorOverlay)
-  listenToConfigMessage(configOverlay)
+
   ws.start()
 }

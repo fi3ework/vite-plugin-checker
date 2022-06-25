@@ -1,11 +1,12 @@
 <script>
   import Diagnostic from './Diagnostic.svelte'
   export let diagnostics
+  export let base
 </script>
 
 <ul>
   {#each diagnostics as diagnostic}
-    <Diagnostic {diagnostic} />
+    <Diagnostic {diagnostic} {base} />
   {/each}
 </ul>
 
