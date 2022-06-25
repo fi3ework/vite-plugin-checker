@@ -1,5 +1,6 @@
 <script>
   export let diagnostic
+  export let base
 
   const checkerColorMap = {
     TypeScript: '#3178c6',
@@ -35,7 +36,7 @@
         const link = {}
         link.textContent = file
         link.onclick = () => {
-          fetch('/__open-in-editor?file=' + encodeURIComponent(file))
+          fetch(`${base}__open-in-editor?file=` + encodeURIComponent(file))
         }
         curIndex += frag.length + file.length
         links.push(link)

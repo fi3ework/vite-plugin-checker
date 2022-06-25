@@ -12,7 +12,6 @@ const socket = new WebSocket(`${socketProtocol}://${socketHost}`, 'vite-hmr')
 // NOTE: sync modification with packages/vite-plugin-checker/client/index.ts
 const WS_CHECKER_ERROR_EVENT = 'vite-plugin-checker:error'
 const WS_CHECKER_RECONNECT_EVENT = 'vite-plugin-checker:reconnect'
-const WS_CHECKER_CONFIG_RUNTIME_EVENT = 'vite-plugin-checker:config-runtime'
 // #endregion
 
 const onCustomMessage = []
@@ -48,9 +47,6 @@ export function prepareListen() {
           break
         case WS_CHECKER_RECONNECT_EVENT:
           onReconnectMessage.forEach((callbackfn) => callbackfn(data.data))
-          break
-        case WS_CHECKER_CONFIG_RUNTIME_EVENT:
-          onConfigMessage.forEach((callbackfn) => callbackfn(data.data))
           break
       }
     }
