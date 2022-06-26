@@ -49,6 +49,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
   const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : null
   let resolvedRuntimePath = RUNTIME_PUBLIC_PATH
   let checkers: ServeAndBuildChecker[] = []
+
   let viteMode: ConfigEnv['command'] | undefined
   let resolvedConfig: ResolvedConfig | undefined
 
@@ -58,6 +59,7 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       // for dev mode (1/2)
       // Initialize checker with config
       viteMode = env.command
+
       checkers = createCheckers(userConfig || {}, env)
       if (viteMode !== 'serve') return
 
@@ -145,12 +147,9 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
       }
     },
     buildStart: () => {
-      // for build mode
+      // only run in build mode
       // run a bin command in a separated process
-      if (viteMode !== 'build') return
-
-      // do not do anything when disable build mode
-      if (!enableBuild) return
+      if (viteMode !== 'build' || !enableBuild) return
 
       const localEnv = npmRunPath.env({
         env: process.env,
@@ -164,7 +163,10 @@ export default function Plugin(userConfig: UserPluginConfig): Plugin {
           checkers.map((checker) => spawnChecker(checker, userConfig, localEnv))
         )
         const exitCode = exitCodes.find((code) => code !== 0) ?? 0
-        if (exitCode !== 0) process.exit(exitCode)
+        // do not exit the process if run `vite build --watch`
+        if (exitCode !== 0 && !resolvedConfig?.build.watch) {
+          process.exit(exitCode)
+        }
       })()
     },
     configureServer(server) {
