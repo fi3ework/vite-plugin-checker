@@ -1,3 +1,10 @@
+## <small>0.4.7 (2022-07-01)</small>
+
+* build: compatible with Vite3 (fix #147) ([96f2bc4](https://github.com/fi3ework/vite-plugin-checker/commit/96f2bc4)), closes [#147](https://github.com/fi3ework/vite-plugin-checker/issues/147)
+* feat: do not exit when watching build mode (resolve #138) ([918c13b](https://github.com/fi3ework/vite-plugin-checker/commit/918c13b)), closes [#138](https://github.com/fi3ework/vite-plugin-checker/issues/138)
+
+
+
 ## <small>0.4.6 (2022-04-14)</small>
 
 * fix: runtime path should consider base (#135) ([356b664](https://github.com/fi3ework/vite-plugin-checker/commit/356b664)), closes [#135](https://github.com/fi3ework/vite-plugin-checker/issues/135)
