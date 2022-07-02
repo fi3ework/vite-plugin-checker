@@ -14,7 +14,10 @@
     "changelog": "pnpm -r --filter ./packages run changelog",
     "test:watch": "jest -w",
     "type-check": "pnpm -r --parallel --filter ./packages/vite-plugin-checker exec -- tsc --noEmit",
-    "ci:publish": "zx scripts/publish.mjs"
+    "ci:publish": "zx scripts/publish.mjs",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs"
   },
   "husky": {
     "hooks": {
@@ -71,6 +74,8 @@
     "typescript": "~4.5.5",
     "vite": "^2.7.13",
     "vite-plugin-checker": "workspace:*",
+    "vitepress": "^1.0.0-alpha.4",
+    "vue": "^3.2.37",
     "ws": "^8.5.0",
     "zx": "^1.14.2"
   }
