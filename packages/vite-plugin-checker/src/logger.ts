@@ -208,7 +208,7 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
   const message = flattenDiagnosticMessageText(d.messageText, os.EOL)
 
   let loc: SourceLocation | undefined
-  const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition(d.start)
+  const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition?.(d.start)
   if (pos && d.file && typeof d.start === 'number' && typeof d.length === 'number') {
     loc = tsLocationToBabelLocation({
       start: d.file?.getLineAndCharacterOfPosition(d.start),
