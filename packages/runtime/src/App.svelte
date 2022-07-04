@@ -19,7 +19,11 @@
   badgeStyle={overlayConfig.badgeStyle}
   onClick={toggle}
 />
-<main class={`window ${collapsed ? 'window-collapsed' : ''}`} on:click|stopPropagation>
+<main
+  class={`window ${collapsed ? 'window-collapsed' : ''}`}
+  on:click|stopPropagation
+  style={overlayConfig.panelStyle}
+>
   <div class="list-scroll">
     <List {checkerResults} {base} ulStyle="margin-bottom: 36px;" />
   </div>
