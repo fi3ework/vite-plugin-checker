@@ -86,20 +86,33 @@ export interface SharedConfig {
     | boolean
     | {
         /**
-         * Set this true if you want the overlay to default to being open if errors/warnings are found
+         * Set this true if you want the overlay to default to being open if
+         * errors/warnings are found
          * @defaultValue `true`
          */
         initialIsOpen?: boolean
         /**
-         * The position of the vite-plugin-checker badge to open and close the diagnostics panel
+         * The position of the vite-plugin-checker badge to open and close
+         * the diagnostics panel
          * @default `bl`
          */
         position?: 'tl' | 'tr' | 'bl' | 'br'
         /**
-         * Use this to add extra style to the badge button
-         * For example, if you want to want with react-query devtool, you can pass 'margin-left: 100px;' to avoid the badge overlap with the react-query's
+         * Use this to add extra style string to the badge button, the string format is
+         * [Svelte style](https://svelte.dev/docs#template-syntax-element-directives-style-property)
+         * For example, if you want to hide the badge,
+         * you can pass `display: none;` to the badgeStyle property
+         * @default no default value
          */
         badgeStyle?: string
+        /**
+         * Use this to add extra style string to the diagnostic panel, the string format is
+         * [Svelte style](https://svelte.dev/docs#template-syntax-element-directives-style-property)
+         * For example, if you want to change the opacity of the panel,
+         * you can pass `opacity: 0.8;` to the panelStyle property
+         * @default no default value
+         */
+        panelStyle?: string
       }
   /**
    * stdout in terminal which starts the Vite server in dev mode.
