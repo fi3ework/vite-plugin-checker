@@ -1,3 +1,9 @@
+## <small>0.4.9 (2022-07-13)</small>
+
+* Allow Vite 3 beta as peer dependency ([cd1f06f](https://github.com/fi3ework/vite-plugin-checker/commit/cd1f06f))
+
+
+
 ## <small>0.4.8 (2022-07-05)</small>
 
 * feat: add panel style config (resolve #148) ([04e0959](https://github.com/fi3ework/vite-plugin-checker/commit/04e0959)), closes [#148](https://github.com/fi3ework/vite-plugin-checker/issues/148)
