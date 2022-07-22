@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "name": "docs",
+  "dependencies": {
+    "vue": "^3.2.37"
+  }
+}

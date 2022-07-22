@@ -3,6 +3,7 @@
   import Badge from './components/Badge.svelte'
   export let overlayConfig = {}
   export let checkerResults
+  export let base
 
   const initialIsOpen = overlayConfig?.initialIsOpen ?? true
   $: collapsed = !initialIsOpen
@@ -18,9 +19,13 @@
   badgeStyle={overlayConfig.badgeStyle}
   onClick={toggle}
 />
-<main class={`window ${collapsed ? 'window-collapsed' : ''}`} on:click|stopPropagation>
+<main
+  class={`window ${collapsed ? 'window-collapsed' : ''}`}
+  on:click|stopPropagation
+  style={overlayConfig.panelStyle}
+>
   <div class="list-scroll">
-    <List {checkerResults} ulStyle="margin-bottom: 36px;" />
+    <List {checkerResults} {base} ulStyle="margin-bottom: 36px;" />
   </div>
 </main>
 

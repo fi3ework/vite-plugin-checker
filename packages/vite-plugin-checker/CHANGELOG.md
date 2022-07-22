@@ -1,3 +1,24 @@
+## <small>0.4.9 (2022-07-13)</small>
+
+* Allow Vite 3 beta as peer dependency ([cd1f06f](https://github.com/fi3ework/vite-plugin-checker/commit/cd1f06f))
+
+
+
+## <small>0.4.8 (2022-07-05)</small>
+
+* feat: add panel style config (resolve #148) ([04e0959](https://github.com/fi3ework/vite-plugin-checker/commit/04e0959)), closes [#148](https://github.com/fi3ework/vite-plugin-checker/issues/148)
+* fix: handle diagnostic without positon (fix #149) ([029e83c](https://github.com/fi3ework/vite-plugin-checker/commit/029e83c)), closes [#149](https://github.com/fi3ework/vite-plugin-checker/issues/149)
+* fix: open in editor should respect `base` (fix #142) ([4bcdc5c](https://github.com/fi3ework/vite-plugin-checker/commit/4bcdc5c)), closes [#142](https://github.com/fi3ework/vite-plugin-checker/issues/142)
+
+
+
+## <small>0.4.7 (2022-07-01)</small>
+
+* build: compatible with Vite3 (fix #147) ([96f2bc4](https://github.com/fi3ework/vite-plugin-checker/commit/96f2bc4)), closes [#147](https://github.com/fi3ework/vite-plugin-checker/issues/147)
+* feat: do not exit when watching build mode (resolve #138) ([918c13b](https://github.com/fi3ework/vite-plugin-checker/commit/918c13b)), closes [#138](https://github.com/fi3ework/vite-plugin-checker/issues/138)
+
+
+
 ## <small>0.4.6 (2022-04-14)</small>
 
 * fix: runtime path should consider base (#135) ([356b664](https://github.com/fi3ework/vite-plugin-checker/commit/356b664)), closes [#135](https://github.com/fi3ework/vite-plugin-checker/issues/135)

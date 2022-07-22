@@ -2,12 +2,13 @@
   import Checker from './Checker.svelte'
   export let checkerResults
   export let ulStyle
+  export let base
 </script>
 
 <ul style={ulStyle}>
   {#each checkerResults as checkerResult, index}
     <li>
-      <Checker diagnostics={checkerResult.diagnostics} {index} />
+      <Checker diagnostics={checkerResult.diagnostics} {base} {index} />
     </li>
   {/each}
 </ul>

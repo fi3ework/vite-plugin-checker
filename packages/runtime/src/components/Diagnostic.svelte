@@ -1,5 +1,6 @@
 <script>
   export let diagnostic
+  export let base
 
   const checkerColorMap = {
     TypeScript: '#3178c6',
@@ -8,7 +9,7 @@
     'vue-tsc': '#64b587',
   }
 
-  const fileRE = /(?:[a-zA-Z]:\\|\/).*?:\d+:\d+/g
+  const fileRE = /(?:[a-zA-Z]:\\|\/).*(:\d+:\d+)?/g
   const codeframeRE = /^(?:>?\s+\d+\s+\|.*|\s+\|\s*\^.*)\r?\n/gm
   codeframeRE.lastIndex = 0
   $: hasFrame = diagnostic.frame && codeframeRE.test(diagnostic.frame)
@@ -17,9 +18,12 @@
   $: stackLinks = calcLink(diagnostic.stack)
   $: [file] = (diagnostic.loc?.file || diagnostic.id || 'unknown file').split(`?`)
 
-  $: errorSource = diagnostic.loc
-    ? { ...calcLink(`${file}:${diagnostic.loc.line}:${diagnostic.loc.column}`)[0], linkFiles: true }
-    : { text: file, linkFiles: false }
+  $: errorSource = {
+    ...calcLink(
+      `${file}` + (diagnostic.loc ? `:${diagnostic.loc.line}:${diagnostic.loc.column}` : '')
+    )[0],
+    linkFiles: true,
+  }
 
   function calcLink(text) {
     let curIndex = 0
@@ -32,7 +36,7 @@
         const link = {}
         link.textContent = file
         link.onclick = () => {
-          fetch('/__open-in-editor?file=' + encodeURIComponent(file))
+          fetch(`${base}__open-in-editor?file=` + encodeURIComponent(file))
         }
         curIndex += frag.length + file.length
         links.push(link)
@@ -50,13 +54,8 @@
     ><span class={`message-body message-body-${diagnostic.level}`}>{message}</span>
   </pre>
   <!-- svelte-ignore a11y-missing-attribute -->
-  <pre class="file">{#if errorSource.linkFiles}<a class="file-link" on:click={errorSource.onclick}
-        >{errorSource.textContent}</a
-      >
-    {:else}
-      {errorSource.text}
-    {/if}
-  </pre>
+  <pre class="file"><a class="file-link" on:click={errorSource.onclick}>{errorSource.textContent}</a
+    ></pre>
   {#if hasFrame}
     <pre class="frame"><code class="frame-code">{diagnostic.frame}</code></pre>
   {/if}
