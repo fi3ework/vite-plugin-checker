@@ -3,7 +3,7 @@ name: Test
 env:
   # 7 GiB by default on GitHub, setting to 6 GiB
   # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-  NODE_OPTIONS: --max-old-space-size=6144
+  # NODE_OPTIONS: --max-old-space-size=6144
   # install playwright binary manually (because pnpm only runs install script once)
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
 
@@ -17,7 +17,6 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -82,10 +81,3 @@ jobs:
 
       - name: Test
         run: pnpm --silent run test
-
-      - name: Coverage
-        run: pnpm run test:coverage
-
-      - uses: codecov/codecov-action@v2 # https://github.com/codecov/codecov-action
-        with:
-          fail_ci_if_error: true

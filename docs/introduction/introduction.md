@@ -6,7 +6,6 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
   <a href="https://www.npmjs.com/package/vite-plugin-checker" :style="{ 'margin-right': '4px' }"><img src="https://img.shields.io/npm/v/vite-plugin-checker" /></a>
   <a href="https://www.npmtrends.com/vite-plugin-checker" :style="{ 'margin-right': '4px' }"><img src="https://img.shields.io/npm/dm/vite-plugin-checker" /></a>
   <a href="https://github.com/fi3ework/vite-plugin-checker/actions/workflows/ci.yml" :style="{ 'margin-right': '4px' }"><img src="https://github.com/fi3ework/vite-plugin-checker/actions/workflows/ci.yml/badge.svg" /></a>
-  <a href="https://codecov.io/gh/fi3ework/vite-plugin-checker" :style="{ 'margin-right': '4px' }"><img src="https://codecov.io/gh/fi3ework/vite-plugin-checker/branch/main/graph/badge.svg?token=YCU4HJ66RA" /></a>
   <a href="https://app.netlify.com/sites/vite-plugin-checker/deploys"><img src="https://api.netlify.com/api/v1/badges/de70465f-0ab6-41a8-ba76-49cb237a7a31/deploy-status?branch=main" /></a>
 </div>
 
