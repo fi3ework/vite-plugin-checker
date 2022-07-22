@@ -1,0 +1,53 @@
+// Vitest Snapshot v1
+
+exports[`eslint-config-log-level > serve > get initial error and subsequent error 1`] = `undefined`;
+
+exports[`eslint-config-log-level > serve > get initial error and subsequent error 2`] = `
+" ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
+ FILE  <PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts:3:1
+
+    1 | import { text } from './text'
+    2 |
+  > 3 | var hello = 'Hello'
+      | ^^^^^^^^^^^^^^^^^^^
+    4 |
+    5 | const rootDom = document.querySelector('#root')!
+    6 | rootDom.innerHTML = hello + text
+ WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
+ FILE  <PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts:5:17
+
+    3 | var hello = 'Hello'
+    4 |
+  > 5 | const rootDom = document.querySelector('#root')!
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    6 | rootDom.innerHTML = hello + text
+    7 |
+    8 | export {}
+[ESLint] Found 1 error and 1 warning"
+`;
+
+exports[`eslint-config-log-level > serve > get initial error and subsequent error 3`] = `undefined`;
+
+exports[`eslint-config-log-level > serve > get initial error and subsequent error 4`] = `
+" ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
+ FILE  <PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts:3:1
+
+    1 | import { text } from './text'
+    2 |
+  > 3 | var hello = 'Hello~'
+      | ^^^^^^^^^^^^^^^^^^^^
+    4 |
+    5 | const rootDom = document.querySelector('#root')!
+    6 | rootDom.innerHTML = hello + text
+ WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
+ FILE  <PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts:5:17
+
+    3 | var hello = 'Hello~'
+    4 |
+  > 5 | const rootDom = document.querySelector('#root')!
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    6 | rootDom.innerHTML = hello + text
+    7 |
+    8 | export {}
+[ESLint] Found 1 error and 1 warning"
+`;

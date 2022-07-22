@@ -1,20 +1,23 @@
 import os from 'os'
 import { parentPort } from 'worker_threads'
 
-import { Checker } from '../../Checker'
+import { Checker } from '../../Checker.js'
 import {
   composeCheckerSummary,
   consoleLog,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   toViteCustomPayload,
-} from '../../logger'
-import { ACTION_TYPES, DiagnosticLevel } from '../../types'
-import { DiagnosticOptions, diagnostics } from './diagnostics'
+} from '../../logger.js'
+import { ACTION_TYPES } from '../../types.js'
+import { DiagnosticOptions, diagnostics } from './diagnostics.js'
 
 import type { ConfigEnv } from 'vite'
 
-import type { CreateDiagnostic } from '../../types'
+import type { CreateDiagnostic } from '../../types.js'
+
+let createServeAndBuild
+
 export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
   let overlay = true
   let terminal = true
@@ -90,13 +93,14 @@ export class VlsChecker extends Checker<'vls'> {
   }
 
   public init() {
-    const createServeAndBuild = super.initMainThread()
-    module.exports.createServeAndBuild = createServeAndBuild
-
+    const _createServeAndBuild = super.initMainThread()
+    // module.exports.createServeAndBuild = createServeAndBuild
+    createServeAndBuild = _createServeAndBuild
     super.initWorkerThread()
   }
 }
 
+export { createServeAndBuild }
 const vlsChecker = new VlsChecker()
 vlsChecker.prepare()
 vlsChecker.init()

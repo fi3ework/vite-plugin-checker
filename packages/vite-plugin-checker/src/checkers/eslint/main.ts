@@ -1,13 +1,12 @@
 import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
-// @ts-ignore
-import optionator from './options'
-import path from 'path'
+import { options as optionator } from './options.js'
 import invariant from 'tiny-invariant'
 import { parentPort } from 'worker_threads'
+import path from 'path'
 
-import { Checker } from '../../Checker'
-import { FileDiagnosticManager } from '../../FileDiagnosticManager'
+import { Checker } from '../../Checker.js'
+import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
   consoleLog,
   diagnosticToTerminalLog,
@@ -16,11 +15,12 @@ import {
   normalizeEslintDiagnostic,
   toViteCustomPayload,
   composeCheckerSummary,
-} from '../../logger'
-import { ACTION_TYPES, DiagnosticLevel } from '../../types'
-import { translateOptions } from './cli'
+} from '../../logger.js'
+import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { translateOptions } from './cli.js'
 
 const manager = new FileDiagnosticManager()
+let createServeAndBuild
 
 import type { CreateDiagnostic } from '../../types'
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
@@ -137,12 +137,14 @@ export class EslintChecker extends Checker<'eslint'> {
   }
 
   public init() {
-    const createServeAndBuild = super.initMainThread()
-    module.exports.createServeAndBuild = createServeAndBuild
+    const _createServeAndBuild = super.initMainThread()
+    // module.exports.createServeAndBuild = createServeAndBuild
+    createServeAndBuild = _createServeAndBuild
     super.initWorkerThread()
   }
 }
 
+export { createServeAndBuild }
 const eslintChecker = new EslintChecker()
 eslintChecker.prepare()
 eslintChecker.init()

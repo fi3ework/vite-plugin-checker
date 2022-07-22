@@ -1,0 +1,139 @@
+// Vitest Snapshot v1
+
+exports[`VLS config > customized config 1`] = `
+{
+  "css": {},
+  "emmet": {},
+  "html": {
+    "suggest": {},
+  },
+  "javascript": {
+    "format": {},
+  },
+  "languageStylus": {},
+  "stylusSupremacy": {},
+  "typescript": {
+    "format": {},
+    "tsdk": null,
+  },
+  "vetur": {
+    "completion": {
+      "autoImport": false,
+      "scaffoldSnippetSources": {
+        "user": "🗒️",
+        "vetur": "✌",
+        "workspace": "💼",
+      },
+      "tagCasing": "initial",
+    },
+    "dev": {
+      "logLevel": "INFO",
+      "vlsPath": "",
+      "vlsPort": -1,
+    },
+    "experimental": {
+      "templateInterpolationService": true,
+    },
+    "format": {
+      "defaultFormatter": {},
+      "defaultFormatterOptions": {},
+      "enable": true,
+      "options": {
+        "tabSize": 2,
+        "useTabs": false,
+      },
+      "scriptInitialIndent": false,
+      "styleInitialIndent": false,
+    },
+    "grammar": {
+      "customBlocks": {},
+    },
+    "ignoreProjectWarning": false,
+    "languageFeatures": {
+      "codeActions": true,
+      "semanticTokens": true,
+      "updateImportOnFileMove": true,
+    },
+    "trace": {
+      "server": "off",
+    },
+    "useWorkspaceDependencies": false,
+    "validation": {
+      "interpolation": false,
+      "script": true,
+      "style": false,
+      "template": false,
+      "templateProps": false,
+    },
+  },
+}
+`;
+
+exports[`VLS config > default config 1`] = `
+{
+  "css": {},
+  "emmet": {},
+  "html": {
+    "suggest": {},
+  },
+  "javascript": {
+    "format": {},
+  },
+  "languageStylus": {},
+  "stylusSupremacy": {},
+  "typescript": {
+    "format": {},
+    "tsdk": null,
+  },
+  "vetur": {
+    "completion": {
+      "autoImport": false,
+      "scaffoldSnippetSources": {
+        "user": "🗒️",
+        "vetur": "✌",
+        "workspace": "💼",
+      },
+      "tagCasing": "initial",
+    },
+    "dev": {
+      "logLevel": "INFO",
+      "vlsPath": "",
+      "vlsPort": -1,
+    },
+    "experimental": {
+      "templateInterpolationService": true,
+    },
+    "format": {
+      "defaultFormatter": {},
+      "defaultFormatterOptions": {},
+      "enable": true,
+      "options": {
+        "tabSize": 2,
+        "useTabs": false,
+      },
+      "scriptInitialIndent": false,
+      "styleInitialIndent": false,
+    },
+    "grammar": {
+      "customBlocks": {},
+    },
+    "ignoreProjectWarning": false,
+    "languageFeatures": {
+      "codeActions": true,
+      "semanticTokens": true,
+      "updateImportOnFileMove": true,
+    },
+    "trace": {
+      "server": "off",
+    },
+    "useWorkspaceDependencies": false,
+    "validation": {
+      "interpolation": true,
+      "script": true,
+      "style": true,
+      "template": true,
+      "templateProps": true,
+    },
+  },
+}
+`;

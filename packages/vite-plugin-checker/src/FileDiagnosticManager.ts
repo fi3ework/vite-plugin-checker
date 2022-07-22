@@ -1,4 +1,4 @@
-import type { NormalizedDiagnostic } from './logger'
+import type { NormalizedDiagnostic } from './logger.js'
 
 class FileDiagnosticManager {
   public diagnostics: NormalizedDiagnostic[] = []

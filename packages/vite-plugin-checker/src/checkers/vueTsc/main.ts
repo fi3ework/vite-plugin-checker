@@ -3,8 +3,9 @@ import path from 'path'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { parentPort } from 'worker_threads'
-
-import { Checker } from '../../Checker'
+import { createRequire } from 'module'
+const _require = createRequire(import.meta.url)
+import { Checker } from '../../Checker.js'
 import {
   consoleLog,
   diagnosticToRuntimeError,
@@ -13,9 +14,11 @@ import {
   normalizeVueTscDiagnostic,
   toViteCustomPayload,
   wrapCheckerSummary,
-} from '../../logger'
-import { ACTION_TYPES, CreateDiagnostic, DiagnosticLevel, DiagnosticToRuntime } from '../../types'
-import { prepareVueTsc } from './prepareVueTsc'
+} from '../../logger.js'
+import { ACTION_TYPES, CreateDiagnostic, DiagnosticToRuntime } from '../../types.js'
+import { prepareVueTsc } from './prepareVueTsc.js'
+
+let createServeAndBuild
 
 const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
   let overlay = true
@@ -32,7 +35,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
 
       const { targetTsDir } = prepareVueTsc()
 
-      const vueTs = require(path.resolve(targetTsDir, 'lib/tsc.js'))
+      const vueTs = _require(path.resolve(targetTsDir, 'lib/tsc.js'))
 
       const finalConfig =
         pluginConfig.vueTsc === true
@@ -156,13 +159,14 @@ export class VueTscChecker extends Checker<'vueTsc'> {
   }
 
   public init() {
-    const createServeAndBuild = super.initMainThread()
-    module.exports.createServeAndBuild = createServeAndBuild
-
+    const _createServeAndBuild = super.initMainThread()
+    // module.exports.createServeAndBuild = createServeAndBuild
+    createServeAndBuild = _createServeAndBuild
     super.initWorkerThread()
   }
 }
 
+export { createServeAndBuild }
 const tscChecker = new VueTscChecker()
 tscChecker.prepare()
 tscChecker.init()

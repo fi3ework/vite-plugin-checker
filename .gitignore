@@ -105,5 +105,5 @@ dist
 
 #
 lib/
-temp/
+playground-temp/
 packages/runtime/public/build/bundle.js

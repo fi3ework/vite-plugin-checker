@@ -1,7 +1,7 @@
 import { ConfigEnv } from 'vite'
 import { parentPort, Worker, workerData } from 'worker_threads'
 
-import { ACTION_TYPES } from './types'
+import { ACTION_TYPES } from './types.js'
 
 import type {
   ServeChecker,
@@ -14,7 +14,7 @@ import type {
   SharedConfig,
   UnrefAction,
   BuildInCheckers,
-} from './types'
+} from './types.js'
 
 interface WorkerScriptOptions {
   absFilename: string
@@ -66,10 +66,12 @@ export function createScript<T extends Partial<BuildInCheckers>>({
         }
       }
 
-      return (config, env) => ({
-        serve: createWorker(config, env),
-        build: { buildBin },
-      })
+      return (config, env) => {
+        return {
+          serve: createWorker(config, env),
+          build: { buildBin },
+        }
+      }
     },
     workerScript: () => {
       // runs in worker thread

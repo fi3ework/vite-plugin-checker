@@ -8,12 +8,16 @@ export default defineConfig({
   outDir: 'lib',
   splitting: false,
   bundle: false,
+  format: ['esm'],
   sourcemap: true,
   clean: false,
-  target: 'node12',
+  target: 'node14',
   platform: 'node',
   dts: true,
-  esbuildPlugins: [createPatchEsbuildDistPlugin()],
+  // esbuildPlugins: [
+  // addImportExt(),
+  // createPatchEsbuildDistPlugin()
+  // ],
 })
 
 // copied from https://github.com/vitejs/vite/blob/5d6ea8efc36bfdcd8b70afa8e82026ad1ccc0a77/scripts/patchEsbuildDist.ts, with a slight modification :)
