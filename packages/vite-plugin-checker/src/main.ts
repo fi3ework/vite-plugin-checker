@@ -4,9 +4,10 @@ import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
 import path from 'path'
 import { ConfigEnv, Plugin, ResolvedConfig } from 'vite'
-
-import { Checker } from './Checker'
-import { RUNTIME_PUBLIC_PATH, runtimeCode, WS_CHECKER_RECONNECT_EVENT } from './client/index'
+import { createRequire } from 'module'
+// const _require = createRequire(import.meta.url)
+import { Checker } from './Checker.js'
+import { RUNTIME_PUBLIC_PATH, runtimeCode, WS_CHECKER_RECONNECT_EVENT } from './client/index.js'
 import {
   ACTION_TYPES,
   BuildCheckBinStr,
@@ -16,23 +17,26 @@ import {
   ServeAndBuildChecker,
   SharedConfig,
   UserPluginConfig,
-} from './types'
+} from './types.js'
 
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: BuildInCheckerNames[] = ['typescript', 'vueTsc', 'vls', 'eslint']
 
-function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndBuildChecker[] {
+async function createCheckers(
+  userConfig: UserPluginConfig,
+  env: ConfigEnv
+): Promise<ServeAndBuildChecker[]> {
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
   const sharedConfig = pick(userConfig, sharedConfigKeys)
 
-  buildInCheckerKeys.forEach((name: BuildInCheckerNames) => {
-    if (!userConfig[name]) return
-
-    const { createServeAndBuild } = require(`./checkers/${name}/main`)
+  // buildInCheckerKeys.forEach(async (name: BuildInCheckerNames) => {
+  for (const name of buildInCheckerKeys) {
+    if (!userConfig[name]) continue
+    const { createServeAndBuild } = await import(`./checkers/${name}/main.js`)
     serveAndBuildCheckers.push(
       createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env)
     )
-  })
+  }
 
   return serveAndBuildCheckers
 }
@@ -50,12 +54,14 @@ export function checker(userConfig: UserPluginConfig): Plugin {
 
   return {
     name: 'vite-plugin-checker',
-    config: (config, env) => {
+    // @ts-ignore
+    __checker: Checker,
+    config: async (config, env) => {
       // for dev mode (1/2)
       // Initialize checker with config
       viteMode = env.command
 
-      checkers = createCheckers(userConfig || {}, env)
+      checkers = await createCheckers(userConfig || {}, env)
       if (viteMode !== 'serve') return
 
       checkers.forEach((checker) => {

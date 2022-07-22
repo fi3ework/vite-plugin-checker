@@ -1,63 +1,29 @@
-import stringify from 'fast-json-stable-stringify'
-// @ts-expect-error
+import { describe, expect, it } from 'vitest'
+// @ts-ignore
 import stable from 'sort-deep-object-arrays'
 
 import {
-  killServer,
-  preTest,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
+  diagnostics,
+  isServe,
+  expectStderrContains,
   stripedLog,
-  viteBuild,
-  viteServe,
-} from 'vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
-import {
+  isBuild,
   editFile,
-  sleep,
-  testDir,
-  WORKER_CLEAN_TIMEOUT,
-} from 'vite-plugin-checker/__tests__/e2e/testUtils'
-import { WS_CHECKER_ERROR_EVENT } from 'vite-plugin-checker/src/client'
-import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
-import { serializers } from '../../../scripts/serializers'
-
-beforeAll(async () => {
-  await preTest()
-})
-
-expect.addSnapshotSerializer(serializers)
-
-afterAll(async () => {
-  await sleep(WORKER_CLEAN_TIMEOUT)
-})
+  resetDiagnostics,
+} from '../../testUtils'
+import stringify from 'fast-json-stable-stringify'
 
 describe('multiple-reload', () => {
-  beforeEach(async () => {
-    await copyCode()
-  })
-
-  describe('serve', () => {
-    afterEach(async () => {
-      await killServer()
-    })
-
+  describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
-      let diagnostics: any[] = []
-      await viteServe({
-        cwd: testDir,
-        wsSend: (_payload) => {
-          if (_payload.type === 'custom' && _payload.event === WS_CHECKER_ERROR_EVENT) {
-            diagnostics = diagnostics.concat(_payload.data.diagnostics)
-          }
-        },
-      })
       await sleepForServerReady()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit with error --')
-      diagnostics = []
       resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello1'`, `'Hello1~'`))
       await sleepForEdit()
@@ -65,7 +31,7 @@ describe('multiple-reload', () => {
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit on non-error file --')
-      diagnostics = []
+      resetDiagnostics()
       resetReceivedLog()
       editFile('src/text.ts', (code) => code.replace(`Multiple`, `multiple`))
       await sleepForEdit()
@@ -74,7 +40,7 @@ describe('multiple-reload', () => {
     })
   })
 
-  describe('build', () => {
+  describe.runIf(isBuild)('build', () => {
     const expectedMsg = [
       '3:1  error  Unexpected var, use let or const instead  no-var',
       '4:1  error  Unexpected var, use let or const instead  no-var',
@@ -83,16 +49,8 @@ describe('multiple-reload', () => {
     ]
 
     it('enableBuild: true', async () => {
-      await viteBuild({ expectedErrorMsg: expectedMsg, cwd: testDir })
-    })
-
-    it('enableBuild: false', async () => {
-      editFile('vite.config.ts', (code) =>
-        code.replace('eslint: {', 'enableBuild: false, eslint: {')
-      )
-      await viteBuild({
-        unexpectedErrorMsg: 'error',
-        cwd: testDir,
+      it('enableBuild: true', async () => {
+        expectStderrContains(stripedLog, expectedMsg)
       })
     })
   })

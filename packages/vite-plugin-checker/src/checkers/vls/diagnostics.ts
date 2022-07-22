@@ -19,23 +19,24 @@ import {
   InitializeRequest,
   InitializeResult,
   Logger,
-  PublishDiagnosticsParams,
   ServerCapabilities,
   StreamMessageReader,
   StreamMessageWriter,
-} from 'vscode-languageserver/node'
-import { URI } from 'vscode-uri'
+} from 'vscode-languageserver/node.js'
+import type { URI as IURI } from 'vscode-uri'
+import pkg from 'vscode-uri'
+const { URI } = pkg
 
 import {
   diagnosticToTerminalLog,
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
   NormalizedDiagnostic,
-} from '../../logger'
-import { DeepPartial } from '../../types'
-import { getInitParams, VlsOptions } from './initParams'
+} from '../../logger.js'
+import { DeepPartial } from '../../types.js'
+import { getInitParams, VlsOptions } from './initParams.js'
 
-import { FileDiagnosticManager } from '../../FileDiagnosticManager'
+import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 
 enum DOC_VERSION {
   init = -1,
@@ -126,7 +127,7 @@ function suppressConsole() {
 }
 
 export async function prepareClientConnection(
-  workspaceUri: URI,
+  workspaceUri: IURI,
   severity: DiagnosticSeverity,
   options: DiagnosticOptions
 ) {
@@ -220,7 +221,7 @@ const watchedDidChangeWatchedFiles = ['.js', '.ts', '.json']
 const watchedDidChangeContentGlob = extToGlobs(watchedDidChangeContent)
 
 async function getDiagnostics(
-  workspaceUri: URI,
+  workspaceUri: IURI,
   severity: DiagnosticSeverity,
   options: DiagnosticOptions
 ): Promise<{ initialErrorCount: number; initialWarningCount: number } | null> {

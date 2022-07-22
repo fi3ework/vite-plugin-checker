@@ -1,10 +1,11 @@
 import { Command, Option } from 'commander'
-
-import { diagnostics, LogLevel, logLevels } from './diagnostics'
+import { createRequire } from 'module'
+const _require = createRequire(import.meta.url)
+import { diagnostics, LogLevel, logLevels } from './diagnostics.js'
 
 function getVersion(): string {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { version }: { version: string } = require('../../../package.json')
+  const { version }: { version: string } = _require('../../../package.json')
   return `v${version}`
 }
 

@@ -8,12 +8,13 @@
  */
 
 'use strict'
-
+// import { createRequire } from 'module'
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-const optionator = require('optionator')
+// @ts-ignore
+import optionator from 'optionator'
 
 //------------------------------------------------------------------------------
 // Typedefs
@@ -67,7 +68,7 @@ const optionator = require('optionator')
 //------------------------------------------------------------------------------
 
 // exports "parse(args)", "generateHelp()", and "generateHelpForOption(optionName)"
-module.exports = optionator({
+export const options = optionator({
   prepend: 'eslint [options] file.js [file.js] [dir]',
   defaults: {
     concatRepeatedArrays: true,

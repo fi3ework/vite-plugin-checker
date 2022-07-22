@@ -1,7 +1,9 @@
 import fs from 'fs'
 import path from 'path'
+import { createRequire } from 'module'
+const _require = createRequire(import.meta.url)
 
-const proxyPath = require.resolve('vue-tsc/out/proxy')
+const proxyPath = _require.resolve('vue-tsc/out/proxy')
 
 const textToReplace: { target: string; replacement: string }[] = [
   {
@@ -43,8 +45,8 @@ export function prepareVueTsc() {
   let shouldPrepare = true
   const targetDirExist = fs.existsSync(targetTsDir)
   if (targetDirExist) {
-    const targetTsVersion = require(path.resolve(targetTsDir, 'package.json')).version
-    const currTsVersion = require('typescript/package.json').version
+    const targetTsVersion = _require(path.resolve(targetTsDir, 'package.json')).version
+    const currTsVersion = _require('typescript/package.json').version
     // check fixture versions before re-use
     if (
       targetTsVersion === currTsVersion &&
@@ -58,12 +60,12 @@ export function prepareVueTsc() {
   if (shouldPrepare) {
     rimraf(targetTsDir)
     fs.mkdirSync(targetTsDir)
-    const sourceTsDir = path.resolve(require.resolve('typescript'), '../..')
+    const sourceTsDir = path.resolve(_require.resolve('typescript'), '../..')
     copyDirRecursively(sourceTsDir, targetTsDir)
     fs.writeFileSync(vueTscFlagFile, proxyPath)
 
     // 2. sync modification of lib/tsc.js with vue-tsc
-    const tscJs = require.resolve(path.resolve(targetTsDir, 'lib/tsc.js'))
+    const tscJs = _require.resolve(path.resolve(targetTsDir, 'lib/tsc.js'))
     modifyFileText(tscJs, textToReplace)
   }
 

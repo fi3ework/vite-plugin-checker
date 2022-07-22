@@ -1,8 +1,18 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "allowJs": true,
+    "target": "ES2015",
+    "lib": ["ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "forceConsistentCasingInFileNames": true,
+    //
     "rootDir": "./",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "module": "ESNext"
   },
 
   "include": ["src", "__tests__"],

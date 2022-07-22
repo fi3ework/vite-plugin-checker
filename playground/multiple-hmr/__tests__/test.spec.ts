@@ -1,62 +1,30 @@
-import stringify from 'fast-json-stable-stringify'
-// @ts-expect-error
+import { describe, expect, it } from 'vitest'
+// @ts-ignore
 import stable from 'sort-deep-object-arrays'
+
 import {
-  killServer,
-  preTest,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
+  diagnostics,
+  isServe,
+  expectStderrContains,
   stripedLog,
-  viteServe,
-} from 'vite-plugin-checker/__tests__/e2e/Sandbox/Sandbox'
-import {
+  isBuild,
   editFile,
-  sleep,
-  testDir,
-  WORKER_CLEAN_TIMEOUT,
-} from 'vite-plugin-checker/__tests__/e2e/testUtils'
-import { WS_CHECKER_ERROR_EVENT } from 'vite-plugin-checker/src/client'
-
-import { copyCode } from '../../../scripts/jestSetupFilesAfterEnv'
-import { serializers } from '../../../scripts/serializers'
-
-expect.addSnapshotSerializer(serializers)
-
-beforeAll(async () => {
-  await preTest()
-})
-
-afterAll(async () => {
-  await sleep(WORKER_CLEAN_TIMEOUT)
-})
+  resetDiagnostics,
+} from '../../testUtils'
+import stringify from 'fast-json-stable-stringify'
 
 describe('multiple-hmr', () => {
-  beforeEach(async () => {
-    await copyCode()
-  })
-
-  describe('serve', () => {
-    afterEach(async () => {
-      await killServer()
-    })
-
+  describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
-      let diagnostics: any[] = []
-      await viteServe({
-        cwd: testDir,
-        wsSend: (_payload) => {
-          if (_payload.type === 'custom' && _payload.event === WS_CHECKER_ERROR_EVENT) {
-            diagnostics = diagnostics.concat(_payload.data.diagnostics)
-          }
-        },
-      })
       await sleepForServerReady()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit with error --')
-      diagnostics = []
+      resetDiagnostics()
       resetReceivedLog()
       editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
       await sleepForEdit()
@@ -64,7 +32,7 @@ describe('multiple-hmr', () => {
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- fix typescript error --')
-      diagnostics = []
+      resetDiagnostics()
       resetReceivedLog()
       editFile('src/App.tsx', (code) =>
         code.replace('useState<string>(2)', `useState<string>('x')`)
@@ -74,12 +42,23 @@ describe('multiple-hmr', () => {
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- fix eslint error --')
-      diagnostics = []
+      resetDiagnostics()
       resetReceivedLog()
       editFile('src/App.tsx', (code) => code.replace('var', 'const'))
       await sleepForEdit()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
+    })
+  })
+
+  describe.runIf(isBuild)('build', () => {
+    const expectedMsg = [
+      '6:3  error  Unexpected var, use let or const instead  no-var',
+      `src/App.tsx(6,44): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.`,
+    ]
+
+    it('enableBuild: true', async () => {
+      expectStderrContains(stripedLog, expectedMsg)
     })
   })
 })

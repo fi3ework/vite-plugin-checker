@@ -3,13 +3,16 @@ import fs from 'fs'
 import os from 'os'
 import strip from 'strip-ansi'
 import { CustomPayload } from 'vite'
-import { URI } from 'vscode-uri'
-import { isMainThread, parentPort } from 'worker_threads'
-
+// import { URI } from 'vscode-uri'
+import vscodeUri from 'vscode-uri'
+const { URI } = vscodeUri
+import { isMainThread, parentPort, threadId } from 'worker_threads'
+import { createRequire } from 'module'
+const _require = createRequire(import.meta.url)
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
-import { WS_CHECKER_ERROR_EVENT } from './client/index'
-import { ACTION_TYPES, DiagnosticToRuntime, DiagnosticLevel } from './types'
+import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
+import { ACTION_TYPES, DiagnosticToRuntime, DiagnosticLevel } from './types.js'
 
 import type { Range } from 'vscode-languageclient'
 import type { ESLint } from 'eslint'
@@ -203,7 +206,7 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
     flattenDiagnosticMessageText,
   }: {
     flattenDiagnosticMessageText: typeof flattenDiagnosticMessageTextType
-  } = require('typescript')
+  } = _require('typescript')
 
   const message = flattenDiagnosticMessageText(d.messageText, os.EOL)
 
@@ -384,7 +387,7 @@ export function ensureCall(callback: CallableFunction) {
 }
 
 export function consoleLog(value: string) {
-  if (isMainThread) {
+  if (isMainThread || (threadId === 1 && process.env.VITEST)) {
     console.log(value)
   } else {
     parentPort?.postMessage({

@@ -3,8 +3,9 @@
   "version": "0.4.9",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
   "main": "lib/main.js",
+  "type": "module",
   "bin": {
-    "vite-plugin-checker-vls": "./bin/vls"
+    "vite-plugin-checker-vls": "./bin/vls.js"
   },
   "types": "lib/main.d.ts",
   "files": [

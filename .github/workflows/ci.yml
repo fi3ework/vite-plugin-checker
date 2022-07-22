@@ -79,5 +79,11 @@ jobs:
       - name: Type check
         run: pnpm run type-check
 
-      - name: Test
-        run: pnpm --silent run test
+      - name: Test unit
+        run: pnpm run test-unit
+
+      - name: Test serve
+        run: pnpm run test-serve
+
+      - name: Test build
+        run: pnpm run test-build

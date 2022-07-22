@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { parentPort } from 'worker_threads'
 
-import { Checker } from '../../Checker'
+import { Checker } from '../../Checker.js'
 import {
   consoleLog,
   diagnosticToTerminalLog,
@@ -13,8 +13,15 @@ import {
   normalizeTsDiagnostic,
   toViteCustomPayload,
   wrapCheckerSummary,
-} from '../../logger'
-import { ACTION_TYPES, CreateDiagnostic, DiagnosticLevel, DiagnosticToRuntime } from '../../types'
+} from '../../logger.js'
+import {
+  ACTION_TYPES,
+  CreateDiagnostic,
+  DiagnosticLevel,
+  DiagnosticToRuntime,
+} from '../../types.js'
+
+let createServeAndBuild
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true
@@ -162,13 +169,13 @@ export class TscChecker extends Checker<'typescript'> {
   }
 
   public init() {
-    const createServeAndBuild = super.initMainThread()
-    module.exports.createServeAndBuild = createServeAndBuild
-
+    const _createServeAndBuild = super.initMainThread()
+    createServeAndBuild = _createServeAndBuild
     super.initWorkerThread()
   }
 }
 
+export { createServeAndBuild }
 const tscChecker = new TscChecker()
 tscChecker.prepare()
 tscChecker.init()
