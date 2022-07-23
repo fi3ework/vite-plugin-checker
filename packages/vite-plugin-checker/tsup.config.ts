@@ -31,7 +31,7 @@ function createPatchEsbuildDistPlugin(): Plugin {
           process.exit(1)
         }
 
-        const modifiedCode = patchEsbuildDist(targetFile.text, 'Plugin')
+        const modifiedCode = patchEsbuildDist(targetFile.text, 'checker')
 
         if (modifiedCode) {
           Object.defineProperty(targetFile, 'text', { value: modifiedCode })

@@ -37,7 +37,7 @@ function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndB
   return serveAndBuildCheckers
 }
 
-export default function Plugin(userConfig: UserPluginConfig): Plugin {
+export function checker(userConfig: UserPluginConfig): Plugin {
   const enableBuild = userConfig?.enableBuild ?? true
   const enableOverlay = userConfig?.overlay !== false
   const enableTerminal = userConfig?.terminal !== false
@@ -259,3 +259,5 @@ function spawnChecker(
 export function isObject(value: unknown): value is Record<string, any> {
   return Object.prototype.toString.call(value) === '[object Object]'
 }
+
+export default checker
