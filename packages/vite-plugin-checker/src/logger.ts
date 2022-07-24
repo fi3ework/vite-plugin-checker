@@ -13,6 +13,7 @@ import { ACTION_TYPES, DiagnosticToRuntime, DiagnosticLevel } from './types'
 
 import type { Range } from 'vscode-languageclient'
 import type { ESLint } from 'eslint'
+import type Stylelint from 'stylelint'
 import type {
   Diagnostic as LspDiagnostic,
   PublishDiagnosticsParams,
@@ -77,7 +78,7 @@ export function filterLogLevel(
 
 export function diagnosticToTerminalLog(
   d: NormalizedDiagnostic,
-  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint'
+  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint' | 'Stylelint'
 ): string {
   const nameInLabel = name ? `(${name})` : ''
   const boldBlack = chalk.bold.rgb(0, 0, 0)
@@ -369,6 +370,56 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
         stripedCodeFrame: codeFrame && strip(codeFrame),
         id: diagnostic.filePath,
         checker: 'ESLint',
+        loc,
+        level,
+      } as any as NormalizedDiagnostic
+    })
+    .filter(isNormalizedDiagnostic)
+}
+
+/* --------------------------------- Stylelint --------------------------------- */
+
+export function normalizeStylelintDiagnostic(
+  diagnostic: Stylelint.LintResult
+): NormalizedDiagnostic[] {
+  return diagnostic.warnings
+    .map((d) => {
+      let level = DiagnosticLevel.Error
+      switch (d.severity) {
+        case 'warning': // warn
+          level = DiagnosticLevel.Warning
+          break
+        case 'error': // error
+          level = DiagnosticLevel.Error
+          break
+        default:
+          level = DiagnosticLevel.Error
+          return null
+      }
+
+      const loc: SourceLocation = {
+        start: {
+          line: d.line,
+          column: d.column,
+        },
+        end: {
+          line: d.endLine || 0,
+          column: d.endColumn,
+        },
+      }
+
+      const codeFrame = createFrame({
+        source: diagnostic.source ?? '',
+        location: loc,
+      })
+
+      return {
+        message: `${d.text} (${d.rule})`,
+        conclusion: '',
+        codeFrame,
+        stripedCodeFrame: codeFrame && strip(codeFrame),
+        id: diagnostic.source,
+        checker: 'Stylelint',
         loc,
         level,
       } as any as NormalizedDiagnostic

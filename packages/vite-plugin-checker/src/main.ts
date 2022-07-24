@@ -19,7 +19,13 @@ import {
 } from './types'
 
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
-const buildInCheckerKeys: BuildInCheckerNames[] = ['typescript', 'vueTsc', 'vls', 'eslint']
+const buildInCheckerKeys: BuildInCheckerNames[] = [
+  'typescript',
+  'vueTsc',
+  'vls',
+  'eslint',
+  'stylelint',
+]
 
 function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): ServeAndBuildChecker[] {
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
