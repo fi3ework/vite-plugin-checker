@@ -1,23 +1,30 @@
 {
   "private": true,
   "version": "0.0.0",
+  "engines": {
+    "pnpm": "^7.0.0",
+    "yarn": "forbidden, use pnpm",
+    "npm": "forbidden, use pnpm"
+  },
+  "packageManager": "pnpm@7.5.0",
   "scripts": {
-    "dev": "pnpm -r --filter ./packages --parallel run dev",
-    "build": "pnpm -r --filter ./packages run build",
-    "clean": "pnpm -r --filter ./packages run clean",
-    "build:test": "pnpm -r --filter ./packages run build:test",
+    "preinstall": "npx only-allow pnpm",
+    "dev": "pnpm -r --filter=./packages/** --parallel run dev",
+    "build": "pnpm -r --filter=./packages/** run build",
+    "clean": "pnpm -r --filter=./packages/** run clean",
+    "build:test": "pnpm -r --filter=./packages/** run build:test",
     "format": "prettier --check \"packages/*/src/**/*.{ts,js,svelte}\"",
     "lint": "eslint \"packages/*/src/**/*.{ts,js,svelte}\"",
     "test": "jest --clearCache && cross-env jest --runInBand",
     "test-win": "jest --clearCache && cross-env jest --runInBand --testPathIgnorePatterns=multiple-hmr",
     "test:coverage": "jest --clearCache && jest --runInBand --coverage=true",
-    "changelog": "pnpm -r --filter ./packages run changelog",
+    "changelog": "pnpm -r --filter=./packages/** run changelog",
     "test:watch": "jest -w",
-    "type-check": "pnpm -r --parallel --filter ./packages/vite-plugin-checker exec -- tsc --noEmit",
+    "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit",
     "ci:publish": "zx scripts/publish.mjs",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:serve": "vitepress serve docs"
+    "docs:dev": "pnpm --filter docs exec vitepress dev .",
+    "docs:build": "pnpm --filter docs exec vitepress build .",
+    "docs:serve": "pnpm --filter docs exec vitepress serve ."
   },
   "husky": {
     "hooks": {
@@ -74,7 +81,6 @@
     "typescript": "~4.5.5",
     "vite": "^2.7.13",
     "vite-plugin-checker": "workspace:*",
-    "vitepress": "^1.0.0-alpha.4",
     "ws": "^8.5.0",
     "zx": "^1.14.2"
   }

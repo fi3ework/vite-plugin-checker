@@ -2,6 +2,9 @@
   "private": true,
   "name": "docs",
   "dependencies": {
+    "@vueuse/core": "^8.9.4",
+    "body-scroll-lock": "4.0.0-beta.0",
+    "vitepress": "^1.0.0-alpha.4",
     "vue": "^3.2.37"
   }
 }
