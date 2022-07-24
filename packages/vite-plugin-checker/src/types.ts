@@ -71,7 +71,7 @@ export type StylelintConfig =
       lintCommand: string
       dev?: Partial<{
         /** You can override the options of translated from lintCommand. */
-        overrideConfig: Stylelint.Config
+        overrideConfig: Stylelint.LinterOptions
         /** which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning')[]
       }>
