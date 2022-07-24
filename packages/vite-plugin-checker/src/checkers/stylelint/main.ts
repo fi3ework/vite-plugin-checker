@@ -1,6 +1,6 @@
 import chokidar from 'chokidar'
 import stylelint from 'stylelint'
-import getOptions from './options'
+import translateOptions from './options'
 import path from 'path'
 import { parentPort } from 'worker_threads'
 
@@ -33,7 +33,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
     async configureServer({ root }) {
       if (!pluginConfig.stylelint) return
 
-      const options = getOptions(pluginConfig.stylelint.lintCommand)
+      const translatedOptions = translateOptions(pluginConfig.stylelint.lintCommand)
 
       const logLevel = (() => {
         if (typeof pluginConfig.stylelint !== 'object') return undefined
@@ -87,7 +87,11 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       }
 
       // initial lint
-      const { results: diagnostics } = await stylelint.lint({ ...options })
+      const { results: diagnostics } = await stylelint.lint({
+        cwd: root,
+        ...translatedOptions,
+        ...pluginConfig.stylelint.dev?.overrideConfig,
+      })
 
       manager.initWith(diagnostics.map((p) => normalizeStylelintDiagnostic(p)).flat(1))
       dispatchDiagnostics()
@@ -97,7 +101,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         cwd: root,
         ignored: (path: string) => path.includes('node_modules'),
       })
-      watcher.add(options.files as string)
+      watcher.add(translatedOptions.files as string)
       watcher.on('change', async (filePath) => {
         handleFileChange(filePath, 'change')
       })
