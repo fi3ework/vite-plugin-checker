@@ -7,6 +7,7 @@
     ESLint: '#7b7fe3',
     VLS: '#64b587',
     'vue-tsc': '#64b587',
+    Stylelint: '#ffffff',
   }
 
   const fileRE = /(?:[a-zA-Z]:\\|\/).*(:\d+:\d+)?/g

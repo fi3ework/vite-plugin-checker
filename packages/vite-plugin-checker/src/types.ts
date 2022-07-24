@@ -1,6 +1,7 @@
 import type { ErrorPayload, ConfigEnv, CustomPayload } from 'vite'
 import type { Worker } from 'worker_threads'
 import type { ESLint } from 'eslint'
+import type * as Stylelint from 'stylelint'
 import type { VlsOptions } from './checkers/vls/initParams.js'
 
 /* ----------------------------- userland plugin options ----------------------------- */
@@ -54,6 +55,23 @@ export type EslintConfig =
       dev?: Partial<{
         /** You can override the options of translated from lintCommand. */
         overrideConfig: ESLint.Options
+        /** which level of the diagnostic will be emitted from plugin */
+        logLevel: ('error' | 'warning')[]
+      }>
+    }
+
+/** Stylelint checker configuration */
+export type StylelintConfig =
+  | false
+  | {
+      /**
+       * lintCommand will be executed at build mode, and will also be used as
+       * default config for dev mode when options.stylelint.dev.stylelint is nullable.
+       */
+      lintCommand: string
+      dev?: Partial<{
+        /** You can override the options of translated from lintCommand. */
+        overrideConfig: Stylelint.LinterOptions
         /** which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning')[]
       }>
@@ -134,6 +152,7 @@ export interface BuildInCheckers {
   vueTsc: VueTscConfig
   vls: VlsConfig
   eslint: EslintConfig
+  stylelint: StylelintConfig
 }
 
 export type BuildInCheckerNames = keyof BuildInCheckers
