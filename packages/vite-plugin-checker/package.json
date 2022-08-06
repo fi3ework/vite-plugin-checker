@@ -50,7 +50,21 @@
     "vscode-uri": "^3.0.2"
   },
   "peerDependencies": {
-    "vite": "^2.0.0 || ^3.0.0-0"
+    "vite": "^2.0.0 || ^3.0.0-0",
+    "eslint": ">=7",
+    "vls": "*",
+    "typescript": "*"
+  },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    },
+    "vls": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/eslint": "^7.2.14",
