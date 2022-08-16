@@ -75,17 +75,16 @@ export class VlsChecker extends Checker<'vls'> {
         buildBin: (config) => {
           if (typeof config.vls === 'object') {
             return [
-              'vite-plugin-checker-vls',
+              'vti',
               [
                 'diagnostics',
-                '--checker-config',
                 // Escape quotes so that the system shell doesn't strip them out:
                 '"' + JSON.stringify(config.vls).replace(/[\\"]/g, '\\$&') + '"',
               ],
             ]
           }
 
-          return ['vite-plugin-checker-vls', ['diagnostics']]
+          return ['vti', ['diagnostics']]
         },
       },
       createDiagnostic,
@@ -94,7 +93,6 @@ export class VlsChecker extends Checker<'vls'> {
 
   public init() {
     const _createServeAndBuild = super.initMainThread()
-    // module.exports.createServeAndBuild = createServeAndBuild
     createServeAndBuild = _createServeAndBuild
     super.initWorkerThread()
   }

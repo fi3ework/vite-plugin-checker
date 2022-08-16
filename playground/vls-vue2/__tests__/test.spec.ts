@@ -33,7 +33,6 @@ describe('vue2-vls', () => {
 
   describe.runIf(isBuild)('build', () => {
     it('enableBuild: true', async () => {
-      console.log('👰', log)
       expectStderrContains(log, `Property 'msg1' does not exist on type`)
     })
   })
