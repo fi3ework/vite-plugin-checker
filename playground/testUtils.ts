@@ -48,7 +48,7 @@ export async function sleep(millisecond: number, callback?: Function) {
 }
 
 export async function sleepForServerReady(ratio = 1) {
-  await sleep(process.env.CI ? 10e3 * ratio : 5e3 * ratio)
+  await sleep(process.env.CI ? 10e3 * ratio : 8e3 * ratio)
 }
 
 export async function getHmrOverlay(): Promise<ElementHandle<'vite-plugin-checker-error-overlay'> | null> {
