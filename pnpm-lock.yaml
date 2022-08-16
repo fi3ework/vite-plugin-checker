@@ -143,6 +143,7 @@ importers:
       vscode-languageserver: ^7.0.0
       vscode-languageserver-textdocument: ^1.0.1
       vscode-uri: ^3.0.2
+      vti: ^0.1.7
       vue-tsc: 0.38.9
     dependencies:
       '@babel/code-frame': 7.16.7
@@ -171,6 +172,7 @@ importers:
       tsup: 5.12.3_typescript@4.5.5
       typescript: 4.5.5
       vls: 0.7.6
+      vti: 0.1.7
       vue-tsc: 0.38.9_typescript@4.5.5
 
   playground/config-default:
@@ -504,6 +506,7 @@ importers:
       vite-plugin-components: ^0.12.2
       vite-plugin-vue2: ^1.9.0
       vls: ^0.8.1
+      vti: ^0.1.7
       vue: ^2.6.14
       vue-class-component: ^7.2.6
       vue-property-decorator: ^9.1.2
@@ -533,6 +536,7 @@ importers:
       vite-plugin-components: 0.12.2_vite@3.0.7
       vite-plugin-vue2: 1.9.3_jgujpliumuvwdvyeik3z3zdaxi
       vls: 0.8.1
+      vti: 0.1.7
       vue-template-compiler: 2.7.8
 
   playground/vue-tsc-vue3:
@@ -7274,6 +7278,16 @@ packages:
 
   /vscode-uri/3.0.3:
     resolution: {integrity: sha512-EcswR2S8bpR7fD0YPeS7r2xXExrScVMxg4MedACaWHEtx9ftCF/qHG1xGkolzTPcEmjTavCQgbVzHUIdTMzFGA==}
+
+  /vti/0.1.7:
+    resolution: {integrity: sha512-4k9mZ1gRbWngL8tXTNwcaBV/O8G+FadYIagdTlApnlCtf7G8z7E5fDnPGtS3QMjxPIXiF+TfsgeUfbR3ICy23Q==}
+    hasBin: true
+    dependencies:
+      commander: 8.3.0
+      vls: 0.8.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /vue-class-component/7.2.6_vue@2.7.8:
     resolution: {integrity: sha512-+eaQXVrAm/LldalI272PpDe3+i4mPis0ORiMYxF6Ae4hyuCh15W8Idet7wPUEs4N4YptgFHGys4UrgNQOMyO6w==}
