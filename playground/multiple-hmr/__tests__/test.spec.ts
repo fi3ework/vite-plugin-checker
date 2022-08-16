@@ -1,20 +1,19 @@
-import { describe, expect, it } from 'vitest'
-// @ts-ignore
+import stringify from 'fast-json-stable-stringify'
 import stable from 'sort-deep-object-arrays'
+import { describe, expect, it } from 'vitest'
 
 import {
+  diagnostics,
+  editFile,
+  expectStderrContains,
+  isBuild,
+  isServe,
+  resetDiagnostics,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
-  diagnostics,
-  isServe,
-  expectStderrContains,
   stripedLog,
-  isBuild,
-  editFile,
-  resetDiagnostics,
 } from '../../testUtils'
-import stringify from 'fast-json-stable-stringify'
 
 describe('multiple-hmr', () => {
   describe.runIf(isServe)('serve', () => {
@@ -57,7 +56,7 @@ describe('multiple-hmr', () => {
       `src/App.tsx(6,44): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.`,
     ]
 
-    it('enableBuild: true', async () => {
+    it('should fail', async () => {
       expectStderrContains(stripedLog, expectedMsg)
     })
   })

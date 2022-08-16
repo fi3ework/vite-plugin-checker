@@ -1,20 +1,20 @@
+import stringify from 'fast-json-stable-stringify'
 import { describe, expect, it } from 'vitest'
 
 import {
+  diagnostics,
+  editFile,
+  expectStderrContains,
+  isBuild,
+  isServe,
+  log,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
-  diagnostics,
-  isServe,
-  expectStderrContains,
-  log,
   stripedLog,
-  isBuild,
-  editFile,
 } from '../../testUtils'
-import stringify from 'fast-json-stable-stringify'
 
-describe('vue3-vue-tsc', () => {
+describe('vue-tsc-vue3', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
       await sleepForServerReady(2)
@@ -33,9 +33,8 @@ describe('vue3-vue-tsc', () => {
   })
 
   describe.runIf(isBuild)('build', () => {
-    const expectedMsg = `src/App.vue(3,4): error TS2322: Type '{ msg1: string; }' is not assignable to type 'IntrinsicAttributes & Partial<{}> & Omit<Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.`
-
-    it('default', async () => {
+    it('should fail', async () => {
+      const expectedMsg = `src/App.vue(3,4): error TS2322: Type '{ msg1: string; }' is not assignable to type 'IntrinsicAttributes & Partial<{}> & Omit<Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.`
       expectStderrContains(log, expectedMsg)
     })
   })

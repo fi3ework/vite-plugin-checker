@@ -1,9 +1,10 @@
-import { buildSucceed, isBuild } from '../../testUtils'
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-describe('enableBuild-false', () => {
+import { buildSucceed, isBuild } from '../../testUtils'
+
+describe('config-enableBuild-false', () => {
   describe.runIf(isBuild)('build', () => {
-    it('build', async () => {
+    it('should pass', async () => {
       expect(buildSucceed).toBe(true)
     })
   })

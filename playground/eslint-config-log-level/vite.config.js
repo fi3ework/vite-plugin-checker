@@ -6,7 +6,7 @@ export default defineConfig({
     checker({
       eslint: {
         lintCommand: 'eslint ./src --ext .ts',
-        // dev: { logLevel: ['warning'] },
+        dev: { logLevel: ['warning'] },
       },
     }),
   ],

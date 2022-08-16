@@ -1,20 +1,19 @@
-import { describe, expect, it } from 'vitest'
-// @ts-ignore
+import stringify from 'fast-json-stable-stringify'
 import stable from 'sort-deep-object-arrays'
+import { describe, expect, it } from 'vitest'
 
 import {
+  diagnostics,
+  editFile,
+  expectStderrContains,
+  isBuild,
+  isServe,
+  resetDiagnostics,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
-  diagnostics,
-  isServe,
-  expectStderrContains,
   stripedLog,
-  isBuild,
-  editFile,
-  resetDiagnostics,
 } from '../../testUtils'
-import stringify from 'fast-json-stable-stringify'
 
 describe('multiple-reload', () => {
   describe.runIf(isServe)('serve', () => {
@@ -48,10 +47,8 @@ describe('multiple-reload', () => {
       `src/main.ts(4,5): error TS2322: Type 'string' is not assignable to type 'boolean'.`,
     ]
 
-    it('enableBuild: true', async () => {
-      it('enableBuild: true', async () => {
-        expectStderrContains(stripedLog, expectedMsg)
-      })
+    it('should fail', async () => {
+      expectStderrContains(stripedLog, expectedMsg)
     })
   })
 })

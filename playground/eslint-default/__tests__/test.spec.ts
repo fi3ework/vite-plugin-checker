@@ -1,18 +1,17 @@
+import stringify from 'fast-json-stable-stringify'
 import { describe, expect, it } from 'vitest'
-
 import {
+  diagnostics,
+  editFile,
+  expectStderrContains,
+  isBuild,
+  isServe,
+  log,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
-  diagnostics,
-  isServe,
-  expectStderrContains,
-  log,
   stripedLog,
-  isBuild,
-  editFile,
 } from '../../testUtils'
-import stringify from 'fast-json-stable-stringify'
 
 describe('eslint', () => {
   describe.runIf(isServe)('serve', () => {
@@ -40,7 +39,7 @@ describe('eslint', () => {
   describe.runIf(isBuild)('build', () => {
     const expectedMsg = 'Unexpected var, use let or const instead  no-var'
 
-    it('default', async () => {
+    it('should fail', async () => {
       expectStderrContains(log, expectedMsg)
     })
   })

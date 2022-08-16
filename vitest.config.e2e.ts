@@ -4,12 +4,6 @@ import { defineConfig } from 'vitest/config'
 const timeout = process.env.CI ? 50000 : 30000
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      '~utils': resolve(__dirname, './playground/testUtils'),
-      '~setup': resolve(__dirname, './playground/vitestSetup'),
-    },
-  },
   test: {
     cache: false,
     isolate: false,

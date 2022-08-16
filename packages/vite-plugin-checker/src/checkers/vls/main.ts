@@ -1,4 +1,5 @@
 import os from 'os'
+import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker.js'
@@ -13,8 +14,9 @@ import { ACTION_TYPES } from '../../types.js'
 import { DiagnosticOptions, diagnostics } from './diagnostics.js'
 
 import type { ConfigEnv } from 'vite'
-
 import type { CreateDiagnostic } from '../../types.js'
+
+const __filename = fileURLToPath(import.meta.url)
 
 let createServeAndBuild
 

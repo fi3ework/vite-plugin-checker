@@ -1,16 +1,13 @@
-import { expect } from 'vitest'
-
 import fs from 'fs'
 import path from 'path'
-import { testDir, page } from './vitestSetup'
-import type { ElementHandle } from 'playwright-chromium'
 import invariant from 'tiny-invariant'
+import { expect } from 'vitest'
+
+import { page, testDir } from './vitestSetup'
+
+import type { ElementHandle } from 'playwright-chromium'
 
 export * from './vitestSetup'
-
-export function slash(p: string): string {
-  return p.replace(/\\/g, '/')
-}
 
 export const WORKER_CLEAN_TIMEOUT = process.env.CI ? 6000 : 3000
 

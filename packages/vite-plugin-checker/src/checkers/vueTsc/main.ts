@@ -1,10 +1,11 @@
+import { createRequire } from 'module'
 import os from 'os'
 import path from 'path'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
+import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
-import { createRequire } from 'module'
-const _require = createRequire(import.meta.url)
+
 import { Checker } from '../../Checker.js'
 import {
   consoleLog,
@@ -18,6 +19,9 @@ import {
 import { ACTION_TYPES, CreateDiagnostic, DiagnosticToRuntime } from '../../types.js'
 import { prepareVueTsc } from './prepareVueTsc.js'
 
+const _require = createRequire(import.meta.url)
+const __filename = fileURLToPath(import.meta.url)
+
 let createServeAndBuild
 
 const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
@@ -30,10 +34,10 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
       overlay = enableOverlay
       terminal = enableTerminal
     },
-    configureServer({ root }) {
+    async configureServer({ root }) {
       invariant(pluginConfig.vueTsc, 'config.vueTsc should be `false`')
 
-      const { targetTsDir } = prepareVueTsc()
+      const { targetTsDir } = await prepareVueTsc()
 
       const vueTs = _require(path.resolve(targetTsDir, 'lib/tsc.js'))
 
@@ -160,7 +164,6 @@ export class VueTscChecker extends Checker<'vueTsc'> {
 
   public init() {
     const _createServeAndBuild = super.initMainThread()
-    // module.exports.createServeAndBuild = createServeAndBuild
     createServeAndBuild = _createServeAndBuild
     super.initWorkerThread()
   }
