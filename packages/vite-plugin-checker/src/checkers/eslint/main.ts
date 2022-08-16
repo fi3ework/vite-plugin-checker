@@ -1,23 +1,25 @@
 import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
-import { options as optionator } from './options.js'
-import invariant from 'tiny-invariant'
-import { parentPort } from 'worker_threads'
 import path from 'path'
+import { fileURLToPath } from 'url'
+import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
+  composeCheckerSummary,
   consoleLog,
-  diagnosticToTerminalLog,
   diagnosticToRuntimeError,
+  diagnosticToTerminalLog,
   filterLogLevel,
   normalizeEslintDiagnostic,
   toViteCustomPayload,
-  composeCheckerSummary,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
 import { translateOptions } from './cli.js'
+import { options as optionator } from './options.js'
+
+const __filename = fileURLToPath(import.meta.url)
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild
@@ -138,7 +140,6 @@ export class EslintChecker extends Checker<'eslint'> {
 
   public init() {
     const _createServeAndBuild = super.initMainThread()
-    // module.exports.createServeAndBuild = createServeAndBuild
     createServeAndBuild = _createServeAndBuild
     super.initWorkerThread()
   }

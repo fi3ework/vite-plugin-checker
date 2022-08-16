@@ -1,5 +1,6 @@
 import execa from 'execa'
 import fs from 'fs-extra'
+import pathSerializer from 'jest-serializer-path'
 import * as http from 'node:http'
 import os from 'node:os'
 import path, { dirname, join, resolve } from 'node:path'
@@ -7,18 +8,16 @@ import { chromium } from 'playwright-chromium'
 import strip from 'strip-ansi'
 import { createServer, mergeConfig } from 'vite'
 import { beforeAll, expect } from 'vitest'
+import { Checker } from 'vite-plugin-checker/lib/Checker'
 
-import { serializers } from './serializers'
+import { normalizeWindowsLogSerializer } from './serializers'
 
 import type { Browser, Page } from 'playwright-chromium'
 import type { InlineConfig, ResolvedConfig, ViteDevServer } from 'vite'
 import type { File } from 'vitest'
-import pathSerializer from 'jest-serializer-path'
 
 expect.addSnapshotSerializer(pathSerializer)
-expect.addSnapshotSerializer(serializers)
-
-// #region env
+expect.addSnapshotSerializer(normalizeWindowsLogSerializer)
 
 export const workspaceRoot = resolve(__dirname, '../')
 
@@ -26,8 +25,6 @@ export const isBuild = !!process.env.VITE_TEST_BUILD
 export const isServe = !isBuild
 export const isWindows = process.platform === 'win32'
 export const viteBinPath = path.posix.join(workspaceRoot, 'packages/vite/bin/vite.js')
-
-// #region context
 
 let server: ViteDevServer | http.Server
 
@@ -57,21 +54,16 @@ export let testName: string
  */
 export let viteConfig: InlineConfig | undefined
 
-export let diagnostics: string[]
 export let log = ''
 export let stripedLog = ''
+export let diagnostics: string[]
 export let buildSucceed: boolean
-
-export const serverLogs: string[] = []
-export const browserLogs: string[] = []
-export const browserErrors: Error[] = []
 
 export let resolvedConfig: ResolvedConfig = undefined!
 
 export let page: Page = undefined!
 export let browser: Browser = undefined!
 export let viteTestUrl = ''
-// export let watcher: RollupWatcher | undefined = undefined
 
 declare module 'vite' {
   interface InlineConfig {
@@ -91,20 +83,6 @@ export function setViteUrl(url: string): void {
 
 const DIR = join(os.tmpdir(), 'vitest_playwright_global_setup')
 
-export function proxyConsoleInTest(c: any, accumulate = true) {
-  c.logger = [
-    (...args: any[]) => {
-      if (accumulate) {
-        log += args[0].payload
-        stripedLog += strip(args[0].payload)
-      } else {
-        log = args[0].payload
-        stripedLog = strip(args[0].payload)
-      }
-    },
-  ]
-}
-
 beforeAll(async (s) => {
   const suite = s as File
   // skip browser setup for non-playground tests
@@ -120,26 +98,9 @@ beforeAll(async (s) => {
   browser = await chromium.connect(wsEndpoint)
   page = await browser.newPage()
 
-  const globalConsole = global.console
-  const warn = globalConsole.warn
-  globalConsole.warn = (msg, ...args) => {
-    // suppress @vue/reactivity-transform warning
-    if (msg.includes('@vue/reactivity-transform')) return
-    if (msg.includes('Generated an empty chunk')) return
-    warn.call(globalConsole, msg, ...args)
-  }
-
   try {
-    page.on('console', (msg) => {
-      browserLogs.push(msg.text())
-    })
-    page.on('pageerror', (error) => {
-      browserErrors.push(error)
-    })
-
     testPath = suite.filepath!
 
-    // @ts-ignore
     testName = slash(testPath).match(/playground\/([\w-]+)\//)?.[1]
     testDir = dirname(testPath)
 
@@ -165,13 +126,9 @@ beforeAll(async (s) => {
   }
 
   return async () => {
-    serverLogs.length = 0
     await page?.close()
     await server?.close()
-    // watcher?.close()
-    if (browser) {
-      await browser.close()
-    }
+    await browser?.close()
   }
 })
 
@@ -186,43 +143,21 @@ export async function startDefaultServe(): Promise<void> {
 
   const options: InlineConfig = {
     root: rootDir,
-    // logLevel: 'silent',
-    // server: {
-    //   watch: {
-    //     // During tests we edit the files too fast and sometimes chokidar
-    //     // misses change events, so enforce polling for consistency
-    //     usePolling: true,
-    //     interval: 100,
-    //   },
-    //   host: true,
-    //   fs: {
-    //     strict: !isBuild,
-    //   },
-    // },
-    // build: {
-    //   // esbuild do not minify ES lib output since that would remove pure annotations and break tree-shaking
-    //   // skip transpilation during tests to make it faster
-    //   target: 'esnext',
-    //   // tests are flaky when `emptyOutDir` is `true`
-    //   emptyOutDir: false,
-    // },
-    // customLogger: createInMemoryLogger(serverLogs),
   }
 
   if (!isBuild) {
     process.env.VITE_INLINE = 'inline-serve'
     const testConfig = mergeConfig(options, config || {})
     viteConfig = testConfig
-    // proxyConsoleInTest()
 
-    const viteDevServer1 = await createServer({ root: rootDir })
-    const checker = viteDevServer1.config.plugins.filter(
+    const viteDevServer = await createServer({ root: rootDir })
+    const checker = viteDevServer.config.plugins.filter(
       ({ name }) => name === 'vite-plugin-checker'
     )[0]
 
     // @ts-ignore
-    proxyConsoleInTest(checker.__checker)
-    viteServer = server = await viteDevServer1.listen()
+    setCheckerLoggerForTest(checker.__internal__checker)
+    viteServer = server = await viteDevServer.listen()
 
     // use resolved port/base from server
     const devBase = server.config.base
@@ -249,9 +184,22 @@ export async function startDefaultServe(): Promise<void> {
       log = (e as any).toString()
       stripedLog += strip(log)
       buildSucceed = false
-      // expectStderrContains((e as any).toString(), expectedErrorMsg)
     }
   }
+}
+
+function setCheckerLoggerForTest(checker: typeof Checker, accumulate = true) {
+  checker.logger = [
+    (...args: any[]) => {
+      if (accumulate) {
+        log += args[0].payload
+        stripedLog += strip(args[0].payload)
+      } else {
+        log = args[0].payload
+        stripedLog = strip(args[0].payload)
+      }
+    },
+  ]
 }
 
 export function slash(p: string): string {

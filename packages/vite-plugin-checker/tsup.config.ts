@@ -10,6 +10,7 @@ export default defineConfig({
   bundle: false,
   format: ['esm'],
   sourcemap: true,
+  // do not clean @runtime code on watch mode
   clean: false,
   target: 'node14',
   platform: 'node',

@@ -1,0 +1,25 @@
+// Vitest Snapshot v1
+
+exports[`config-overlay-changes > serve > get initial error from overlay and overlay error content changes on modifying 1`] = `"Unexpected var, use let or const instead. (no-var)"`;
+
+exports[`config-overlay-changes > serve > get initial error from overlay and overlay error content changes on modifying 2`] = `"<PROJECT_ROOT>/playground-temp/config-overlay-changes/src/main.ts:3:1"`;
+
+exports[`config-overlay-changes > serve > get initial error from overlay and overlay error content changes on modifying 3`] = `
+"    1 | import { text } from './text'
+    2 |
+  > 3 | var hello = 'Hello'
+      | ^^^^^^^^^^^^^^^^^^^
+    4 |
+    5 | const rootDom = document.querySelector('#root')! as HTMLElement
+    6 | rootDom.innerHTML = hello + text"
+`;
+
+exports[`config-overlay-changes > serve > get initial error from overlay and overlay error content changes on modifying 4`] = `
+"    1 | import { text } from './text'
+    2 |
+  > 3 | var hello = 'Hello1'
+      | ^^^^^^^^^^^^^^^^^^^^
+    4 |
+    5 | const rootDom = document.querySelector('#root')! as HTMLElement
+    6 | rootDom.innerHTML = hello + text"
+`;

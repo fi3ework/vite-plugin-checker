@@ -2,16 +2,16 @@ import stringify from 'fast-json-stable-stringify'
 import { describe, expect, it } from 'vitest'
 
 import {
-  expectStderrContains,
-  sleepForServerReady,
   diagnostics,
+  editFile,
+  expectStderrContains,
   isBuild,
   isServe,
   log,
-  stripedLog,
   resetReceivedLog,
   sleepForEdit,
-  editFile,
+  sleepForServerReady,
+  stripedLog,
 } from '../../testUtils'
 
 describe('typescript-react', () => {
@@ -31,7 +31,7 @@ describe('typescript-react', () => {
   })
 
   describe.runIf(isBuild)('build', () => {
-    it('enableBuild: true', async () => {
+    it('should fail', async () => {
       expectStderrContains(log, 'error TS2345')
     })
   })

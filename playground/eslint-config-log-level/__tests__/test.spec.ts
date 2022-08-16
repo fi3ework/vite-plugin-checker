@@ -1,20 +1,19 @@
-// import stringify from 'fast-json-stable-stringify'
+import stringify from 'fast-json-stable-stringify'
 import { describe, expect, it } from 'vitest'
 
 import {
+  diagnostics,
+  editFile,
+  isServe,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
   stripedLog,
-  editFile,
-  isServe,
 } from '../../testUtils'
-import stringify from 'fast-json-stable-stringify'
 
 describe('eslint-config-log-level', () => {
   describe.runIf(isServe)('serve', () => {
-    it('get initial error and subsequent error', async () => {
-      let diagnostics: any
+    it('should only emit warning logs', async () => {
       await sleepForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()

@@ -1,9 +1,9 @@
+import fs from 'fs-extra'
 import os from 'node:os'
 import path from 'node:path'
-import fs from 'fs-extra'
-import type { BrowserServer } from 'playwright-chromium'
 import { chromium } from 'playwright-chromium'
 
+import type { BrowserServer } from 'playwright-chromium'
 const DIR = path.join(os.tmpdir(), 'vitest_playwright_global_setup')
 
 let browserServer: BrowserServer | undefined
@@ -24,8 +24,8 @@ export async function setup(): Promise<void> {
     .copy(path.resolve(__dirname, '../playground'), tempDir, {
       dereference: false,
       filter(file) {
-        file = file.replace(/\\/g, '/')
-        return !file.includes('__tests__') && !file.match(/dist(\/|$)/)
+        const _file = file.replace(/\\/g, '/')
+        return !_file.includes('__tests__') && !file.match(/dist(\/|$)/)
       },
     })
     .catch(async (error) => {

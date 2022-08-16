@@ -55,7 +55,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   return {
     name: 'vite-plugin-checker',
     // @ts-ignore
-    __checker: Checker,
+    __internal__checker: Checker,
     config: async (config, env) => {
       // for dev mode (1/2)
       // Initialize checker with config

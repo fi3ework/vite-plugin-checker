@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 describe('config-overlay-position-style', () => {
   describe.runIf(isServe)('serve', () => {
-    it('get initial error and subsequent error', async () => {
+    it('find badge in right top corner', async () => {
       await sleepForServerReady()
       const shadowRoot = await getHmrOverlay()
       const badge = await shadowRoot!.$('.badge-base')

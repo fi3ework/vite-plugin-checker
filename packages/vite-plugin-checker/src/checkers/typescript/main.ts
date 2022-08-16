@@ -3,12 +3,13 @@ import path from 'path'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { parentPort } from 'worker_threads'
+import { fileURLToPath } from 'url'
 
 import { Checker } from '../../Checker.js'
 import {
   consoleLog,
-  diagnosticToTerminalLog,
   diagnosticToRuntimeError,
+  diagnosticToTerminalLog,
   ensureCall,
   normalizeTsDiagnostic,
   toViteCustomPayload,
@@ -21,6 +22,7 @@ import {
   DiagnosticToRuntime,
 } from '../../types.js'
 
+const __filename = fileURLToPath(import.meta.url)
 let createServeAndBuild
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {

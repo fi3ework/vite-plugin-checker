@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { isServe, sleepForServerReady, getHmrOverlayText } from '../../testUtils'
+import { getHmrOverlayText, isServe, sleepForServerReady } from '../../testUtils'
 
-describe('initial-is-open-false', () => {
+describe('config-initialIsOpen-false', () => {
   describe.runIf(isServe)('serve', () => {
-    it('default', async () => {
+    it('should not find overlay', async () => {
       if (isServe) {
         await sleepForServerReady()
         try {

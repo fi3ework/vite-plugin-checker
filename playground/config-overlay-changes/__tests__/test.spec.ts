@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import {
   editFile,
   getHmrOverlay,
@@ -10,9 +11,9 @@ import {
   sleepForServerReady,
 } from '../../testUtils'
 
-describe('config-default', () => {
+describe('config-overlay-changes', () => {
   describe.runIf(isServe)('serve', () => {
-    it('get initial and following errors', async () => {
+    it('get initial error from overlay and overlay error content changes on modifying', async () => {
       await sleepForServerReady()
       const [message1, file1, frame1] = await getHmrOverlayText()
       expect(message1).toMatchSnapshot()
