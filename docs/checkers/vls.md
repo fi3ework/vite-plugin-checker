@@ -4,10 +4,10 @@ You can use VLS checker for your Vue2 project. If you're using Vue3, choose [vue
 
 ## Installation
 
-1. Make sure [vls](https://www.npmjs.com/package/vls) is installed as a peer dependency, plugin will use vls as the check server.
+1. Make sure [vls](https://www.npmjs.com/package/vls) and [vti](https://www.npmjs.com/package/vti) are installed as peer dependencies, plugin will use vls on dev mode and vti on build mode.
 
    ```bash
-   pnpm add vls -D
+   pnpm add vls vti -D
    ```
 
 2. Add `vls` field to plugin config.
