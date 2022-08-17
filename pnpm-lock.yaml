@@ -4,6 +4,7 @@ importers:
 
   .:
     specifiers:
+      '@tsconfig/node16-strictest-esm': ^1.0.3
       '@types/babel__code-frame': ^7.0.2
       '@types/debug': ^4.1.5
       '@types/fs-extra': ^9.0.11
@@ -47,6 +48,7 @@ importers:
       ws: ^8.5.0
       zx: ^1.14.2
     devDependencies:
+      '@tsconfig/node16-strictest-esm': 1.0.3
       '@types/babel__code-frame': 7.0.3
       '@types/debug': 4.1.7
       '@types/fs-extra': 9.0.13
@@ -1222,6 +1224,10 @@ packages:
     dependencies:
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    dev: true
+
+  /@tsconfig/node16-strictest-esm/1.0.3:
+    resolution: {integrity: sha512-0/QTPDkKmE2dy0dMRstPCv4VJ+gUGgvMKzaWd5P3hgdlmPqYqe1pJxDGUlNYbSgUBlncIvvX+mIeZarokysNgg==}
     dev: true
 
   /@types/babel__code-frame/7.0.3:

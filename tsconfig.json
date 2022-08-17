@@ -1,14 +1,3 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "target": "ES2015",
-    "lib": ["ESNext"],
-    "module": "CommonJS",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationMap": true,
-    "forceConsistentCasingInFileNames": true
-  }
+  "extends": "@tsconfig/node16-strictest-esm/tsconfig.json"
 }

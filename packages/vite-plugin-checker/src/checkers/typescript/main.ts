@@ -2,8 +2,8 @@ import os from 'os'
 import path from 'path'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
-import { parentPort } from 'worker_threads'
 import { fileURLToPath } from 'url'
+import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker.js'
 import {
@@ -15,12 +15,7 @@ import {
   toViteCustomPayload,
   wrapCheckerSummary,
 } from '../../logger.js'
-import {
-  ACTION_TYPES,
-  CreateDiagnostic,
-  DiagnosticLevel,
-  DiagnosticToRuntime,
-} from '../../types.js'
+import { ACTION_TYPES, CreateDiagnostic, DiagnosticToRuntime } from '../../types.js'
 
 const __filename = fileURLToPath(import.meta.url)
 let createServeAndBuild

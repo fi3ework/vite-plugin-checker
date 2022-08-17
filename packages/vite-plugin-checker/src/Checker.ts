@@ -1,14 +1,14 @@
 import invariant from 'tiny-invariant'
-import { isMainThread, threadId } from 'worker_threads'
+import { isInVitestEntryThread, isMainThread } from './utils.js'
 
-import { ServeAndBuildChecker, BuildInCheckerNames } from './types.js'
+import type { ServeAndBuildChecker, BuildInCheckerNames } from './types.js'
 import { createScript, Script } from './worker.js'
 
 // still an only issue https://github.com/microsoft/TypeScript/issues/29808#issuecomment-829750974
 import type {} from 'vite'
 import type { CreateDiagnostic, BuildInCheckers } from './types.js'
 
-if (!(isMainThread || (threadId === 1 && process.env.VITEST))) {
+if (!(isMainThread || isInVitestEntryThread)) {
   process.stdout.isTTY = true
 }
 
@@ -59,16 +59,18 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
   public initMainThread() {
     invariant(this.script, `script should be created in 'prepare', but got ${this.script}`)
 
-    if (isMainThread || (threadId === 1 && process.env.VITEST)) {
+    if (isMainThread || isInVitestEntryThread) {
       const createServeAndBuild = this.script.mainScript()
       return createServeAndBuild
     }
+
+    return
   }
 
   public initWorkerThread() {
     invariant(this.script, `script should be created in 'prepare', but got ${this.script}`)
 
-    if (!(isMainThread || (threadId === 1 && process.env.VITEST))) {
+    if (!(isMainThread || isInVitestEntryThread)) {
       this.script.workerScript()
     }
   }

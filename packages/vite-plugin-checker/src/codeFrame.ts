@@ -1,5 +1,5 @@
 import os from 'os'
-import ts from 'typescript'
+import type ts from 'typescript'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
