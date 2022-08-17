@@ -54,7 +54,8 @@
     "eslint": ">=7",
     "typescript": "*",
     "vite": "^2.0.0 || ^3.0.0-0",
-    "vls": "*"
+    "vls": "*",
+    "vti": "*"
   },
   "peerDependenciesMeta": {
     "eslint": {
