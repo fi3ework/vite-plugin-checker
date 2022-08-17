@@ -1,20 +1,9 @@
 {
+  "extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
   "compilerOptions": {
-    "allowJs": true,
-    "target": "ES2015",
-    "lib": ["ESNext"],
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationMap": true,
-    "forceConsistentCasingInFileNames": true,
-    //
-    "rootDir": "./",
-    "moduleResolution": "node",
-    "module": "ESNext"
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false
   },
-
   "include": ["src", "__tests__"],
   "exclude": ["src/@runtime"]
 }

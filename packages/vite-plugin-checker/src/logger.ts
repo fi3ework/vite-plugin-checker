@@ -1,19 +1,19 @@
 import chalk from 'chalk'
 import fs from 'fs'
+import { createRequire } from 'module'
 import os from 'os'
 import strip from 'strip-ansi'
-import { CustomPayload } from 'vite'
-// import { URI } from 'vscode-uri'
 import vscodeUri from 'vscode-uri'
-const { URI } = vscodeUri
-import { isMainThread, parentPort, threadId } from 'worker_threads'
-import { createRequire } from 'module'
-const _require = createRequire(import.meta.url)
+import { parentPort } from 'worker_threads'
+
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
-import { ACTION_TYPES, DiagnosticToRuntime, DiagnosticLevel } from './types.js'
+import { ACTION_TYPES, DiagnosticLevel, DiagnosticToRuntime } from './types.js'
+import { isMainThread } from './utils.js'
 
+import type { CustomPayload } from 'vite'
+const _require = createRequire(import.meta.url)
 import type { Range } from 'vscode-languageclient'
 import type { ESLint } from 'eslint'
 import type {
@@ -27,6 +27,7 @@ import type {
   LineAndCharacter,
 } from 'typescript'
 
+const { URI } = vscodeUri
 export interface NormalizedDiagnostic {
   /** error message */
   message?: string
@@ -119,7 +120,7 @@ export function diagnosticToRuntimeError(
     let loc: DiagnosticToRuntime['loc']
     if (d.loc) {
       loc = {
-        file: d.id,
+        file: d.id ?? '',
         line: d.loc.start.line,
         column: typeof d.loc.start.column === 'number' ? d.loc.start.column : 0,
       }
@@ -137,7 +138,7 @@ export function diagnosticToRuntimeError(
     }
   })
 
-  return Array.isArray(diagnostics) ? results : results[0]
+  return Array.isArray(diagnostics) ? results : results[0]!
 }
 
 export function toViteCustomPayload(id: string, diagnostics: DiagnosticToRuntime[]): CustomPayload {
@@ -387,7 +388,7 @@ export function ensureCall(callback: CallableFunction) {
 }
 
 export function consoleLog(value: string) {
-  if (isMainThread || (threadId === 1 && process.env.VITEST)) {
+  if (isMainThread) {
     console.log(value)
   } else {
     parentPort?.postMessage({

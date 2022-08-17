@@ -2,7 +2,7 @@ import { createRequire } from 'module'
 import os from 'os'
 import path from 'path'
 import invariant from 'tiny-invariant'
-import ts from 'typescript'
+import type ts from 'typescript'
 import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
 

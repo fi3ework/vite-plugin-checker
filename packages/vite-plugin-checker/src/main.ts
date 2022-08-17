@@ -3,9 +3,7 @@ import { spawn } from 'child_process'
 import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
 import path from 'path'
-import { ConfigEnv, Plugin, ResolvedConfig } from 'vite'
-import { createRequire } from 'module'
-// const _require = createRequire(import.meta.url)
+import type { ConfigEnv, Plugin, ResolvedConfig } from 'vite'
 import { Checker } from './Checker.js'
 import { RUNTIME_PUBLIC_PATH, runtimeCode, WS_CHECKER_RECONNECT_EVENT } from './client/index.js'
 import {
@@ -91,6 +89,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
           return id
         }
       }
+
+      return
     },
     load(id) {
       if (viteMode === 'serve') {
@@ -98,6 +98,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
           return runtimeCode
         }
       }
+
+      return
     },
     transform(code, id) {
       if (id === RUNTIME_PUBLIC_PATH) {
@@ -150,6 +152,8 @@ inject({
           },
         ]
       }
+
+      return
     },
     buildStart: () => {
       // only run in build mode

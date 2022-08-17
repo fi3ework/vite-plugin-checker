@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { SourceLocation } from '@babel/code-frame'
+import type { SourceLocation } from '@babel/code-frame'
 
 import { tsLocationToBabelLocation } from '../src/codeFrame'
 

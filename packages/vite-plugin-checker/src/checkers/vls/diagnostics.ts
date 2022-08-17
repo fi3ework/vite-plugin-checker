@@ -6,7 +6,7 @@ import os from 'os'
 import path from 'path'
 import { Duplex } from 'stream'
 import { VLS } from 'vls'
-import { TextDocument } from 'vscode-languageserver-textdocument'
+import type { TextDocument } from 'vscode-languageserver-textdocument'
 import {
   createConnection,
   createProtocolConnection,
@@ -33,7 +33,7 @@ import {
   normalizePublishDiagnosticParams,
   NormalizedDiagnostic,
 } from '../../logger.js'
-import { DeepPartial } from '../../types.js'
+import type { DeepPartial } from '../../types.js'
 import { getInitParams, VlsOptions } from './initParams.js'
 
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
@@ -107,11 +107,11 @@ class NullLogger implements Logger {
 }
 
 export class TestStream extends Duplex {
-  public _write(chunk: string, _encoding: string, done: () => void) {
+  public override _write(chunk: string, _encoding: string, done: () => void) {
     this.emit('data', chunk)
     done()
   }
-  public _read(_size: number) {}
+  public override _read(_size: number) {}
 }
 
 function suppressConsole() {
@@ -266,47 +266,46 @@ async function getDiagnostics(
 
       // build mode - step 2
       // use $/getDiagnostics to get diagnostics from server side directly
-      if (!options.watch) {
-        try {
-          let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
-            uri: URI.file(absFilePath).toString(),
-            version: DOC_VERSION.init,
-          })) as Diagnostic[]
+      if (options.watch) return
+      try {
+        let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
+          uri: URI.file(absFilePath).toString(),
+          version: DOC_VERSION.init,
+        })) as Diagnostic[]
 
-          diagnostics = filterDiagnostics(diagnostics, severity)
-          let logChunk = ''
-          if (diagnostics.length > 0) {
-            logChunk +=
-              os.EOL +
-              diagnostics
-                .map((d) =>
-                  diagnosticToTerminalLog(
-                    normalizeLspDiagnostic({
-                      diagnostic: d,
-                      absFilePath,
-                      fileText,
-                    }),
-                    'VLS'
-                  )
+        diagnostics = filterDiagnostics(diagnostics, severity)
+        let logChunk = ''
+        if (diagnostics.length > 0) {
+          logChunk +=
+            os.EOL +
+            diagnostics
+              .map((d) =>
+                diagnosticToTerminalLog(
+                  normalizeLspDiagnostic({
+                    diagnostic: d,
+                    absFilePath,
+                    fileText,
+                  }),
+                  'VLS'
                 )
-                .join(os.EOL)
+              )
+              .join(os.EOL)
 
-            diagnostics.forEach((d) => {
-              if (d.severity === DiagnosticSeverity.Error) {
-                initialErrorCount++
-              }
-              if (d.severity === DiagnosticSeverity.Warning) {
-                initialWarningCount++
-              }
-            })
-          }
-
-          console.log(logChunk)
-          return { initialErrorCount, initialWarningCount }
-        } catch (err: any) {
-          console.error(err.stack)
-          return { initialErrorCount, initialWarningCount }
+          diagnostics.forEach((d) => {
+            if (d.severity === DiagnosticSeverity.Error) {
+              initialErrorCount++
+            }
+            if (d.severity === DiagnosticSeverity.Warning) {
+              initialWarningCount++
+            }
+          })
         }
+
+        console.log(logChunk)
+        return { initialErrorCount, initialWarningCount }
+      } catch (err: any) {
+        console.error(err.stack)
+        return { initialErrorCount, initialWarningCount }
       }
     })
   )

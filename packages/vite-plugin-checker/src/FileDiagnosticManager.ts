@@ -29,7 +29,7 @@ class FileDiagnosticManager {
 
   public updateByFileId(fileId: string, next: NormalizedDiagnostic[] | null) {
     for (let i = 0; i < this.diagnostics.length; i++) {
-      if (this.diagnostics[i].id === fileId) {
+      if (this.diagnostics[i]?.id === fileId) {
         this.diagnostics.splice(i, 1)
         i--
       }

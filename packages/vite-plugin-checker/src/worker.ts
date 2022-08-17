@@ -1,4 +1,4 @@
-import { ConfigEnv } from 'vite'
+import type { ConfigEnv } from 'vite'
 import { parentPort, Worker, workerData } from 'worker_threads'
 
 import { ACTION_TYPES } from './types.js'

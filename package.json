@@ -38,6 +38,7 @@
     ]
   },
   "devDependencies": {
+    "@tsconfig/node16-strictest-esm": "^1.0.3",
     "@types/babel__code-frame": "^7.0.2",
     "@types/debug": "^4.1.5",
     "@types/fs-extra": "^9.0.11",

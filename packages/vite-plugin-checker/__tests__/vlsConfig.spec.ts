@@ -7,12 +7,15 @@ import { prepareClientConnection, logLevel2Severity } from '../src/checkers/vls/
 
 async function testVslConfig(overrideConfig?: any) {
   const workspaceUri = URI.file(path.join(__dirname, 'fixtures'))
-  const { clientConnection, serverConnection, vls, up, down, logger } =
-    await prepareClientConnection(workspaceUri, logLevel2Severity['WARN'], {
+  const { clientConnection, serverConnection, vls, up, down } = await prepareClientConnection(
+    workspaceUri,
+    logLevel2Severity['WARN'],
+    {
       watch: false,
       verbose: false,
       config: overrideConfig || null,
-    })
+    }
+  )
 
   // @ts-expect-error
   expect(vls.workspaceConfig).toMatchSnapshot()
