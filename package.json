@@ -27,10 +27,8 @@
     "docs:build": "pnpm --filter docs exec vitepress build .",
     "docs:serve": "pnpm --filter docs exec vitepress serve ."
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+  "simple-git-hooks": {
+    "pre-commit": "pnpm exec lint-staged"
   },
   "lint-staged": {
     "{packages}/**/*.{js,ts}": [
@@ -60,7 +58,6 @@
     "execa": "^5.1.1",
     "fast-json-stable-stringify": "^2.1.0",
     "fs-extra": "^10.0.0",
-    "husky": "4.3.7",
     "jest-serializer-path": "^0.1.15",
     "klaw": "^4.0.1",
     "lint-staged": "^11.0.0",
@@ -73,6 +70,7 @@
     "prompts": "^2.4.1",
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
+    "simple-git-hooks": "^2.8.0",
     "sort-deep-object-arrays": "^1.1.2",
     "strip-ansi": "^7.0.0",
     "svelte": "^3.46.4",
