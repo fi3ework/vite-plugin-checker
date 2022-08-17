@@ -15,7 +15,7 @@ pnpm preview
 
 ### with vite-plugin-checker
 
-Watch and compile bundled JS to `../vite-plugin-checker/lib/@runtime/main.js`. Run `pnpm dev` in monorepo root will invoke below scripts.
+Watch and compile bundled JS to `../vite-plugin-checker/dist/@runtime/main.js`. Run `pnpm dev` in monorepo root will invoke below scripts.
 
 ```bash
 pnpm dev

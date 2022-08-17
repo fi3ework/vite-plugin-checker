@@ -5,7 +5,6 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "dev:watch": "nodemon --watch ../../packages/vite-plugin-checker/lib --exec 'vite'",
     "build": "vite build",
     "serve": "vite preview"
   },

@@ -12,7 +12,7 @@ const config = isLocal
     }
   : {
       entryPoints: ['./src/main.js'],
-      outfile: '../vite-plugin-checker/lib/@runtime/main.js',
+      outfile: '../vite-plugin-checker/dist/@runtime/main.js',
     }
 
 esbuild
