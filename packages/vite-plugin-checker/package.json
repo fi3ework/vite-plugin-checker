@@ -2,16 +2,19 @@
   "name": "vite-plugin-checker",
   "version": "0.4.9",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
-  "main": "lib/main.js",
   "type": "module",
-  "types": "lib/main.d.ts",
+  "types": "./dist/main.d.ts",
+  "exports": "./dist/main.js",
+  "engines": {
+    "node": ">=14.16"
+  },
   "files": [
-    "lib",
-    "!lib/checkers/vueTsc/typescript-vue-tsc"
+    "dist",
+    "!dist/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
     "dev": "tsup --watch",
-    "clean": "rimraf lib",
+    "clean": "rimraf dist",
     "build": "tsup",
     "build:test": "tsup --sourcemap inline",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . --lerna-package vite-plugin-checker",

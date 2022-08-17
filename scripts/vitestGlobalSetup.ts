@@ -7,7 +7,7 @@ export async function setup(): Promise<void> {
   await fs.ensureDir(tempRuntimePath)
   await fs.emptyDir(tempRuntimePath)
   await fs.copy(
-    path.resolve(__dirname, '../packages/vite-plugin-checker/lib/@runtime'),
+    path.resolve(__dirname, '../packages/vite-plugin-checker/dist/@runtime'),
     tempRuntimePath,
     {
       dereference: false,
