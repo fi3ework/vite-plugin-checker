@@ -1,15 +1,31 @@
-import { defineConfig } from 'tsup'
+import { defineConfig, Options } from 'tsup'
 
-export default defineConfig({
+const shared: Options = {
   entry: ['src'],
-  outDir: 'dist',
   splitting: false,
   bundle: false,
-  format: ['esm'],
   sourcemap: true,
-  // do not clean @runtime code on watch mode
-  clean: false,
+  clean: true,
   target: 'node14',
   platform: 'node',
   dts: true,
-})
+}
+
+export default defineConfig([
+  {
+    format: ['esm'],
+    outDir: 'dist/esm',
+    ...shared,
+  },
+  {
+    format: ['cjs'],
+    outDir: 'dist/cjs',
+    shims: true,
+    outExtension({ format }) {
+      return {
+        js: `.js`,
+      }
+    },
+    ...shared,
+  },
+])
