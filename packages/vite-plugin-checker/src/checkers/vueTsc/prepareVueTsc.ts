@@ -4,8 +4,9 @@ import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
 const _require = createRequire(import.meta.url)
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+// isomorphic __dirname https://antfu.me/posts/isomorphic-dirname
+const _filename = fileURLToPath(import.meta.url)
+const _dirname = dirname(_filename)
 
 const proxyPath = _require.resolve('vue-tsc/out/proxy')
 
@@ -43,7 +44,7 @@ const textToReplace: { target: string; replacement: string }[] = [
 
 export function prepareVueTsc() {
   // 1. copy typescript to folder
-  const targetTsDir = path.resolve(__dirname, 'typescript-vue-tsc')
+  const targetTsDir = path.resolve(_dirname, 'typescript-vue-tsc')
   const vueTscFlagFile = path.resolve(targetTsDir, 'vue-tsc-resolve-path')
 
   let shouldPrepare = true
