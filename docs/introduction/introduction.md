@@ -19,8 +19,8 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
 
 | Examples           | StackBlitz                                                       |
 | ------------------ | ---------------------------------------------------------------- |
-| Vue3 + vue-tsc     | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-p4qsv6) |
-| React + TypeScript | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-bsdp5b) |
-| ESLint             | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-xkwqvz) |
-| Vue2 + VLS         | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-bqtcau) |
-| Multiple           | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-uetqdg) |
+| Vue3 + vue-tsc     | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-e8pddl) |
+| React + TypeScript | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-b4zcev) |
+| ESLint             | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-l1ritu) |
+| Vue2 + VLS         | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-kpffk5) |
+| Multiple           | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-mb4ea6) |
