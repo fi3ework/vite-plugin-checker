@@ -42,7 +42,8 @@
 
   .window {
     font-family: sans-serif;
-    background-color: rgb(11, 21, 33);
+    background-color: rgba(11, 21, 33, 0.85);
+    backdrop-filter: blur(1px);
     color: white;
     position: fixed;
     bottom: 0px;
@@ -72,7 +73,7 @@
 
   .list-scroll {
     height: 100%;
-    overflow: scroll;
+    overflow-y: auto;
     flex-grow: 1;
   }
 
