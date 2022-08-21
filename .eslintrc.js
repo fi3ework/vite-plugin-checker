@@ -7,6 +7,8 @@ module.exports = {
     __HMR_HOSTNAME__: 'readonly',
     __HMR_PORT__: 'readonly',
     __HMR_PROTOCOL__: 'readonly',
+    __dirname: 'off',
+    __filename: 'off',
   },
   plugins: ['svelte3'],
   overrides: [
