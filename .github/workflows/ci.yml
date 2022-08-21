@@ -82,8 +82,16 @@ jobs:
       - name: Test unit
         run: pnpm run test-unit
 
-      - name: Test serve
+      - name: Test serve (ESM)
         run: pnpm run test-serve
 
-      - name: Test build
+      - name: Test build (ESM)
         run: pnpm run test-build
+
+      - name: Test serve (CJS)
+        if: ${{ matrix.node_version == 18 && runner.os == 'Linux' }}
+        run: pnpm run test-serve-cjs
+
+      - name: Test build (CJS)
+        if: ${{ matrix.node_version == 18 && runner.os == 'Linux' }}
+        run: pnpm run test-build-cjs
