@@ -22,7 +22,6 @@
     "test-serve-cjs": "cross-env VITEST_TEST_CJS=1 pnpm run test-serve",
     "test-build-cjs": "cross-env VITEST_TEST_CJS=1 pnpm run test-build",
     "test-unit:watch": "vitest",
-    "changelog": "pnpm -r --filter=./packages/** run changelog",
     "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit",
     "ci:publish": "zx scripts/publish.mjs",
     "docs:dev": "pnpm --filter docs exec vitepress dev .",

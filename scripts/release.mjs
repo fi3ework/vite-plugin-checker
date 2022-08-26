@@ -110,7 +110,7 @@ async function main() {
   step('\nGit commit & tag & push...')
 
   await $`pnpm run changelog`
-  await $`git add .`
+  await $`git add ../../`
 
   const commitMsg = `release: ${tag}` // 🤨 https://github.com/google/zx/issues/86
   await $`git commit -m ${commitMsg}`
