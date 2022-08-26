@@ -1,3 +1,26 @@
+## 0.5.0 (2022-08-26)
+
+* chore: clean code ([2a1a318](https://github.com/fi3ework/vite-plugin-checker/commit/2a1a318))
+* chore: migrate to ESM and Vitest ([963067b](https://github.com/fi3ework/vite-plugin-checker/commit/963067b))
+* chore: remove unnecessary export ([602d446](https://github.com/fi3ework/vite-plugin-checker/commit/602d446))
+* test: add tests for CJS ([544b4da](https://github.com/fi3ework/vite-plugin-checker/commit/544b4da))
+* fix: add named export to improve `"module": "nodenext"` compatibility (#140) ([dca4157](https://github.com/fi3ework/vite-plugin-checker/commit/dca4157)), closes [#140](https://github.com/fi3ework/vite-plugin-checker/issues/140)
+* fix: use isomorphic __dirname ([a3c566b](https://github.com/fi3ework/vite-plugin-checker/commit/a3c566b))
+* build: add peerDependenciesMeta ([24d22b7](https://github.com/fi3ework/vite-plugin-checker/commit/24d22b7))
+* build: add vti as optional peer dependency ([1a8b065](https://github.com/fi3ework/vite-plugin-checker/commit/1a8b065))
+* build: make ESM/CJS dual package ([48ccc28](https://github.com/fi3ework/vite-plugin-checker/commit/48ccc28))
+* build: make package.json pure ESM ([09e679e](https://github.com/fi3ework/vite-plugin-checker/commit/09e679e))
+* build: make test pass ([3e6fa02](https://github.com/fi3ework/vite-plugin-checker/commit/3e6fa02))
+* refactor: clean code with @tsconfig/node16-strictest-esm ([f84401f](https://github.com/fi3ework/vite-plugin-checker/commit/f84401f))
+* feat!: use VTI in vls build mode ([0e24931](https://github.com/fi3ework/vite-plugin-checker/commit/0e24931))
+
+
+### BREAKING CHANGE
+
+* node requires >=14.16
+* use VTI in vls build mode. `vti` is required as a peerDependency if `vls` is enabled.
+
+
 ## <small>0.4.9 (2022-07-13)</small>
 
 * Allow Vite 3 beta as peer dependency ([cd1f06f](https://github.com/fi3ework/vite-plugin-checker/commit/cd1f06f))
