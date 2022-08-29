@@ -2,24 +2,27 @@ import chokidar from 'chokidar'
 import stylelint from 'stylelint'
 import translateOptions from './options'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
 
-import { Checker } from '../../Checker'
-import { FileDiagnosticManager } from '../../FileDiagnosticManager'
+import { Checker } from '../../Checker.js'
+import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
+  composeCheckerSummary,
   consoleLog,
-  diagnosticToTerminalLog,
   diagnosticToRuntimeError,
+  diagnosticToTerminalLog,
   filterLogLevel,
   normalizeStylelintDiagnostic,
   toViteCustomPayload,
-  composeCheckerSummary,
-} from '../../logger'
-import { ACTION_TYPES, DiagnosticLevel } from '../../types'
+} from '../../logger.js'
+import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
 
 const manager = new FileDiagnosticManager()
 
-import type { CreateDiagnostic } from '../../types'
+import type { CreateDiagnostic } from '../../types.js'
+
+const __filename = fileURLToPath(import.meta.url)
 
 const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
   let overlay = true
