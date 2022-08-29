@@ -32,7 +32,7 @@
     "pre-commit": "pnpm exec lint-staged"
   },
   "lint-staged": {
-    "{packages}/**/*.{js,ts}": [
+    "packages/**/*.{js,ts}": [
       "eslint --fix",
       "prettier --write",
       "git add"
