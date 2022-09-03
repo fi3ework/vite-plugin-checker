@@ -83,7 +83,9 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         const absPath = path.resolve(root, filePath)
         const isChangedFileIgnored = await eslint.isPathIgnored(filePath)
 
-        if (type === 'unlink' || isChangedFileIgnored) {
+        if (isChangedFileIgnored) return
+
+        if (type === 'unlink') {
           manager.updateByFileId(absPath, [])
         } else if (type === 'change') {
           const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
