@@ -68,7 +68,7 @@
   }
 
   .message-item {
-    border-bottom: 2px dashed #838383;
+    border-bottom: 1px dotted #666;
     padding: 12px 0 0 0;
   }
 
