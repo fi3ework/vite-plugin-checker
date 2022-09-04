@@ -1,3 +1,13 @@
+## <small>0.5.1 (2022-09-04)</small>
+
+* fix: changed overflow style and opacity (#170) ([2824b50](https://github.com/fi3ework/vite-plugin-checker/commit/2824b50)), closes [#170](https://github.com/fi3ework/vite-plugin-checker/issues/170)
+* fix: skip running ESLint on ignored files (#162) ([a491be7](https://github.com/fi3ework/vite-plugin-checker/commit/a491be7)), closes [#162](https://github.com/fi3ework/vite-plugin-checker/issues/162)
+* build: move CHANGELOG to root ([acf6b83](https://github.com/fi3ework/vite-plugin-checker/commit/acf6b83))
+* docs: update demo links ([f73577e](https://github.com/fi3ework/vite-plugin-checker/commit/f73577e))
+* refactor: clean code ([e8c285a](https://github.com/fi3ework/vite-plugin-checker/commit/e8c285a))
+
+
+
 ## 0.5.0 (2022-08-26)
 
 * chore: clean code ([6163d65](https://github.com/fi3ework/vite-plugin-checker/commit/6163d65))
