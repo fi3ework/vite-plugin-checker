@@ -89,7 +89,7 @@
   .frame {
     margin: 1em 0;
     padding: 6px 8px;
-    background: #16181d;
+    background: rgba(22, 24, 29, 0.85);
     margin-top: 8px;
     border-radius: 8px;
   }
