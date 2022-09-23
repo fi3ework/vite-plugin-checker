@@ -48,6 +48,27 @@ describe('multiple-hmr', () => {
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
+
+    it('should ignore extensions that are not specified for ESLint', async () => {
+      const source = 'text-align: center;'
+      const target = 'text-align: right;'
+
+      console.log('-- edit the file --')
+      resetDiagnostics()
+      resetReceivedLog()
+      editFile('src/App.css', (code) => code.replace(source, target))
+      await sleepForEdit()
+      expect(diagnostics).toStrictEqual([])
+      expect(stripedLog).toBe('')
+
+      console.log('-- return to previous state --')
+      resetDiagnostics()
+      resetReceivedLog()
+      editFile('src/App.css', (code) => code.replace(target, source))
+      await sleepForEdit()
+      expect(diagnostics).toStrictEqual([])
+      expect(stripedLog).toBe('')
+    })
   })
 
   describe.runIf(isBuild)('build', () => {
