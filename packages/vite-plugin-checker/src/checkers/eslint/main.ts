@@ -52,11 +52,12 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         return userLogLevel.map((l) => map[l])
       })()
 
-      const eslint = new ESLint({
+      const eslintOptions: ESLint.Options = {
         cwd: root,
         ...translatedOptions,
         ...pluginConfig.eslint.dev?.overrideConfig,
-      })
+      }
+      const eslint = new ESLint(eslintOptions)
 
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
@@ -82,11 +83,16 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       }
 
       const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
-        const absPath = path.resolve(root, filePath)
-        const isChangedFileIgnored = await eslint.isPathIgnored(filePath)
+        // See: https://github.com/eslint/eslint/pull/4465
+        const extension = path.extname(filePath)
+        const { extensions } = eslintOptions
+        const hasExtensionsConfig = Array.isArray(extensions)
+        if (hasExtensionsConfig && !extensions.includes(extension)) return
 
+        const isChangedFileIgnored = await eslint.isPathIgnored(filePath)
         if (isChangedFileIgnored) return
 
+        const absPath = path.resolve(root, filePath)
         if (type === 'unlink') {
           manager.updateByFileId(absPath, [])
         } else if (type === 'change') {
