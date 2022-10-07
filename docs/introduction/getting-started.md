@@ -28,16 +28,16 @@ If you are using [Vite 3](https://vitejs.dev/blog/announcing-vite3.html), the mi
    ```
 
 ::: tip
-If you'd prefer to not run the checkers during unit testing, you can check the test framework environment variable and alter the config based on that. Example of vitest:
-
-```ts
-// vite.config.js
-import checker from 'vite-plugin-checker'
-export default {
-  plugins: [process.env.VITEST ? undefined : checker({ typescript: true })],
-}
-```
-
+If you'd prefer to not run the checkers during unit testing, you can check the VITEST environment variable and alter the config based on that.  Example:
+   ```ts
+   // vite.config.js
+   import checker from 'vite-plugin-checker'
+   export default {
+     plugins: [
+       !process.env.VITEST ? checker({ typescript: true }) : undefined,
+     ]
+   }
+   ```
 :::
 
 3. You're all set. Open localhost page and start development 🚀.
