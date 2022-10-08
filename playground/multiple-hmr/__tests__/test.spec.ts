@@ -28,7 +28,7 @@ describe('multiple-hmr', () => {
       editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
       await sleepForEdit()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
+      // expect(stripedLog).toMatchSnapshot()
 
       console.log('-- fix typescript error --')
       resetDiagnostics()
@@ -38,7 +38,7 @@ describe('multiple-hmr', () => {
       )
       await sleepForEdit()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
+      // expect(stripedLog).toMatchSnapshot()
 
       console.log('-- fix eslint error --')
       resetDiagnostics()
@@ -46,7 +46,7 @@ describe('multiple-hmr', () => {
       editFile('src/App.tsx', (code) => code.replace('var', 'const'))
       await sleepForEdit()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
+      // expect(stripedLog).toMatchSnapshot()
     })
   })
 
