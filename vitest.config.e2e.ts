@@ -6,7 +6,6 @@ const timeout = process.env.CI ? 80000 : 40000
 export default defineConfig({
   test: {
     cache: false,
-    isolate: false,
     threads: false,
     include: ['./playground/**/*.spec.[tj]s'],
     setupFiles: ['./playground/vitestSetup.ts'],
