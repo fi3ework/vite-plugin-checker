@@ -62,7 +62,8 @@
     "typescript": "*",
     "vite": "^2.0.0 || ^3.0.0-0",
     "vls": "*",
-    "vti": "*"
+    "vti": "*",
+    "optionator": "^0.9.1"
   },
   "peerDependenciesMeta": {
     "eslint": {
@@ -75,6 +76,9 @@
       "optional": true
     },
     "vti": {
+      "optional": true
+    },
+    "optionator": {
       "optional": true
     }
   },
