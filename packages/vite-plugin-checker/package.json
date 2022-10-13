@@ -59,6 +59,8 @@
   },
   "peerDependencies": {
     "eslint": ">=7",
+    "meow": "^9.0.0",
+    "stylelint": ">=13",
     "typescript": "*",
     "vite": "^2.0.0 || ^3.0.0-0",
     "vls": "*",
@@ -67,6 +69,12 @@
   },
   "peerDependenciesMeta": {
     "eslint": {
+      "optional": true
+    },
+    "meow": {
+      "optional": true
+    },
+    "stylelint": {
       "optional": true
     },
     "typescript": {
@@ -88,8 +96,10 @@
     "@types/lodash.pick": "^4.4.6",
     "@volar/vue-typescript": "^0.33.0",
     "esbuild": "^0.14.27",
+    "meow": "^9.0.0",
     "npm-run-all": "^4.1.5",
     "optionator": "^0.9.1",
+    "stylelint": "^14.0.0",
     "tsup": "^6.2.2",
     "typescript": "~4.5.5",
     "vls": "^0.7.6",

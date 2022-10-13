@@ -1,12 +1,16 @@
 import invariant from 'tiny-invariant'
 import { isInVitestEntryThread, isMainThread } from './utils.js'
 
-import type { ServeAndBuildChecker, BuildInCheckerNames } from './types.js'
 import { createScript, Script } from './worker.js'
 
 // still an only issue https://github.com/microsoft/TypeScript/issues/29808#issuecomment-829750974
 import type {} from 'vite'
-import type { CreateDiagnostic, BuildInCheckers } from './types.js'
+import type {
+  CreateDiagnostic,
+  BuildInCheckers,
+  ServeAndBuildChecker,
+  BuildInCheckerNames,
+} from './types.js'
 
 if (!(isMainThread || isInVitestEntryThread)) {
   process.stdout.isTTY = true

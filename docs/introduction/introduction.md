@@ -1,6 +1,6 @@
 # About vite-plugin-checker
 
-A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint in worker thread.
+A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint, Stylelint in worker thread.
 
 <div :style="{ 'display': 'flex' }">
   <a href="https://www.npmjs.com/package/vite-plugin-checker" :style="{ 'margin-right': '4px' }"><img src="https://img.shields.io/npm/v/vite-plugin-checker" /></a>

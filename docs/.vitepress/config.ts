@@ -45,6 +45,7 @@ function sidebar() {
         { text: 'vue-tsc', link: '/checkers/vue-tsc' },
         { text: 'ESLint', link: '/checkers/eslint' },
         { text: 'VLS', link: '/checkers/vls' },
+        { text: 'Stylelint', link: '/checkers/stylelint' },
       ],
     },
     {
