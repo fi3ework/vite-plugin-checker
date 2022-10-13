@@ -1,6 +1,6 @@
 import chokidar from 'chokidar'
 import stylelint from 'stylelint'
-import translateOptions from './options'
+import translateOptions from './options.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
@@ -19,6 +19,7 @@ import {
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
 
 const manager = new FileDiagnosticManager()
+let createServeAndBuild
 
 import type { CreateDiagnostic } from '../../types.js'
 
@@ -134,12 +135,13 @@ export class StylelintChecker extends Checker<'stylelint'> {
   }
 
   public init() {
-    const createServeAndBuild = super.initMainThread()
-    module.exports.createServeAndBuild = createServeAndBuild
+    const _createServeAndBuild = super.initMainThread()
+    createServeAndBuild = _createServeAndBuild
     super.initWorkerThread()
   }
 }
 
+export { createServeAndBuild }
 const stylelintChecker = new StylelintChecker()
 stylelintChecker.prepare()
 stylelintChecker.init()

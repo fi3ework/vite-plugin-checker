@@ -413,7 +413,8 @@ export function normalizeStylelintDiagnostic(
       }
 
       const codeFrame = createFrame({
-        source: diagnostic.source ?? '',
+        // @ts-ignore
+        source: diagnostic._postcssResult.css ?? '',
         location: loc,
       })
 
