@@ -152,7 +152,13 @@ export class TscChecker extends Checker<'typescript'> {
             // Custom config path
             if (tsconfigPath) {
               const fullConfigPath = root ? path.join(root, tsconfigPath) : tsconfigPath
-              args = args.concat(['-p', fullConfigPath])
+
+              // In build mode, the tsconfig path is an argument to -b, e.g. "tsc -b [path]"
+              if (buildMode) {
+                args = args.concat([fullConfigPath])
+              } else {
+                args = args.concat(['-p', fullConfigPath])
+              }
             }
 
             return ['tsc', args]
