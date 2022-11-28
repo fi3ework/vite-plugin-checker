@@ -114,7 +114,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         const devBase = resolvedConfig.base
 
         // #region
-        // copied from https://github.dev/vitejs/vite/blob/76bbcd09985f85f7786b7e2e2d5ce177ee7d1916/packages/vite/src/client/client.ts#L25
+        // copied from https://github.com/vitejs/vite/blob/d76db0cae645beaecd970d95b4819158c5dd568a/packages/vite/src/client/client.ts#LL25
         const hmrConfig = isObject(resolvedConfig.server.hmr) ? resolvedConfig.server.hmr : {}
         const host = hmrConfig.host || null
         const protocol = hmrConfig.protocol || null
