@@ -107,38 +107,34 @@ export function checker(userConfig: UserPluginConfig): Plugin {
 
       return
     },
-    transform(code, id) {
+    transform(code, id, options) {
       if (id === RUNTIME_PUBLIC_PATH) {
         if (!resolvedConfig) return
 
+        const devBase = resolvedConfig.base
+
         // #region
         // copied from https://github.dev/vitejs/vite/blob/76bbcd09985f85f7786b7e2e2d5ce177ee7d1916/packages/vite/src/client/client.ts#L25
-        let options = resolvedConfig.server.hmr
-        options = options && typeof options !== 'boolean' ? options : {}
-        const host = options.host || null
-        const protocol = options.protocol || null
-        let port: number | string | false | undefined
-        if (isObject(resolvedConfig.server.hmr)) {
-          port = resolvedConfig.server.hmr.clientPort || resolvedConfig.server.hmr.port
-        }
+        const hmrConfig = isObject(resolvedConfig.server.hmr) ? resolvedConfig.server.hmr : {}
+        const host = hmrConfig.host || null
+        const protocol = hmrConfig.protocol || null
+        // hmr.clientPort -> hmr.port
+        // -> (24678 if middleware mode) -> new URL(import.meta.url).port
+        let port = hmrConfig?.clientPort || hmrConfig?.port || null
         if (resolvedConfig.server.middlewareMode) {
-          port = String(port || 24678)
-        } else {
-          port = String(port || options.port || resolvedConfig.server.port!)
+          port ||= 24678
         }
 
-        let hmrBase = resolvedConfig.base
-        if (options.path) {
-          hmrBase = path.posix.join(hmrBase, options.path)
-        }
-        if (hmrBase !== '/') {
-          port = path.posix.normalize(`${port}${hmrBase}`)
+        let hmrBase = devBase
+        if (hmrConfig?.path) {
+          hmrBase = path.posix.join(hmrBase, hmrConfig.path)
         }
 
         return code
           .replace(/__HMR_PROTOCOL__/g, JSON.stringify(protocol))
           .replace(/__HMR_HOSTNAME__/g, JSON.stringify(host))
           .replace(/__HMR_PORT__/g, JSON.stringify(port))
+          .replace(/__HMR_BASE__/g, JSON.stringify(hmrBase))
         // #endregion
       }
 
