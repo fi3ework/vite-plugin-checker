@@ -1,10 +1,13 @@
 // #region
-// copied from https://github.dev/vitejs/vite/blob/76bbcd09985f85f7786b7e2e2d5ce177ee7d1916/packages/vite/src/client/client.ts#L25
+// copied from https://github.com/vitejs/vite/blob/d76db0cae645beaecd970d95b4819158c5dd568a/packages/vite/src/client/client.ts#LL25
 // use server configuration, then fallback to inference
+const importMetaUrl = new URL(import.meta.url)
+
 const socketProtocol = __HMR_PROTOCOL__ || (location.protocol === 'https:' ? 'wss' : 'ws')
-const socketHost = __HMR_PORT__
-  ? `${__HMR_HOSTNAME__ || location.hostname}:${__HMR_PORT__}`
-  : `${__HMR_HOSTNAME__ || location.hostname}`
+const hmrPort = __HMR_PORT__
+const socketHost = `${__HMR_HOSTNAME__ || importMetaUrl.hostname}:${
+  hmrPort || importMetaUrl.port
+}${__HMR_BASE__}`
 const socket = new WebSocket(`${socketProtocol}://${socketHost}`, 'vite-hmr')
 // #endregion
 
