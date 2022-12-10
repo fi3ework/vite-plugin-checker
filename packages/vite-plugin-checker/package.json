@@ -62,7 +62,7 @@
     "meow": "^9.0.0",
     "stylelint": ">=13",
     "typescript": "*",
-    "vite": "^2.0.0 || ^3.0.0-0",
+    "vite": ">=2.0.0",
     "vls": "*",
     "vti": "*",
     "optionator": "^0.9.1"
