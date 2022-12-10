@@ -1,3 +1,21 @@
+## <small>0.5.2 (2022-12-10)</small>
+
+* chore: allow future version of Vite as peer dep (close #187) ([32c5658](https://github.com/fi3ework/vite-plugin-checker/commit/32c5658)), closes [#187](https://github.com/fi3ework/vite-plugin-checker/issues/187)
+* chore: bump vitest ([bd54d05](https://github.com/fi3ework/vite-plugin-checker/commit/bd54d05))
+* test: add basic test for stylelint ([5275ce2](https://github.com/fi3ework/vite-plugin-checker/commit/5275ce2))
+* test: Add case for unknown extensions with ESLint ([674b2e1](https://github.com/fi3ework/vite-plugin-checker/commit/674b2e1))
+* test: comment out stripedLog ([14e75f5](https://github.com/fi3ework/vite-plugin-checker/commit/14e75f5))
+* test: remove log for passing test stably ([ff5ee39](https://github.com/fi3ework/vite-plugin-checker/commit/ff5ee39))
+* fix: Ignore unknown extensions when running ESLint ([712fb31](https://github.com/fi3ework/vite-plugin-checker/commit/712fb31))
+* fix(stylelint): correct code frame ([443567c](https://github.com/fi3ework/vite-plugin-checker/commit/443567c))
+* feat: add Stylelint basic support (#158) ([333ba13](https://github.com/fi3ework/vite-plugin-checker/commit/333ba13)), closes [#158](https://github.com/fi3ework/vite-plugin-checker/issues/158)
+* build: add optionator as optional peer dep ([4e1904e](https://github.com/fi3ework/vite-plugin-checker/commit/4e1904e))
+* build: remove stale bot ([140f96c](https://github.com/fi3ework/vite-plugin-checker/commit/140f96c))
+* build: update publish script ([3be96a8](https://github.com/fi3ework/vite-plugin-checker/commit/3be96a8))
+* Add tip to documentation on how to disable in unit testing context (#173) ([ca900d6](https://github.com/fi3ework/vite-plugin-checker/commit/ca900d6)), closes [#173](https://github.com/fi3ework/vite-plugin-checker/issues/173)
+
+
+
 ## <small>0.5.1 (2022-09-04)</small>
 
 * fix: changed overflow style and opacity (#170) ([2824b50](https://github.com/fi3ework/vite-plugin-checker/commit/2824b50)), closes [#170](https://github.com/fi3ework/vite-plugin-checker/issues/170)
