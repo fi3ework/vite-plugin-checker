@@ -1,4 +1,5 @@
 #!/usr/bin/env zx
+// @ts-nocheck
 
 /**
  * modified from https://github.com/vitejs/vite/blob/main/scripts/release.js
