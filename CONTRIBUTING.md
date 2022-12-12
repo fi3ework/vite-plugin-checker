@@ -26,14 +26,4 @@ npm run release -- --version=1.2.3 --dry
 
 ## Publish
 
-Publish in @latest dist tag
-
-```bash
-npm run ci:publish
-```
-
-Or publish in other dist tag
-
-```bash
-npm run ci:publish -- dist-tag=beta
-```
+Package is automated published in CI, see `.github/workflows/release.yml`.

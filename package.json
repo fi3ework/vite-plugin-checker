@@ -23,7 +23,6 @@
     "test-build-cjs": "cross-env VITEST_TEST_CJS=1 pnpm run test-build",
     "test-unit:watch": "vitest",
     "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit",
-    "ci:publish": "zx scripts/publish.mjs",
     "docs:dev": "pnpm --filter docs exec vitepress dev .",
     "docs:build": "pnpm --filter docs exec vitepress build .",
     "docs:serve": "pnpm --filter docs exec vitepress serve ."
