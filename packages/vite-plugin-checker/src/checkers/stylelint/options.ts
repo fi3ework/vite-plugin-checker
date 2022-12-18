@@ -92,7 +92,7 @@ import type Stylelint from 'stylelint'
 
 const EXIT_CODE_ERROR = 2
 
-export default (command: string) => {
+export const translateOptions = (command: string) => {
   const result = meow({
     autoHelp: false,
     autoVersion: false,

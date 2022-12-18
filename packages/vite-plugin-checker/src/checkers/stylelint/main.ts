@@ -1,6 +1,6 @@
 import chokidar from 'chokidar'
 import stylelint from 'stylelint'
-import translateOptions from './options.js'
+import { translateOptions } from './options.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
