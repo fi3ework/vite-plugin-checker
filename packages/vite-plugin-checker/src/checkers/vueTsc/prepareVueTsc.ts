@@ -8,7 +8,17 @@ const _require = createRequire(import.meta.url)
 const _filename = fileURLToPath(import.meta.url)
 const _dirname = dirname(_filename)
 
-const proxyPath = _require.resolve('vue-tsc/out/proxy')
+let proxyPath: string
+let createProgramFunction: string
+try {
+  // vue-tsc exposes the proxy in vue-tsc/out/index after v1.0.14
+  proxyPath = _require.resolve('vue-tsc/out/index')
+  createProgramFunction = 'createProgram'
+} catch (e) {
+  // vue-tsc exposes the proxy in vue-tsc/out/proxy before v1.0.14
+  proxyPath = _require.resolve('vue-tsc/out/proxy')
+  createProgramFunction = 'createProgramProxy'
+}
 
 const textToReplace: { target: string; replacement: string }[] = [
   {
@@ -34,7 +44,7 @@ const textToReplace: { target: string; replacement: string }[] = [
     target: `function createProgram(rootNamesOrOptions, _options, _host, _oldProgram, _configFileParsingDiagnostics) {`,
     replacement: `function createProgram(rootNamesOrOptions, _options, _host, _oldProgram, _configFileParsingDiagnostics) { return require(${JSON.stringify(
       proxyPath
-    )}).createProgramProxy(...arguments);`,
+    )}).${createProgramFunction}(...arguments);`,
   },
   {
     target: `ts.executeCommandLine(ts.sys, ts.noop, ts.sys.args);`,
