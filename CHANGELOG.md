@@ -1,3 +1,15 @@
+## <small>0.5.3 (2022-12-22)</small>
+
+* ci: clean Netlify scripts for pnpm (#195) ([ab5798f](https://github.com/fi3ework/vite-plugin-checker/commit/ab5798f)), closes [#195](https://github.com/fi3ework/vite-plugin-checker/issues/195)
+* fix: update logic that is resolve socket url (#188) ([a3d9684](https://github.com/fi3ework/vite-plugin-checker/commit/a3d9684)), closes [#188](https://github.com/fi3ework/vite-plugin-checker/issues/188)
+* fix(stylelint): drop export default (#191) ([82f30b1](https://github.com/fi3ework/vite-plugin-checker/commit/82f30b1)), closes [#191](https://github.com/fi3ework/vite-plugin-checker/issues/191)
+* fix(typescript): Support custom path in build mode (#186) ([d1c422c](https://github.com/fi3ework/vite-plugin-checker/commit/d1c422c)), closes [#186](https://github.com/fi3ework/vite-plugin-checker/issues/186)
+* fix(vue-tsc): support volar v1.0.14 (#194) ([538a0d9](https://github.com/fi3ework/vite-plugin-checker/commit/538a0d9)), closes [#194](https://github.com/fi3ework/vite-plugin-checker/issues/194) [#193](https://github.com/fi3ework/vite-plugin-checker/issues/193)
+* build: publish package in CI ([8c638cf](https://github.com/fi3ework/vite-plugin-checker/commit/8c638cf))
+* refactor: no type check for mjs ([f0b78fa](https://github.com/fi3ework/vite-plugin-checker/commit/f0b78fa))
+
+
+
 ## <small>0.5.2 (2022-12-10)</small>
 
 * chore: allow future version of Vite as peer dep (close #187) ([32c5658](https://github.com/fi3ework/vite-plugin-checker/commit/32c5658)), closes [#187](https://github.com/fi3ework/vite-plugin-checker/issues/187)

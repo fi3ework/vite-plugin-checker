@@ -39,9 +39,8 @@ jobs:
           pnpm run clean
           pnpm run build
           cp README.md packages/vite-plugin-checker/README.md
-          cd packages/vite-plugin-checker
 
       - name: Publish to NPM
-        run: pnpm publish --access public
+        run: pnpm publish --filter vite-plugin-checker --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
