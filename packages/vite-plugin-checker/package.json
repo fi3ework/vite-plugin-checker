@@ -65,6 +65,7 @@
     "vite": ">=2.0.0",
     "vls": "*",
     "vti": "*",
+    "vue-tsc": "*",
     "optionator": "^0.9.1"
   },
   "peerDependenciesMeta": {
@@ -87,6 +88,9 @@
       "optional": true
     },
     "optionator": {
+      "optional": true
+    },
+    "vue-tsc": {
       "optional": true
     }
   },
