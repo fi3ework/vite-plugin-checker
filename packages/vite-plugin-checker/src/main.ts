@@ -60,6 +60,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
 
   return {
     name: 'vite-plugin-checker',
+    enforce: 'pre',
     // @ts-ignore
     __internal__checker: Checker,
     config: async (config, env) => {
