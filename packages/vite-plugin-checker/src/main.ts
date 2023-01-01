@@ -52,6 +52,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : {}
   let resolvedRuntimePath = RUNTIME_PUBLIC_PATH
   let checkers: ServeAndBuildChecker[] = []
+  let isProduction = true
+  let skipRuntime = false
 
   let viteMode: ConfigEnv['command'] | undefined
   let resolvedConfig: ResolvedConfig | undefined
@@ -80,6 +82,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     configResolved(config) {
       resolvedConfig = config
       resolvedRuntimePath = config.base + RUNTIME_PUBLIC_PATH.slice(1)
+      isProduction = config.isProduction
+      skipRuntime ||= isProduction || config.command === 'build'
     },
     buildEnd() {
       if (viteMode === 'serve') {
@@ -90,19 +94,14 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       }
     },
     resolveId(id) {
-      if (viteMode === 'serve') {
-        if (id === RUNTIME_PUBLIC_PATH) {
-          return id
-        }
+      if (id === RUNTIME_PUBLIC_PATH) {
+        return id
       }
-
       return
     },
     load(id) {
-      if (viteMode === 'serve') {
-        if (id === RUNTIME_PUBLIC_PATH) {
-          return runtimeCode
-        }
+      if (id === RUNTIME_PUBLIC_PATH) {
+        return runtimeCode
       }
 
       return
@@ -141,7 +140,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       return null
     },
     transformIndexHtml() {
-      if (viteMode === 'serve') {
+      if (!skipRuntime) {
         return [
           {
             tag: 'script',
@@ -160,7 +159,7 @@ inject({
     buildStart: () => {
       // only run in build mode
       // run a bin command in a separated process
-      if (viteMode !== 'build' || !enableBuild) return
+      if (!skipRuntime || !enableBuild) return
 
       const localEnv = npmRunPath.env({
         env: process.env,
