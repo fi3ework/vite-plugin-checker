@@ -113,7 +113,27 @@ beforeAll(async (s) => {
       const testCustomRoot = resolve(testDir, 'root')
       rootDir = fs.existsSync(testCustomRoot) ? testCustomRoot : testDir
 
-      await startDefaultServe()
+      const testCustomServe = [
+        resolve(dirname(testPath), 'serve.ts'),
+        resolve(dirname(testPath), 'serve.js'),
+      ].find((i) => fs.existsSync(i))
+
+      if (testCustomServe && isServe) {
+        // test has custom server configuration.
+        const mod = await import(testCustomServe)
+        const serve = mod.serve || mod.default?.serve
+        const preServe = mod.preServe || mod.default?.preServe
+        if (preServe) {
+          await preServe()
+        }
+        if (serve) {
+          server = await serve()
+          viteServer = mod.viteServer
+          startDefaultServe((server as any).viteDevServer, (server as any).port)
+        }
+      } else {
+        await startDefaultServe()
+      }
     }
   } catch (e) {
     // Closing the page since an error in the setup, for example a runtime error
@@ -132,7 +152,7 @@ beforeAll(async (s) => {
   }
 })
 
-export async function startDefaultServe(): Promise<void> {
+export async function startDefaultServe(_server?: ViteDevServer, port?: number): Promise<void> {
   const testCustomConfig = resolve(testDir, 'vite.config.js')
 
   let config: InlineConfig | undefined
@@ -150,7 +170,7 @@ export async function startDefaultServe(): Promise<void> {
     const testConfig = mergeConfig(options, config || {})
     viteConfig = testConfig
 
-    const viteDevServer = await createServer({ root: rootDir })
+    const viteDevServer = _server || (await createServer({ root: rootDir }))
     const checker = viteDevServer.config.plugins.filter(
       ({ name }) => name === 'vite-plugin-checker'
     )[0]
@@ -161,7 +181,9 @@ export async function startDefaultServe(): Promise<void> {
 
     // use resolved port/base from server
     const devBase = server.config.base
-    viteTestUrl = `http://localhost:${server.config.server.port}${devBase === '/' ? '' : devBase}`
+    viteTestUrl = `http://localhost:${port ?? server.config.server.port}${
+      devBase === '/' ? '' : devBase
+    }`
 
     const rawWsSend = server.ws.send
     server.ws.send = (_payload) => {

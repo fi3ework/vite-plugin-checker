@@ -1,0 +1,26 @@
+{
+  "name": "@playground/backend-integration",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.15",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@vitejs/plugin-react": "^2.0.0",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "typescript": "~4.5.5",
+    "vite": "^3.0.4",
+    "vite-plugin-checker": "workspace:*"
+  }
+}
