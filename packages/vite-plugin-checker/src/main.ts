@@ -5,7 +5,13 @@ import npmRunPath from 'npm-run-path'
 import path from 'path'
 import type { ConfigEnv, Plugin, ResolvedConfig } from 'vite'
 import { Checker } from './Checker.js'
-import { RUNTIME_PUBLIC_PATH, runtimeCode, WS_CHECKER_RECONNECT_EVENT } from './client/index.js'
+import {
+  RUNTIME_CLIENT_RUNTIME_PATH,
+  RUNTIME_CLIENT_ENTRY_PATH,
+  runtimeCode,
+  composePreambleCode,
+  WS_CHECKER_RECONNECT_EVENT,
+} from './client/index.js'
 import {
   ACTION_TYPES,
   BuildCheckBinStr,
@@ -50,7 +56,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   const enableOverlay = userConfig?.overlay !== false
   const enableTerminal = userConfig?.terminal !== false
   const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : {}
-  let resolvedRuntimePath = RUNTIME_PUBLIC_PATH
   let checkers: ServeAndBuildChecker[] = []
   let isProduction = true
   let skipRuntime = false
@@ -82,7 +87,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     configResolved(config) {
       resolvedConfig = config
-      resolvedRuntimePath = config.base + RUNTIME_PUBLIC_PATH.slice(1)
       isProduction = config.isProduction
       skipRuntime ||= isProduction || config.command === 'build'
     },
@@ -95,20 +99,14 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       }
     },
     resolveId(id) {
-      if (id === RUNTIME_PUBLIC_PATH) {
+      if (id === RUNTIME_CLIENT_RUNTIME_PATH || id === RUNTIME_CLIENT_ENTRY_PATH) {
         return id
-      }
-      return
-    },
-    load(id) {
-      if (id === RUNTIME_PUBLIC_PATH) {
-        return runtimeCode
       }
 
       return
     },
-    transform(code, id, options) {
-      if (id === RUNTIME_PUBLIC_PATH) {
+    load(id) {
+      if (id === RUNTIME_CLIENT_RUNTIME_PATH) {
         if (!resolvedConfig) return
 
         const devBase = resolvedConfig.base
@@ -130,7 +128,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
           hmrBase = path.posix.join(hmrBase, hmrConfig.path)
         }
 
-        return code
+        return runtimeCode
           .replace(/__HMR_PROTOCOL__/g, JSON.stringify(protocol))
           .replace(/__HMR_HOSTNAME__/g, JSON.stringify(host))
           .replace(/__HMR_PORT__/g, JSON.stringify(port))
@@ -138,7 +136,11 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         // #endregion
       }
 
-      return null
+      if (id === RUNTIME_CLIENT_ENTRY_PATH) {
+        return composePreambleCode(resolvedConfig!.base, overlayConfig)
+      }
+
+      return
     },
     transformIndexHtml() {
       if (!skipRuntime) {
@@ -146,11 +148,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
           {
             tag: 'script',
             attrs: { type: 'module' },
-            children: `import { inject } from "${resolvedRuntimePath}";
-inject({
-  overlayConfig: ${JSON.stringify(overlayConfig)},
-  base: "${resolvedConfig?.base}",
-});`,
+            children: composePreambleCode(resolvedConfig!.base, overlayConfig),
           },
         ]
       }
