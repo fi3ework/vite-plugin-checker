@@ -11,13 +11,16 @@
 
 2. Add `stylelint` field to plugin config and `options.stylelint.lintCommand` is required. The `lintCommand` is the same as the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
 
+   Do not add `--fix` to the lint command since the plugin is only aiming at check issues.
+
    ```js
    // e.g.
    export default {
      plugins: [
        checker({
          stylelint: {
-           lintCommand: 'stylelint ./src/**/*.{css,vue}', // for example, lint .css & .vue
+           // for example, lint .css and .vue
+           lintCommand: 'stylelint ./src/**/*.{css,vue}',
          },
        }),
      ],

@@ -11,13 +11,16 @@
 
 2. Add `eslint` field to plugin config and `options.eslint.lintCommand` is required. The `lintCommand` is the same as the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
 
+   Do not add `--fix` to the lint command since the plugin is only aiming at check issues.
+
    ```js
    // e.g.
    export default {
      plugins: [
        checker({
          eslint: {
-           lintCommand: 'eslint "./src/**/*.{ts,tsx}"', // for example, lint .ts & .tsx
+           // for example, lint .ts and .tsx
+           lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
          },
        }),
      ],
