@@ -1,6 +1,6 @@
 # Getting Started
 
-1. Install plugin.
+1. Install plugin (pnpm recommended).
 
    ```bash
    pnpm add vite-plugin-checker -D
@@ -13,10 +13,6 @@
    npm i vite-plugin-checker -D
    ```
 
-::: warning
-If you are using [Vite 3](https://vitejs.dev/blog/announcing-vite3.html), the minimum version of `vite-plugin-checker` must be `^0.4.9`. See more at [#153](https://github.com/fi3ework/vite-plugin-checker/pull/153).
-:::
-
 2. Add plugin to Vite config file. Add the checker you need. We add TypeScript below as an example. See all available checkers [here](/checkers/overview).
 
    ```ts
@@ -28,7 +24,7 @@ If you are using [Vite 3](https://vitejs.dev/blog/announcing-vite3.html), the mi
    ```
 
 ::: tip
-If you'd prefer to not run the checkers during unit testing with vitest, you can alter the config based on that. Example:
+If you'd prefer to not run the checkers during unit testing with Vitest, you can alter the config based on that. Example:
 
 ```ts
 // vite.config.js
