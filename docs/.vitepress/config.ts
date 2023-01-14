@@ -4,21 +4,17 @@ export default defineConfig({
   lang: 'en-US',
   title: 'vite-plugin-checker',
   description: 'Vite plugin that provide checks of TypeScript, ESLint, vue-tsc, and more.',
-
   lastUpdated: true,
-
   themeConfig: {
+    outline: 'deep',
     sidebar: {
       '/': sidebar(),
     },
-
     editLink: {
       pattern: 'https://github.com/fi3ework/vite-plugin-checker/edit/main/docs/:path',
       text: 'Edit this page on GitHub',
     },
-
     socialLinks: [{ icon: 'github', link: 'https://github.com/fi3ework/vite-plugin-checker' }],
-
     footer: {
       message: 'Released under the MIT License.',
       copyright: 'Copyright fi3ework',
@@ -52,6 +48,11 @@ function sidebar() {
       text: 'Configuration',
       collapsible: true,
       items: [{ text: 'Shared ', link: '/configuration/config' }],
+    },
+    {
+      text: 'FAQs',
+      collapsible: true,
+      items: [{ text: 'Troubleshooting ', link: '/faq/troubleshooting' }],
     },
   ]
 }
