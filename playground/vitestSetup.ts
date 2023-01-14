@@ -114,8 +114,8 @@ beforeAll(async (s) => {
       rootDir = fs.existsSync(testCustomRoot) ? testCustomRoot : testDir
 
       const testCustomServe = [
-        resolve(dirname(testPath), 'serve.ts'),
-        resolve(dirname(testPath), 'serve.js'),
+        resolve(dirname(rootDir), 'serve.ts'),
+        resolve(dirname(rootDir), 'serve.js'),
       ].find((i) => fs.existsSync(i))
 
       if (testCustomServe && isServe) {

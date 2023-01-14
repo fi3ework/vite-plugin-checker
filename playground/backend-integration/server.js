@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname)
 export const port = 3008
 
-export async function createServer(port) {
+export async function createServer() {
   const app = express()
   const viteDevServer = await createViteServer({ root: rootDir })
 
