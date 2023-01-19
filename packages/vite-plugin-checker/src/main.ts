@@ -2,7 +2,6 @@ import chalk from 'chalk'
 import { spawn } from 'child_process'
 import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
-import path from 'path'
 import type { ConfigEnv, Plugin, ResolvedConfig } from 'vite'
 import { Checker } from './Checker.js'
 import {
@@ -59,6 +58,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let checkers: ServeAndBuildChecker[] = []
   let isProduction = true
   let skipRuntime = false
+  let devBase = '/'
 
   let viteMode: ConfigEnv['command'] | undefined
   let resolvedConfig: ResolvedConfig | undefined
@@ -87,6 +87,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     configResolved(config) {
       resolvedConfig = config
+      devBase = config.base
       isProduction = config.isProduction
       skipRuntime ||= isProduction || config.command === 'build'
     },
@@ -107,37 +108,11 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     load(id) {
       if (id === RUNTIME_CLIENT_RUNTIME_PATH) {
-        if (!resolvedConfig) return
-
-        const devBase = resolvedConfig.base
-
-        // #region
-        // copied from https://github.com/vitejs/vite/blob/d76db0cae645beaecd970d95b4819158c5dd568a/packages/vite/src/client/client.ts#LL25
-        const hmrConfig = isObject(resolvedConfig.server.hmr) ? resolvedConfig.server.hmr : {}
-        const host = hmrConfig.host || null
-        const protocol = hmrConfig.protocol || null
-        // hmr.clientPort -> hmr.port
-        // -> (24678 if middleware mode) -> new URL(import.meta.url).port
-        let port = hmrConfig?.clientPort || hmrConfig?.port || null
-        if (resolvedConfig.server.middlewareMode) {
-          port ||= 24678
-        }
-
-        let hmrBase = devBase
-        if (hmrConfig?.path) {
-          hmrBase = path.posix.join(hmrBase, hmrConfig.path)
-        }
-
         return runtimeCode
-          .replace(/__HMR_PROTOCOL__/g, JSON.stringify(protocol))
-          .replace(/__HMR_HOSTNAME__/g, JSON.stringify(host))
-          .replace(/__HMR_PORT__/g, JSON.stringify(port))
-          .replace(/__HMR_BASE__/g, JSON.stringify(hmrBase))
-        // #endregion
       }
 
       if (id === RUNTIME_CLIENT_ENTRY_PATH) {
-        return composePreambleCode(resolvedConfig!.base, overlayConfig)
+        return composePreambleCode(devBase, overlayConfig)
       }
 
       return
@@ -179,7 +154,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       })()
     },
     configureServer(server) {
-      let connectedTimes = 0
       let latestOverlayErrors: OverlayErrorAction['payload'][] = new Array(checkers.length)
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
@@ -190,7 +164,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
           if (action.type === ACTION_TYPES.overlayError) {
             latestOverlayErrors[index] = action.payload
             if (action.payload) {
-              server.ws.send(action.payload)
+              server.ws.send('vite-plugin-checker', action.payload)
             }
           } else if (action.type === ACTION_TYPES.console) {
             Checker.log(action)
@@ -204,15 +178,11 @@ export function checker(userConfig: UserPluginConfig): Plugin {
           // may update the overlay before full-reload fired. So we make sure the overlay
           // will be displayed again after full-reload.
           server.ws.on('connection', () => {
-            connectedTimes++
-            // if connectedCount !== 1, means Vite is doing a full-reload, so we don't need to send overlay again
-            if (connectedTimes > 1) {
-              server.ws.send({
-                type: 'custom',
-                event: WS_CHECKER_RECONNECT_EVENT,
-                data: latestOverlayErrors.filter(Boolean),
-              })
-            }
+            server.ws.send('vite-plugin-checker', {
+              type: 'custom',
+              event: WS_CHECKER_RECONNECT_EVENT,
+              data: latestOverlayErrors.filter(Boolean),
+            })
           })
         } else {
           setTimeout(() => {
@@ -264,10 +234,6 @@ function spawnChecker(
       }
     })
   })
-}
-
-function isObject(value: unknown): value is Record<string, any> {
-  return Object.prototype.toString.call(value) === '[object Object]'
 }
 
 export default checker
