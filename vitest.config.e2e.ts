@@ -14,7 +14,7 @@ export default defineConfig({
     hookTimeout: timeout,
     globals: true,
     reporters: 'dot',
-    outputTruncateLength: 999999999,
+    outputTruncateLength: Infinity,
     onConsoleLog(log) {
       if (log.match(/experimental|jit engine|emitted file|tailwind/i)) return false
     },

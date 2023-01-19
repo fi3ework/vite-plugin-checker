@@ -186,12 +186,16 @@ export async function startDefaultServe(_server?: ViteDevServer, port?: number):
     }`
 
     const rawWsSend = server.ws.send
-    server.ws.send = (_payload) => {
-      if (_payload.type === 'custom' && _payload.event === 'vite-plugin-checker:error') {
-        diagnostics = _payload.data.diagnostics
+    server.ws.send = (...args) => {
+      const type = args?.[0]
+      const payload = args?.[1]
+
+      if (type === 'vite-plugin-checker' && payload.event === 'vite-plugin-checker:error') {
+        diagnostics = payload.data.diagnostics
       }
 
-      return rawWsSend(_payload)
+      // @ts-ignore
+      return rawWsSend(...args)
     }
 
     await page.goto(viteTestUrl)
