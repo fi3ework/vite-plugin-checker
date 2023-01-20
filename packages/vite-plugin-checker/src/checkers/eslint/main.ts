@@ -13,7 +13,7 @@ import {
   diagnosticToTerminalLog,
   filterLogLevel,
   normalizeEslintDiagnostic,
-  toViteCustomPayload,
+  toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
 import { translateOptions } from './cli.js'
@@ -74,7 +74,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         if (overlay) {
           parentPort?.postMessage({
             type: ACTION_TYPES.overlayError,
-            payload: toViteCustomPayload(
+            payload: toClientPayload(
               'eslint',
               diagnostics.map((d) => diagnosticToRuntimeError(d))
             ),

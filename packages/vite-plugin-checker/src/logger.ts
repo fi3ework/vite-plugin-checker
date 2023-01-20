@@ -9,10 +9,14 @@ import { parentPort } from 'worker_threads'
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
-import { ACTION_TYPES, DiagnosticLevel, DiagnosticToRuntime } from './types.js'
+import {
+  ACTION_TYPES,
+  DiagnosticLevel,
+  DiagnosticToRuntime,
+  ClientDiagnosticPayload,
+} from './types.js'
 import { isMainThread } from './utils.js'
 
-import type { CustomPayload } from 'vite'
 const _require = createRequire(import.meta.url)
 import type { Range } from 'vscode-languageclient'
 import type { ESLint } from 'eslint'
@@ -142,9 +146,11 @@ export function diagnosticToRuntimeError(
   return Array.isArray(diagnostics) ? results : results[0]!
 }
 
-export function toViteCustomPayload(id: string, diagnostics: DiagnosticToRuntime[]): CustomPayload {
+export function toClientPayload(
+  id: string,
+  diagnostics: DiagnosticToRuntime[]
+): ClientDiagnosticPayload {
   return {
-    type: 'custom',
     event: WS_CHECKER_ERROR_EVENT,
     data: {
       checkerId: id,

@@ -1,6 +1,7 @@
 {
   "extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
   "compilerOptions": {
+    "isolatedModules": true,
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false
   },

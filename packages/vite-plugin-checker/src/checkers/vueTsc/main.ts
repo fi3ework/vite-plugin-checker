@@ -13,7 +13,7 @@ import {
   diagnosticToTerminalLog,
   ensureCall,
   normalizeVueTscDiagnostic,
-  toViteCustomPayload,
+  toClientPayload,
   wrapCheckerSummary,
 } from '../../logger.js'
 import { ACTION_TYPES, CreateDiagnostic, DiagnosticToRuntime } from '../../types.js'
@@ -99,7 +99,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
             if (overlay) {
               parentPort?.postMessage({
                 type: ACTION_TYPES.overlayError,
-                payload: toViteCustomPayload('vue-tsc', currDiagnostics),
+                payload: toClientPayload('vue-tsc', currDiagnostics),
               })
             }
         }

@@ -12,7 +12,7 @@ import {
   diagnosticToTerminalLog,
   ensureCall,
   normalizeTsDiagnostic,
-  toViteCustomPayload,
+  toClientPayload,
   wrapCheckerSummary,
 } from '../../logger.js'
 import { ACTION_TYPES, CreateDiagnostic, DiagnosticToRuntime } from '../../types.js'
@@ -86,7 +86,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             if (overlay) {
               parentPort?.postMessage({
                 type: ACTION_TYPES.overlayError,
-                payload: toViteCustomPayload('typescript', currDiagnostics),
+                payload: toClientPayload('typescript', currDiagnostics),
               })
             }
         }

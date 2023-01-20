@@ -8,7 +8,7 @@ import {
   consoleLog,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
-  toViteCustomPayload,
+  toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES } from '../../types.js'
 import { DiagnosticOptions, diagnostics } from './diagnostics.js'
@@ -47,7 +47,7 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
         if (overlay && command === 'serve') {
           parentPort?.postMessage({
             type: ACTION_TYPES.overlayError,
-            payload: toViteCustomPayload('vls', diagnosticToRuntimeError(normalized)),
+            payload: toClientPayload('vls', diagnosticToRuntimeError(normalized)),
           })
         }
 

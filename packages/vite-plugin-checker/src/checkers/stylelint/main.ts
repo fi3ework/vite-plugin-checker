@@ -14,7 +14,7 @@ import {
   diagnosticToTerminalLog,
   filterLogLevel,
   normalizeStylelintDiagnostic,
-  toViteCustomPayload,
+  toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
 
@@ -66,7 +66,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         if (overlay) {
           parentPort?.postMessage({
             type: ACTION_TYPES.overlayError,
-            payload: toViteCustomPayload(
+            payload: toClientPayload(
               'stylelint',
               diagnostics.map((d) => diagnosticToRuntimeError(d))
             ),

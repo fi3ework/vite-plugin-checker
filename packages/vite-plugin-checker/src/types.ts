@@ -1,4 +1,4 @@
-import type { ErrorPayload, ConfigEnv, CustomPayload } from 'vite'
+import type { ErrorPayload, ConfigEnv } from 'vite'
 import type { Worker } from 'worker_threads'
 import type { ESLint } from 'eslint'
 import type * as Stylelint from 'stylelint'
@@ -90,6 +90,21 @@ export interface DiagnosticToRuntime extends ErrorPayloadErr {
   level?: DiagnosticLevel
 }
 
+export interface ClientDiagnosticPayload {
+  event: 'vite-plugin-checker:error'
+  data: {
+    checkerId: string
+    diagnostics: DiagnosticToRuntime[]
+  }
+}
+
+export interface ClientReconnectPayload {
+  event: 'vite-plugin-checker:reconnect'
+  data: ClientDiagnosticPayload[]
+}
+
+export type ClientPayload = ClientDiagnosticPayload | ClientReconnectPayload
+
 /** checkers shared configuration */
 export interface SharedConfig {
   /**
@@ -180,10 +195,10 @@ interface Action {
 export interface OverlayErrorAction extends Action {
   type: ACTION_TYPES.overlayError
   /**
-   * send `CustomPayload` to raise error overlay provided by Vite
+   * send `ClientPayload` to raise error overlay
    * send `null` to clear overlay for current checker
    */
-  payload: CustomPayload | null
+  payload: ClientPayload
 }
 
 interface ConfigActionPayload {

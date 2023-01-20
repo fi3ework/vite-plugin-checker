@@ -2,19 +2,21 @@ import chalk from 'chalk'
 import { spawn } from 'child_process'
 import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
-import type { ConfigEnv, Plugin, ResolvedConfig } from 'vite'
+
 import { Checker } from './Checker.js'
 import {
-  RUNTIME_CLIENT_RUNTIME_PATH,
-  RUNTIME_CLIENT_ENTRY_PATH,
-  runtimeCode,
   composePreambleCode,
+  RUNTIME_CLIENT_ENTRY_PATH,
+  RUNTIME_CLIENT_RUNTIME_PATH,
+  runtimeCode,
   WS_CHECKER_RECONNECT_EVENT,
 } from './client/index.js'
 import {
   ACTION_TYPES,
   BuildCheckBinStr,
   BuildInCheckerNames,
+  ClientDiagnosticPayload,
+  ClientReconnectPayload,
   OverlayErrorAction,
   PluginConfig,
   ServeAndBuildChecker,
@@ -22,6 +24,7 @@ import {
   UserPluginConfig,
 } from './types.js'
 
+import type { ConfigEnv, Plugin, ResolvedConfig } from 'vite'
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: BuildInCheckerNames[] = [
   'typescript',
@@ -154,7 +157,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       })()
     },
     configureServer(server) {
-      let latestOverlayErrors: OverlayErrorAction['payload'][] = new Array(checkers.length)
+      let latestOverlayErrors: ClientReconnectPayload['data'] = new Array(checkers.length)
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
       checkers.forEach((checker, index) => {
@@ -162,7 +165,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         workerConfigureServer({ root: server.config.root })
         worker.on('message', (action: OverlayErrorAction) => {
           if (action.type === ACTION_TYPES.overlayError) {
-            latestOverlayErrors[index] = action.payload
+            latestOverlayErrors[index] = action.payload as ClientDiagnosticPayload
             if (action.payload) {
               server.ws.send('vite-plugin-checker', action.payload)
             }
@@ -179,7 +182,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
           // will be displayed again after full-reload.
           server.ws.on('connection', () => {
             server.ws.send('vite-plugin-checker', {
-              type: 'custom',
               event: WS_CHECKER_RECONNECT_EVENT,
               data: latestOverlayErrors.filter(Boolean),
             })
