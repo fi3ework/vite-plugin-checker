@@ -1,3 +1,20 @@
+## <small>0.5.4 (2023-01-20)</small>
+
+* refactor: add skipRuntime flag ([f107514](https://github.com/fi3ework/vite-plugin-checker/commit/f107514))
+* refactor: do not use Vite's `CustomPayload` type ([47471b6](https://github.com/fi3ework/vite-plugin-checker/commit/47471b6))
+* fix: set plugin as `force: 'pre'` ([034a7ad](https://github.com/fi3ework/vite-plugin-checker/commit/034a7ad))
+* fix: use import.meta.hot.on to do client server communication ([aa853a8](https://github.com/fi3ework/vite-plugin-checker/commit/aa853a8))
+* fix: vue-tsc should be an optional peer dep ([5e6318e](https://github.com/fi3ework/vite-plugin-checker/commit/5e6318e))
+* build: only deploy docs when tagging a commit ([7b54a0c](https://github.com/fi3ework/vite-plugin-checker/commit/7b54a0c))
+* test: fix backend-integration root path ([7b2a8a3](https://github.com/fi3ework/vite-plugin-checker/commit/7b2a8a3))
+* docs: add trobleshooting ([234695b](https://github.com/fi3ework/vite-plugin-checker/commit/234695b))
+* docs: do not add `--fix` to lint command ([990a088](https://github.com/fi3ework/vite-plugin-checker/commit/990a088))
+* docs: pnpm workaround ([df1a744](https://github.com/fi3ework/vite-plugin-checker/commit/df1a744))
+* docs: use script ([cb0ebe5](https://github.com/fi3ework/vite-plugin-checker/commit/cb0ebe5))
+* feat: compatible with backend integration apps ([1c1d4b5](https://github.com/fi3ework/vite-plugin-checker/commit/1c1d4b5))
+
+
+
 ## <small>0.5.3 (2022-12-22)</small>
 
 * ci: clean Netlify scripts for pnpm (#195) ([ab5798f](https://github.com/fi3ework/vite-plugin-checker/commit/ab5798f)), closes [#195](https://github.com/fi3ework/vite-plugin-checker/issues/195)
