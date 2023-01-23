@@ -10,7 +10,7 @@ body:
     id: bug-description
     attributes:
       label: Describe the bug
-      description: A clear and concise description of what the bug is. If you intend to submit a PR for this issue, tell us in the description. Thanks!
+      description: A clear and concise description of what the bug is. If you intend to submit a PR for this issue, tell us in the description. If you're reporting a potential bug with the unexpected report of checkers(tsc / eslint / vue-tsc / ...) Please make sure to run the report with the checker only to ensure the unexpected report is plugin-specified(e.g. run `tsc --noEmit` to check the vanilla reports of typescript), if so, please coming up with an issue and attach the report of vanilla checker. Thanks!
       placeholder: Bug description
     validations:
       required: true
