@@ -11,49 +11,19 @@ const _require = createRequire(import.meta.url)
 const _filename = fileURLToPath(import.meta.url)
 const _dirname = dirname(_filename)
 
-let proxyPath: string
+let proxyApiPath: string
 let createProgramFunction: string
 try {
   // vue-tsc exposes the proxy in vue-tsc/out/index after v1.0.14
-  proxyPath = _require.resolve('vue-tsc/out/index')
+  proxyApiPath = _require.resolve('vue-tsc/out/index')
   createProgramFunction = 'createProgram'
 } catch (e) {
+  // @deprecated
+  // will be removed in 0.6.0
   // vue-tsc exposes the proxy in vue-tsc/out/proxy before v1.0.14
-  proxyPath = _require.resolve('vue-tsc/out/proxy')
+  proxyApiPath = _require.resolve('vue-tsc/out/proxy')
   createProgramFunction = 'createProgramProxy'
 }
-
-const textToReplace: { target: string; replacement: string }[] = [
-  {
-    target: `ts.supportedTSExtensions = [[".ts", ".tsx", ".d.ts"], [".cts", ".d.cts"], [".mts", ".d.mts"]];`,
-    replacement: `ts.supportedTSExtensions = [[".ts", ".tsx", ".d.ts"], [".cts", ".d.cts"], [".mts", ".d.mts"], [".vue"]];`,
-  },
-  {
-    target: `ts.supportedJSExtensions = [[".js", ".jsx"], [".mjs"], [".cjs"]];`,
-    replacement: `ts.supportedJSExtensions = [[".js", ".jsx"], [".mjs"], [".cjs"], [".vue"]];`,
-  },
-
-  {
-    target: `var allSupportedExtensions = [[".ts", ".tsx", ".d.ts", ".js", ".jsx"], [".cts", ".d.cts", ".cjs"], [".mts", ".d.mts", ".mjs"]];`,
-    replacement: `var allSupportedExtensions = [[".ts", ".tsx", ".d.ts", ".js", ".jsx"], [".cts", ".d.cts", ".cjs"], [".mts", ".d.mts", ".mjs"], [".vue"]];`,
-  },
-
-  // proxy createProgram apis
-  {
-    target: `function createIncrementalProgram(_a) {`,
-    replacement: `function createIncrementalProgram(_a) { console.error('incremental mode is not yet supported'); throw 'incremental mode is not yet supported';`,
-  },
-  {
-    target: `function createProgram(rootNamesOrOptions, _options, _host, _oldProgram, _configFileParsingDiagnostics) {`,
-    replacement: `function createProgram(rootNamesOrOptions, _options, _host, _oldProgram, _configFileParsingDiagnostics) { return require(${JSON.stringify(
-      proxyPath
-    )}).${createProgramFunction}(...arguments);`,
-  },
-  {
-    target: `ts.executeCommandLine(ts.sys, ts.noop, ts.sys.args);`,
-    replacement: `module.exports = ts`,
-  },
-]
 
 export async function prepareVueTsc() {
   // 1. copy typescript to folder
@@ -68,7 +38,7 @@ export async function prepareVueTsc() {
     // check fixture versions before re-use
     await access(vueTscFlagFile)
     const fixtureFlagContent = await readFile(vueTscFlagFile, 'utf8')
-    if (targetTsVersion === currTsVersion && fixtureFlagContent === proxyPath) {
+    if (targetTsVersion === currTsVersion && fixtureFlagContent === proxyApiPath) {
       shouldBuildFixture = false
     }
   } catch (e) {
@@ -81,24 +51,45 @@ export async function prepareVueTsc() {
     await mkdir(targetTsDir)
     const sourceTsDir = path.resolve(_require.resolve('typescript'), '../..')
     await copy(sourceTsDir, targetTsDir)
-    await writeFile(vueTscFlagFile, proxyPath)
+    await writeFile(vueTscFlagFile, proxyApiPath)
 
     // 2. sync modification of lib/tsc.js with vue-tsc
-    const tscJs = _require.resolve(path.resolve(targetTsDir, 'lib/tsc.js'))
-    await modifyFileText(tscJs, textToReplace)
+    await overrideTscJs(_require.resolve(path.resolve(targetTsDir, 'lib/tsc.js')))
   }
 
   return { targetTsDir }
 }
 
-async function modifyFileText(
-  filePath: string,
-  textToReplace: { target: string; replacement: string }[]
-) {
-  const text = await readFile(filePath, 'utf8')
-  let newText = text
-  for (const { target, replacement } of textToReplace) {
-    newText = newText.replace(target, replacement)
+async function overrideTscJs(tscJsPath: string) {
+  let result = await readFile(tscJsPath, 'utf8')
+  // #region copied from https://github.com/johnsoncodehk/volar/blob/54f7186485d79bc0e9b7ec59ecbc01d681ee5310/vue-language-tools/vue-tsc/bin/vue-tsc.js
+  const tryReplace = (search: RegExp | string, replace: string | ((v: string) => string)) => {
+    const before = result
+    // @ts-ignore
+    result = result.replace(search, replace)
+    if (before === result) {
+      throw 'Search string not found: ' + JSON.stringify(search.toString())
+    }
   }
-  await writeFile(filePath, newText)
+
+  // add *.vue files to allow extensions
+  tryReplace(/supportedTSExtensions = .*(?=;)/, (s) => s + '.concat([[".vue"]])')
+  tryReplace(/supportedJSExtensions = .*(?=;)/, (s) => s + '.concat([[".vue"]])')
+  tryReplace(/allSupportedExtensions = .*(?=;)/, (s) => s + '.concat([[".vue"]])')
+
+  // proxy startTracing, dumpTracingLegend
+  tryReplace(/ = tracingEnabled\./g, ` = require(${JSON.stringify(proxyApiPath)}).loadTsLib().`)
+
+  // proxy createProgram apis
+  tryReplace(
+    /function createProgram\(.+\) {/,
+    (s) =>
+      s + ` return require(${JSON.stringify(proxyApiPath)}).${createProgramFunction}(...arguments);` // tweak for compatibility, will be removed in 0.6.0
+  )
+  // #endregion
+
+  // change tsc command to module.exports
+  tryReplace(`ts.executeCommandLine(ts.sys, ts.noop, ts.sys.args);`, `module.exports = ts`)
+
+  await writeFile(tscJsPath, result)
 }
