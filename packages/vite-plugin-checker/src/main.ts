@@ -58,6 +58,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   const enableOverlay = userConfig?.overlay !== false
   const enableTerminal = userConfig?.terminal !== false
   const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : {}
+  let initialized = false
+  let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
   let isProduction = true
   let skipRuntime = false
@@ -75,6 +77,13 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       // for dev mode (1/2)
       // Initialize checker with config
       viteMode = env.command
+      // avoid running twice when running in SSR
+      if (initializeCounter === 0) {
+        initializeCounter++
+      } else {
+        initialized = true
+        return
+      }
 
       checkers = await createCheckers(userConfig || {}, env)
       if (viteMode !== 'serve') return
@@ -95,6 +104,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       skipRuntime ||= isProduction || config.command === 'build'
     },
     buildEnd() {
+      if (initialized) return
+
       if (viteMode === 'serve') {
         checkers.forEach((checker) => {
           const { worker } = checker.serve
@@ -121,19 +132,19 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       return
     },
     transformIndexHtml() {
-      if (!skipRuntime) {
-        return [
-          {
-            tag: 'script',
-            attrs: { type: 'module' },
-            children: composePreambleCode(resolvedConfig!.base, overlayConfig),
-          },
-        ]
-      }
+      if (initialized) return
+      if (skipRuntime) return
 
-      return
+      return [
+        {
+          tag: 'script',
+          attrs: { type: 'module' },
+          children: composePreambleCode(resolvedConfig!.base, overlayConfig),
+        },
+      ]
     },
     buildStart: () => {
+      if (initialized) return
       // only run in build mode
       // run a bin command in a separated process
       if (!skipRuntime || !enableBuild) return
@@ -157,6 +168,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       })()
     },
     configureServer(server) {
+      if (initialized) return
+
       let latestOverlayErrors: ClientReconnectPayload['data'] = new Array(checkers.length)
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
