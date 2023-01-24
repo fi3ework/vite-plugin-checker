@@ -7,7 +7,7 @@ importers:
       '@tsconfig/node16-strictest-esm': ^1.0.3
       '@types/babel__code-frame': ^7.0.2
       '@types/debug': ^4.1.5
-      '@types/fs-extra': ^9.0.11
+      '@types/fs-extra': ^11.0.1
       '@types/klaw': ^3.0.3
       '@types/minimist': ^1.2.2
       '@types/node': ^16.0.0
@@ -26,7 +26,7 @@ importers:
       execa: ^5.1.1
       fast-glob: ^3.2.7
       fast-json-stable-stringify: ^2.1.0
-      fs-extra: ^10.0.0
+      fs-extra: ^11.1.0
       jest-serializer-path: ^0.1.15
       klaw: ^4.0.1
       lint-staged: ^11.0.0
@@ -53,7 +53,7 @@ importers:
       '@tsconfig/node16-strictest-esm': 1.0.3
       '@types/babel__code-frame': 7.0.3
       '@types/debug': 4.1.7
-      '@types/fs-extra': 9.0.13
+      '@types/fs-extra': 11.0.1
       '@types/klaw': 3.0.3
       '@types/minimist': 1.2.2
       '@types/node': 16.11.49
@@ -72,7 +72,7 @@ importers:
       execa: 5.1.1
       fast-glob: 3.2.11
       fast-json-stable-stringify: 2.1.0
-      fs-extra: 10.1.0
+      fs-extra: 11.1.0
       jest-serializer-path: 0.1.15
       klaw: 4.0.1
       lint-staged: 11.2.6
@@ -124,6 +124,7 @@ importers:
     specifiers:
       '@babel/code-frame': ^7.12.13
       '@types/eslint': ^7.2.14
+      '@types/fs-extra': ^11.0.1
       '@types/lodash.debounce': ^4.0.6
       '@types/lodash.pick': ^4.4.6
       '@volar/vue-typescript': ^0.33.0
@@ -133,6 +134,7 @@ importers:
       commander: ^8.0.0
       esbuild: ^0.14.27
       fast-glob: ^3.2.7
+      fs-extra: ^11.1.0
       lodash.debounce: ^4.0.8
       lodash.pick: ^4.4.0
       meow: ^9.0.0
@@ -158,6 +160,7 @@ importers:
       chokidar: 3.5.3
       commander: 8.3.0
       fast-glob: 3.2.11
+      fs-extra: 11.1.0
       lodash.debounce: 4.0.8
       lodash.pick: 4.4.0
       npm-run-path: 4.0.1
@@ -169,6 +172,7 @@ importers:
       vscode-uri: 3.0.3
     devDependencies:
       '@types/eslint': 7.29.0
+      '@types/fs-extra': 11.0.1
       '@types/lodash.debounce': 4.0.7
       '@types/lodash.pick': 4.4.7
       '@volar/vue-typescript': 0.33.9
@@ -577,7 +581,7 @@ importers:
       vue: 2.7.8
       vue-class-component: 7.2.6_vue@2.7.8
       vue-property-decorator: 9.1.2_chk7q7rgeabwy64hfqmb36krqe
-      vue-router: 3.5.4
+      vue-router: 3.5.4_vue@2.7.8
       vuex: 3.6.2_vue@2.7.8
     devDependencies:
       '@types/node': 15.14.9
@@ -1589,9 +1593,10 @@ packages:
       '@types/serve-static': 1.15.0
     dev: true
 
-  /@types/fs-extra/9.0.13:
-    resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
+  /@types/fs-extra/11.0.1:
+    resolution: {integrity: sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==}
     dependencies:
+      '@types/jsonfile': 6.1.1
       '@types/node': 16.11.49
     dev: true
 
@@ -1610,6 +1615,12 @@ packages:
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
+    dev: true
+
+  /@types/jsonfile/6.1.1:
+    resolution: {integrity: sha512-GSgiRCVeapDN+3pqA35IkQwasaCh/0YFH5dEF6S88iDvEn901DjOeH3/QPY+XYP1DFzDZPvIvfeEgk+7br5png==}
+    dependencies:
+      '@types/node': 16.11.49
     dev: true
 
   /@types/klaw/3.0.3:
@@ -3486,8 +3497,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      is-text-path: 1.0.1
       JSONStream: 1.3.5
+      is-text-path: 1.0.1
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -4745,14 +4756,13 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /fs-extra/10.1.0:
-    resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
-    engines: {node: '>=12'}
+  /fs-extra/11.1.0:
+    resolution: {integrity: sha512-0rcTq621PD5jM/e0a3EJoGC/1TC5ZBCERW82LQuwfGnCa1V8w7dpYH1yNu+SLb6E5dkeCBzKEyLGlFrnr+dUyw==}
+    engines: {node: '>=14.14'}
     dependencies:
       graceful-fs: 4.2.10
       jsonfile: 6.1.0
       universalify: 2.0.0
-    dev: true
 
   /fs-extra/9.1.0:
     resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
@@ -4972,7 +4982,6 @@ packages:
 
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
-    dev: true
 
   /grapheme-splitter/1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
@@ -5431,7 +5440,6 @@ packages:
       universalify: 2.0.0
     optionalDependencies:
       graceful-fs: 4.2.10
-    dev: true
 
   /jsonparse/1.3.1:
     resolution: {integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==}
@@ -7417,7 +7425,6 @@ packages:
   /universalify/2.0.0:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
     engines: {node: '>= 10.0.0'}
-    dev: true
 
   /unpipe/1.0.0:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
@@ -7895,8 +7902,12 @@ packages:
       vue-class-component: 7.2.6_vue@2.7.8
     dev: false
 
-  /vue-router/3.5.4:
+  /vue-router/3.5.4_vue@2.7.8:
     resolution: {integrity: sha512-x+/DLAJZv2mcQ7glH2oV9ze8uPwcI+H+GgTgTmb5I55bCgY3+vXWIsqbYUzbBSZnwFHEJku4eoaH/x98veyymQ==}
+    peerDependencies:
+      vue: ^2
+    dependencies:
+      vue: 2.7.8
     dev: false
 
   /vue-template-compiler/2.7.14:

@@ -1,7 +1,10 @@
-import fs from 'fs'
+import fsExtra from 'fs-extra'
 import { createRequire } from 'module'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { writeFile, access, readFile, rm } from 'fs/promises'
+
+const { copy, mkdir } = fsExtra
 const _require = createRequire(import.meta.url)
 
 // isomorphic __dirname https://antfu.me/posts/isomorphic-dirname
@@ -52,84 +55,50 @@ const textToReplace: { target: string; replacement: string }[] = [
   },
 ]
 
-export function prepareVueTsc() {
+export async function prepareVueTsc() {
   // 1. copy typescript to folder
   const targetTsDir = path.resolve(_dirname, 'typescript-vue-tsc')
   const vueTscFlagFile = path.resolve(targetTsDir, 'vue-tsc-resolve-path')
 
-  let shouldPrepare = true
-  const targetDirExist = fs.existsSync(targetTsDir)
-  if (targetDirExist) {
-    try {
-      const targetTsVersion = _require(path.resolve(targetTsDir, 'package.json')).version
-      const currTsVersion = _require('typescript/package.json').version
-      // check fixture versions before re-use
-      if (
-        targetTsVersion === currTsVersion &&
-        fs.existsSync(vueTscFlagFile) &&
-        fs.readFileSync(vueTscFlagFile, 'utf8') === proxyPath
-      ) {
-        shouldPrepare = true
-      }
-    } catch {
-      shouldPrepare = true
+  let shouldBuildFixture = true
+  try {
+    await access(targetTsDir)
+    const targetTsVersion = _require(path.resolve(targetTsDir, 'package.json')).version
+    const currTsVersion = _require('typescript/package.json').version
+    // check fixture versions before re-use
+    await access(vueTscFlagFile)
+    const fixtureFlagContent = await readFile(vueTscFlagFile, 'utf8')
+    if (targetTsVersion === currTsVersion && fixtureFlagContent === proxyPath) {
+      shouldBuildFixture = false
     }
+  } catch (e) {
+    // no matter what error, we should rebuild the fixture
+    shouldBuildFixture = true
   }
 
-  if (shouldPrepare) {
-    rimraf(targetTsDir)
-    fs.mkdirSync(targetTsDir)
+  if (shouldBuildFixture) {
+    await rm(targetTsDir, { force: true, recursive: true })
+    await mkdir(targetTsDir)
     const sourceTsDir = path.resolve(_require.resolve('typescript'), '../..')
-    copyDirRecursively(sourceTsDir, targetTsDir)
-    fs.writeFileSync(vueTscFlagFile, proxyPath)
+    await copy(sourceTsDir, targetTsDir)
+    await writeFile(vueTscFlagFile, proxyPath)
 
     // 2. sync modification of lib/tsc.js with vue-tsc
     const tscJs = _require.resolve(path.resolve(targetTsDir, 'lib/tsc.js'))
-    modifyFileText(tscJs, textToReplace)
+    await modifyFileText(tscJs, textToReplace)
   }
 
-  return { targetTsDir: targetTsDir }
+  return { targetTsDir }
 }
 
-function modifyFileText(
+async function modifyFileText(
   filePath: string,
   textToReplace: { target: string; replacement: string }[]
 ) {
-  const text = fs.readFileSync(filePath, 'utf8')
+  const text = await readFile(filePath, 'utf8')
   let newText = text
   for (const { target, replacement } of textToReplace) {
     newText = newText.replace(target, replacement)
   }
-  fs.writeFileSync(filePath, newText)
-}
-
-function copyDirRecursively(src: string, dest: string) {
-  const files = fs.readdirSync(src, { withFileTypes: true })
-  for (const file of files) {
-    const srcPath = path.join(src, file.name)
-    const destPath = path.join(dest, file.name)
-    if (file.isDirectory()) {
-      fs.mkdirSync(destPath, { recursive: true })
-      copyDirRecursively(srcPath, destPath)
-    } else {
-      fs.copyFileSync(srcPath, destPath)
-    }
-  }
-}
-
-/**
- * https://stackoverflow.com/a/42505874
- */
-function rimraf(dir_path: string) {
-  if (fs.existsSync(dir_path)) {
-    fs.readdirSync(dir_path).forEach((entry) => {
-      const entry_path = path.join(dir_path, entry)
-      if (fs.lstatSync(entry_path).isDirectory()) {
-        rimraf(entry_path)
-      } else {
-        fs.unlinkSync(entry_path)
-      }
-    })
-    fs.rmdirSync(dir_path)
-  }
+  await writeFile(filePath, newText)
 }

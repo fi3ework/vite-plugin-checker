@@ -47,6 +47,7 @@
     "chokidar": "^3.5.1",
     "commander": "^8.0.0",
     "fast-glob": "^3.2.7",
+    "fs-extra": "^11.1.0",
     "lodash.debounce": "^4.0.8",
     "lodash.pick": "^4.4.0",
     "npm-run-path": "^4.0.1",
@@ -95,6 +96,7 @@
     }
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
     "@types/eslint": "^7.2.14",
     "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.pick": "^4.4.6",
