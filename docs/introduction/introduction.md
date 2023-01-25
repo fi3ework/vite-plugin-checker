@@ -1,6 +1,6 @@
 # About vite-plugin-checker
 
-A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint, Stylelint in worker thread.
+A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint, Stylelint in worker thread to **add type checking and linting support** for Vite.
 
 <div :style="{ 'display': 'flex' }">
   <a href="https://www.npmjs.com/package/vite-plugin-checker" :style="{ 'margin-right': '4px' }"><img src="https://img.shields.io/npm/v/vite-plugin-checker" /></a>
@@ -13,7 +13,7 @@ A Vite plugin that can run TypeScript, VLS, vue-tsc, ESLint, Stylelint in worker
   <img alt="screenshot" src="https://user-images.githubusercontent.com/12322740/152739742-7444ee62-9ca7-4379-8f02-495c612ecc5c.png">
 </p>
 
-> History version documentations [0.1](https://github.com/fi3ework/vite-plugin-checker/tree/v0.1.x), [0.2](https://github.com/fi3ework/vite-plugin-checker/tree/v0.2), [0.3](https://github.com/fi3ework/vite-plugin-checker/tree/v0.3.x), [0.4](https://github.com/fi3ework/vite-plugin-checker/tree/v0.4.x/docs). It's highly recommended to use latest version before 1.0.0, although there's some breaking changes, the plugin configuration is quite simple.
+> History version documentations [0.1](https://github.com/fi3ework/vite-plugin-checker/tree/v0.1.x), [0.2](https://github.com/fi3ework/vite-plugin-checker/tree/v0.2), [0.3](https://github.com/fi3ework/vite-plugin-checker/tree/v0.3.x), [0.4](https://github.com/fi3ework/vite-plugin-checker/tree/v0.4.x/docs). It's highly recommended to use latest version before 1.0.0, although there's some breaking changes in each version bumping, the plugin configuration is quite simple.
 
 ## Online playground
 

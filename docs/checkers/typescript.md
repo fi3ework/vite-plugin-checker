@@ -8,11 +8,11 @@ You can use TypeScript checker for vanilla TypeScript project or React project.
 
 2. Add `typescript` field to plugin config.
 
-```js
-export default {
-  plugins: [checker({ typescript: true /** or an object config */ })],
-}
-```
+   ```js
+   export default {
+     plugins: [checker({ typescript: true /** or an object config */ })],
+   }
+   ```
 
 ## Configuration
 

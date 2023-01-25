@@ -30,16 +30,21 @@ See [`initParams.ts`](https://github.com/fi3ework/vite-plugin-checker/blob/8fc5d
 For example, to performing checking only the `<script>` block:
 
 ```ts
-checker({
-  vls: {
-    vetur: {
-      validation: {
-        template: false,
-        templateProps: false,
-        interpolation: false,
-        style: false,
+// e.g.
+export default {
+  plugins: [
+    checker({
+      vls: {
+        vetur: {
+          validation: {
+            template: false,
+            templateProps: false,
+            interpolation: false,
+            style: false,
+          },
+        },
       },
-    },
-  },
-}),
+    }),
+  ],
+}
 ```

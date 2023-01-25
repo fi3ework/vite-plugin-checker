@@ -1,9 +1,6 @@
-# Troubleshooting
+# Integration
 
-This section lists a few common gotchas, and bugs introduced in the past.
-Please skim through before [opening an issue](https://github.com/fi3ework/vite-plugin-checker/issues/new/choose).
-
-## HMR Issues
+## with traditional backend
 
 ### Hot Module Refresh does not work when integrating with backend
 

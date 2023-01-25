@@ -1,6 +1,6 @@
 # Configurations
 
-Shared configuration to control the behaviors of the plugin.
+Shared configuration to control the checker behaviors of the plugin.
 
 ```ts
 {

@@ -40,8 +40,8 @@ function sidebar() {
         { text: 'TypeScript', link: '/checkers/typescript' },
         { text: 'vue-tsc', link: '/checkers/vue-tsc' },
         { text: 'ESLint', link: '/checkers/eslint' },
-        { text: 'VLS', link: '/checkers/vls' },
         { text: 'Stylelint', link: '/checkers/stylelint' },
+        { text: 'VLS', link: '/checkers/vls' },
       ],
     },
     {
@@ -52,7 +52,7 @@ function sidebar() {
     {
       text: 'FAQs',
       collapsible: true,
-      items: [{ text: 'Troubleshooting ', link: '/faq/troubleshooting' }],
+      items: [{ text: 'Integration', link: '/faq/integration' }],
     },
   ]
 }

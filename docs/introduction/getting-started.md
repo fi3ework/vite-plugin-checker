@@ -1,6 +1,6 @@
 # Getting Started
 
-1. Install plugin (pnpm recommended).
+1. Install plugin (pnpm recommended 🚀).
 
    ```bash
    pnpm add vite-plugin-checker -D
@@ -13,13 +13,18 @@
    npm i vite-plugin-checker -D
    ```
 
-2. Add plugin to Vite config file. Add the checker you need. We add TypeScript below as an example. See all available checkers [here](/checkers/overview).
+2. Add plugin to Vite config file and config the checker you need. We add TypeScript here as an example. See all available checkers [here](/checkers/overview).
 
    ```ts
    // vite.config.js
    import checker from 'vite-plugin-checker'
    export default {
-     plugins: [checker({ typescript: true })], // e.g. use TypeScript check
+     plugins: [
+       checker({
+         // e.g. use TypeScript check
+         typescript: true,
+       }),
+     ],
    }
    ```
 
@@ -43,5 +48,5 @@ It's recommended to open a browser for a better terminal flush, see [#27](https:
 :::
 
 ::: warning
-`server.ws.on` is introduced to Vite in [2.6.8](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). vite-plugin-checker relies on `server.ws.on` to bring diagnostics back after a full reload and it' not available for older version of Vite.
+`server.ws.on` is introduced to Vite in [2.6.8](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). vite-plugin-checker relies on `server.ws.on` to make overlay visible after opening a new browser tab.
 :::
