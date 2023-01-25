@@ -3,7 +3,12 @@ import fs from 'fs'
 import { createRequire } from 'module'
 import os from 'os'
 import strip from 'strip-ansi'
-import vscodeUri from 'vscode-uri'
+import * as _vscodeUri from 'vscode-uri'
+
+// hack to compatible with Jiti
+// see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
+// @ts-expect-error
+const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
 import { parentPort } from 'worker_threads'
 
 import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
@@ -32,7 +37,6 @@ import type {
   LineAndCharacter,
 } from 'typescript'
 
-const { URI } = vscodeUri
 export interface NormalizedDiagnostic {
   /** error message */
   message?: string
