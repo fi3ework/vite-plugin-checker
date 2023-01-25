@@ -33,11 +33,17 @@ export function prepareListen() {
   }
 
   return {
-    start: () => {
+    startListening: () => {
       if (import.meta.hot) {
+        // listen server -> client messages
         import.meta.hot.on('vite-plugin-checker', (data) => {
           onMessage(data)
         })
+
+        // told server that vite-plugin-checker runtime has loaded
+        // then server should send stored diagnostics to display overlay
+        // NOTE: sync modification with packages /packages/vite-plugin-checker/src/main.ts
+        import.meta.hot.send('vite-plugin-checker', { event: 'runtime-loaded' })
       }
     },
   }

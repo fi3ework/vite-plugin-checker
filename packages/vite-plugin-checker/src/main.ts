@@ -190,14 +190,14 @@ export function checker(userConfig: UserPluginConfig): Plugin {
 
       return () => {
         if (server.ws.on) {
-          // sometimes Vite will trigger a full-reload instead of HMR, but the checker
-          // may update the overlay before full-reload fired. So we make sure the overlay
-          // will be displayed again after full-reload.
-          server.ws.on('connection', () => {
-            server.ws.send('vite-plugin-checker', {
-              event: WS_CHECKER_RECONNECT_EVENT,
-              data: latestOverlayErrors.filter(Boolean),
-            })
+          server.ws.on('vite-plugin-checker', (data) => {
+            // NOTE: sync modification with packages /packages/runtime/src/ws.js
+            if (data.event === 'runtime-loaded') {
+              server.ws.send('vite-plugin-checker', {
+                event: WS_CHECKER_RECONNECT_EVENT,
+                data: latestOverlayErrors.filter(Boolean),
+              })
+            }
           })
         } else {
           setTimeout(() => {
