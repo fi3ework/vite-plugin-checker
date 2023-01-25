@@ -87,5 +87,5 @@ export function inject(params) {
   listenToCustomMessage(updateErrorOverlay)
   listenToReconnectMessage(resumeErrorOverlay)
 
-  ws.start()
+  ws.startListening()
 }
