@@ -1,6 +1,6 @@
 # Integration
 
-## with traditional backend
+## with traditional backend (require version >= 0.5.4)
 
 ### overlay does not display in development mode
 
@@ -20,7 +20,7 @@ When integrating with a [traditional backend](https://vitejs.dev/guide/backend-i
 
 There're two ways to use vite-plugin-checker with Nuxt3 for now.
 
-#### Use vite-plugin-checker as a normal Vite plugin
+#### Use vite-plugin-checker as a normal Vite plugin (require version >= 0.5.5)
 
 There are a few steps to do:
 
