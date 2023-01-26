@@ -32,7 +32,23 @@ There are a few steps to do:
    import('/@vite-plugin-checker-runtime-entry')
    </script>
    ```
-3. Import component above in the root component of your Nuxt project to have a global error overlay.
+3. Add vite-plugin-checker to `vite.plugins` in `nuxt.config.ts`.
+
+   ```ts
+   import { checker } from 'vite-plugin-checker'
+   // https://nuxt.com/docs/api/configuration/nuxt-config
+   export default defineNuxtConfig({
+     vite: {
+       plugins: [
+         checker({
+           vueTsc: true,
+         }),
+       ],
+     },
+   })
+   ```
+
+4. Import component above in the root component of your Nuxt project to have a global error overlay.
 
    ```vue
    <script setup lang="ts">
@@ -48,6 +64,8 @@ There are a few steps to do:
      </DevOnly>
    </template>
    ```
+
+You are all set in both development and build mode.
 
 #### Enable vite-plugin-checker as a built-in Nuxt functionality
 
