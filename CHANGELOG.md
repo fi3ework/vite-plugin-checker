@@ -1,3 +1,17 @@
+## <small>0.5.5 (2023-01-26)</small>
+
+* refactor: bump vite in devDep to ^4 (#208) ([61b7aea](https://github.com/fi3ework/vite-plugin-checker/commit/61b7aea)), closes [#208](https://github.com/fi3ework/vite-plugin-checker/issues/208)
+* refactor(vue-tsc): sync tsc.js override code from volar ([fce521e](https://github.com/fi3ework/vite-plugin-checker/commit/fce521e))
+* docs: polish doc ([8c0f9fd](https://github.com/fi3ework/vite-plugin-checker/commit/8c0f9fd))
+* docs: update issue template ([4453a73](https://github.com/fi3ework/vite-plugin-checker/commit/4453a73))
+* fix: avoid running twice in SSR mode ([0816f95](https://github.com/fi3ework/vite-plugin-checker/commit/0816f95))
+* fix: compatible with jiti ([b3c271e](https://github.com/fi3ework/vite-plugin-checker/commit/b3c271e))
+* fix: show overlay even runtime is loaded after connection event (#207) ([fee7924](https://github.com/fi3ework/vite-plugin-checker/commit/fee7924)), closes [#207](https://github.com/fi3ework/vite-plugin-checker/issues/207)
+* fix(vue-tsc): clean fixture building steps ([c133cb2](https://github.com/fi3ework/vite-plugin-checker/commit/c133cb2))
+* test: fix playground ([1d0851a](https://github.com/fi3ework/vite-plugin-checker/commit/1d0851a))
+
+
+
 ## <small>0.5.4 (2023-01-20)</small>
 
 * refactor: add skipRuntime flag ([f107514](https://github.com/fi3ework/vite-plugin-checker/commit/f107514))
