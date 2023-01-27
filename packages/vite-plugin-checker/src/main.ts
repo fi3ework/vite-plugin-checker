@@ -17,14 +17,14 @@ import {
   BuildInCheckerNames,
   ClientDiagnosticPayload,
   ClientReconnectPayload,
-  OverlayErrorAction,
+  Action,
   PluginConfig,
   ServeAndBuildChecker,
   SharedConfig,
   UserPluginConfig,
 } from './types.js'
 
-import type { ConfigEnv, Plugin, ResolvedConfig } from 'vite'
+import type { ConfigEnv, Plugin, Logger } from 'vite'
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: BuildInCheckerNames[] = [
   'typescript',
@@ -61,12 +61,11 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
-  let isProduction = true
   let skipRuntime = false
   let devBase = '/'
-
   let viteMode: ConfigEnv['command'] | undefined
-  let resolvedConfig: ResolvedConfig | undefined
+  let buildWatch = false
+  let logger: Logger | null = null
 
   return {
     name: 'vite-plugin-checker',
@@ -98,10 +97,10 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       })
     },
     configResolved(config) {
-      resolvedConfig = config
+      logger = config.logger
       devBase = config.base
-      isProduction = config.isProduction
-      skipRuntime ||= isProduction || config.command === 'build'
+      skipRuntime ||= config.isProduction || config.command === 'build'
+      buildWatch = !!config.build.watch
     },
     buildEnd() {
       if (initialized) return
@@ -139,7 +138,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         {
           tag: 'script',
           attrs: { type: 'module' },
-          children: composePreambleCode(resolvedConfig!.base, overlayConfig),
+          children: composePreambleCode(devBase, overlayConfig),
         },
       ]
     },
@@ -162,7 +161,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         )
         const exitCode = exitCodes.find((code) => code !== 0) ?? 0
         // do not exit the process if run `vite build --watch`
-        if (exitCode !== 0 && !resolvedConfig?.build.watch) {
+        if (exitCode !== 0 && !buildWatch) {
           process.exit(exitCode)
         }
       })()
@@ -176,43 +175,45 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       checkers.forEach((checker, index) => {
         const { worker, configureServer: workerConfigureServer } = checker.serve
         workerConfigureServer({ root: server.config.root })
-        worker.on('message', (action: OverlayErrorAction) => {
+        worker.on('message', (action: Action) => {
           if (action.type === ACTION_TYPES.overlayError) {
             latestOverlayErrors[index] = action.payload as ClientDiagnosticPayload
             if (action.payload) {
               server.ws.send('vite-plugin-checker', action.payload)
             }
           } else if (action.type === ACTION_TYPES.console) {
-            Checker.log(action)
+            if (Checker.logger.length) {
+              // for test injection and customize logger in the future
+              Checker.log(action)
+            } else {
+              logger!.error(action.payload)
+            }
           }
         })
       })
 
-      return () => {
-        if (server.ws.on) {
-          server.ws.on('vite-plugin-checker', (data) => {
-            // NOTE: sync modification with packages /packages/runtime/src/ws.js
-            if (data.event === 'runtime-loaded') {
-              server.ws.send('vite-plugin-checker', {
-                event: WS_CHECKER_RECONNECT_EVENT,
-                data: latestOverlayErrors.filter(Boolean),
-              })
-            }
-          })
-        } else {
-          setTimeout(() => {
-            console.warn(
-              chalk.yellow(
-                "[vite-plugin-checker]: `server.ws.on` is introduced to Vite in 2.6.8, see [PR](https://github.com/vitejs/vite/pull/5273) and [changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). \nvite-plugin-checker relies on `server.ws.on` to bring diagnostics back after a full reload and it' not available for you now due to the old version of Vite. You can upgrade Vite to latest version to eliminate this warning."
-              )
-            )
-            // make a delay to avoid flush by Vite's console
-          }, 5000)
-        }
-
-        server.middlewares.use((req, res, next) => {
-          next()
+      if (server.ws.on) {
+        server.watcher.on('change', (file) => {
+          logger!.clearScreen('error')
         })
+        server.ws.on('vite-plugin-checker', (data) => {
+          // NOTE: sync modification with packages /packages/runtime/src/ws.js
+          if (data.event === 'runtime-loaded') {
+            server.ws.send('vite-plugin-checker', {
+              event: WS_CHECKER_RECONNECT_EVENT,
+              data: latestOverlayErrors.filter(Boolean),
+            })
+          }
+        })
+      } else {
+        setTimeout(() => {
+          logger!.warn(
+            chalk.yellow(
+              '[vite-plugin-checker]: `server.ws.on` is introduced to Vite in 2.6.8, see [PR](https://github.com/vitejs/vite/pull/5273) and [changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). \nvite-plugin-checker relies on `server.ws.on` to send overlay message to client. Support for Vite < 2.6.8 will be removed in the next major version release.'
+            )
+          )
+          // make a delay to avoid flush by Vite's console
+        }, 5000)
       }
     },
   }
