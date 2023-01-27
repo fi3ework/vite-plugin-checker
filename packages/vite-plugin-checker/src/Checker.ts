@@ -3,8 +3,6 @@ import { isInVitestEntryThread, isMainThread } from './utils.js'
 
 import { createScript, Script } from './worker.js'
 
-// still an only issue https://github.com/microsoft/TypeScript/issues/29808#issuecomment-829750974
-import type {} from 'vite'
 import type {
   CreateDiagnostic,
   BuildInCheckers,
@@ -25,11 +23,7 @@ export interface CheckerMeta<T extends BuildInCheckerNames> {
 }
 
 export abstract class Checker<T extends BuildInCheckerNames> implements CheckerMeta<T> {
-  public static logger: ((...args: any[]) => void)[] = [
-    (...args: any[]) => {
-      console.log(args[0].payload)
-    },
-  ]
+  public static logger: ((...v: string[]) => unknown)[] = []
 
   public static log(...args: any[]) {
     this.logger.forEach((fn) => fn(...args))

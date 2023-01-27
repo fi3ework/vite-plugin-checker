@@ -187,12 +187,12 @@ export enum ACTION_TYPES {
   unref = 'unref',
 }
 
-interface Action {
+interface AbstractAction {
   type: string
   payload: unknown
 }
 
-export interface OverlayErrorAction extends Action {
+export interface OverlayErrorAction extends AbstractAction {
   type: ACTION_TYPES.overlayError
   /**
    * send `ClientPayload` to raise error overlay
@@ -201,29 +201,39 @@ export interface OverlayErrorAction extends Action {
   payload: ClientPayload
 }
 
-interface ConfigActionPayload {
-  enableOverlay: boolean
-  enableTerminal: boolean
-  env: ConfigEnv
-}
-
-export interface ConfigAction extends Action {
+export interface ConfigAction extends AbstractAction {
   type: ACTION_TYPES.config
   payload: ConfigActionPayload
 }
 
-export interface ConfigureServerAction extends Action {
+export interface ConfigureServerAction extends AbstractAction {
   type: ACTION_TYPES.configureServer
   payload: {
     root: string
   }
 }
 
-export interface UnrefAction extends Action {
+export interface ConsoleAction extends AbstractAction {
+  type: ACTION_TYPES.console
+  payload: string
+}
+
+export interface UnrefAction extends AbstractAction {
   type: ACTION_TYPES.unref
 }
 
-export type Actions = OverlayErrorAction | ConfigAction | ConfigureServerAction | UnrefAction
+interface ConfigActionPayload {
+  enableOverlay: boolean
+  enableTerminal: boolean
+  env: ConfigEnv
+}
+
+export type Action =
+  | ConfigAction
+  | ConfigureServerAction
+  | ConsoleAction
+  | OverlayErrorAction
+  | UnrefAction
 
 /* ----------------------------- internal types ----------------------------- */
 
