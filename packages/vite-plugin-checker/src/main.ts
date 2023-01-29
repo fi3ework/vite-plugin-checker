@@ -193,7 +193,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       })
 
       if (server.ws.on) {
-        server.watcher.on('change', (file) => {
+        server.watcher.on('change', () => {
           logger!.clearScreen('error')
         })
         server.ws.on('vite-plugin-checker', (data) => {

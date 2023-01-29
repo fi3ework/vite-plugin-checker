@@ -38,6 +38,7 @@ jobs:
           pnpm run type-check
           pnpm run clean
           pnpm run build
+          pnpm run publint
           cp README.md packages/vite-plugin-checker/README.md
 
       - name: Publish to NPM

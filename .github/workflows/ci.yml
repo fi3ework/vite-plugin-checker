@@ -76,6 +76,9 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
+      - name: Publint
+        run: pnpm run publint
+
       - name: Type check
         run: pnpm run type-check
 
