@@ -61,7 +61,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
-  let skipRuntime = false
+  let isProduction = false
   let devBase = '/'
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
@@ -99,7 +99,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     configResolved(config) {
       logger = config.logger
       devBase = config.base
-      skipRuntime ||= config.isProduction || config.command === 'build'
+      isProduction ||= config.isProduction || config.command === 'build'
       buildWatch = !!config.build.watch
     },
     buildEnd() {
@@ -132,7 +132,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     transformIndexHtml() {
       if (initialized) return
-      if (skipRuntime) return
+      if (isProduction) return
 
       return [
         {
@@ -146,7 +146,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       if (initialized) return
       // only run in build mode
       // run a bin command in a separated process
-      if (!skipRuntime || !enableBuild) return
+      if (!isProduction || !enableBuild) return
 
       const localEnv = npmRunPath.env({
         env: process.env,
