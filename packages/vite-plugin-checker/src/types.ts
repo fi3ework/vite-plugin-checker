@@ -58,6 +58,10 @@ export type EslintConfig =
         /** which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning')[]
       }>
+      /**
+       * lintCommand will delay running, work with editor lint on save.
+       */
+      delay?: number
     }
 
 /** Stylelint checker configuration */

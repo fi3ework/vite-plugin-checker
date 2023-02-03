@@ -18,6 +18,7 @@ import {
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
 import { translateOptions } from './cli.js'
 import { options as optionator } from './options.js'
+import { sleep } from '../../utils';
 
 const __filename = fileURLToPath(import.meta.url)
 
@@ -83,6 +84,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       }
 
       const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
+         if (pluginConfig.eslint && pluginConfig.eslint.delay) await sleep(pluginConfig.eslint.delay);
         // See: https://github.com/eslint/eslint/pull/4465
         const extension = path.extname(filePath)
         const { extensions } = eslintOptions
@@ -121,10 +123,8 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       watcher.add(files)
       watcher.on('change', async (filePath) => {
         handleFileChange(filePath, 'change')
-      })
       watcher.on('unlink', async (filePath) => {
         handleFileChange(filePath, 'unlink')
-      })
     },
   }
 }
