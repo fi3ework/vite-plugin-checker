@@ -19,6 +19,14 @@ interface TsConfigOptions {
    * root path of cwd
    */
   buildMode: boolean
+
+  dev?: Partial<{
+    /**
+     * tsc will delay running,implement through debounce
+     */
+    debounce: number
+  }>
+  'dev.debounce'?: number
 }
 
 /**
@@ -57,6 +65,10 @@ export type EslintConfig =
         overrideConfig: ESLint.Options
         /** which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning')[]
+        /**
+         * lintCommand will delay running, work with editor lint on save,implement through debounce
+         */
+        debounce: number
       }>
     }
 

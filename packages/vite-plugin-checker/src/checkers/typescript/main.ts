@@ -1,3 +1,4 @@
+import debounce from 'lodash.debounce'
 import os from 'os'
 import path from 'path'
 import invariant from 'tiny-invariant'
@@ -121,13 +122,21 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
         ts.createSolutionBuilderWithWatch(host, [configFile], {}).build()
       } else {
+        // onchange:add debounce
+        let debounceReportWatchStatusChanged = reportWatchStatusChanged
+        if (typeof pluginConfig.typescript === 'object' && pluginConfig.typescript?.dev?.debounce) {
+          debounceReportWatchStatusChanged = debounce(
+            reportWatchStatusChanged,
+            pluginConfig.typescript.dev.debounce
+          )
+        }
         const host = ts.createWatchCompilerHost(
           configFile,
           { noEmit: true },
           ts.sys,
           createProgram,
           reportDiagnostic,
-          reportWatchStatusChanged
+          debounceReportWatchStatusChanged
         )
 
         ts.createWatchProgram(host)

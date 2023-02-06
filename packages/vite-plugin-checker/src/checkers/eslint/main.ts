@@ -25,6 +25,7 @@ const manager = new FileDiagnosticManager()
 let createServeAndBuild
 
 import type { CreateDiagnostic } from '../../types'
+import debounce from 'lodash.debounce'
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
   let overlay = true
   let terminal = true
@@ -119,9 +120,21 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ignored: (path: string) => path.includes('node_modules'),
       })
       watcher.add(files)
-      watcher.on('change', async (filePath) => {
-        handleFileChange(filePath, 'change')
-      })
+      // onchange:create debounce function before useage
+      if (pluginConfig.eslint?.dev?.debounce) {
+        const debounceHandleFileChange = debounce(
+          handleFileChange,
+          pluginConfig.eslint.dev.debounce
+        )
+        watcher.on('change', async (filePath) => {
+          debounceHandleFileChange(filePath, 'change')
+        })
+      } else {
+        watcher.on('change', async (filePath) => {
+          handleFileChange(filePath, 'change')
+        })
+      }
+      // unlink
       watcher.on('unlink', async (filePath) => {
         handleFileChange(filePath, 'unlink')
       })
