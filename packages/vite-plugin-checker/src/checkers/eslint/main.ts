@@ -121,7 +121,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       })
       watcher.add(files)
       // onchange:create debounce function before useage
-      if (pluginConfig.eslint?.dev?.debounce) {
+      if (typeof pluginConfig.eslint === 'object' && pluginConfig.eslint.dev?.debounce) {
         const debounceHandleFileChange = debounce(
           handleFileChange,
           pluginConfig.eslint.dev.debounce
