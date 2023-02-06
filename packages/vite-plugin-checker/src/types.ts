@@ -26,7 +26,6 @@ interface TsConfigOptions {
      */
     debounce: number
   }>
-  'dev.debounce'?: number
 }
 
 /**
