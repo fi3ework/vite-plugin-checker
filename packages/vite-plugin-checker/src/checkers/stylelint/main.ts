@@ -105,7 +105,8 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         cwd: root,
         ignored: (path: string) => path.includes('node_modules'),
       })
-      watcher.add(translatedOptions.files as string)
+      const watchPath = pluginConfig.stylelint.dev?.overrideConfig?.files ?? translatedOptions.files
+      watcher.add(watchPath as string)
       watcher.on('change', async (filePath) => {
         handleFileChange(filePath, 'change')
       })
