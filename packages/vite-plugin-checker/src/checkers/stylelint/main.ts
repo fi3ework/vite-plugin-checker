@@ -37,7 +37,11 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
     async configureServer({ root }) {
       if (!pluginConfig.stylelint) return
 
-      const translatedOptions = translateOptions(pluginConfig.stylelint.lintCommand)
+      const translatedOptions = await translateOptions(pluginConfig.stylelint.lintCommand)
+      const baseConfig = {
+        cwd: root,
+        ...translatedOptions,
+      } as const
 
       const logLevel = (() => {
         if (typeof pluginConfig.stylelint !== 'object') return undefined
@@ -80,7 +84,10 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         if (type === 'unlink') {
           manager.updateByFileId(absPath, [])
         } else if (type === 'change') {
-          const { results: diagnosticsOfChangedFile } = await stylelint.lint({ files: filePath })
+          const { results: diagnosticsOfChangedFile } = await stylelint.lint({
+            ...baseConfig,
+            files: filePath,
+          })
           const newDiagnostics = diagnosticsOfChangedFile
             .map((d) => normalizeStylelintDiagnostic(d))
             .flat(1)
@@ -92,8 +99,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
 
       // initial lint
       const { results: diagnostics } = await stylelint.lint({
-        cwd: root,
-        ...translatedOptions,
+        ...baseConfig,
         ...pluginConfig.stylelint.dev?.overrideConfig,
       })
 

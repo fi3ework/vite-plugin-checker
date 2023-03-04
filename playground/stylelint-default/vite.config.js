@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [
     checker({
       stylelint: {
-        lintCommand: 'stylelint ./**/*.css',
+        lintCommand: 'stylelint "./**/*.css"',
       },
     }),
   ],
