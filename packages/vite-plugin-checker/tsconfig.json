@@ -1,5 +1,9 @@
 {
-  "extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
+  "extends": [
+    "@tsconfig/strictest/tsconfig",
+    "@tsconfig/node18/tsconfig",
+    "@tsconfig/esm/tsconfig"
+  ],
   "compilerOptions": {
     "isolatedModules": true,
     "noUnusedParameters": false,

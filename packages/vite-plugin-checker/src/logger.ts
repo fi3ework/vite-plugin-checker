@@ -11,14 +11,14 @@ import * as _vscodeUri from 'vscode-uri'
 const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
 import { parentPort } from 'worker_threads'
 
-import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
+import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
 import {
   ACTION_TYPES,
   DiagnosticLevel,
-  DiagnosticToRuntime,
-  ClientDiagnosticPayload,
+  type DiagnosticToRuntime,
+  type ClientDiagnosticPayload,
 } from './types.js'
 import { isMainThread } from './utils.js'
 

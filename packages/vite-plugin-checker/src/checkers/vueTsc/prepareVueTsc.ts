@@ -2,6 +2,7 @@ import fsExtra from 'fs-extra'
 import { createRequire } from 'module'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
+import semver from 'semver'
 import { writeFile, access, readFile, rm } from 'fs/promises'
 
 const { copy, mkdir } = fsExtra
@@ -29,12 +30,13 @@ export async function prepareVueTsc() {
   // 1. copy typescript to folder
   const targetTsDir = path.resolve(_dirname, 'typescript-vue-tsc')
   const vueTscFlagFile = path.resolve(targetTsDir, 'vue-tsc-resolve-path')
+  // let currTsVersion: string = ''
+  const currTsVersion = _require('typescript/package.json').version
 
   let shouldBuildFixture = true
   try {
     await access(targetTsDir)
     const targetTsVersion = _require(path.resolve(targetTsDir, 'package.json')).version
-    const currTsVersion = _require('typescript/package.json').version
     // check fixture versions before re-use
     await access(vueTscFlagFile)
     const fixtureFlagContent = await readFile(vueTscFlagFile, 'utf8')
@@ -54,39 +56,50 @@ export async function prepareVueTsc() {
     await writeFile(vueTscFlagFile, proxyApiPath)
 
     // 2. sync modification of lib/tsc.js with vue-tsc
-    await overrideTscJs(_require.resolve(path.resolve(targetTsDir, 'lib/tsc.js')))
+    await overrideTscJs(
+      _require.resolve(path.resolve(targetTsDir, 'lib/typescript.js')),
+      currTsVersion
+    )
   }
 
   return { targetTsDir }
 }
 
-async function overrideTscJs(tscJsPath: string) {
-  let result = await readFile(tscJsPath, 'utf8')
+async function overrideTscJs(tscJsPath: string, version: string) {
+  let tsc = await readFile(tscJsPath, 'utf8')
   // #region copied from https://github.com/johnsoncodehk/volar/blob/54f7186485d79bc0e9b7ec59ecbc01d681ee5310/vue-language-tools/vue-tsc/bin/vue-tsc.js
-  const tryReplace = (search: RegExp | string, replace: string | ((v: string) => string)) => {
-    const before = result
-    // @ts-ignore
-    result = result.replace(search, replace)
-    if (before === result) {
-      throw 'Search string not found: ' + JSON.stringify(search.toString())
-    }
-  }
-
   // add *.vue files to allow extensions
-  tryReplace(/supportedTSExtensions = .*(?=;)/, (s) => s + '.concat([[".vue"]])')
-  tryReplace(/supportedJSExtensions = .*(?=;)/, (s) => s + '.concat([[".vue"]])')
-  tryReplace(/allSupportedExtensions = .*(?=;)/, (s) => s + '.concat([[".vue"]])')
+  tryReplace(/supportedTSExtensions = .*(?=;)/, (s: string) => s + '.concat([[".vue"]])')
+  tryReplace(/supportedJSExtensions = .*(?=;)/, (s: string) => s + '.concat([[".vue"]])')
+  tryReplace(/allSupportedExtensions = .*(?=;)/, (s: string) => s + '.concat([[".vue"]])')
 
   // proxy createProgram apis
   tryReplace(
     /function createProgram\(.+\) {/,
-    (s) =>
-      s + ` return require(${JSON.stringify(proxyApiPath)}).${createProgramFunction}(...arguments);` // tweak for compatibility, will be removed in 0.6.0
+    (s: string) =>
+      s + ` return require(${JSON.stringify(proxyApiPath)}).${createProgramFunction}(...arguments);`
   )
+
+  // patches logic for checking root file extension in build program for incremental builds
+  if (semver.gt(version, '5.0.0')) {
+    tryReplace(
+      `for (const existingRoot of buildInfoVersionMap.roots) {`,
+      `for (const existingRoot of buildInfoVersionMap.roots
+				.filter(file => !file.toLowerCase().includes('__vls_'))
+				.map(file => file.replace(/\.vue\.(j|t)sx?$/i, '.vue'))
+			) {`
+    )
+  }
+
+  function tryReplace(search: any, replace: any) {
+    const before = tsc
+    tsc = tsc.replace(search, replace)
+    const after = tsc
+    if (after === before) {
+      throw 'Search string not found: ' + JSON.stringify(search.toString())
+    }
+  }
   // #endregion
 
-  // change tsc command to module.exports
-  tryReplace(`ts.executeCommandLine(ts.sys, ts.noop, ts.sys.args);`, `module.exports = ts`)
-
-  await writeFile(tscJsPath, result)
+  await writeFile(tscJsPath, tsc)
 }
