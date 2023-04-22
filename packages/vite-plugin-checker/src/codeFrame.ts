@@ -1,7 +1,7 @@
 import os from 'os'
 import type ts from 'typescript'
 
-import { codeFrameColumns, SourceLocation } from '@babel/code-frame'
+import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
 
 export function createFrame({
   source,

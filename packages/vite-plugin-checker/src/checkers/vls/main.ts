@@ -11,7 +11,7 @@ import {
   toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES } from '../../types.js'
-import { DiagnosticOptions, diagnostics } from './diagnostics.js'
+import { type DiagnosticOptions, diagnostics } from './diagnostics.js'
 
 import type { ConfigEnv } from 'vite'
 import type { CreateDiagnostic } from '../../types.js'

@@ -15,11 +15,11 @@ import {
   DidChangeTextDocumentNotification,
   DidChangeWatchedFilesNotification,
   DidOpenTextDocumentNotification,
-  InitializeParams,
+  type InitializeParams,
   InitializeRequest,
-  InitializeResult,
-  Logger,
-  ServerCapabilities,
+  type InitializeResult,
+  type Logger,
+  type ServerCapabilities,
   StreamMessageReader,
   StreamMessageWriter,
 } from 'vscode-languageserver/node.js'
@@ -31,10 +31,10 @@ import {
   diagnosticToTerminalLog,
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
-  NormalizedDiagnostic,
+  type NormalizedDiagnostic,
 } from '../../logger.js'
 import type { DeepPartial } from '../../types.js'
-import { getInitParams, VlsOptions } from './initParams.js'
+import { getInitParams, type VlsOptions } from './initParams.js'
 
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 

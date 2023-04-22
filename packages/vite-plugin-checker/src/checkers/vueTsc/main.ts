@@ -16,7 +16,7 @@ import {
   toClientPayload,
   wrapCheckerSummary,
 } from '../../logger.js'
-import { ACTION_TYPES, CreateDiagnostic, DiagnosticToRuntime } from '../../types.js'
+import { ACTION_TYPES, type CreateDiagnostic, type DiagnosticToRuntime } from '../../types.js'
 import { prepareVueTsc } from './prepareVueTsc.js'
 
 const _require = createRequire(import.meta.url)
@@ -39,7 +39,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
 
       const { targetTsDir } = await prepareVueTsc()
 
-      const vueTs = _require(path.resolve(targetTsDir, 'lib/tsc.js'))
+      const vueTs = _require(path.resolve(targetTsDir, 'lib/typescript.js'))
 
       const finalConfig =
         pluginConfig.vueTsc === true

@@ -15,7 +15,7 @@ import {
   toClientPayload,
   wrapCheckerSummary,
 } from '../../logger.js'
-import { ACTION_TYPES, CreateDiagnostic, DiagnosticToRuntime } from '../../types.js'
+import { ACTION_TYPES, type CreateDiagnostic, type DiagnosticToRuntime } from '../../types.js'
 
 const __filename = fileURLToPath(import.meta.url)
 let createServeAndBuild

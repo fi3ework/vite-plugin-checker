@@ -13,15 +13,15 @@ import {
 } from './client/index.js'
 import {
   ACTION_TYPES,
-  BuildCheckBinStr,
-  BuildInCheckerNames,
-  ClientDiagnosticPayload,
-  ClientReconnectPayload,
-  Action,
-  PluginConfig,
-  ServeAndBuildChecker,
-  SharedConfig,
-  UserPluginConfig,
+  type BuildCheckBinStr,
+  type BuildInCheckerNames,
+  type ClientDiagnosticPayload,
+  type ClientReconnectPayload,
+  type Action,
+  type PluginConfig,
+  type ServeAndBuildChecker,
+  type SharedConfig,
+  type UserPluginConfig,
 } from './types.js'
 
 import type { ConfigEnv, Plugin, Logger } from 'vite'
