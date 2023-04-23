@@ -19,8 +19,6 @@ describe('vue-tsc-vue3-ts4', () => {
     it('get initial error and subsequent error', async () => {
       await sleepForServerReady(2)
       expect(stringify(diagnostics)).toMatchSnapshot()
-      console.log('🙇 diagnostics', stringify(diagnostics))
-      console.log('🙇 stripedLog', stripedLog)
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit file --')

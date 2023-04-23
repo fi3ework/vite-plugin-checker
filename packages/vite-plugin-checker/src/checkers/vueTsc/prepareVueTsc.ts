@@ -30,7 +30,6 @@ export async function prepareVueTsc() {
   // 1. copy typescript to folder
   const targetTsDir = path.resolve(_dirname, 'typescript-vue-tsc')
   const vueTscFlagFile = path.resolve(targetTsDir, 'vue-tsc-resolve-path')
-  // let currTsVersion: string = ''
   const currTsVersion = _require('typescript/package.json').version
 
   let shouldBuildFixture = true
