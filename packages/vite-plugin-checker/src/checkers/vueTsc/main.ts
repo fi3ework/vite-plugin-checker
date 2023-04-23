@@ -38,9 +38,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
       invariant(pluginConfig.vueTsc, 'config.vueTsc should be `false`')
 
       const { targetTsDir } = await prepareVueTsc()
-
       const vueTs = _require(path.resolve(targetTsDir, 'lib/typescript.js'))
-
       const finalConfig =
         pluginConfig.vueTsc === true
           ? { root, tsconfigPath: 'tsconfig.json' }
@@ -64,6 +62,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
       }
 
       let logChunk = ''
+      let prevLogChunk = ''
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
@@ -110,9 +109,15 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
           }
 
           if (terminal) {
-            consoleLog(
+            logChunk =
               logChunk + os.EOL + wrapCheckerSummary('vue-tsc', diagnostic.messageText.toString())
-            )
+            if (logChunk === prevLogChunk) {
+              return
+            }
+
+            // TODO: only macOS will report multiple times for same result
+            prevLogChunk = logChunk
+            consoleLog(logChunk)
           }
         })
       }
