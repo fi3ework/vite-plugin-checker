@@ -1,6 +1,7 @@
 import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
 import path from 'path'
+import invariant from 'tiny-invariant'
 import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
 
@@ -38,6 +39,11 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       if (!pluginConfig.eslint) return
 
       const options = optionator.parse(pluginConfig.eslint.lintCommand)
+      invariant(
+        !options.fix,
+        'Using `--fix` in `config.eslint.lintCommand` is not allowed in vite-plugin-checker, you could using `--fix` with editor.'
+      )
+
       const translatedOptions = translateOptions(options) as ESLint.Options
 
       const logLevel = (() => {
