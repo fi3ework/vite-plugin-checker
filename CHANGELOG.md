@@ -1,3 +1,15 @@
+## 0.6.0 (2023-04-30)
+
+* fix: compatible with mac’s duplication watch report ([5dd90c9](https://github.com/fi3ework/vite-plugin-checker/commit/5dd90c9))
+* fix: require vue-tsc >= 1.3.9 ([69a73a9](https://github.com/fi3ework/vite-plugin-checker/commit/69a73a9))
+* fix: support vue-tsc works with ts5 ([ebf8996](https://github.com/fi3ework/vite-plugin-checker/commit/ebf8996))
+* fix: throw when using —fix with ESLint ([6d3887d](https://github.com/fi3ework/vite-plugin-checker/commit/6d3887d))
+* fix(stylelint): parse lintCommand like argv ([20b7399](https://github.com/fi3ework/vite-plugin-checker/commit/20b7399))
+* build: bump vitest ([30510a6](https://github.com/fi3ework/vite-plugin-checker/commit/30510a6))
+* chore: bump vue-tsc to latest ([8a99b8f](https://github.com/fi3ework/vite-plugin-checker/commit/8a99b8f))
+
+
+
 ## <small>0.5.6 (2023-02-17)</small>
 
 * chore(playground): lock vue-tsc to ~1.0.0 ([50a2609](https://github.com/fi3ework/vite-plugin-checker/commit/50a2609))
