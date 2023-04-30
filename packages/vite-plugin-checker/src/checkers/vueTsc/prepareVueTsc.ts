@@ -11,20 +11,7 @@ const _require = createRequire(import.meta.url)
 // isomorphic __dirname https://antfu.me/posts/isomorphic-dirname
 const _filename = fileURLToPath(import.meta.url)
 const _dirname = dirname(_filename)
-
-let proxyApiPath: string
-let createProgramFunction: string
-try {
-  // vue-tsc exposes the proxy in vue-tsc/out/index after v1.0.14
-  proxyApiPath = _require.resolve('vue-tsc/out/index')
-  createProgramFunction = 'createProgram'
-} catch (e) {
-  // @deprecated
-  // will be removed in 0.6.0
-  // vue-tsc exposes the proxy in vue-tsc/out/proxy before v1.0.14
-  proxyApiPath = _require.resolve('vue-tsc/out/proxy')
-  createProgramFunction = 'createProgramProxy'
-}
+const proxyApiPath = _require.resolve('vue-tsc/out/index')
 
 export async function prepareVueTsc() {
   // 1. copy typescript to folder
@@ -76,7 +63,7 @@ async function overrideTscJs(tscJsPath: string, version: string) {
   tryReplace(
     /function createProgram\(.+\) {/,
     (s: string) =>
-      s + ` return require(${JSON.stringify(proxyApiPath)}).${createProgramFunction}(...arguments);`
+      s + ` return require(${JSON.stringify(proxyApiPath)}).createProgram(...arguments);`
   )
 
   // patches logic for checking root file extension in build program for incremental builds
