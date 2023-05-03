@@ -39,6 +39,7 @@
     ]
   },
   "devDependencies": {
+    "@changesets/cli": "^2.26.1",
     "@tsconfig/esm": "^1.0.2",
     "@tsconfig/node18": "^1.0.1",
     "@tsconfig/strictest": "^2.0.0",
@@ -55,7 +56,6 @@
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "chalk": "^4.1.1",
-    "conventional-changelog-cli": "^2.1.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.11.0",
     "eslint-config-alloy": "^4.5.1",
@@ -85,7 +85,6 @@
     "vite": "^4.3.0",
     "vite-plugin-checker": "workspace:*",
     "vitest": "^0.30.1",
-    "ws": "^8.5.0",
-    "zx": "^1.14.2"
+    "ws": "^8.5.0"
   }
 }

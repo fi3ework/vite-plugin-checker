@@ -22,10 +22,8 @@
   "scripts": {
     "dev": "tsup --watch",
     "clean": "rimraf dist",
-    "build": "tsup && zx ../../scripts/patchCjs.mjs",
-    "build:test": "tsup --sourcemap inline",
-    "changelog": "conventional-changelog -p angular -i ../../CHANGELOG.md -s --commit-path ../../ --lerna-package vite-plugin-checker",
-    "release": "zx ../../scripts/release.mjs"
+    "build": "tsup && node ../../scripts/patchCjs.mjs",
+    "build:test": "tsup --sourcemap inline"
   },
   "repository": {
     "type": "git",
