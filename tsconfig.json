@@ -1,3 +1,0 @@
-{
-  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node18/tsconfig", "@tsconfig/esm/tsconfig"]
-}
