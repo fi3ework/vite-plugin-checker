@@ -5,6 +5,8 @@ const _require = createRequire(import.meta.url)
 export const RUNTIME_CLIENT_RUNTIME_PATH = '/@vite-plugin-checker-runtime'
 export const RUNTIME_CLIENT_ENTRY_PATH = '/@vite-plugin-checker-runtime-entry'
 
+export const wrapVirtualPrefix = (id: `/${string}`): `virtual:${string}` =>
+  `virtual:${id.slice('/'.length)}`
 export const composePreambleCode = (base = '/', config: Record<string, any>) => `
 import { inject } from "${base}${RUNTIME_CLIENT_RUNTIME_PATH.slice(1)}";
 inject({
