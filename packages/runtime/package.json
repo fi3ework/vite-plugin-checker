@@ -5,12 +5,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "node ./scripts/build.js",
-    "build-local": "node ./scripts/build.js --local",
-    "build:test": "pnpm run build",
-    "dev": "node ./scripts/build.js --watch",
-    "dev-local": "node ./scripts/build.js --watch --local",
-    "preview": "sirv public --no-clear"
+    "build1": "node ./scripts/build.js",
+    "build-local1": "node ./scripts/build.js --local",
+    "build:test1": "pnpm run build",
+    "dev1": "node ./scripts/build.js --watch",
+    "dev-local1": "node ./scripts/build.js --watch --local",
+    "preview1": "sirv public --no-clear"
   },
   "devDependencies": {
     "esbuild": "^0.14.27",

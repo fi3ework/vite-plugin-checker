@@ -32,7 +32,7 @@ describe('config-overlay-changes', () => {
       editFile('src/main.ts', (code) => code.replace('! as', ` as`))
       await sleep(6000)
       await expect(getHmrOverlayText()).rejects.toThrow(
-        'Invariant failed: <vite-plugin-checker-error-overlay> shadow dom is expected to be found, but got null'
+        'Invariant failed: .message-body is expected in shadow root'
       )
     })
   })
