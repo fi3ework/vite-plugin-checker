@@ -10,7 +10,7 @@ describe('config-overlay-false', () => {
         await getHmrOverlayText()
       } catch (e) {
         await expect((e as any).toString()).toContain(
-          'Invariant failed: <vite-plugin-checker-error-overlay> shadow dom is expected to be found, but got null'
+          'Error: Invariant failed: .message-body is expected in shadow root'
         )
       }
     })
