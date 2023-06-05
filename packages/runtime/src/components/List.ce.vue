@@ -1,15 +1,16 @@
 <script setup lang="ts">
-
 import Checker from './Checker.ce.vue'
 
-withDefaults(defineProps<{
-  ulStyle?: string
-  base: string
-  checkerResults: any[]
-}>(), {
-  ulStyle: ''
-})
-
+withDefaults(
+  defineProps<{
+    ulStyle?: string
+    base: string
+    checkerResults: any[]
+  }>(),
+  {
+    ulStyle: '',
+  }
+)
 </script>
 
 <template>
@@ -17,7 +18,6 @@ withDefaults(defineProps<{
     <li v-for="(checkerResult, index) in checkerResults" :key="index">
       <Checker :diagnostics="checkerResult.diagnostics" :base="base" :index="index" />
     </li>
-
   </ul>
 </template>
 

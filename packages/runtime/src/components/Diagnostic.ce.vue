@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { computed } from 'vue'
 const { diagnostic, base } = defineProps<{
   diagnostic: any
@@ -23,7 +22,7 @@ function calcLink(text: string) {
         textContent: file,
         onclick: () => {
           fetch(`${base}__open-in-editor?file=` + encodeURIComponent(file))
-        }
+        },
       }
 
       curIndex += frag.length + file.length
@@ -50,7 +49,6 @@ const hasFrame = computed(() => {
   return diagnostic.frame && codeFrameRE.test(diagnostic.frame)
 })
 
-
 const file = computed(() => {
   return (diagnostic.loc?.file || diagnostic.id || 'unknown file').split(`?`)
 }).value[0]
@@ -73,7 +71,9 @@ const errorSource = computed(() => {
       >{{ `[${diagnostic.checkerId}]` }} </span
     ><span :class="['message-body', `message-body-${diagnostic.level}`]">{{ diagnostic.message }}</span>
   </pre>
-    <pre class="file"><a class="file-link" @click="errorSource.onclick">{{ errorSource.textContent }}</a></pre>
+    <pre
+      class="file"
+    ><a class="file-link" @click="errorSource.onclick">{{ errorSource.textContent }}</a></pre>
     <pre v-if="hasFrame" class="frame"><code class="frame-code">{{ diagnostic.frame }}</code></pre>
     <pre class="stack">{{ diagnostic.stack }}</pre>
   </li>

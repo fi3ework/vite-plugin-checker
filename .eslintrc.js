@@ -11,13 +11,6 @@ module.exports = {
     __dirname: 'off',
     __filename: 'off',
   },
-  plugins: ['svelte3'],
-  overrides: [
-    {
-      files: ['*.svelte'],
-      processor: 'svelte3/svelte3',
-    },
-  ],
   rules: {
     'max-nested-callbacks': 'off',
     '@typescript-eslint/consistent-type-assertions': 'off',

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import Diagnostic from './Diagnostic.ce.vue'
 
 defineProps<{

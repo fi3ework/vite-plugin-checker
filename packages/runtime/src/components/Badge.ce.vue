@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = withDefaults(defineProps<{
-  checkerResults: any;
-  collapsed: boolean
-  position?: string
-  badgeStyle?: string
-  onClick?: () => void
-}>(), {
-  position: 'bl',
-  badgeStyle: ''
-})
+const props = withDefaults(
+  defineProps<{
+    checkerResults: any
+    collapsed: boolean
+    position?: string
+    badgeStyle?: string
+    onClick?: () => void
+  }>(),
+  {
+    position: 'bl',
+    badgeStyle: '',
+  }
+)
 
 const summary = computed(() => {
   let errorCount = 0
@@ -31,8 +34,6 @@ const bgColorClass = computed(() => {
   return 'summary-success'
 })
 
-
-
 // $: calcBgColorClass = () => {
 //   if (!summary) return ''
 //   if (summary.errorCount > 0) return 'summary-error'
@@ -44,8 +45,15 @@ const bgColorClass = computed(() => {
 </script>
 
 <template>
-  <button :class="['badge-base', collapsed ? `to-uncollpase ${bgColorClass}` : 'to-collpase', `badge-${position}`]"
-    :style="badgeStyle" @click="onClick">
+  <button
+    :class="[
+      'badge-base',
+      collapsed ? `to-uncollpase ${bgColorClass}` : 'to-collpase',
+      `badge-${position}`,
+    ]"
+    :style="badgeStyle"
+    @click="onClick"
+  >
     <template v-if="collapsed">
       <span class="summary"><span class="emoji">❗️</span>{{ summary.errorCount }}</span>
       <span class="summary"><span class="emoji">⚠️</span>{{ summary.warningCount }}</span>

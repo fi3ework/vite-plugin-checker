@@ -4,14 +4,16 @@ import Badge from './components/Badge.ce.vue'
 import List from './components/List.ce.vue'
 import { useChecker } from './useChecker'
 
-const props = withDefaults(defineProps<{
-  checkerResults: any[]
-  overlayConfig: any;
-  base: string
-}>(), {
-  overlayConfig: {}
-})
-
+const props = withDefaults(
+  defineProps<{
+    checkerResults: any[]
+    overlayConfig: any
+    base: string
+  }>(),
+  {
+    overlayConfig: {},
+  }
+)
 
 const { checkerResults } = useChecker()
 
@@ -27,17 +29,24 @@ const toggle = () => {
 
 <template>
   <template v-if="shouldRender">
-    <Badge :collapsed="collapsed" :checker-results="checkerResults" :position="overlayConfig.position"
-      :badgeStyle="overlayConfig.badgeStyle" @click="toggle">
+    <Badge
+      :collapsed="collapsed"
+      :checker-results="checkerResults"
+      :position="overlayConfig.position"
+      :badgeStyle="overlayConfig.badgeStyle"
+      @click="toggle"
+    >
     </Badge>
-    <main :class="['window', `${collapsed ? 'window-collapsed' : ''}`]" style={overlayConfig?.panelStyle}>
+    <main
+      :class="['window', `${collapsed ? 'window-collapsed' : ''}`]"
+      style="{overlayConfig?.panelStyle}"
+    >
       <div class="list-scroll">
         <List :checkerResults="checkerResults" :base="base" ulStyle="margin-bottom: 36px;" />
       </div>
     </main>
   </template>
 </template>
-
 
 <style>
 :host {
