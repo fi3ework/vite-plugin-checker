@@ -22,8 +22,7 @@ function calcLink(text: string) {
       const link: Link = {
         textContent: file,
         onclick: () => {
-          console.log('🤬', `${'/'}__open-in-editor?file=` + encodeURIComponent(file))
-          fetch(`${'/'}__open-in-editor?file=` + encodeURIComponent(file))
+          fetch(`${base}__open-in-editor?file=` + encodeURIComponent(file))
         }
       }
 
@@ -35,13 +34,13 @@ function calcLink(text: string) {
   return links
 }
 
-const checkerColorMap = {
+const checkerColorMap: Record<string, string> = {
   TypeScript: '#3178c6',
   ESLint: '#7b7fe3',
   VLS: '#64b587',
   'vue-tsc': '#64b587',
   Stylelint: '#ffffff',
-}
+} as const
 
 const fileRE = /(?:[a-zA-Z]:\\|\/).*(:\d+:\d+)?/g
 const codeFrameRE = /^(?:>?\s+\d+\s+\|.*|\s+\|\s*\^.*)\r?\n/gm
@@ -64,13 +63,12 @@ const errorSource = computed(() => {
     linkFiles: true,
   }
 })
-
-
 </script>
 
 <template>
   <li class="message-item">
     <pre class="message">
+    <!-- @vue-ignore -->
     <span class="plugin" :style="{ color: checkerColorMap[diagnostic.checkerId] }"
       >{{ `[${diagnostic.checkerId}]` }} </span
     ><span :class="['message-body', `message-body-${diagnostic.level}`]">{{ diagnostic.message }}</span>

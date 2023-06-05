@@ -8,7 +8,13 @@ if (customElements && !customElements.get(overlayId)) {
   customElements.define(overlayId, ShadowElement)
 }
 
-export function inject({ base, overlayConfig }) {
+export function inject({
+  base,
+  overlayConfig,
+}: {
+  base: string
+  overlayConfig: Record<string, any>
+}) {
   const overlayEle = new ShadowElement({
     base,
     overlayConfig,

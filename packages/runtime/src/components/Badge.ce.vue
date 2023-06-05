@@ -15,8 +15,8 @@ const props = withDefaults(defineProps<{
 const summary = computed(() => {
   let errorCount = 0
   let warningCount = 0
-  props.checkerResults.forEach((result) => {
-    result.diagnostics.forEach((d) => {
+  props.checkerResults.forEach((result: any) => {
+    result.diagnostics.forEach((d: any) => {
       if (d.level === 1) errorCount++
       if (d.level === 0) warningCount++
     })
