@@ -95,14 +95,14 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         const hasExtensionsConfig = Array.isArray(extensions)
         if (hasExtensionsConfig && !extensions.includes(extension)) return
 
-        const isChangedFileIgnored = await eslint.isPathIgnored(filePath)
+        const absPath = path.resolve(root, filePath)
+        const isChangedFileIgnored = await eslint.isPathIgnored(absPath)
         if (isChangedFileIgnored) return
 
-        const absPath = path.resolve(root, filePath)
         if (type === 'unlink') {
           manager.updateByFileId(absPath, [])
         } else if (type === 'change') {
-          const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
+          const diagnosticsOfChangedFile = await eslint.lintFiles(absPath)
           const newDiagnostics = diagnosticsOfChangedFile
             .map((d) => normalizeEslintDiagnostic(d))
             .flat(1)
