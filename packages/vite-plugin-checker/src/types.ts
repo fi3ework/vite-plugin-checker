@@ -143,7 +143,7 @@ export interface SharedConfig {
         position?: 'tl' | 'tr' | 'bl' | 'br'
         /**
          * Use this to add extra style string to the badge button, the string format is
-         * [Svelte style](https://svelte.dev/docs#template-syntax-element-directives-style-property)
+         * [HTML element's style property](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
          * For example, if you want to hide the badge,
          * you can pass `display: none;` to the badgeStyle property
          * @default no default value
@@ -151,7 +151,7 @@ export interface SharedConfig {
         badgeStyle?: string
         /**
          * Use this to add extra style string to the diagnostic panel, the string format is
-         * [Svelte style](https://svelte.dev/docs#template-syntax-element-directives-style-property)
+         * [HTML element's style property](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
          * For example, if you want to change the opacity of the panel,
          * you can pass `opacity: 0.8;` to the panelStyle property
          * @default no default value

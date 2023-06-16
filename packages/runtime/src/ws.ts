@@ -4,24 +4,24 @@ const WS_CHECKER_ERROR_EVENT = 'vite-plugin-checker:error'
 const WS_CHECKER_RECONNECT_EVENT = 'vite-plugin-checker:reconnect'
 // #endregion
 
-const onCustomMessage = []
-const onReconnectMessage = []
+const onCustomMessage: any[] = []
+const onReconnectMessage: any[] = []
 const onConfigMessage = []
 
-export function listenToConfigMessage(cb) {
+export function listenToConfigMessage(cb: () => any) {
   onConfigMessage.push(cb)
 }
 
-export function listenToCustomMessage(cb) {
+export function listenToCustomMessage(cb: () => any) {
   onCustomMessage.push(cb)
 }
 
-export function listenToReconnectMessage(cb) {
+export function listenToReconnectMessage(cb: () => any) {
   onReconnectMessage.push(cb)
 }
 
 export function prepareListen() {
-  const onMessage = async (data) => {
+  const onMessage = async (data: any) => {
     switch (data.event) {
       case WS_CHECKER_ERROR_EVENT:
         onCustomMessage.forEach((callbackfn) => callbackfn(data.data))
@@ -36,7 +36,7 @@ export function prepareListen() {
     startListening: () => {
       if (import.meta.hot) {
         // listen server -> client messages
-        import.meta.hot.on('vite-plugin-checker', (data) => {
+        import.meta.hot.on('vite-plugin-checker', (data: any) => {
           onMessage(data)
         })
 

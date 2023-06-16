@@ -13,6 +13,7 @@
 
 import meow from 'meow'
 import type Stylelint from 'stylelint'
+import { parseArgsStringToArgv } from './argv.js'
 
 //------------------------------------------------------------------------------
 // Typedefs
@@ -92,7 +93,7 @@ import type Stylelint from 'stylelint'
 
 const EXIT_CODE_ERROR = 2
 
-export const translateOptions = (command: string) => {
+export const translateOptions = async (command: string) => {
   const result = meow({
     autoHelp: false,
     autoVersion: false,
@@ -190,6 +191,9 @@ export const translateOptions = (command: string) => {
       cacheLocation: {
         type: 'string',
       },
+      cacheStrategy: {
+        type: 'string',
+      },
       color: {
         type: 'boolean',
       },
@@ -214,7 +218,7 @@ export const translateOptions = (command: string) => {
       },
       formatter: {
         alias: 'f',
-        default: 'json',
+        default: 'string',
         type: 'string',
       },
       help: {
@@ -228,6 +232,7 @@ export const translateOptions = (command: string) => {
       ignorePath: {
         alias: 'i',
         type: 'string',
+        isMultiple: true,
       },
       ignorePattern: {
         alias: 'ip',
@@ -267,18 +272,19 @@ export const translateOptions = (command: string) => {
       stdinFilename: {
         type: 'string',
       },
-      syntax: {
-        alias: 's',
-        type: 'string',
-      },
       version: {
         alias: 'v',
         type: 'boolean',
       },
+      globbyOptions: {
+        alias: 'go',
+        type: 'string',
+      },
     },
-    argv: command.split(' ').filter((item) => !!item),
+    argv: parseArgsStringToArgv(command),
   })
-  return {
+
+  const optionsBase = {
     ...Object.fromEntries(
       Object.entries(result.flags).filter(([key]) =>
         [
@@ -311,4 +317,6 @@ export const translateOptions = (command: string) => {
     formatter: result.flags.formatter === 'string' ? 'json' : result.flags.formatter,
     files: result.input[1],
   } as Stylelint.LinterOptions
+
+  return optionsBase
 }

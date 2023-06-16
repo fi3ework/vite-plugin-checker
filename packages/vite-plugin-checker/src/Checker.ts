@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant'
 import { isInVitestEntryThread, isMainThread } from './utils.js'
 
-import { createScript, Script } from './worker.js'
+import { createScript, type Script } from './worker.js'
 
 import type {
   CreateDiagnostic,

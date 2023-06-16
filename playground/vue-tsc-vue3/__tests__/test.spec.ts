@@ -34,7 +34,7 @@ describe('vue-tsc-vue3', () => {
 
   describe.runIf(isBuild)('build', () => {
     it('should fail', async () => {
-      const expectedMsg = `src/App.vue(3,4): error TS2322: Type '{ msg1: string; }' is not assignable to type 'ComponentProps<DefineComponent<{ msg: { type: StringConstructor; required: true; }; }, { count: Ref<number>; }, unknown, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ... 4 more ..., {}>>'.`
+      const expectedMsg = `error TS2345`
       expectStderrContains(log, expectedMsg)
     })
   })

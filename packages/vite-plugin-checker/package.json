@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-checker",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
   "types": "./dist/esm/main.d.ts",
   "main": "./dist/cjs/main.js",
@@ -22,10 +22,8 @@
   "scripts": {
     "dev": "tsup --watch",
     "clean": "rimraf dist",
-    "build": "tsup && zx ../../scripts/patchCjs.mjs",
-    "build:test": "tsup --sourcemap inline",
-    "changelog": "conventional-changelog -p angular -i ../../CHANGELOG.md -s --commit-path ../../ --lerna-package vite-plugin-checker",
-    "release": "zx ../../scripts/release.mjs"
+    "build": "tsup && node ../../scripts/patchCjs.mjs",
+    "build:test": "tsup --sourcemap inline"
   },
   "repository": {
     "type": "git",
@@ -51,6 +49,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.pick": "^4.4.0",
     "npm-run-path": "^4.0.1",
+    "semver": "^7.5.0",
     "strip-ansi": "^6.0.0",
     "tiny-invariant": "^1.1.0",
     "vscode-languageclient": "^7.0.0",
@@ -61,13 +60,13 @@
   "peerDependencies": {
     "eslint": ">=7",
     "meow": "^9.0.0",
+    "optionator": "^0.9.1",
     "stylelint": ">=13",
     "typescript": "*",
     "vite": ">=2.0.0",
     "vls": "*",
     "vti": "*",
-    "vue-tsc": "*",
-    "optionator": "^0.9.1"
+    "vue-tsc": ">=1.3.9"
   },
   "peerDependenciesMeta": {
     "eslint": {
@@ -96,20 +95,21 @@
     }
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.1",
     "@types/eslint": "^7.2.14",
+    "@types/fs-extra": "^11.0.1",
     "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.pick": "^4.4.6",
+    "@types/semver": "^7.3.13",
     "@volar/vue-typescript": "^0.33.0",
     "esbuild": "^0.14.27",
     "meow": "^9.0.0",
     "npm-run-all": "^4.1.5",
     "optionator": "^0.9.1",
     "stylelint": "^14.0.0",
-    "tsup": "^6.2.2",
-    "typescript": "~4.5.5",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.4",
     "vls": "^0.7.6",
     "vti": "^0.1.7",
-    "vue-tsc": "^1.0.24"
+    "vue-tsc": "^1.6.1"
   }
 }

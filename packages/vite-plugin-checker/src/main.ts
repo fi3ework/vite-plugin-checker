@@ -9,19 +9,20 @@ import {
   RUNTIME_CLIENT_ENTRY_PATH,
   RUNTIME_CLIENT_RUNTIME_PATH,
   runtimeCode,
+  wrapVirtualPrefix,
   WS_CHECKER_RECONNECT_EVENT,
 } from './client/index.js'
 import {
   ACTION_TYPES,
-  BuildCheckBinStr,
-  BuildInCheckerNames,
-  ClientDiagnosticPayload,
-  ClientReconnectPayload,
-  Action,
-  PluginConfig,
-  ServeAndBuildChecker,
-  SharedConfig,
-  UserPluginConfig,
+  type BuildCheckBinStr,
+  type BuildInCheckerNames,
+  type ClientDiagnosticPayload,
+  type ClientReconnectPayload,
+  type Action,
+  type PluginConfig,
+  type ServeAndBuildChecker,
+  type SharedConfig,
+  type UserPluginConfig,
 } from './types.js'
 
 import type { ConfigEnv, Plugin, Logger } from 'vite'
@@ -114,17 +115,17 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     resolveId(id) {
       if (id === RUNTIME_CLIENT_RUNTIME_PATH || id === RUNTIME_CLIENT_ENTRY_PATH) {
-        return id
+        return wrapVirtualPrefix(id)
       }
 
       return
     },
     load(id) {
-      if (id === RUNTIME_CLIENT_RUNTIME_PATH) {
+      if (id === wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)) {
         return runtimeCode
       }
 
-      if (id === RUNTIME_CLIENT_ENTRY_PATH) {
+      if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
         return composePreambleCode(devBase, overlayConfig)
       }
 

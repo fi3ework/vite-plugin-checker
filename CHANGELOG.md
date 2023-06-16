@@ -1,3 +1,29 @@
+## 0.6.0 (2023-04-30)
+
+* fix: compatible with mac’s duplication watch report ([5dd90c9](https://github.com/fi3ework/vite-plugin-checker/commit/5dd90c9))
+* fix: require vue-tsc >= 1.3.9 ([69a73a9](https://github.com/fi3ework/vite-plugin-checker/commit/69a73a9))
+* fix: support vue-tsc works with ts5 ([ebf8996](https://github.com/fi3ework/vite-plugin-checker/commit/ebf8996))
+* fix: throw when using —fix with ESLint ([6d3887d](https://github.com/fi3ework/vite-plugin-checker/commit/6d3887d))
+* fix(stylelint): parse lintCommand like argv ([20b7399](https://github.com/fi3ework/vite-plugin-checker/commit/20b7399))
+* build: bump vitest ([30510a6](https://github.com/fi3ework/vite-plugin-checker/commit/30510a6))
+* chore: bump vue-tsc to latest ([8a99b8f](https://github.com/fi3ework/vite-plugin-checker/commit/8a99b8f))
+
+
+
+## <small>0.5.6 (2023-02-17)</small>
+
+* chore(playground): lock vue-tsc to ~1.0.0 ([50a2609](https://github.com/fi3ework/vite-plugin-checker/commit/50a2609))
+* fix: use Vite's native logger to log and clean screen before log (#209) ([8dd4915](https://github.com/fi3ework/vite-plugin-checker/commit/8dd4915)), closes [#209](https://github.com/fi3ework/vite-plugin-checker/issues/209)
+* fix(vue-tsc): compatible with vue-tsc@^1.1.0 ([96b762b](https://github.com/fi3ework/vite-plugin-checker/commit/96b762b))
+* docs: add how to use with Nuxt ([7eb4c84](https://github.com/fi3ework/vite-plugin-checker/commit/7eb4c84))
+* docs: add missing step for Nuxt ([9ceacd6](https://github.com/fi3ework/vite-plugin-checker/commit/9ceacd6))
+* docs: add version requirement ([219c7ed](https://github.com/fi3ework/vite-plugin-checker/commit/219c7ed))
+* docs: eslint (#210) ([f65aa71](https://github.com/fi3ework/vite-plugin-checker/commit/f65aa71)), closes [#210](https://github.com/fi3ework/vite-plugin-checker/issues/210)
+* refactor: clean code ([90780c3](https://github.com/fi3ework/vite-plugin-checker/commit/90780c3))
+* ci: add publint ([ee50bae](https://github.com/fi3ework/vite-plugin-checker/commit/ee50bae))
+
+
+
 ## <small>0.5.5 (2023-01-26)</small>
 
 * refactor: bump vite in devDep to ^4 (#208) ([61b7aea](https://github.com/fi3ework/vite-plugin-checker/commit/61b7aea)), closes [#208](https://github.com/fi3ework/vite-plugin-checker/issues/208)
