@@ -22,7 +22,7 @@ interface TsConfigOptions {
 
   dev?: Partial<{
     /**
-     * tsc will delay running,implement through debounce
+     * tsc will delay running, implemented via debounce
      */
     debounce: number
   }>
@@ -65,7 +65,7 @@ export type EslintConfig =
         /** which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning')[]
         /**
-         * lintCommand will delay running, work with editor lint on save,implement through debounce
+         * lintCommand will delay running, work with editor lint on save, implemented via debounce
          */
         debounce: number
       }>
