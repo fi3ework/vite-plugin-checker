@@ -144,20 +144,23 @@ export class TscChecker extends Checker<'typescript'> {
       build: {
         buildBin: (config) => {
           if (typeof config.typescript === 'object') {
-            const { root, tsconfigPath, buildMode } = config.typescript
+            const { root = '', tsconfigPath = '', buildMode } = config.typescript
 
             // Compiler option '--noEmit' may not be used with '--build'
-            let args = [buildMode ? '-b' : '--noEmit']
+            const args = [buildMode ? '-b' : '--noEmit']
 
             // Custom config path
-            if (tsconfigPath) {
-              const fullConfigPath = root ? path.join(root, tsconfigPath) : tsconfigPath
+            let projectPath = ''
+            if (root || tsconfigPath) {
+              projectPath = root ? path.join(root, tsconfigPath) : tsconfigPath
+            }
 
+            if (projectPath) {
               // In build mode, the tsconfig path is an argument to -b, e.g. "tsc -b [path]"
               if (buildMode) {
-                args = args.concat([fullConfigPath])
+                args.push(projectPath)
               } else {
-                args = args.concat(['-p', fullConfigPath])
+                args.push('-p', projectPath)
               }
             }
 

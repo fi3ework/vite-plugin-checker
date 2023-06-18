@@ -148,13 +148,17 @@ export class VueTscChecker extends Checker<'vueTsc'> {
       build: {
         buildBin: (config) => {
           if (typeof config.vueTsc === 'object') {
-            const { root, tsconfigPath } = config.vueTsc
+            const { root = '', tsconfigPath = '' } = config.vueTsc
 
             let args = ['--noEmit']
             // Custom config path
-            if (tsconfigPath) {
-              const fullConfigPath = root ? path.join(root, tsconfigPath) : tsconfigPath
-              args = args.concat(['-p', fullConfigPath])
+            let projectPath = ''
+            if (root || tsconfigPath) {
+              projectPath = root ? path.join(root, tsconfigPath) : tsconfigPath
+            }
+
+            if (projectPath) {
+              args.push('-p', projectPath)
             }
 
             return ['vue-tsc', args]
