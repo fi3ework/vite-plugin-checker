@@ -24,8 +24,8 @@ import {
   type SharedConfig,
   type UserPluginConfig,
 } from './types.js'
-
 import type { ConfigEnv, Plugin, Logger } from 'vite'
+
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: BuildInCheckerNames[] = [
   'typescript',
@@ -63,7 +63,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
   let isProduction = false
-  let devBase = '/'
+  let baseWithOrigin: string
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
   let logger: Logger | null = null
@@ -99,7 +99,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     configResolved(config) {
       logger = config.logger
-      devBase = config.base
+      baseWithOrigin = config.server.origin ? config.server.origin + config.base : config.base
       isProduction ||= config.isProduction || config.command === 'build'
       buildWatch = !!config.build.watch
     },
@@ -126,7 +126,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       }
 
       if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
-        return composePreambleCode(devBase, overlayConfig)
+        return composePreambleCode({ baseWithOrigin, overlayConfig })
       }
 
       return
@@ -139,7 +139,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         {
           tag: 'script',
           attrs: { type: 'module' },
-          children: composePreambleCode(devBase, overlayConfig),
+          children: composePreambleCode({ baseWithOrigin, overlayConfig }),
         },
       ]
     },
