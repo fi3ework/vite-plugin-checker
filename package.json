@@ -51,7 +51,8 @@
     "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit",
     "docs:dev": "pnpm --filter docs exec vitepress dev .",
     "docs:build": "pnpm --filter docs exec vitepress build .",
-    "docs:serve": "pnpm --filter docs exec vitepress serve ."
+    "docs:serve": "pnpm --filter docs exec vitepress serve .",
+    "release": "cp README.md packages/vite-plugin-checker/README.md && changeset publish && git push --follow-tags"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged"
