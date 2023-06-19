@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'vite-plugin-checker@*'
+    branches:
+      - main
 
 jobs:
   release:
@@ -23,15 +23,10 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npx changelogithub
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
       - name: Install Dependencies
         run: pnpm i
 
-      - name: PNPM build
+      - name: Prepare for Release
         run: |
           pnpm run format
           pnpm run lint
@@ -39,9 +34,14 @@ jobs:
           pnpm run clean
           pnpm run build
           pnpm run publint
-          cp README.md packages/vite-plugin-checker/README.md
 
-      - name: Publish to NPM
-        run: pnpm publish --filter vite-plugin-checker --no-git-checks
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          title: 'chore: next release'
+          publish: pnpm release
+          commit: 'release: publish'
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
