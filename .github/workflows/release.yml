@@ -26,6 +26,10 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Setup npmrc
+        # https://github.com/changesets/action/issues/98#issuecomment-917292485
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+
       - name: Install Dependencies
         run: pnpm i
 
