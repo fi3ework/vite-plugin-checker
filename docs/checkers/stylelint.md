@@ -5,7 +5,7 @@
 1. Make sure [stylelint](https://www.npmjs.com/package/stylelint) and related plugins for your `stylelintrc` are installed as peer dependencies.
 
    ::: warning
-   **(Optional but highly recommended)** Install `meow@^9.0.0` with your package manager. It's needed because of Stylelint dependents on it. It's probably working fine even it's not installed as it's accessed as a phantom dependency. But when you set `hoist=false` of pnpm. It won't be accessible anymore without explicit installation.\
+   **(Optional but highly recommended)** Install `meow@^9.0.0` with your package manager. It's needed because of Stylelint dependents on it. It's probably working fine even it's not installed as it's accessed as a phantom dependency. But when you set `hoist=false` of pnpm. It won't be accessible anymore without explicit installation.
    :::
 
 2. Add `stylelint` field to plugin config and `options.stylelint.lintCommand` is required. The `lintCommand` is the same as the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
