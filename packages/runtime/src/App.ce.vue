@@ -22,6 +22,7 @@ const shouldRender = computed(() => {
 })
 
 const collapsed = ref<boolean>(!(props?.overlayConfig?.initialIsOpen ?? true))
+
 const toggle = () => {
   collapsed.value = !collapsed.value
 }
@@ -39,7 +40,7 @@ const toggle = () => {
     </Badge>
     <main
       :class="['window', `${collapsed ? 'window-collapsed' : ''}`]"
-      style="{overlayConfig?.panelStyle}"
+      :style="overlayConfig?.panelStyle"
     >
       <div class="list-scroll">
         <List :checkerResults="checkerResults" :base="base" ulStyle="margin-bottom: 36px;" />
