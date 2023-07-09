@@ -1,0 +1,53 @@
+{
+  "name": "@vite-plugin-checker/stylelint",
+  "version": "0.0.1",
+  "private": true,
+  "description": "TypeScript checker for vite-plugin-checker",
+  "types": "./dist/esm/main.d.ts",
+  "main": "./dist/cjs/main.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/main.d.ts",
+      "import": "./dist/esm/main.js",
+      "require": "./dist/cjs/main.js"
+    }
+  },
+  "engines": {
+    "node": ">=14.16"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsup --watch",
+    "clean": "rimraf dist",
+    "build": "tsup",
+    "build:test": "tsup --sourcemap inline"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fi3ework/vite-plugin-checker.git"
+  },
+  "keywords": [
+    "vite-plugin-checker"
+  ],
+  "author": "fi3ework <fi3ework@gmail.com>",
+  "license": "MIT",
+  "bugs": "https://github.com/fi3ework/vite-plugin-checker/issues",
+  "homepage": "https://github.com/fi3ework/vite-plugin-checker",
+  "dependencies": {
+    "chokidar": "^3.5.1",
+    "meow": "^9.0.0"
+  },
+  "peerDependencies": {
+    "vite-plugin-checker": ">= 0.7.0",
+    "stylelint": "*"
+  },
+  "devDependencies": {
+    "vite-plugin-checker": "workspace:*",
+    "tsup": "^6.7.0",
+    "stylelint": "^14.0.0",
+    "typescript": "^5.0.4"
+  }
+}

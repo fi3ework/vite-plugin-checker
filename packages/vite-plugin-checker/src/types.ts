@@ -1,68 +1,9 @@
 import type { ErrorPayload, ConfigEnv } from 'vite'
 import type { Worker } from 'worker_threads'
-import type { ESLint } from 'eslint'
+// @ts-ignore
 import type * as Stylelint from 'stylelint'
-import type { VlsOptions } from './checkers/vls/initParams.js'
 
 /* ----------------------------- userland plugin options ----------------------------- */
-
-interface TsConfigOptions {
-  /**
-   * path to tsconfig.json file
-   */
-  tsconfigPath: string
-  /**
-   * root path of cwd
-   */
-  root: string
-  /**
-   * root path of cwd
-   */
-  buildMode: boolean
-}
-
-/**
- * TypeScript checker configuration
- * @default true
- */
-export type TscConfig =
-  /**
-   * - set to `true` to enable type checking with default configuration
-   * - set to `false` to disable type checking, you can also remove `config.typescript` directly
-   */
-  boolean | Partial<TsConfigOptions>
-
-/** vue-tsc checker configuration */
-export type VueTscConfig =
-  /**
-   * - set to `true` to enable type checking with default configuration
-   * - set to `false` to disable type checking, you can also remove `config.vueTsc` directly
-   */
-  boolean | Partial<Omit<TsConfigOptions, 'buildMode'>>
-
-/** vls checker configuration */
-export type VlsConfig = boolean | DeepPartial<VlsOptions>
-
-/** ESLint checker configuration */
-export type EslintConfig =
-  | false
-  | {
-      /**
-       * lintCommand will be executed at build mode, and will also be used as
-       * default config for dev mode when options.eslint.dev.eslint is nullable.
-       */
-      lintCommand: string
-      /**
-       * @default false
-       */
-      useFlatConfig?: boolean
-      dev?: Partial<{
-        /** You can override the options of translated from lintCommand. */
-        overrideConfig: ESLint.Options
-        /** which level of the diagnostic will be emitted from plugin */
-        logLevel: ('error' | 'warning')[]
-      }>
-    }
 
 /** Stylelint checker configuration */
 export type StylelintConfig =
@@ -171,20 +112,17 @@ export interface SharedConfig {
   root?: string
 }
 
-export interface BuildInCheckers {
-  typescript: TscConfig
-  vueTsc: VueTscConfig
-  vls: VlsConfig
-  eslint: EslintConfig
-  stylelint: StylelintConfig
+export interface Checker {
+  createServeAndBuild: (config: unknown, env: ConfigEnv) => ServeAndBuildChecker
+  options: unknown
 }
 
-export type BuildInCheckerNames = keyof BuildInCheckers
-
-export type PluginConfig = SharedConfig & BuildInCheckers
+// export interface PluginConfig extends SharedConfig {
+//   checkers: any[]
+// }
 
 /** Userland plugin configuration */
-export type UserPluginConfig = Partial<PluginConfig>
+export type UserPluginConfig = [any[], Partial<SharedConfig>?]
 
 /* ----------------------------- worker actions ----------------------------- */
 
@@ -210,9 +148,9 @@ export interface OverlayErrorAction extends AbstractAction {
   payload: ClientPayload
 }
 
-export interface ConfigAction extends AbstractAction {
+export interface ConfigAction<T = unknown> extends AbstractAction {
   type: ACTION_TYPES.config
-  payload: ConfigActionPayload
+  payload: ConfigActionPayload<T>
 }
 
 export interface ConfigureServerAction extends AbstractAction {
@@ -231,11 +169,7 @@ export interface UnrefAction extends AbstractAction {
   type: ACTION_TYPES.unref
 }
 
-interface ConfigActionPayload {
-  enableOverlay: boolean
-  enableTerminal: boolean
-  env: ConfigEnv
-}
+type ConfigActionPayload<T = unknown> = CreateServeAndBuildParams<T>
 
 export type Action =
   | ConfigAction
@@ -248,40 +182,47 @@ export type Action =
 
 // prepare for create serve & build checker
 
-export type BuildCheckBin = BuildCheckBinStr | BuildCheckBinFn
+export type BuildCheckBin<T = unknown> = BuildCheckBinStr | BuildCheckBinFn<T>
 export type BuildCheckBinStr = [string, ReadonlyArray<string>]
-export type BuildCheckBinFn = (config: UserPluginConfig) => [string, ReadonlyArray<string>]
+export type BuildCheckBinFn<T = unknown> = (things: {
+  checkerOptions: T
+}) => [string, ReadonlyArray<string>]
 
 export interface ConfigureServeChecker {
   worker: Worker
-  config: (config: ConfigAction['payload']) => void
+  config: (things: CreateServeAndBuildParams) => void
   configureServer: (serverConfig: ConfigureServerAction['payload']) => void
 }
 
-export interface ServeAndBuildChecker {
+export interface ServeAndBuildChecker<T = unknown> {
   serve: ConfigureServeChecker
-  build: { buildBin: BuildCheckBin; buildFile?: string }
+  build: { buildBin: BuildCheckBin<T>; buildFile?: string }
+}
+
+export interface FatServeAndBuildChecker {
+  checker: ServeAndBuildChecker
+  options: unknown
 }
 
 /**
  * create serve & build checker
  */
 
-export interface ServeChecker<T extends BuildInCheckerNames = any> {
+export interface ServeChecker<T = unknown> {
   createDiagnostic: CreateDiagnostic<T>
 }
 
-export interface CheckerDiagnostic {
-  config: (options: ConfigActionPayload) => unknown
+export type CreateDiagnostic<T = unknown> = () => CheckerDiagnostic<T>
+
+export interface CheckerDiagnostic<T = unknown> {
+  config: (options: ConfigActionPayload<T>) => unknown
   configureServer: (options: { root: string }) => unknown
 }
 
-export type CreateDiagnostic<T extends BuildInCheckerNames = any> = (
-  config: Pick<BuildInCheckers, T> & SharedConfig
-) => CheckerDiagnostic
-
 /* ----------------------------- generic utility types ----------------------------- */
 
-export type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>
+export interface CreateServeAndBuildParams<T = unknown> {
+  checkerOptions: T
+  sharedConfig: Partial<SharedConfig>
+  env: ConfigEnv
 }

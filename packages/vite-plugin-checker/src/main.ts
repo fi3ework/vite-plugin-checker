@@ -14,67 +14,58 @@ import {
 import {
   ACTION_TYPES,
   type BuildCheckBinStr,
-  type BuildInCheckerNames,
   type ClientDiagnosticPayload,
   type ClientReconnectPayload,
   type Action,
-  type PluginConfig,
-  type ServeAndBuildChecker,
   type UserPluginConfig,
+  type FatServeAndBuildChecker,
 } from './types.js'
 import type { ConfigEnv, Plugin, Logger } from 'vite'
 
-const buildInCheckerKeys: BuildInCheckerNames[] = [
-  'typescript',
-  'vueTsc',
-  'vls',
-  'eslint',
-  'stylelint',
-]
+// @ts-ignore
+const buildInCheckerKeys: string[] = ['typescript', 'vueTsc', 'vls', 'eslint', 'stylelint']
 
-async function createCheckers(
-  userConfig: UserPluginConfig,
-  env: ConfigEnv
-): Promise<ServeAndBuildChecker[]> {
-  const serveAndBuildCheckers: ServeAndBuildChecker[] = []
-  const { enableBuild, overlay } = userConfig
-  const sharedConfig = { enableBuild, overlay }
-
-  // buildInCheckerKeys.forEach(async (name: BuildInCheckerNames) => {
-  for (const name of buildInCheckerKeys) {
-    if (!userConfig[name]) continue
-    const { createServeAndBuild } = await import(`./checkers/${name}/main.js`)
-    serveAndBuildCheckers.push(
-      createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env)
-    )
-  }
-
-  return serveAndBuildCheckers
+function createCheckers(userConfig: UserPluginConfig, env: ConfigEnv): FatServeAndBuildChecker[] {
+  const sharedConfig = userConfig[1]
+  return userConfig[0].map((checker) => {
+    return {
+      checker: checker.createServeAndBuild({ checkerOptions: checker.options, sharedConfig, env }),
+      options: checker.options,
+    }
+  })
 }
 
-export function checker(userConfig: UserPluginConfig): Plugin {
-  const enableBuild = userConfig?.enableBuild ?? true
-  const enableOverlay = userConfig?.overlay !== false
-  const enableTerminal = userConfig?.terminal !== false
-  const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : {}
+export function checker(...userConfig: UserPluginConfig): Plugin {
+  const sharedConfig = userConfig[1] ?? {}
+  const enableBuild = sharedConfig?.enableBuild ?? true
+  const overlayConfig = typeof sharedConfig?.overlay === 'object' ? sharedConfig?.overlay : {}
   let initialized = false
   let initializeCounter = 0
-  let checkers: ServeAndBuildChecker[] = []
+  let checkers: FatServeAndBuildChecker[] = []
   let isProduction = false
   let baseWithOrigin: string
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
   let logger: Logger | null = null
+  let env: ConfigEnv | null = null
 
   return {
     name: 'vite-plugin-checker',
     enforce: 'pre',
     // @ts-ignore
     __internal__checker: Checker,
-    config: async (config, env) => {
+    config: async (config, _env) => {
+      env = _env
+    },
+    configResolved(config) {
+      logger = config.logger
+      baseWithOrigin = config.server.origin ? config.server.origin + config.base : config.base
+      isProduction ||= config.isProduction || config.command === 'build'
+      buildWatch = !!config.build.watch
+
       // for dev mode (1/2)
       // Initialize checker with config
-      viteMode = env.command
+      viteMode = env!.command
       // avoid running twice when running in SSR
       if (initializeCounter === 0) {
         initializeCounter++
@@ -83,30 +74,24 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         return
       }
 
-      checkers = await createCheckers(userConfig || {}, env)
+      checkers = createCheckers(userConfig || {}, env!)
       if (viteMode !== 'serve') return
 
       checkers.forEach((checker) => {
-        const workerConfig = checker.serve.config
-        workerConfig({
-          enableOverlay,
-          enableTerminal,
-          env,
+        const configWorker = checker.checker.serve.config
+        configWorker({
+          checkerOptions: checker.options,
+          sharedConfig: sharedConfig,
+          env: env!,
         })
       })
-    },
-    configResolved(config) {
-      logger = config.logger
-      baseWithOrigin = config.server.origin ? config.server.origin + config.base : config.base
-      isProduction ||= config.isProduction || config.command === 'build'
-      buildWatch = !!config.build.watch
     },
     buildEnd() {
       if (initialized) return
 
       if (viteMode === 'serve') {
         checkers.forEach((checker) => {
-          const { worker } = checker.serve
+          const { worker } = checker.checker.serve
           worker.terminate()
         })
       }
@@ -172,7 +157,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
       checkers.forEach((checker, index) => {
-        const { worker, configureServer: workerConfigureServer } = checker.serve
+        const { worker, configureServer: workerConfigureServer } = checker.checker.serve
         workerConfigureServer({ root: userConfig.root || server.config.root })
         worker.on('message', (action: Action) => {
           if (action.type === ACTION_TYPES.overlayError) {
@@ -219,14 +204,18 @@ export function checker(userConfig: UserPluginConfig): Plugin {
 }
 
 function spawnChecker(
-  checker: ServeAndBuildChecker,
-  userConfig: Partial<PluginConfig>,
+  checker: FatServeAndBuildChecker,
+  userConfig: UserPluginConfig,
   localEnv: npmRunPath.ProcessEnv
 ) {
   return new Promise<number>((resolve) => {
-    const buildBin = checker.build.buildBin
+    const buildBin = checker.checker.build.buildBin
     const finalBin: BuildCheckBinStr =
-      typeof buildBin === 'function' ? buildBin(userConfig) : buildBin
+      typeof buildBin === 'function'
+        ? buildBin({
+            checkerOptions: checker.options,
+          })
+        : buildBin
 
     const proc = spawn(...finalBin, {
       cwd: process.cwd(),

@@ -32,11 +32,11 @@ import {
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
   type NormalizedDiagnostic,
-} from '../../logger.js'
-import type { DeepPartial } from '../../types.js'
+} from 'vite-plugin-checker/logger'
+import type { DeepPartial } from './types.js'
 import { getInitParams, type VlsOptions } from './initParams.js'
 
-import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
+import { FileDiagnosticManager } from 'vite-plugin-checker/FileDiagnosticManager'
 
 enum DOC_VERSION {
   init = -1,

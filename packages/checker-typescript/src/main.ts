@@ -1,11 +1,10 @@
 import os from 'os'
 import path from 'path'
-import invariant from 'tiny-invariant'
 import ts from 'typescript'
 import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
 
-import { Checker } from '../../Checker.js'
+import { Checker } from 'vite-plugin-checker/Checker'
 import {
   consoleLog,
   diagnosticToRuntimeError,
@@ -14,30 +13,33 @@ import {
   normalizeTsDiagnostic,
   toClientPayload,
   wrapCheckerSummary,
-} from '../../logger.js'
-import { ACTION_TYPES, type CreateDiagnostic, type DiagnosticToRuntime } from '../../types.js'
+} from 'vite-plugin-checker/logger'
+import {
+  ACTION_TYPES,
+  type CreateDiagnostic,
+  type DiagnosticToRuntime,
+} from 'vite-plugin-checker/types'
+import type { TscConfig } from './types.js'
 
 const __filename = fileURLToPath(import.meta.url)
-let createServeAndBuild
+let createServeAndBuild: any
 
-const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
-  let overlay = true
-  let terminal = true
+const createDiagnostic: CreateDiagnostic<TscConfig> = () => {
+  let tscConfig: TscConfig | undefined
   let currDiagnostics: DiagnosticToRuntime[] = []
 
   return {
-    config: async ({ enableOverlay, enableTerminal }) => {
-      overlay = enableOverlay
-      terminal = enableTerminal
+    config: async ({ checkerOptions }) => {
+      tscConfig = checkerOptions
     },
-    configureServer({ root }) {
-      invariant(pluginConfig.typescript, 'config.typescript should be `false`')
+    configureServer(thing) {
+      const { root } = thing
       const finalConfig =
-        pluginConfig.typescript === true
+        tscConfig === undefined
           ? { root, tsconfigPath: 'tsconfig.json' }
           : {
-              root: pluginConfig.typescript.root ?? root,
-              tsconfigPath: pluginConfig.typescript.tsconfigPath ?? 'tsconfig.json',
+              root: tscConfig.root ?? root,
+              tsconfigPath: tscConfig.tsconfigPath ?? 'tsconfig.json',
             }
 
       let configFile: string | undefined
@@ -83,12 +85,12 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             return
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
-            if (overlay) {
-              parentPort?.postMessage({
-                type: ACTION_TYPES.overlayError,
-                payload: toClientPayload('typescript', currDiagnostics),
-              })
-            }
+            // if (overlay) {
+            parentPort?.postMessage({
+              type: ACTION_TYPES.overlayError,
+              payload: toClientPayload('typescript', currDiagnostics),
+            })
+          // }
         }
 
         ensureCall(() => {
@@ -96,13 +98,11 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             logChunk = ''
           }
 
-          if (terminal) {
-            consoleLog(
-              logChunk +
-                os.EOL +
-                wrapCheckerSummary('TypeScript', diagnostic.messageText.toString())
-            )
-          }
+          // if (terminal) {
+          consoleLog(
+            logChunk + os.EOL + wrapCheckerSummary('TypeScript', diagnostic.messageText.toString())
+          )
+          // }
         })
       }
 
@@ -110,7 +110,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       // https://github.com/microsoft/TypeScript/pull/33082/files
       const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram
 
-      if (typeof pluginConfig.typescript === 'object' && pluginConfig.typescript.buildMode) {
+      if (typeof tscConfig === 'object' && tscConfig?.buildMode) {
         const host = ts.createSolutionBuilderWithWatchHost(
           ts.sys,
           createProgram,
@@ -136,15 +136,14 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   }
 }
 
-export class TscChecker extends Checker<'typescript'> {
+class TscChecker extends Checker<TscConfig> {
   public constructor() {
     super({
-      name: 'typescript',
       absFilePath: __filename,
       build: {
-        buildBin: (config) => {
-          if (typeof config.typescript === 'object') {
-            const { root = '', tsconfigPath = '', buildMode } = config.typescript
+        buildBin: ({ checkerOptions }) => {
+          if (typeof checkerOptions === 'object') {
+            const { root = '', tsconfigPath = '', buildMode } = checkerOptions
 
             // Compiler option '--noEmit' may not be used with '--build'
             const args = [buildMode ? '-b' : '--noEmit']
@@ -175,13 +174,13 @@ export class TscChecker extends Checker<'typescript'> {
   }
 
   public init() {
-    const _createServeAndBuild = super.initMainThread()
-    createServeAndBuild = _createServeAndBuild
-    super.initWorkerThread()
+    createServeAndBuild = super.createChecker()
   }
 }
 
-export { createServeAndBuild }
+export const checker = (options?: TscConfig) => {
+  return { createServeAndBuild, options }
+}
+
 const tscChecker = new TscChecker()
-tscChecker.prepare()
 tscChecker.init()

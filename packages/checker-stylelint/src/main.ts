@@ -5,8 +5,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
 
-import { Checker } from '../../Checker.js'
-import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
+import { Checker } from 'vite-plugin-checker/Checker'
+import { FileDiagnosticManager } from 'vite-plugin-checker/FileDiagnosticManager'
 import {
   composeCheckerSummary,
   consoleLog,
@@ -15,13 +15,13 @@ import {
   filterLogLevel,
   normalizeStylelintDiagnostic,
   toClientPayload,
-} from '../../logger.js'
-import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+} from 'vite-plugin-checker/logger'
+import { ACTION_TYPES, DiagnosticLevel } from 'vite-plugin-checker/types'
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild
 
-import type { CreateDiagnostic } from '../../types.js'
+import type { CreateDiagnostic } from 'vite-plugin-checker/types'
 
 const __filename = fileURLToPath(import.meta.url)
 
@@ -149,5 +149,4 @@ export class StylelintChecker extends Checker<'stylelint'> {
 
 export { createServeAndBuild }
 const stylelintChecker = new StylelintChecker()
-stylelintChecker.prepare()
 stylelintChecker.init()

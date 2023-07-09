@@ -11,48 +11,45 @@ import type {
   CheckerDiagnostic,
   BuildCheckBin,
   ServeAndBuildChecker,
-  SharedConfig,
   UnrefAction,
-  BuildInCheckers,
+  CreateServeAndBuildParams,
 } from './types.js'
 
-interface WorkerScriptOptions {
+interface WorkerScriptOptions<T = unknown> {
   absFilename: string
-  buildBin: BuildCheckBin
-  serverChecker: ServeChecker
+  buildBin: BuildCheckBin<T>
+  serverChecker: ServeChecker<T>
 }
 
-export interface Script<T> {
-  mainScript: () => (config: T & SharedConfig, env: ConfigEnv) => ServeAndBuildChecker
+export interface Script<T = unknown> {
+  mainScript: () => (things: CreateServeAndBuildParams) => ServeAndBuildChecker<T>
   workerScript: () => void
 }
 
-export function createScript<T extends Partial<BuildInCheckers>>({
+export function createScript<T = unknown>({
   absFilename,
   buildBin,
   serverChecker,
-}: WorkerScriptOptions): Script<T> {
-  type CheckerConfig = T & SharedConfig
-
+}: WorkerScriptOptions<T>): Script<T> {
   return {
     mainScript: () => {
       // initialized in main thread
-      const createWorker = (
-        checkerConfig: CheckerConfig,
-        env: ConfigEnv
-      ): ConfigureServeChecker => {
+      const createServe = ({ env }: { env: ConfigEnv }): ConfigureServeChecker => {
         const isBuild = env.command === 'build'
         const worker = new Worker(absFilename, {
-          workerData: { env, checkerConfig },
+          workerData: { env },
         })
 
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return {
           worker,
-          config: (config) => {
+          config: (things: CreateServeAndBuildParams) => {
             if (isBuild) return // just run the command
 
-            const configAction: ConfigAction = { type: ACTION_TYPES.config, payload: config }
+            const configAction: ConfigAction = {
+              type: ACTION_TYPES.config,
+              payload: things,
+            }
             worker.postMessage(configAction)
           },
           configureServer: (serverConfig) => {
@@ -66,27 +63,26 @@ export function createScript<T extends Partial<BuildInCheckers>>({
         }
       }
 
-      return (config, env) => {
+      return (things: CreateServeAndBuildParams) => {
         return {
-          serve: createWorker(config, env),
+          serve: createServe(things),
           build: { buildBin },
         }
       }
     },
     workerScript: () => {
       // runs in worker thread
-      let diagnostic: CheckerDiagnostic | null = null
+      let diagnostic: CheckerDiagnostic<T> | null = null
       if (!parentPort) throw Error('should have parentPort as file runs in worker thread')
       const isBuild = workerData.env.command === 'build'
       // only run bin command and do not listen message in build mode
 
       const port = parentPort.on(
         'message',
-        (action: ConfigAction | ConfigureServerAction | UnrefAction) => {
+        (action: ConfigAction<T> | ConfigureServerAction | UnrefAction) => {
           switch (action.type) {
             case ACTION_TYPES.config: {
-              const checkerConfig: T & SharedConfig = workerData.checkerConfig
-              diagnostic = serverChecker.createDiagnostic(checkerConfig)
+              diagnostic = serverChecker.createDiagnostic()
               diagnostic.config(action.payload)
               break
             }

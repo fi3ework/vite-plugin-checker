@@ -1,12 +1,11 @@
 import { createRequire } from 'module'
 import os from 'os'
 import path from 'path'
-import invariant from 'tiny-invariant'
 import type ts from 'typescript'
 import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
 
-import { Checker } from '../../Checker.js'
+import { Checker } from 'vite-plugin-checker/Checker'
 import {
   consoleLog,
   diagnosticToRuntimeError,
@@ -15,36 +14,37 @@ import {
   normalizeVueTscDiagnostic,
   toClientPayload,
   wrapCheckerSummary,
-} from '../../logger.js'
-import { ACTION_TYPES, type CreateDiagnostic, type DiagnosticToRuntime } from '../../types.js'
+} from 'vite-plugin-checker/logger'
+import {
+  ACTION_TYPES,
+  type CreateDiagnostic,
+  type DiagnosticToRuntime,
+} from 'vite-plugin-checker/types'
 import { prepareVueTsc } from './prepareVueTsc.js'
+import type { VueTscConfig } from './types.js'
 
 const _require = createRequire(import.meta.url)
 const __filename = fileURLToPath(import.meta.url)
 
-let createServeAndBuild
+let createServeAndBuild: any
 
-const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
-  let overlay = true
-  let terminal = true
+const createDiagnostic: CreateDiagnostic<VueTscConfig> = () => {
   let currDiagnostics: DiagnosticToRuntime[] = []
+  let vueTscOptions: VueTscConfig | undefined
 
   return {
-    config: ({ enableOverlay, enableTerminal }) => {
-      overlay = enableOverlay
-      terminal = enableTerminal
+    config: ({ checkerOptions }) => {
+      vueTscOptions = checkerOptions
     },
     async configureServer({ root }) {
-      invariant(pluginConfig.vueTsc, 'config.vueTsc should be `false`')
-
       const { targetTsDir } = await prepareVueTsc()
       const vueTs = _require(path.resolve(targetTsDir, 'lib/typescript.js'))
       const finalConfig =
-        pluginConfig.vueTsc === true
+        vueTscOptions === undefined
           ? { root, tsconfigPath: 'tsconfig.json' }
           : {
-              root: pluginConfig.vueTsc.root ?? root,
-              tsconfigPath: pluginConfig.vueTsc.tsconfigPath ?? 'tsconfig.json',
+              root: vueTscOptions.root ?? root,
+              tsconfigPath: vueTscOptions.tsconfigPath ?? 'tsconfig.json',
             }
 
       let configFile: string | undefined
@@ -95,12 +95,10 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
             return
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
-            if (overlay) {
-              parentPort?.postMessage({
-                type: ACTION_TYPES.overlayError,
-                payload: toClientPayload('vue-tsc', currDiagnostics),
-              })
-            }
+            parentPort?.postMessage({
+              type: ACTION_TYPES.overlayError,
+              payload: toClientPayload('vue-tsc', currDiagnostics),
+            })
         }
 
         ensureCall(() => {
@@ -108,17 +106,15 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
             logChunk = ''
           }
 
-          if (terminal) {
-            logChunk =
-              logChunk + os.EOL + wrapCheckerSummary('vue-tsc', diagnostic.messageText.toString())
-            if (logChunk === prevLogChunk) {
-              return
-            }
-
-            // TODO: only macOS will report multiple times for same result
-            prevLogChunk = logChunk
-            consoleLog(logChunk)
+          logChunk =
+            logChunk + os.EOL + wrapCheckerSummary('vue-tsc', diagnostic.messageText.toString())
+          if (logChunk === prevLogChunk) {
+            return
           }
+
+          // TODO: only macOS will report multiple times for same result
+          prevLogChunk = logChunk
+          consoleLog(logChunk)
         })
       }
 
@@ -140,15 +136,14 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
   }
 }
 
-export class VueTscChecker extends Checker<'vueTsc'> {
+export class VueTscChecker extends Checker<VueTscConfig> {
   public constructor() {
     super({
-      name: 'vueTsc',
       absFilePath: __filename,
       build: {
-        buildBin: (config) => {
-          if (typeof config.vueTsc === 'object') {
-            const { root = '', tsconfigPath = '' } = config.vueTsc
+        buildBin: ({ checkerOptions }) => {
+          if (typeof checkerOptions === 'object') {
+            const { root = '', tsconfigPath = '' } = checkerOptions
 
             let args = ['--noEmit']
             // Custom config path
@@ -172,13 +167,13 @@ export class VueTscChecker extends Checker<'vueTsc'> {
   }
 
   public init() {
-    const _createServeAndBuild = super.initMainThread()
-    createServeAndBuild = _createServeAndBuild
-    super.initWorkerThread()
+    createServeAndBuild = super.createChecker()
   }
 }
 
-export { createServeAndBuild }
+export const checker = (options?: VueTscConfig) => {
+  return { createServeAndBuild, options }
+}
+
 const tscChecker = new VueTscChecker()
-tscChecker.prepare()
 tscChecker.init()

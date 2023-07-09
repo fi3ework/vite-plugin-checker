@@ -22,9 +22,13 @@ import {
 } from './types.js'
 import { isMainThread } from './utils.js'
 
+export { codeFrameColumns, strip }
+export type { SourceLocation }
+
 const _require = createRequire(import.meta.url)
 import type { Range } from 'vscode-languageclient'
 import type { ESLint } from 'eslint'
+// @ts-ignore
 import type Stylelint from 'stylelint'
 import type {
   Diagnostic as LspDiagnostic,
@@ -396,50 +400,53 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
 export function normalizeStylelintDiagnostic(
   diagnostic: Stylelint.LintResult
 ): NormalizedDiagnostic[] {
-  return diagnostic.warnings
-    .map((d) => {
-      let level = DiagnosticLevel.Error
-      switch (d.severity) {
-        case 'warning': // warn
-          level = DiagnosticLevel.Warning
-          break
-        case 'error': // error
-          level = DiagnosticLevel.Error
-          break
-        default:
-          level = DiagnosticLevel.Error
-          return null
-      }
+  return (
+    diagnostic.warnings
+      // @ts-ignore
+      .map((d) => {
+        let level = DiagnosticLevel.Error
+        switch (d.severity) {
+          case 'warning': // warn
+            level = DiagnosticLevel.Warning
+            break
+          case 'error': // error
+            level = DiagnosticLevel.Error
+            break
+          default:
+            level = DiagnosticLevel.Error
+            return null
+        }
 
-      const loc: SourceLocation = {
-        start: {
-          line: d.line,
-          column: d.column,
-        },
-        end: {
-          line: d.endLine || 0,
-          column: d.endColumn,
-        },
-      }
+        const loc: SourceLocation = {
+          start: {
+            line: d.line,
+            column: d.column,
+          },
+          end: {
+            line: d.endLine || 0,
+            column: d.endColumn,
+          },
+        }
 
-      const codeFrame = createFrame({
-        // @ts-ignore
-        source: diagnostic._postcssResult.css ?? '',
-        location: loc,
+        const codeFrame = createFrame({
+          // @ts-ignore
+          source: diagnostic._postcssResult.css ?? '',
+          location: loc,
+        })
+
+        return {
+          message: `${d.text} (${d.rule})`,
+          conclusion: '',
+          codeFrame,
+          stripedCodeFrame: codeFrame && strip(codeFrame),
+          id: diagnostic.source,
+          checker: 'Stylelint',
+          loc,
+          level,
+        } as any as NormalizedDiagnostic
       })
-
-      return {
-        message: `${d.text} (${d.rule})`,
-        conclusion: '',
-        codeFrame,
-        stripedCodeFrame: codeFrame && strip(codeFrame),
-        id: diagnostic.source,
-        checker: 'Stylelint',
-        loc,
-        level,
-      } as any as NormalizedDiagnostic
-    })
-    .filter(isNormalizedDiagnostic)
+      .filter(isNormalizedDiagnostic)
+  )
 }
 
 /* ------------------------------ miscellaneous ----------------------------- */

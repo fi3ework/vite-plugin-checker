@@ -2,33 +2,31 @@ import os from 'os'
 import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
 
-import { Checker } from '../../Checker.js'
+import { Checker } from 'vite-plugin-checker/Checker'
 import {
   composeCheckerSummary,
   consoleLog,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   toClientPayload,
-} from '../../logger.js'
-import { ACTION_TYPES } from '../../types.js'
+} from 'vite-plugin-checker/logger'
+import { ACTION_TYPES } from 'vite-plugin-checker/types'
 import { type DiagnosticOptions, diagnostics } from './diagnostics.js'
+import type { VlsConfig } from './types.js'
 
 import type { ConfigEnv } from 'vite'
-import type { CreateDiagnostic } from '../../types.js'
+import type { CreateDiagnostic } from 'vite-plugin-checker/types'
 
 const __filename = fileURLToPath(import.meta.url)
 
-let createServeAndBuild
+let createServeAndBuild: any
 
-export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
-  let overlay = true
-  let terminal = true
+export const createDiagnostic: CreateDiagnostic<VlsConfig> = () => {
   let command: ConfigEnv['command']
+  let vlsConfig: VlsConfig | undefined
 
   return {
-    config: ({ enableOverlay, enableTerminal, env }) => {
-      overlay = enableOverlay
-      terminal = enableTerminal
+    config: async ({ checkerOptions, env }) => {
       command = env.command
     },
     async configureServer({ root }) {
@@ -38,25 +36,20 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
         errorCount,
         warningCount
       ) => {
-        if (!terminal) return
-
         consoleLog(composeCheckerSummary('VLS', errorCount, warningCount))
       }
 
       const onDispatchDiagnostics: DiagnosticOptions['onDispatchDiagnostics'] = (normalized) => {
-        if (overlay && command === 'serve') {
+        if (command === 'serve') {
           parentPort?.postMessage({
             type: ACTION_TYPES.overlayError,
             payload: toClientPayload('vls', diagnosticToRuntimeError(normalized)),
           })
         }
 
-        if (terminal) {
-          consoleLog(normalized.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
-        }
+        consoleLog(normalized.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
       }
 
-      const vlsConfig = pluginConfig?.vls
       await diagnostics(workDir, 'WARN', {
         onDispatchDiagnostics,
         onDispatchDiagnosticsSummary,
@@ -68,20 +61,19 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
   }
 }
 
-export class VlsChecker extends Checker<'vls'> {
+export class VlsChecker extends Checker<VlsConfig> {
   public constructor() {
     super({
-      name: 'vls',
       absFilePath: __filename,
       build: {
-        buildBin: (config) => {
-          if (typeof config.vls === 'object') {
+        buildBin: ({ checkerOptions }) => {
+          if (typeof checkerOptions === 'object') {
             return [
               'vti',
               [
                 'diagnostics',
                 // Escape quotes so that the system shell doesn't strip them out:
-                '"' + JSON.stringify(config.vls).replace(/[\\"]/g, '\\$&') + '"',
+                '"' + JSON.stringify(checkerOptions).replace(/[\\"]/g, '\\$&') + '"',
               ],
             ]
           }
@@ -94,13 +86,13 @@ export class VlsChecker extends Checker<'vls'> {
   }
 
   public init() {
-    const _createServeAndBuild = super.initMainThread()
-    createServeAndBuild = _createServeAndBuild
-    super.initWorkerThread()
+    createServeAndBuild = super.createChecker()
   }
 }
 
-export { createServeAndBuild }
+export const checker = (options?: VlsConfig) => {
+  return { createServeAndBuild, options }
+}
+
 const vlsChecker = new VlsChecker()
-vlsChecker.prepare()
 vlsChecker.init()

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { ShutdownRequest } from 'vscode-languageserver/node'
 import { URI } from 'vscode-uri'
 
-import { prepareClientConnection, logLevel2Severity } from '../src/checkers/vls/diagnostics'
+import { prepareClientConnection, logLevel2Severity } from '../../checker-vls/src/diagnostics'
 
 async function testVslConfig(overrideConfig?: any) {
   const workspaceUri = URI.file(path.join(__dirname, 'fixtures'))
