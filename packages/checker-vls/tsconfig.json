@@ -1,14 +1,4 @@
 {
-  "extends": [
-    "@tsconfig/strictest/tsconfig",
-    "@tsconfig/node18/tsconfig",
-    "@tsconfig/esm/tsconfig"
-  ],
-  "compilerOptions": {
-    "moduleResolution": "NodeNext",
-    "isolatedModules": true,
-    "noUnusedParameters": false,
-    "exactOptionalPropertyTypes": false
-  },
+  "extends": ["../tsconfig.base.json"],
   "include": ["src", "__tests__"]
 }

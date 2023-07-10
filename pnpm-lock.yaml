@@ -110,6 +110,7 @@ importers:
 
   packages/checker-eslint:
     specifiers:
+      '@types/eslint': ^8.44.0
       chokidar: ^3.5.1
       eslint: ^8.11.0
       optionator: ^0.9.1
@@ -121,6 +122,7 @@ importers:
       optionator: 0.9.1
       tiny-invariant: 1.3.1
     devDependencies:
+      '@types/eslint': 8.44.0
       eslint: 8.22.0
       tsup: 6.7.0
       vite-plugin-checker: link:../vite-plugin-checker
@@ -2102,6 +2104,17 @@ packages:
     resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
     dependencies:
       '@types/ms': 0.7.31
+    dev: true
+
+  /@types/eslint/8.44.0:
+    resolution: {integrity: sha512-gsF+c/0XOguWgaOgvFs+xnnRqt9GwgTvIks36WpE6ueeI4KCEHHd8K/CKHqhOqrJKsYH8m27kRzQEvWXAwXUTw==}
+    dependencies:
+      '@types/estree': 1.0.1
+      '@types/json-schema': 7.0.11
+    dev: true
+
+  /@types/estree/1.0.1:
+    resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
     dev: true
 
   /@types/express-serve-static-core/4.17.32:

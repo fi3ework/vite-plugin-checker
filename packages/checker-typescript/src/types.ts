@@ -1,4 +1,4 @@
-interface TsConfigOptions {
+export interface TsConfigOptions {
   /**
    * path to tsconfig.json file
    */

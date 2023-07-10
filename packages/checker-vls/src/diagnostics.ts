@@ -27,12 +27,8 @@ import type { URI as IURI } from 'vscode-uri'
 import pkg from 'vscode-uri'
 const { URI } = pkg
 
-import {
-  diagnosticToTerminalLog,
-  normalizeLspDiagnostic,
-  normalizePublishDiagnosticParams,
-  type NormalizedDiagnostic,
-} from 'vite-plugin-checker/logger'
+import { diagnosticToTerminalLog, type NormalizedDiagnostic } from 'vite-plugin-checker/logger'
+import { normalizeLspDiagnostic, normalizePublishDiagnosticParams } from './logger.js'
 import type { DeepPartial } from './types.js'
 import { getInitParams, type VlsOptions } from './initParams.js'
 

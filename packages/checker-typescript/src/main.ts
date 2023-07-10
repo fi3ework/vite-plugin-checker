@@ -10,10 +10,10 @@ import {
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   ensureCall,
-  normalizeTsDiagnostic,
   toClientPayload,
   wrapCheckerSummary,
 } from 'vite-plugin-checker/logger'
+import { normalizeTsDiagnostic } from './logger.js'
 import {
   ACTION_TYPES,
   type CreateDiagnostic,

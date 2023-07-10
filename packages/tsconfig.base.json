@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "@tsconfig/strictest/tsconfig",
+    "@tsconfig/node18/tsconfig",
+    "@tsconfig/esm/tsconfig"
+  ],
+  "compilerOptions": {
+    "moduleResolution": "NodeNext",
+    "isolatedModules": true,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false,
+    "paths": {
+      "vite-plugin-checker/Checker": ["./vite-plugin-checker/src/Checker.ts"],
+      "vite-plugin-checker/logger": ["./vite-plugin-checker/src/logger.ts"],
+      "vite-plugin-checker/types": ["./vite-plugin-checker/src/types.ts"],
+      "vite-plugin-checker/FileDiagnosticManager": [
+        "./vite-plugin-checker/src/FileDiagnosticManager.ts"
+      ]
+    }
+  }
+}

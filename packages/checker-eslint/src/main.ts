@@ -13,11 +13,11 @@ import {
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
-  normalizeEslintDiagnostic,
   toClientPayload,
 } from 'vite-plugin-checker/logger'
 import { ACTION_TYPES, DiagnosticLevel } from 'vite-plugin-checker/types'
 import { translateOptions } from './cli.js'
+import { normalizeEslintDiagnostic } from './logger.js'
 import type { EslintOptions } from './types.js'
 import { options as optionator } from './options.js'
 

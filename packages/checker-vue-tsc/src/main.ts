@@ -6,12 +6,12 @@ import { fileURLToPath } from 'url'
 import { parentPort } from 'worker_threads'
 
 import { Checker } from 'vite-plugin-checker/Checker'
+import { normalizeVueTscDiagnostic } from './logger.js'
 import {
   consoleLog,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   ensureCall,
-  normalizeVueTscDiagnostic,
   toClientPayload,
   wrapCheckerSummary,
 } from 'vite-plugin-checker/logger'
