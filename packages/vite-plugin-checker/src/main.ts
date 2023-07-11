@@ -158,7 +158,7 @@ export function checker(...userConfig: UserPluginConfig): Plugin {
       // Get the server instance and keep reference in a closure
       checkers.forEach((checker, index) => {
         const { worker, configureServer: workerConfigureServer } = checker.checker.serve
-        workerConfigureServer({ root: userConfig.root || server.config.root })
+        workerConfigureServer({ root: sharedConfig.root || server.config.root })
         worker.on('message', (action: Action) => {
           if (action.type === ACTION_TYPES.overlayError) {
             latestOverlayErrors[index] = action.payload as ClientDiagnosticPayload

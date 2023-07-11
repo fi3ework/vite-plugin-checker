@@ -17,7 +17,7 @@
 
    ```ts
    // vite.config.js
-   import checker from 'vite-plugin-checker'
+   import { checker } from 'vite-plugin-checker'
    export default {
      plugins: [
        checker({
@@ -33,7 +33,7 @@ If you'd prefer to not run the checkers during unit testing with Vitest, you can
 
 ```ts
 // vite.config.js
-import checker from 'vite-plugin-checker'
+import { checker } from 'vite-plugin-checker'
 export default {
   plugins: [!process.env.VITEST ? checker({ typescript: true }) : undefined],
 }

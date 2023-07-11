@@ -19,6 +19,8 @@
     "@vitejs/plugin-react": "^2.0.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.0",
-    "vite-plugin-checker": "workspace:*"
+    "vite-plugin-checker": "workspace:*",
+    "@vite-plugin-checker/typescript": "workspace:*",
+    "@vite-plugin-checker/eslint": "workspace:*"
   }
 }

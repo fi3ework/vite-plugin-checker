@@ -21,6 +21,7 @@
     "stylelint-config-standard": "^28.0.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.0",
-    "vite-plugin-checker": "workspace:*"
+    "vite-plugin-checker": "workspace:*",
+    "@vite-plugin-checker/stylelint": "workspace:*"
   }
 }
