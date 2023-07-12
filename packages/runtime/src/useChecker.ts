@@ -22,8 +22,8 @@ function resumeErrorOverlay(data: any) {
 
 export function useChecker() {
   const ws = prepareListen()
-  listenToCustomMessage(updateErrorOverlay as any)
-  listenToReconnectMessage(resumeErrorOverlay as any)
+  listenToCustomMessage(updateErrorOverlay)
+  listenToReconnectMessage(resumeErrorOverlay)
   ws.startListening()
 
   return {

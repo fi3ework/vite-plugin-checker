@@ -3,7 +3,7 @@ import { computed } from 'vue'
 
 const props = withDefaults(
   defineProps<{
-    checkerResults: any
+    checkerResults: any[]
     collapsed: boolean
     position?: string
     badgeStyle?: string

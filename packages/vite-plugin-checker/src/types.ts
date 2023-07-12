@@ -123,7 +123,7 @@ export interface SharedConfig {
          * errors/warnings are found
          * @defaultValue `true`
          */
-        initialIsOpen?: boolean
+        initialIsOpen?: boolean | 'error'
         /**
          * The position of the vite-plugin-checker badge to open and close
          * the diagnostics panel

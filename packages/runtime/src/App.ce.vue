@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Badge from './components/Badge.ce.vue'
 import List from './components/List.ce.vue'
 import { useChecker } from './useChecker'
@@ -21,11 +21,32 @@ const shouldRender = computed(() => {
   return checkerResults.value.some((p) => p.diagnostics.length > 0)
 })
 
-const collapsed = ref<boolean>(!(props?.overlayConfig?.initialIsOpen ?? true))
+// collapsed state if requested (otherwise initially open)
+const initialCollapsed = ref<boolean>(
+  props?.overlayConfig?.initialIsOpen === false || props?.overlayConfig?.initialIsOpen === 'error'
+)
+
+// if initialIsOpen is 'error': watch for results and open if there are errors
+if (props?.overlayConfig?.initialIsOpen === 'error') {
+  // checker result is always initially empty, so need to watch for changes
+  const unwatch = watch(checkerResults, () => {
+    if (!checkerResults.value.length) return
+    // non-zero results length means the badge will appear. decide whether to open the overlay.
+    if (checkerResults.value.some((p) => p.diagnostics.some((d: any) => d.level === 1))) {
+      initialCollapsed.value = false
+    }
+    // stop watching and let the user control the overlay state
+    unwatch()
+  })
+}
+
+const userCollapsed = ref<boolean | undefined>(undefined)
 
 const toggle = () => {
-  collapsed.value = !collapsed.value
+  userCollapsed.value = !(userCollapsed.value ?? initialCollapsed.value)
 }
+
+const collapsed = computed<boolean>(() => userCollapsed.value ?? initialCollapsed.value)
 </script>
 
 <template>
