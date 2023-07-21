@@ -57,5 +57,11 @@ Shared configuration to control the checker behaviors of the plugin.
    * @defaultValue `true`
    */
   enableBuild: boolean
+
+  /**
+   * Configure root directory of checkers
+   * @defaultValue no default value
+   */
+  root?: boolean;
 }
 ```

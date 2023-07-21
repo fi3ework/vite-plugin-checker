@@ -160,6 +160,11 @@ export interface SharedConfig {
    * @defaultValue `true`
    */
   enableBuild: boolean
+  /**
+   * Configure root directory of checkers
+   * @defaultValue no default value
+   */
+  root?: string
 }
 
 export interface BuildInCheckers {
