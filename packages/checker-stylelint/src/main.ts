@@ -13,39 +13,38 @@ import {
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
-  normalizeStylelintDiagnostic,
   toClientPayload,
 } from 'vite-plugin-checker/logger'
+import { normalizeStylelintDiagnostic } from './logger.js'
+import type { StylelintOptions } from './types.js'
 import { ACTION_TYPES, DiagnosticLevel } from 'vite-plugin-checker/types'
 
 const manager = new FileDiagnosticManager()
-let createServeAndBuild
+let createServeAndBuild: any
 
 import type { CreateDiagnostic } from 'vite-plugin-checker/types'
 
 const __filename = fileURLToPath(import.meta.url)
 
-const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
-  let overlay = true
-  let terminal = true
+const createDiagnostic: CreateDiagnostic<StylelintOptions> = () => {
+  let stylelintOptions: StylelintOptions | undefined
 
   return {
-    config: async ({ enableOverlay, enableTerminal }) => {
-      overlay = enableOverlay
-      terminal = enableTerminal
+    config: async ({ checkerOptions }) => {
+      stylelintOptions = checkerOptions
     },
     async configureServer({ root }) {
-      if (!pluginConfig.stylelint) return
+      if (!stylelintOptions) return
 
-      const translatedOptions = await translateOptions(pluginConfig.stylelint.lintCommand)
+      const translatedOptions = await translateOptions(stylelintOptions.lintCommand)
       const baseConfig = {
         cwd: root,
         ...translatedOptions,
       } as const
 
       const logLevel = (() => {
-        if (typeof pluginConfig.stylelint !== 'object') return undefined
-        const userLogLevel = pluginConfig.stylelint.dev?.logLevel
+        if (typeof stylelintOptions !== 'object') return undefined
+        const userLogLevel = stylelintOptions.dev?.logLevel
         if (!userLogLevel) return undefined
         const map = {
           error: DiagnosticLevel.Error,
@@ -58,24 +57,24 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
-        if (terminal) {
-          diagnostics.forEach((d) => {
-            consoleLog(diagnosticToTerminalLog(d, 'Stylelint'))
-          })
-          const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
-          const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
-          consoleLog(composeCheckerSummary('Stylelint', errorCount, warningCount))
-        }
+        // if (terminal) {
+        diagnostics.forEach((d) => {
+          consoleLog(diagnosticToTerminalLog(d, 'Stylelint'))
+        })
+        const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
+        const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
+        consoleLog(composeCheckerSummary('Stylelint', errorCount, warningCount))
+        // }
 
-        if (overlay) {
-          parentPort?.postMessage({
-            type: ACTION_TYPES.overlayError,
-            payload: toClientPayload(
-              'stylelint',
-              diagnostics.map((d) => diagnosticToRuntimeError(d))
-            ),
-          })
-        }
+        // if (overlay) {
+        parentPort?.postMessage({
+          type: ACTION_TYPES.overlayError,
+          payload: toClientPayload(
+            'stylelint',
+            diagnostics.map((d) => diagnosticToRuntimeError(d))
+          ),
+        })
+        // }
       }
 
       const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
@@ -100,7 +99,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       // initial lint
       const { results: diagnostics } = await stylelint.lint({
         ...baseConfig,
-        ...pluginConfig.stylelint.dev?.overrideConfig,
+        ...stylelintOptions.dev?.overrideConfig,
       })
 
       manager.initWith(diagnostics.map((p) => normalizeStylelintDiagnostic(p)).flat(1))
@@ -122,15 +121,14 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
   }
 }
 
-export class StylelintChecker extends Checker<'stylelint'> {
+export class StylelintChecker extends Checker<StylelintOptions> {
   public constructor() {
     super({
-      name: 'stylelint',
       absFilePath: __filename,
       build: {
-        buildBin: (pluginConfig) => {
-          if (pluginConfig.stylelint) {
-            const { lintCommand } = pluginConfig.stylelint
+        buildBin: ({ checkerOptions }) => {
+          if (checkerOptions) {
+            const { lintCommand } = checkerOptions
             return ['stylelint', lintCommand.split(' ').slice(1)]
           }
           return ['stylelint', ['']]
@@ -141,12 +139,13 @@ export class StylelintChecker extends Checker<'stylelint'> {
   }
 
   public init() {
-    const _createServeAndBuild = super.initMainThread()
-    createServeAndBuild = _createServeAndBuild
-    super.initWorkerThread()
+    createServeAndBuild = super.createChecker()
   }
 }
 
-export { createServeAndBuild }
+export const checker = (options?: StylelintOptions) => {
+  return { createServeAndBuild, options }
+}
+
 const stylelintChecker = new StylelintChecker()
 stylelintChecker.init()
