@@ -39,6 +39,8 @@ export function checker(...userConfig: UserPluginConfig): Plugin {
   const sharedConfig = userConfig[1] ?? {}
   const enableBuild = sharedConfig?.enableBuild ?? true
   const overlayConfig = typeof sharedConfig?.overlay === 'object' ? sharedConfig?.overlay : {}
+  const enableTerminal = sharedConfig?.terminal !== false
+  const enableOverlay = sharedConfig?.overlay !== false
   let initialized = false
   let initializeCounter = 0
   let checkers: FatServeAndBuildChecker[] = []
@@ -161,11 +163,15 @@ export function checker(...userConfig: UserPluginConfig): Plugin {
         workerConfigureServer({ root: sharedConfig.root || server.config.root })
         worker.on('message', (action: Action) => {
           if (action.type === ACTION_TYPES.overlayError) {
+            if (!enableOverlay) return
+
             latestOverlayErrors[index] = action.payload as ClientDiagnosticPayload
             if (action.payload) {
               server.ws.send('vite-plugin-checker', action.payload)
             }
           } else if (action.type === ACTION_TYPES.console) {
+            if (!enableTerminal) return
+
             if (Checker.logger.length) {
               // for test injection and customize logger in the future
               Checker.log(action)
