@@ -1,5 +1,12 @@
 # vite-plugin-checker
 
+## 0.6.2
+
+### Patch Changes
+
+- ab70e33: fix config.overlay.panelStyle not be applied at runtime
+- bad24c7: add optional global configuration of root directory (#262)
+
 ## 0.6.1
 
 ### Patch Changes
