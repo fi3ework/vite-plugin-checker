@@ -16,11 +16,13 @@ Shared configuration to control the checker behaviors of the plugin.
     | boolean
     | {
         /**
-         * Set this true if you want the overlay to default to being open if
-         * errors/warnings are found
+         * Whether to default the overlay to being open
+         * - Set `true` to initially open if errors/warnings are found
+         * - Set `error` to initially open if errors are found
+         * - Set `false` to initially collapse
          * @defaultValue `true`
          */
-        initialIsOpen?: boolean
+        initialIsOpen?: boolean | 'error'
         /**
          * The position of the vite-plugin-checker badge to open and close
          * the diagnostics panel

@@ -116,7 +116,7 @@ importers:
       vue: ^3.3.4
       vue-tsc: ^1.6.1
     devDependencies:
-      '@unplugin-vue-ce/sub-style': 1.0.0-beta.6
+      '@unplugin-vue-ce/sub-style': 1.0.0-beta.6_vue@3.3.4
       '@vitejs/plugin-vue': 2.3.4_vite@4.3.1+vue@3.3.4
       vite: 4.3.1
       vue: 3.3.4
@@ -246,6 +246,81 @@ importers:
       vite-plugin-checker: link:../../packages/vite-plugin-checker
 
   playground/config-enableBuild-false:
+    specifiers:
+      '@types/react': ^17.0.0
+      '@types/react-dom': ^17.0.0
+      '@typescript-eslint/eslint-plugin': ^5.59.0
+      '@typescript-eslint/parser': ^5.59.0
+      eslint: ^8.11.0
+      react: ^17.0.0
+      react-dom: ^17.0.0
+      typescript: ^5.0.4
+      vite: ^4.3.0
+      vite-plugin-checker: workspace:*
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    devDependencies:
+      '@types/react': 17.0.48
+      '@types/react-dom': 17.0.17
+      '@typescript-eslint/eslint-plugin': 5.59.0_7pjfh4zgwfx6xvatksnbmxnxiq
+      '@typescript-eslint/parser': 5.59.0_cy7zp3kcj75bmapcvvm43smuci
+      eslint: 8.22.0
+      typescript: 5.0.4
+      vite: 4.3.1
+      vite-plugin-checker: link:../../packages/vite-plugin-checker
+
+  playground/config-initialIsOpen-error:
+    specifiers:
+      '@types/react': ^17.0.0
+      '@types/react-dom': ^17.0.0
+      '@typescript-eslint/eslint-plugin': ^5.59.0
+      '@typescript-eslint/parser': ^5.59.0
+      eslint: ^8.11.0
+      react: ^17.0.0
+      react-dom: ^17.0.0
+      typescript: ^5.0.4
+      vite: ^4.3.0
+      vite-plugin-checker: workspace:*
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    devDependencies:
+      '@types/react': 17.0.48
+      '@types/react-dom': 17.0.17
+      '@typescript-eslint/eslint-plugin': 5.59.0_7pjfh4zgwfx6xvatksnbmxnxiq
+      '@typescript-eslint/parser': 5.59.0_cy7zp3kcj75bmapcvvm43smuci
+      eslint: 8.22.0
+      typescript: 5.0.4
+      vite: 4.3.1
+      vite-plugin-checker: link:../../packages/vite-plugin-checker
+
+  playground/config-initialIsOpen-error-clean:
+    specifiers:
+      '@types/react': ^17.0.0
+      '@types/react-dom': ^17.0.0
+      '@typescript-eslint/eslint-plugin': ^5.59.0
+      '@typescript-eslint/parser': ^5.59.0
+      eslint: ^8.11.0
+      react: ^17.0.0
+      react-dom: ^17.0.0
+      typescript: ^5.0.4
+      vite: ^4.3.0
+      vite-plugin-checker: workspace:*
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    devDependencies:
+      '@types/react': 17.0.48
+      '@types/react-dom': 17.0.17
+      '@typescript-eslint/eslint-plugin': 5.59.0_7pjfh4zgwfx6xvatksnbmxnxiq
+      '@typescript-eslint/parser': 5.59.0_cy7zp3kcj75bmapcvvm43smuci
+      eslint: 8.22.0
+      typescript: 5.0.4
+      vite: 4.3.1
+      vite-plugin-checker: link:../../packages/vite-plugin-checker
+
+  playground/config-initialIsOpen-error-warnings:
     specifiers:
       '@types/react': ^17.0.0
       '@types/react-dom': ^17.0.0
@@ -587,7 +662,7 @@ importers:
       vue: 2.7.8
       vue-class-component: 7.2.6_vue@2.7.8
       vue-property-decorator: 9.1.2_chk7q7rgeabwy64hfqmb36krqe
-      vue-router: 3.5.4
+      vue-router: 3.5.4_vue@2.7.8
       vuex: 3.6.2_vue@2.7.8
     devDependencies:
       '@types/node': 15.14.9
@@ -2277,12 +2352,14 @@ packages:
       eslint-visitor-keys: 3.4.0
     dev: true
 
-  /@unplugin-vue-ce/sub-style/1.0.0-beta.6:
+  /@unplugin-vue-ce/sub-style/1.0.0-beta.6_vue@3.3.4:
     resolution: {integrity: sha512-oRpm9xuFZmk28alsVCjMhV1A81ZlSpWckjezAWjQF/FNeoUUmI9hmEdQLvo+nJAoEDjxxCV+/qsetGWvKb5/mQ==}
+    peerDependencies:
+      vue: ^3.3.2
     dependencies:
       '@babel/parser': 7.22.4
       '@babel/types': 7.22.4
-      '@unplugin-vue-ce/utils': 1.0.0-beta.6
+      '@unplugin-vue-ce/utils': 1.0.0-beta.6_vue@3.3.4
       baiwusanyu-utils: 1.0.13
       estree-walker-ts: 1.0.0
       fast-glob: 3.2.12
@@ -2294,8 +2371,10 @@ packages:
       - ansi-colors
     dev: true
 
-  /@unplugin-vue-ce/utils/1.0.0-beta.6:
+  /@unplugin-vue-ce/utils/1.0.0-beta.6_vue@3.3.4:
     resolution: {integrity: sha512-b6w8UOaVTrJBFrzHKWETlCert3XiAQU5GREtdJqPdgPNy0PXi1StfxT5Z/6LAqHkHhQ7DIrYRJub73NJAlzHgw==}
+    peerDependencies:
+      vue: ^3.3.2
     dependencies:
       baiwusanyu-utils: 1.0.13
       estree-walker-ts: 1.0.0
@@ -2763,7 +2842,7 @@ packages:
       source-map: 0.6.1
       vue-template-es2015-compiler: 1.9.1
     optionalDependencies:
-      prettier: 2.7.1
+      prettier: 2.6.0
     transitivePeerDependencies:
       - arc-templates
       - atpl
@@ -8359,8 +8438,12 @@ packages:
       vue-class-component: 7.2.6_vue@2.7.8
     dev: false
 
-  /vue-router/3.5.4:
+  /vue-router/3.5.4_vue@2.7.8:
     resolution: {integrity: sha512-x+/DLAJZv2mcQ7glH2oV9ze8uPwcI+H+GgTgTmb5I55bCgY3+vXWIsqbYUzbBSZnwFHEJku4eoaH/x98veyymQ==}
+    peerDependencies:
+      vue: ^2
+    dependencies:
+      vue: 2.7.8
     dev: false
 
   /vue-template-compiler/2.7.14:

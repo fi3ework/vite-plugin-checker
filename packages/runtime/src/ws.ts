@@ -12,11 +12,11 @@ export function listenToConfigMessage(cb: () => any) {
   onConfigMessage.push(cb)
 }
 
-export function listenToCustomMessage(cb: () => any) {
+export function listenToCustomMessage(cb: (data: any) => any) {
   onCustomMessage.push(cb)
 }
 
-export function listenToReconnectMessage(cb: () => any) {
+export function listenToReconnectMessage(cb: (data: any) => any) {
   onReconnectMessage.push(cb)
 }
 
