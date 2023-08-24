@@ -14,7 +14,7 @@
     "build:test": "pnpm run build"
   },
   "devDependencies": {
-    "@unplugin-vue-ce/sub-style": "1.0.0-beta.6",
+    "@unplugin-vue-ce/sub-style": "1.0.0-beta.14",
     "@vitejs/plugin-vue": "^2.0.1",
     "vite": "^4.3.0",
     "vue": "^3.3.4",

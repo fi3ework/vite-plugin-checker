@@ -8,12 +8,6 @@
   },
   "pnpm": {
     "packageExtensions": {
-      "@unplugin-vue-ce/sub-style": {
-        "dependencies": {
-          "@babel/parser": "^7.21.8",
-          "@babel/types": "^7.21.5"
-        }
-      },
       "@baiwusanyu/utils-log": {
         "dependencies": {
           "ansi-colors": "^4.1.3"
