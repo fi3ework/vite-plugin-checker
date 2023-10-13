@@ -4,7 +4,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 1`] = 
 
 exports[`multiple-reload > serve > get initial error and subsequent error 2`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
 
     1 | import { text } from './text'
     2 |
@@ -14,7 +14,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 2`] = 
     5 |
     6 | const rootDom = document.querySelector('#root')!
  ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:1
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:1
 
     2 |
     3 | var hello1: number = 'Hello1'
@@ -25,7 +25,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 2`] = 
     7 | rootDom.innerHTML = hello1 + text
 [ESLint] Found 2 errors and 0 warning
  ERROR(TypeScript)  Type 'string' is not assignable to type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
 
     1 | import { text } from './text'
     2 |
@@ -36,7 +36,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 2`] = 
     6 | const rootDom = document.querySelector('#root')!
 
  ERROR(TypeScript)  Type 'string' is not assignable to type 'boolean'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:5
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:5
 
     2 |
     3 | var hello1: number = 'Hello1'
@@ -53,7 +53,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 3`] = 
 
 exports[`multiple-reload > serve > get initial error and subsequent error 4`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
 
     1 | import { text } from './text'
     2 |
@@ -63,7 +63,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 4`] = 
     5 |
     6 | const rootDom = document.querySelector('#root')!
  ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:1
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:1
 
     2 |
     3 | var hello1: number = 'Hello1~'
@@ -74,7 +74,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 4`] = 
     7 | rootDom.innerHTML = hello1 + text
 [ESLint] Found 2 errors and 0 warning
  ERROR(TypeScript)  Type 'string' is not assignable to type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
 
     1 | import { text } from './text'
     2 |
@@ -85,7 +85,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 4`] = 
     6 | const rootDom = document.querySelector('#root')!
 
  ERROR(TypeScript)  Type 'string' is not assignable to type 'boolean'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:5
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:5
 
     2 |
     3 | var hello1: number = 'Hello1~'
@@ -102,7 +102,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 5`] = 
 
 exports[`multiple-reload > serve > get initial error and subsequent error 6`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
 
     1 | import { text } from './text'
     2 |
@@ -112,7 +112,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 6`] = 
     5 |
     6 | const rootDom = document.querySelector('#root')!
  ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:1
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:1
 
     2 |
     3 | var hello1: number = 'Hello1~'
@@ -123,7 +123,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 6`] = 
     7 | rootDom.innerHTML = hello1 + text
 [ESLint] Found 2 errors and 0 warning
  ERROR(TypeScript)  Type 'string' is not assignable to type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
 
     1 | import { text } from './text'
     2 |
@@ -134,7 +134,7 @@ exports[`multiple-reload > serve > get initial error and subsequent error 6`] = 
     6 | const rootDom = document.querySelector('#root')!
 
  ERROR(TypeScript)  Type 'string' is not assignable to type 'boolean'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:5
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:5
 
     2 |
     3 | var hello1: number = 'Hello1~'
