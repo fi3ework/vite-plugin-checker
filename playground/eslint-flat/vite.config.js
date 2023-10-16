@@ -6,6 +6,7 @@ export default defineConfig({
     checker({
       eslint: {
         lintCommand: 'eslint "./src/**/*.js"',
+        useFlatConfig: true,
       },
     }),
   ],
