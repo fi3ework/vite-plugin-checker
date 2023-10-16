@@ -67,16 +67,16 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       }
 
       let eslint: ESLint
-      try {
+      if (pluginConfig.eslint.useFlatConfig) {
         const { FlatESLint, shouldUseFlatConfig } = require('eslint/use-at-your-own-risk')
-        if (shouldUseFlatConfig()) {
+        if (shouldUseFlatConfig?.()) {
           eslint = new FlatESLint({
             cwd: root,
           })
         } else {
-          eslint = new ESLint(eslintOptions)
+          throw Error('Please upgrade your eslint to latest version to use `useFlatConfig` option.')
         }
-      } catch (error) {
+      } else {
         eslint = new ESLint(eslintOptions)
       }
 
