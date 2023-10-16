@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [
     checker({
       eslint: {
-        lintCommand: 'eslint .',
+        lintCommand: 'eslint "./src/**/*.js"',
       },
     }),
   ],

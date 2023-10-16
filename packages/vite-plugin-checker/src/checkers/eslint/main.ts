@@ -70,7 +70,9 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       try {
         const { FlatESLint, shouldUseFlatConfig } = require('eslint/use-at-your-own-risk')
         if (shouldUseFlatConfig()) {
-          eslint = new FlatESLint()
+          eslint = new FlatESLint({
+            cwd: root,
+          })
         } else {
           eslint = new ESLint(eslintOptions)
         }
