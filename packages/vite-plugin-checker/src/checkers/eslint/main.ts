@@ -1,3 +1,4 @@
+import Module from 'node:module'
 import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
 import path from 'path'
@@ -21,6 +22,7 @@ import { translateOptions } from './cli.js'
 import { options as optionator } from './options.js'
 
 const __filename = fileURLToPath(import.meta.url)
+const require = Module.createRequire(import.meta.url)
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild
@@ -63,7 +65,18 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ...translatedOptions,
         ...pluginConfig.eslint.dev?.overrideConfig,
       }
-      const eslint = new ESLint(eslintOptions)
+
+      let eslint: ESLint
+      try {
+        const { FlatESLint, shouldUseFlatConfig } = require('eslint/use-at-your-own-risk')
+        if (shouldUseFlatConfig()) {
+          eslint = new FlatESLint()
+        } else {
+          eslint = new ESLint(eslintOptions)
+        }
+      } catch (error) {
+        eslint = new ESLint(eslintOptions)
+      }
 
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
