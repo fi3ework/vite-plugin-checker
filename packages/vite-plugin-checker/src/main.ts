@@ -3,28 +3,28 @@ import { spawn } from 'child_process'
 import pick from 'lodash.pick'
 import npmRunPath from 'npm-run-path'
 
+import type { ConfigEnv, Logger, Plugin } from 'vite'
 import { Checker } from './Checker.js'
 import {
-  composePreambleCode,
   RUNTIME_CLIENT_ENTRY_PATH,
   RUNTIME_CLIENT_RUNTIME_PATH,
+  WS_CHECKER_RECONNECT_EVENT,
+  composePreambleCode,
   runtimeCode,
   wrapVirtualPrefix,
-  WS_CHECKER_RECONNECT_EVENT,
 } from './client/index.js'
 import {
   ACTION_TYPES,
+  type Action,
   type BuildCheckBinStr,
   type BuildInCheckerNames,
   type ClientDiagnosticPayload,
   type ClientReconnectPayload,
-  type Action,
   type PluginConfig,
   type ServeAndBuildChecker,
   type SharedConfig,
   type UserPluginConfig,
 } from './types.js'
-import type { ConfigEnv, Plugin, Logger } from 'vite'
 
 const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: BuildInCheckerNames[] = [
@@ -143,7 +143,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         },
       ]
     },
-    buildStart: () => {
+    buildStart: async () => {
       if (initialized) return
       // only run in build mode
       // run a bin command in a separated process
@@ -155,17 +155,14 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         execPath: process.execPath,
       })
 
-      // spawn an async runner that we don't wait for in order to avoid blocking the build from continuing in parallel
-      ;(async () => {
-        const exitCodes = await Promise.all(
-          checkers.map((checker) => spawnChecker(checker, userConfig, localEnv))
-        )
-        const exitCode = exitCodes.find((code) => code !== 0) ?? 0
-        // do not exit the process if run `vite build --watch`
-        if (exitCode !== 0 && !buildWatch) {
-          process.exit(exitCode)
-        }
-      })()
+      const exitCodes = await Promise.all(
+        checkers.map((checker) => spawnChecker(checker, userConfig, localEnv))
+      )
+      const exitCode = exitCodes.find((code) => code !== 0) ?? 0
+      // do not exit the process if run `vite build --watch`
+      if (exitCode !== 0 && !buildWatch) {
+        process.exit(exitCode)
+      }   
     },
     configureServer(server) {
       if (initialized) return
