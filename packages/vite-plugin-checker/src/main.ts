@@ -155,17 +155,16 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         execPath: process.execPath,
       })
 
-      // spawn an async runner that we don't wait for in order to avoid blocking the build from continuing in parallel
-      ;(async () => {
-        const exitCodes = await Promise.all(
-          checkers.map((checker) => spawnChecker(checker, userConfig, localEnv))
-        )
-        const exitCode = exitCodes.find((code) => code !== 0) ?? 0
-        // do not exit the process if run `vite build --watch`
-        if (exitCode !== 0 && !buildWatch) {
-          process.exit(exitCode)
-        }
-      })()
+      const spawnedCheckers = checkers.map((checker2) => spawnChecker(checker2, userConfig, localEnv));
+
+      // wait for checker states while avoiding blocking the build from continuing in parallel
+      Promise.all(spawnedCheckers)
+        .then((exitCodes) => {
+          const exitCode = exitCodes.find((code) => code !== 0) ?? 0;
+          if (exitCode !== 0 && !buildWatch) {
+            process.exit(exitCode);
+          }
+      });
     },
     configureServer(server) {
       if (initialized) return
