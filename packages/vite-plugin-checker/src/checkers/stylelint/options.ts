@@ -97,6 +97,7 @@ export const translateOptions = async (command: string) => {
   const result = meow({
     autoHelp: false,
     autoVersion: false,
+    importMeta: import.meta,
     help: `
     Usage: stylelint [input] [options]
     Input: Files(s), glob(s), or nothing to use stdin.
