@@ -46,7 +46,6 @@
     "commander": "^8.0.0",
     "fast-glob": "^3.2.7",
     "fs-extra": "^11.1.0",
-    "lodash.debounce": "^4.0.8",
     "lodash.pick": "^4.4.0",
     "npm-run-path": "^4.0.1",
     "semver": "^7.5.0",
@@ -97,7 +96,6 @@
   "devDependencies": {
     "@types/eslint": "^7.2.14",
     "@types/fs-extra": "^11.0.1",
-    "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.pick": "^4.4.6",
     "@types/semver": "^7.3.13",
     "@volar/vue-typescript": "^0.33.0",

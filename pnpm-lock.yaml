@@ -127,7 +127,6 @@ importers:
       '@babel/code-frame': ^7.12.13
       '@types/eslint': ^7.2.14
       '@types/fs-extra': ^11.0.1
-      '@types/lodash.debounce': ^4.0.6
       '@types/lodash.pick': ^4.4.6
       '@types/semver': ^7.3.13
       '@volar/vue-typescript': ^0.33.0
@@ -138,7 +137,6 @@ importers:
       esbuild: ^0.14.27
       fast-glob: ^3.2.7
       fs-extra: ^11.1.0
-      lodash.debounce: ^4.0.8
       lodash.pick: ^4.4.0
       meow: ^9.0.0
       npm-run-all: ^4.1.5
@@ -165,7 +163,6 @@ importers:
       commander: 8.3.0
       fast-glob: 3.2.11
       fs-extra: 11.1.0
-      lodash.debounce: 4.0.8
       lodash.pick: 4.4.0
       npm-run-path: 4.0.1
       semver: 7.5.0
@@ -178,7 +175,6 @@ importers:
     devDependencies:
       '@types/eslint': 7.29.0
       '@types/fs-extra': 11.0.1
-      '@types/lodash.debounce': 4.0.7
       '@types/lodash.pick': 4.4.7
       '@types/semver': 7.3.13
       '@volar/vue-typescript': 0.33.9
@@ -2017,12 +2013,6 @@ packages:
     resolution: {integrity: sha512-mXlRDFbTLpVysvxahXUQav0hFctgu3Fqr2xmSrpf/ptO/FwOp7SFEGsJkEihwshMbof3/BIiVJ/o42cuOOuv6g==}
     dependencies:
       '@types/node': 16.11.49
-    dev: true
-
-  /@types/lodash.debounce/4.0.7:
-    resolution: {integrity: sha512-X1T4wMZ+gT000M2/91SYj0d/7JfeNZ9PeeOldSNoE/lunLeQXKvkmIumI29IaKMotU/ln/McOIvgzZcQ/3TrSA==}
-    dependencies:
-      '@types/lodash': 4.14.182
     dev: true
 
   /@types/lodash.pick/4.4.7:
@@ -6025,10 +6015,6 @@ packages:
   /lodash.clonedeep/4.5.0:
     resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
     dev: true
-
-  /lodash.debounce/4.0.8:
-    resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
-    dev: false
 
   /lodash.iserror/3.1.1:
     resolution: {integrity: sha512-eT/VeNns9hS7vAj1NKW/rRX6b+C3UX3/IAAqEE7aC4Oo2C0iD82NaP5IS4bSlQsammTii4qBJ8G1zd1LTL8hCw==}
