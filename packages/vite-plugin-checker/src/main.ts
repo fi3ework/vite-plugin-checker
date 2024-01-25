@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import { spawn } from 'child_process'
-import { pick } from 'lodash'
+import pick from 'lodash/pick'
 import npmRunPath from 'npm-run-path'
 
 import { Checker } from './Checker.js'
