@@ -20,7 +20,8 @@
     "@typescript-eslint/parser": "^5.59.0",
     "eslint": "^8.11.0",
     "typescript": "^5.0.4",
-    "vite": "^4.3.0",
-    "vite-plugin-checker": "workspace:*"
+    "vite": "^5.0.12",
+    "vite-plugin-checker": "workspace:*",
+    "@vite-plugin-checker/eslint": "workspace:*"
   }
 }

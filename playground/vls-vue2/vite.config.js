@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
-import { createVuePlugin } from 'vite-plugin-vue2'
-import ViteComponents from 'vite-plugin-components'
+import vue from '@vitejs/plugin-vue2'
 import { checker } from 'vite-plugin-checker'
 import { checker as vls } from '@vite-plugin-checker/vls'
 import { resolve } from 'path'
@@ -15,11 +14,7 @@ const config = defineConfig({
   build: {
     minify: true,
   },
-  plugins: [
-    createVuePlugin({}),
-    (ViteComponents.default || ViteComponents)({ transformer: 'vue2' }),
-    checker([vls()]),
-  ],
+  plugins: [vue(), checker([vls()])],
 })
 
 export default config
