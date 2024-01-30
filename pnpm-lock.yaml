@@ -127,7 +127,7 @@ importers:
       '@babel/code-frame': ^7.12.13
       '@types/eslint': ^7.2.14
       '@types/fs-extra': ^11.0.1
-      '@types/lodash': ^4.14.202
+      '@types/lodash-es': ^4.17.12
       '@types/semver': ^7.3.13
       '@volar/vue-typescript': ^0.33.0
       ansi-escapes: ^4.3.0
@@ -137,7 +137,7 @@ importers:
       esbuild: ^0.14.27
       fast-glob: ^3.2.7
       fs-extra: ^11.1.0
-      lodash: ^4.17.21
+      lodash-es: ^4.17.21
       meow: ^9.0.0
       npm-run-all: ^4.1.5
       npm-run-path: ^4.0.1
@@ -163,7 +163,7 @@ importers:
       commander: 8.3.0
       fast-glob: 3.2.11
       fs-extra: 11.1.0
-      lodash: 4.17.21
+      lodash-es: 4.17.21
       npm-run-path: 4.0.1
       semver: 7.5.0
       strip-ansi: 6.0.1
@@ -175,7 +175,7 @@ importers:
     devDependencies:
       '@types/eslint': 7.29.0
       '@types/fs-extra': 11.0.1
-      '@types/lodash': 4.14.202
+      '@types/lodash-es': 4.17.12
       '@types/semver': 7.3.13
       '@volar/vue-typescript': 0.33.9
       esbuild: 0.14.54
@@ -2013,6 +2013,12 @@ packages:
     resolution: {integrity: sha512-mXlRDFbTLpVysvxahXUQav0hFctgu3Fqr2xmSrpf/ptO/FwOp7SFEGsJkEihwshMbof3/BIiVJ/o42cuOOuv6g==}
     dependencies:
       '@types/node': 16.11.49
+    dev: true
+
+  /@types/lodash-es/4.17.12:
+    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
+    dependencies:
+      '@types/lodash': 4.14.202
     dev: true
 
   /@types/lodash/4.14.202:
@@ -6006,6 +6012,10 @@ packages:
       p-locate: 5.0.0
     dev: true
 
+  /lodash-es/4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: false
+
   /lodash.clonedeep/4.5.0:
     resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
     dev: true
@@ -6036,6 +6046,7 @@ packages:
 
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+    dev: true
 
   /log-update/4.0.0:
     resolution: {integrity: sha512-9fkkDevMefjg0mmzWFBW8YkFP91OrizzkW3diF7CpG+S2EYdy4+TVfGwz1zeF8x7hCx1ovSPTOE9Ngib74qqUg==}
