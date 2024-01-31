@@ -9,6 +9,10 @@ export type EslintOptions =
        * default config for dev mode when options.eslint.dev.eslint is nullable.
        */
       lintCommand: string
+      /**
+       * @default false
+       */
+      useFlatConfig?: boolean
       dev?: Partial<{
         /** You can override the options of translated from lintCommand. */
         overrideConfig: ESLint.Options

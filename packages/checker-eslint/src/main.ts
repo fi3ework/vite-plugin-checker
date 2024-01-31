@@ -1,3 +1,4 @@
+import Module from 'node:module'
 import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
 import path from 'path'
@@ -21,6 +22,7 @@ import { normalizeEslintDiagnostic } from './logger.js'
 import type { EslintOptions } from './types.js'
 import { options as optionator } from './options.js'
 
+const require = Module.createRequire(import.meta.url)
 const __filename = fileURLToPath(import.meta.url)
 
 const manager = new FileDiagnosticManager()
@@ -64,7 +66,20 @@ const createDiagnostic: CreateDiagnostic<EslintOptions> = () => {
         ...translatedOptions,
         ...eslintOptions.dev?.overrideConfig,
       }
-      const eslint = new ESLint(finalEslintOptions)
+
+      let eslint: ESLint
+      if (eslintOptions.useFlatConfig) {
+        const { FlatESLint, shouldUseFlatConfig } = require('eslint/use-at-your-own-risk')
+        if (shouldUseFlatConfig?.()) {
+          eslint = new FlatESLint({
+            cwd: root,
+          })
+        } else {
+          throw Error('Please upgrade your eslint to latest version to use `useFlatConfig` option.')
+        }
+      } else {
+        eslint = new ESLint(finalEslintOptions)
+      }
 
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
