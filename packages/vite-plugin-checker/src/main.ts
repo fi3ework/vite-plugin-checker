@@ -1,6 +1,5 @@
 import chalk from 'chalk'
 import { spawn } from 'child_process'
-import { pick } from 'lodash-es'
 import npmRunPath from 'npm-run-path'
 
 import { Checker } from './Checker.js'
@@ -21,12 +20,10 @@ import {
   type Action,
   type PluginConfig,
   type ServeAndBuildChecker,
-  type SharedConfig,
   type UserPluginConfig,
 } from './types.js'
 import type { ConfigEnv, Plugin, Logger } from 'vite'
 
-const sharedConfigKeys: (keyof SharedConfig)[] = ['enableBuild', 'overlay']
 const buildInCheckerKeys: BuildInCheckerNames[] = [
   'typescript',
   'vueTsc',
@@ -40,7 +37,8 @@ async function createCheckers(
   env: ConfigEnv
 ): Promise<ServeAndBuildChecker[]> {
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
-  const sharedConfig = pick(userConfig, sharedConfigKeys)
+  const { enableBuild, overlay } = userConfig
+  const sharedConfig = { enableBuild, overlay }
 
   // buildInCheckerKeys.forEach(async (name: BuildInCheckerNames) => {
   for (const name of buildInCheckerKeys) {
