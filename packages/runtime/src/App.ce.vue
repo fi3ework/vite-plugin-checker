@@ -79,6 +79,7 @@ const collapsed = computed<boolean>(() => userCollapsed.value ?? initialCollapse
   --blue: #a4c1ff;
   --cyan: #2dd9da;
   --dim: #c9c9c9;
+  direction: ltr;
 }
 
 .window {
