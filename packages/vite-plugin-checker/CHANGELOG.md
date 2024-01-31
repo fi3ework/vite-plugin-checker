@@ -1,5 +1,13 @@
 # vite-plugin-checker
 
+## 0.6.3
+
+### Patch Changes
+
+- e5a26d6: feat: support initially open overlay for errors
+- bc4fa05: Remove lodash per method packages
+- c5d5109: support eslint flat config
+
 ## 0.6.2
 
 ### Patch Changes
