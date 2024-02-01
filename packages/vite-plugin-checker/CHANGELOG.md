@@ -1,5 +1,12 @@
 # vite-plugin-checker
 
+## 0.6.4
+
+### Patch Changes
+
+- 83e1028: Remove lodash-es from dependencies
+- b0cce16: fix: add explicitly ltr direction to the overlay
+
 ## 0.6.3
 
 ### Patch Changes
