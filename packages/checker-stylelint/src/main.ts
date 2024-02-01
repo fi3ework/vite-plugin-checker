@@ -1,9 +1,9 @@
 import chokidar from 'chokidar'
 import stylelint from 'stylelint'
 import { translateOptions } from './options.js'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 
 import { Checker } from 'vite-plugin-checker/Checker'
 import { FileDiagnosticManager } from 'vite-plugin-checker/FileDiagnosticManager'

@@ -1,6 +1,6 @@
-import fs from 'fs'
+import fs from 'node:fs'
 import klaw from 'klaw'
-import path from 'path'
+import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 import { isBuild, sleepForServerReady, testDir } from '../../testUtils'

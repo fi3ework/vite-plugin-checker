@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { spawn } from 'child_process'
+import { spawn } from 'node:child_process'
 import npmRunPath from 'npm-run-path'
 
 import { Checker } from './Checker.js'

@@ -1,4 +1,4 @@
-import { createRequire } from 'module'
+import { createRequire } from 'node:module'
 import { createFrame, strip } from 'vite-plugin-checker/logger'
 import { DiagnosticLevel } from 'vite-plugin-checker/types'
 import type { NormalizedDiagnostic, SourceLocation } from 'vite-plugin-checker/logger'
@@ -7,7 +7,7 @@ import type {
   flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
   LineAndCharacter,
 } from 'typescript'
-import os from 'os'
+import os from 'node:os'
 
 const _require = createRequire(import.meta.url)
 

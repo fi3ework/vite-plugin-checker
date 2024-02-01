@@ -1,6 +1,6 @@
-import os from 'os'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
+import os from 'node:os'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 
 import { Checker } from 'vite-plugin-checker/Checker'
 import {

@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import os from 'os'
+import os from 'node:os'
 import strip from 'strip-ansi'
 import * as _vscodeUri from 'vscode-uri'
 
@@ -7,7 +7,7 @@ import * as _vscodeUri from 'vscode-uri'
 // see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
 // @ts-expect-error
 const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
-import { parentPort } from 'worker_threads'
+import { parentPort } from 'node:worker_threads'
 
 import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
 

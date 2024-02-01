@@ -1,9 +1,9 @@
 import fsExtra from 'fs-extra'
-import { createRequire } from 'module'
-import path, { dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { createRequire } from 'node:module'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import semver from 'semver'
-import { writeFile, access, readFile, rm } from 'fs/promises'
+import { writeFile, access, readFile, rm } from 'node:fs/promises'
 
 const { copy, mkdir } = fsExtra
 const _require = createRequire(import.meta.url)

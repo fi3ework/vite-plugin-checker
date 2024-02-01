@@ -6,7 +6,7 @@ import * as _vscodeUri from 'vscode-uri'
 import type { NormalizedDiagnostic, SourceLocation } from 'vite-plugin-checker/logger'
 import { codeFrameColumns, strip } from 'vite-plugin-checker/logger'
 import { DiagnosticLevel } from 'vite-plugin-checker/types'
-import fs from 'fs'
+import fs from 'node:fs'
 import type { Range } from 'vscode-languageclient'
 
 // hack to compatible with Jiti

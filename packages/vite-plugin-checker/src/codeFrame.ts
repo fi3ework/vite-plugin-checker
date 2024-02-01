@@ -1,4 +1,4 @@
-import os from 'os'
+import os from 'node:os'
 import type ts from 'typescript'
 
 import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'

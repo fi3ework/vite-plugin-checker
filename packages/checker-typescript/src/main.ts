@@ -1,8 +1,8 @@
-import os from 'os'
-import path from 'path'
+import os from 'node:os'
+import path from 'node:path'
 import ts from 'typescript'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 
 import { Checker } from 'vite-plugin-checker/Checker'
 import {

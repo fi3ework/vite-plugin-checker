@@ -1,10 +1,10 @@
 import Module from 'node:module'
 import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
-import path from 'path'
+import path from 'node:path'
 import invariant from 'tiny-invariant'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 
 import { Checker } from 'vite-plugin-checker/Checker'
 import { FileDiagnosticManager } from 'vite-plugin-checker/FileDiagnosticManager'

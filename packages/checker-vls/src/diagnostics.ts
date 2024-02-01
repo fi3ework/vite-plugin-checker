@@ -1,16 +1,16 @@
 import chalk from 'chalk'
 import chokidar from 'chokidar'
 import glob from 'fast-glob'
-import fs from 'fs'
-import os from 'os'
-import path from 'path'
-import { Duplex } from 'stream'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { Duplex } from 'node:stream'
 import { VLS } from 'vls'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
+import type { Diagnostic } from 'vscode-languageserver/node.js'
 import {
   createConnection,
   createProtocolConnection,
-  Diagnostic,
   DiagnosticSeverity,
   DidChangeTextDocumentNotification,
   DidChangeWatchedFilesNotification,
@@ -24,8 +24,11 @@ import {
   StreamMessageWriter,
 } from 'vscode-languageserver/node.js'
 import type { URI as IURI } from 'vscode-uri'
-import pkg from 'vscode-uri'
-const { URI } = pkg
+import * as _vscodeUri from 'vscode-uri'
+
+// hack to compatible with Jiti
+// see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
+const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
 
 import { diagnosticToTerminalLog, type NormalizedDiagnostic } from 'vite-plugin-checker/logger'
 import { normalizeLspDiagnostic, normalizePublishDiagnosticParams } from './logger.js'

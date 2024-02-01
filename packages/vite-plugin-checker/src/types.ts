@@ -1,5 +1,5 @@
 import type { ErrorPayload, ConfigEnv } from 'vite'
-import type { Worker } from 'worker_threads'
+import type { Worker } from 'node:worker_threads'
 // @ts-ignore
 import type * as Stylelint from 'stylelint'
 

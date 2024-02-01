@@ -4,7 +4,7 @@
 import path from 'node:path'
 // import kill from 'kill-port'
 // import { hmrPorts, ports } from '~utils'
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'node:url'
 
 const isTest = process.env.VITEST
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

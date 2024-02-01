@@ -4,13 +4,13 @@
   "private": true,
   "description": "ESLint checker for vite-plugin-checker",
   "types": "./dist/esm/main.d.ts",
-  "main": "./dist/cjs/main.cjs",
+  "main": "./dist/cjs/main.js",
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/esm/main.d.ts",
-      "import": "./dist/esm/main.mjs",
-      "default": "./dist/cjs/main.cjs"
+      "import": "./dist/esm/main.js",
+      "default": "./dist/cjs/main.js"
     }
   },
   "engines": {

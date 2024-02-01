@@ -12,7 +12,7 @@ const shared: Options = {
   dts: true,
   outExtension({ format }) {
     return {
-      js: format === 'cjs' ? '.cjs' : '.mjs',
+      js: '.js',
     }
   },
 }

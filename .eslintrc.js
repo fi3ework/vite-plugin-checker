@@ -1,6 +1,9 @@
+const { builtinModules } = require('node:module')
+
 module.exports = {
   root: true,
   extends: ['alloy', 'alloy/typescript'],
+  plugins: ['i'],
   globals: {
     page: 'readonly',
     globalThis: 'readonly',
@@ -15,5 +18,6 @@ module.exports = {
     'max-nested-callbacks': 'off',
     '@typescript-eslint/consistent-type-assertions': 'off',
     '@typescript-eslint/no-require-imports': 'off',
+    'i/no-nodejs-modules': ['error', { allow: builtinModules.map((mod) => `node:${mod}`) }],
   },
 }
