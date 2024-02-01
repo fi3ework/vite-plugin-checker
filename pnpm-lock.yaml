@@ -652,31 +652,6 @@ importers:
       vite: 5.0.12
       vite-plugin-checker: link:../../packages/vite-plugin-checker
 
-  playground/multiple-reload:
-    specifiers:
-      '@types/react': ^17.0.0
-      '@types/react-dom': ^17.0.0
-      '@vite-plugin-checker/eslint': workspace:*
-      '@vite-plugin-checker/typescript': workspace:*
-      '@vitejs/plugin-react': ^4.2.1
-      react: ^17.0.0
-      react-dom: ^17.0.0
-      typescript: ^5.0.4
-      vite: ^5.0.12
-      vite-plugin-checker: workspace:*
-    dependencies:
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-    devDependencies:
-      '@types/react': 17.0.48
-      '@types/react-dom': 17.0.17
-      '@vite-plugin-checker/eslint': link:../../packages/checker-eslint
-      '@vite-plugin-checker/typescript': link:../../packages/checker-typescript
-      '@vitejs/plugin-react': 4.2.1_vite@5.0.12
-      typescript: 5.0.4
-      vite: 5.0.12
-      vite-plugin-checker: link:../../packages/vite-plugin-checker
-
   playground/stylelint-default:
     specifiers:
       '@types/react': ^17.0.0
