@@ -5,6 +5,7 @@
     "@tsconfig/esm/tsconfig"
   ],
   "compilerOptions": {
+    "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "isolatedModules": true,
     "noUnusedParameters": false,

@@ -3,33 +3,33 @@
   "version": "0.6.3",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
   "type": "module",
-  "types": "./dist/esm/main.d.ts",
-  "main": "./dist/esm/main.js",
+  "types": "./dist/cjs/main.d.ts",
+  "main": "./dist/cjs/main.cjs",
   "exports": {
     ".": {
       "types": "./dist/esm/main.d.ts",
-      "import": "./dist/esm/main.js",
-      "require": "./dist/cjs/main.js"
+      "import": "./dist/esm/main.mjs",
+      "default": "./dist/cjs/main.cjs"
     },
     "./logger": {
       "types": "./dist/esm/logger.d.ts",
-      "import": "./dist/esm/logger.js",
-      "require": "./dist/cjs/logger.js"
+      "import": "./dist/esm/logger.mjs",
+      "default": "./dist/cjs/logger.cjs"
     },
     "./types": {
       "types": "./dist/esm/types.d.ts",
-      "import": "./dist/esm/types.js",
-      "require": "./dist/cjs/types.js"
+      "import": "./dist/esm/types.mjs",
+      "default": "./dist/cjs/types.cjs"
     },
     "./Checker": {
       "types": "./dist/esm/Checker.d.ts",
-      "import": "./dist/esm/Checker.js",
-      "require": "./dist/cjs/Checker.js"
+      "import": "./dist/esm/Checker.mjs",
+      "default": "./dist/cjs/Checker.cjs"
     },
     "./FileDiagnosticManager": {
       "types": "./dist/esm/FileDiagnosticManager.d.ts",
-      "import": "./dist/esm/FileDiagnosticManager.js",
-      "require": "./dist/cjs/FileDiagnosticManager.js"
+      "import": "./dist/esm/FileDiagnosticManager.mjs",
+      "default": "./dist/cjs/FileDiagnosticManager.cjs"
     }
   },
   "engines": {
@@ -77,7 +77,6 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "@types/semver": "^7.3.13",
-    "npm-run-all": "^4.1.5",
-    "tsup": "^6.7.0"
+    "npm-run-all": "^4.1.5"
   }
 }

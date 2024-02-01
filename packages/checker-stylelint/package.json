@@ -4,13 +4,13 @@
   "private": true,
   "description": "TypeScript checker for vite-plugin-checker",
   "types": "./dist/esm/main.d.ts",
-  "main": "./dist/cjs/main.js",
+  "main": "./dist/cjs/main.cjs",
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/esm/main.d.ts",
-      "import": "./dist/esm/main.js",
-      "require": "./dist/cjs/main.js"
+      "import": "./dist/esm/main.mjs",
+      "default": "./dist/cjs/main.cjs"
     }
   },
   "engines": {
@@ -46,7 +46,6 @@
   },
   "devDependencies": {
     "vite-plugin-checker": "workspace:*",
-    "tsup": "^6.7.0",
     "stylelint": "^14.0.0",
     "typescript": "^5.0.4"
   }
