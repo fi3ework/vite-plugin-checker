@@ -1,6 +1,7 @@
 {
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "engines": {
     "pnpm": "^7.0.0",
     "yarn": "forbidden, use pnpm",
@@ -90,7 +91,7 @@
     "minimist": "^1.2.8",
     "npm-run-all": "^4.1.5",
     "playwright-chromium": "^1.41.1",
-    "prettier": "^2.3.2",
+    "prettier": "^3.2.4",
     "prompts": "^2.4.1",
     "publint": "^0.2.7",
     "rimraf": "^3.0.2",

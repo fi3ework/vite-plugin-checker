@@ -172,6 +172,7 @@ export async function startDefaultServe({
     server: {
       port,
     },
+    configFile: false,
   }
 
   if (!isBuild) {

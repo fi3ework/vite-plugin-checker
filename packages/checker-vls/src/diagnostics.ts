@@ -41,7 +41,7 @@ enum DOC_VERSION {
   init = -1,
 }
 
-export type LogLevel = typeof logLevels[number]
+export type LogLevel = (typeof logLevels)[number]
 export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 
 let disposeSuppressConsole: ReturnType<typeof suppressConsole>
