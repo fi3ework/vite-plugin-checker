@@ -1,7 +1,5 @@
 import chalk from 'chalk'
-import fs from 'fs'
-import { createRequire } from 'module'
-import os from 'os'
+import os from 'node:os'
 import strip from 'strip-ansi'
 import * as _vscodeUri from 'vscode-uri'
 
@@ -9,7 +7,7 @@ import * as _vscodeUri from 'vscode-uri'
 // see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
 // @ts-expect-error
 const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
-import { parentPort } from 'worker_threads'
+import { parentPort } from 'node:worker_threads'
 
 import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
 
@@ -22,20 +20,10 @@ import {
 } from './types.js'
 import { isMainThread } from './utils.js'
 
-const _require = createRequire(import.meta.url)
-import type { Range } from 'vscode-languageclient'
-import type { ESLint } from 'eslint'
-import type Stylelint from 'stylelint'
-import type {
-  Diagnostic as LspDiagnostic,
-  PublishDiagnosticsParams,
-} from 'vscode-languageclient/node'
+export { codeFrameColumns, strip }
+export type { SourceLocation }
 
-import type {
-  Diagnostic as TsDiagnostic,
-  flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
-  LineAndCharacter,
-} from 'typescript'
+import type { LineAndCharacter } from 'typescript'
 
 export interface NormalizedDiagnostic {
   /** error message */
@@ -86,6 +74,12 @@ export function filterLogLevel(
     if (!diagnostics.level) return null
     return level.includes(diagnostics.level) ? diagnostics : null
   }
+}
+
+export const isNormalizedDiagnostic = (
+  d: NormalizedDiagnostic | null | undefined
+): d is NormalizedDiagnostic => {
+  return Boolean(d)
 }
 
 export function diagnosticToTerminalLog(
@@ -208,238 +202,6 @@ export function composeCheckerSummary(
   const hasWarning = warningCount > 0
   const color = hasError ? 'red' : hasWarning ? 'yellow' : 'green'
   return chalk[color](wrapCheckerSummary(checkerName, message))
-}
-
-/* ------------------------------- TypeScript ------------------------------- */
-
-export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
-  const fileName = d.file?.fileName
-  const {
-    flattenDiagnosticMessageText,
-  }: {
-    flattenDiagnosticMessageText: typeof flattenDiagnosticMessageTextType
-  } = _require('typescript')
-
-  const message = flattenDiagnosticMessageText(d.messageText, os.EOL)
-
-  let loc: SourceLocation | undefined
-  const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition?.(d.start)
-  if (pos && d.file && typeof d.start === 'number' && typeof d.length === 'number') {
-    loc = tsLocationToBabelLocation({
-      start: d.file?.getLineAndCharacterOfPosition(d.start),
-      end: d.file?.getLineAndCharacterOfPosition(d.start + d.length),
-    })
-  }
-
-  let codeFrame: string | undefined
-  if (loc) {
-    codeFrame = createFrame({
-      source: d.file!.text,
-      location: loc,
-    })
-  }
-
-  return {
-    message,
-    conclusion: '',
-    codeFrame,
-    stripedCodeFrame: codeFrame && strip(codeFrame),
-    id: fileName,
-    checker: 'TypeScript',
-    loc,
-    level: d.category as any as DiagnosticLevel,
-  }
-}
-
-/* ----------------------------------- LSP ---------------------------------- */
-
-export function normalizeLspDiagnostic({
-  diagnostic,
-  absFilePath,
-  fileText,
-}: {
-  diagnostic: LspDiagnostic
-  absFilePath: string
-  fileText: string
-}): NormalizedDiagnostic {
-  let level = DiagnosticLevel.Error
-  const loc = lspRange2Location(diagnostic.range)
-  const codeFrame = codeFrameColumns(fileText, loc)
-
-  switch (diagnostic.severity) {
-    case 1: // Error
-      level = DiagnosticLevel.Error
-      break
-    case 2: // Warning
-      level = DiagnosticLevel.Warning
-      break
-    case 3: // Information
-      level = DiagnosticLevel.Message
-      break
-    case 4: // Hint
-      level = DiagnosticLevel.Suggestion
-      break
-  }
-
-  return {
-    message: diagnostic.message.trim(),
-    conclusion: '',
-    codeFrame,
-    stripedCodeFrame: codeFrame && strip(codeFrame),
-    id: absFilePath,
-    checker: 'VLS',
-    loc,
-    level,
-  }
-}
-
-export async function normalizePublishDiagnosticParams(
-  publishDiagnostics: PublishDiagnosticsParams
-): Promise<NormalizedDiagnostic[]> {
-  const diagnostics = publishDiagnostics.diagnostics
-  const absFilePath = uriToAbsPath(publishDiagnostics.uri)
-  const { readFile } = fs.promises
-  const fileText = await readFile(absFilePath, 'utf-8')
-
-  const res = diagnostics.map((d) => {
-    return normalizeLspDiagnostic({
-      diagnostic: d,
-      absFilePath,
-      fileText,
-    })
-  })
-
-  return res
-}
-
-export function uriToAbsPath(documentUri: string): string {
-  return URI.parse(documentUri).fsPath
-}
-
-export function lspRange2Location(range: Range): SourceLocation {
-  return {
-    start: {
-      line: range.start.line + 1,
-      column: range.start.character + 1,
-    },
-    end: {
-      line: range.end.line + 1,
-      column: range.end.character + 1,
-    },
-  }
-}
-
-/* --------------------------------- vue-tsc -------------------------------- */
-
-export function normalizeVueTscDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
-  const diagnostic = normalizeTsDiagnostic(d)
-  diagnostic.checker = 'vue-tsc'
-  return diagnostic
-}
-
-/* --------------------------------- ESLint --------------------------------- */
-
-const isNormalizedDiagnostic = (
-  d: NormalizedDiagnostic | null | undefined
-): d is NormalizedDiagnostic => {
-  return Boolean(d)
-}
-
-export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): NormalizedDiagnostic[] {
-  return diagnostic.messages
-    .map((d) => {
-      let level = DiagnosticLevel.Error
-      switch (d.severity) {
-        case 0: // off, ignore this
-          level = DiagnosticLevel.Error
-          return null
-        case 1: // warn
-          level = DiagnosticLevel.Warning
-          break
-        case 2: // error
-          level = DiagnosticLevel.Error
-          break
-      }
-
-      const loc: SourceLocation = {
-        start: {
-          line: d.line,
-          column: d.column,
-        },
-        end: {
-          line: d.endLine || 0,
-          column: d.endColumn,
-        },
-      }
-
-      const codeFrame = createFrame({
-        source: diagnostic.source ?? '',
-        location: loc,
-      })
-
-      return {
-        message: `${d.message} (${d.ruleId})`,
-        conclusion: '',
-        codeFrame,
-        stripedCodeFrame: codeFrame && strip(codeFrame),
-        id: diagnostic.filePath,
-        checker: 'ESLint',
-        loc,
-        level,
-      } as any as NormalizedDiagnostic
-    })
-    .filter(isNormalizedDiagnostic)
-}
-
-/* --------------------------------- Stylelint --------------------------------- */
-
-export function normalizeStylelintDiagnostic(
-  diagnostic: Stylelint.LintResult
-): NormalizedDiagnostic[] {
-  return diagnostic.warnings
-    .map((d) => {
-      let level = DiagnosticLevel.Error
-      switch (d.severity) {
-        case 'warning': // warn
-          level = DiagnosticLevel.Warning
-          break
-        case 'error': // error
-          level = DiagnosticLevel.Error
-          break
-        default:
-          level = DiagnosticLevel.Error
-          return null
-      }
-
-      const loc: SourceLocation = {
-        start: {
-          line: d.line,
-          column: d.column,
-        },
-        end: {
-          line: d.endLine || 0,
-          column: d.endColumn,
-        },
-      }
-
-      const codeFrame = createFrame({
-        // @ts-ignore
-        source: diagnostic._postcssResult.css ?? '',
-        location: loc,
-      })
-
-      return {
-        message: `${d.text} (${d.rule})`,
-        conclusion: '',
-        codeFrame,
-        stripedCodeFrame: codeFrame && strip(codeFrame),
-        id: diagnostic.source,
-        checker: 'Stylelint',
-        loc,
-        level,
-      } as any as NormalizedDiagnostic
-    })
-    .filter(isNormalizedDiagnostic)
 }
 
 /* ------------------------------ miscellaneous ----------------------------- */

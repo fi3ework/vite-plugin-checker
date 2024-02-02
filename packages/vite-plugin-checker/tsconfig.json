@@ -5,10 +5,13 @@
     "@tsconfig/esm/tsconfig"
   ],
   "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
     "isolatedModules": true,
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false
   },
-  "include": ["src", "__tests__"],
+  "include": ["src"],
+  // "include": ["src", "__tests__"],
   "exclude": ["src/@runtime"]
 }

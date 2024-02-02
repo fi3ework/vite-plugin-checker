@@ -11,7 +11,8 @@
   },
   "devDependencies": {
     "eslint": "^8.51.0",
-    "vite": "^4.3.0",
-    "vite-plugin-checker": "workspace:*"
+    "vite": "^5.0.12",
+    "vite-plugin-checker": "workspace:*",
+    "@vite-plugin-checker/eslint": "workspace:*"
   }
 }

@@ -1,0 +1,68 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`eslint logger > normalizeEslintDiagnostic > get multiple diagnostics 1`] = `
+[
+  {
+    "checker": "ESLint",
+    "codeFrame": "  [0m [90m 1 |[39m [36mimport[39m { text } [36mfrom[39m [32m'./text'[39m[0m
+  [0m [90m 2 |[39m[0m
+  [0m[31m[1m>[22m[39m[90m 3 |[39m [36mvar[39m hello [33m=[39m [32m'Hello'[39m[0m
+  [0m [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[0m
+  [0m [90m 4 |[39m [36mvar[39m hello1 [33m=[39m [32m'Hello1'[39m[0m
+  [0m [90m 5 |[39m[0m
+  [0m [90m 6 |[39m [36mconst[39m rootDom [33m=[39m document[33m.[39mquerySelector([32m'#root'[39m)[33m![39m[0m",
+    "conclusion": "",
+    "id": "/Users/vite-plugin-checker/playground/eslint/src/main.ts",
+    "level": 1,
+    "loc": {
+      "end": {
+        "column": 20,
+        "line": 3,
+      },
+      "start": {
+        "column": 1,
+        "line": 3,
+      },
+    },
+    "message": "Unexpected var, use let or const instead. (no-var)",
+    "stripedCodeFrame": "    1 | import { text } from './text'
+    2 |
+  > 3 | var hello = 'Hello'
+      | ^^^^^^^^^^^^^^^^^^^
+    4 | var hello1 = 'Hello1'
+    5 |
+    6 | const rootDom = document.querySelector('#root')!",
+  },
+  {
+    "checker": "ESLint",
+    "codeFrame": "  [0m [90m 2 |[39m[0m
+  [0m [90m 3 |[39m [36mvar[39m hello [33m=[39m [32m'Hello'[39m[0m
+  [0m[31m[1m>[22m[39m[90m 4 |[39m [36mvar[39m hello1 [33m=[39m [32m'Hello1'[39m[0m
+  [0m [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[0m
+  [0m [90m 5 |[39m[0m
+  [0m [90m 6 |[39m [36mconst[39m rootDom [33m=[39m document[33m.[39mquerySelector([32m'#root'[39m)[33m![39m[0m
+  [0m [90m 7 |[39m rootDom[33m.[39minnerHTML [33m=[39m hello [33m+[39m text[0m",
+    "conclusion": "",
+    "id": "/Users/vite-plugin-checker/playground/eslint/src/main.ts",
+    "level": 1,
+    "loc": {
+      "end": {
+        "column": 22,
+        "line": 4,
+      },
+      "start": {
+        "column": 1,
+        "line": 4,
+      },
+    },
+    "message": "Unexpected var, use let or const instead. (no-var)",
+    "stripedCodeFrame": "    2 |
+    3 | var hello = 'Hello'
+  > 4 | var hello1 = 'Hello1'
+      | ^^^^^^^^^^^^^^^^^^^^^
+    5 |
+    6 | const rootDom = document.querySelector('#root')!
+    7 | rootDom.innerHTML = hello + text",
+  },
+]
+`;

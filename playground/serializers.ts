@@ -1,4 +1,4 @@
-import os from 'os'
+import os from 'node:os'
 
 const winPathReg = /(\/)?(\D:\/)?\D\/vite-plugin-checker\/vite-plugin-checker\/playground-temp/im
 const winNewLineReg = /\/r\/n/gim

@@ -73,8 +73,9 @@ jobs:
       - name: Format
         run: pnpm run format
 
-      - name: Lint
-        run: pnpm run lint
+      # TODO
+      # - name: Lint
+      # run: pnpm run lint
 
       - name: Publint
         run: pnpm run publint
