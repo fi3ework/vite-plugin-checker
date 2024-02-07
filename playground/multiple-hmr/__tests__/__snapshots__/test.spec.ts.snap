@@ -4,7 +4,7 @@ exports[`multiple-hmr > serve > get initial error and subsequent error 1`] = `"[
 
 exports[`multiple-hmr > serve > get initial error and subsequent error 2`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx:6:3
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx:6:3
 
     4 |
     5 | function App() {
@@ -15,7 +15,7 @@ exports[`multiple-hmr > serve > get initial error and subsequent error 2`] = `
     9 |       <header className=\\"App-header\\">
 [ESLint] Found 1 error and 0 warning
  ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx:6:44
+ FILE  file://<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx:6:44
 
     4 |
     5 | function App() {

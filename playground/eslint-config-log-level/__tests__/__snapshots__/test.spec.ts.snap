@@ -4,7 +4,7 @@ exports[`eslint-config-log-level > serve > should only emit warning logs 1`] = `
 
 exports[`eslint-config-log-level > serve > should only emit warning logs 2`] = `
 " WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
- FILE  <PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts:5:17
+ FILE  file://<PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts:5:17
 
     3 | var hello = 'Hello'
     4 |
@@ -20,7 +20,7 @@ exports[`eslint-config-log-level > serve > should only emit warning logs 3`] = `
 
 exports[`eslint-config-log-level > serve > should only emit warning logs 4`] = `
 " WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
- FILE  <PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts:5:17
+ FILE  file://<PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts:5:17
 
     3 | var hello = 'Hello~'
     4 |

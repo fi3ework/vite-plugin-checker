@@ -4,7 +4,7 @@ exports[`vue2-vls > serve > get initial error and subsequent error 1`] = `"[{\\"
 
 exports[`vue2-vls > serve > get initial error and subsequent error 2`] = `
 " ERROR(VLS)  Property 'msg1' does not exist on type 'CombinedVueInstance<{ msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<Record<string, any>, Record<string, any>, never, never, ...>> & Vue<...>, ... 4 more ..., {}>'. Did you mean 'msg'?
- FILE  <PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue:3:12
+ FILE  file://<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue:3:12
 
   1 | <template>
   2 |   <div class=\\"hello\\">
@@ -20,7 +20,7 @@ exports[`vue2-vls > serve > get initial error and subsequent error 3`] = `"[{\\"
 
 exports[`vue2-vls > serve > get initial error and subsequent error 4`] = `
 " ERROR(VLS)  Property 'msg2' does not exist on type 'CombinedVueInstance<{ msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<Record<string, any>, Record<string, any>, never, never, ...>> & Vue<...>, ... 4 more ..., {}>'. Did you mean 'msg'?
- FILE  <PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue:3:12
+ FILE  file://<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue:3:12
 
   1 | <template>
   2 |   <div class=\\"hello\\">

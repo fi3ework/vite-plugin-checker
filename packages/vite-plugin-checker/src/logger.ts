@@ -104,13 +104,14 @@ export function diagnosticToTerminalLog(
 
   const levelLabel = labelMap[d.level ?? DiagnosticLevel.Error]
   const fileLabel = boldBlack.bgCyanBright(' FILE ') + ' '
+  const filePath = 'file://' + d.id
   const position = d.loc
     ? chalk.yellow(d.loc.start.line) + ':' + chalk.yellow(d.loc.start.column)
     : ''
 
   return [
     levelLabel + ' ' + d.message,
-    fileLabel + d.id + ':' + position + os.EOL,
+    fileLabel + filePath + ':' + position + os.EOL,
     d.codeFrame + os.EOL,
     d.conclusion,
   ]

@@ -6,7 +6,7 @@ exports[`vue-tsc-vue3 > serve > get initial error and subsequent error 2`] = `
 "
  ERROR(vue-tsc)  Argument of type '{ msg1: string; }' is not assignable to parameter of type 'Partial<{}> & Omit<Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never> & Record<...>'.
   Property 'msg' is missing in type '{ msg1: string; }' but required in type 'Omit<Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.
- FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue:3:4
+ FILE  file://<PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue:3:4
 
     1 | <template>
     2 |   <img alt=\\"Vue logo\\" src=\\"./assets/logo.png\\" />
@@ -25,7 +25,7 @@ exports[`vue-tsc-vue3 > serve > get initial error and subsequent error 4`] = `
 "
  ERROR(vue-tsc)  Argument of type '{ msg2: string; }' is not assignable to parameter of type 'Partial<{}> & Omit<Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never> & Record<...>'.
   Property 'msg' is missing in type '{ msg2: string; }' but required in type 'Omit<Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>> & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.
- FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue:3:4
+ FILE  file://<PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue:3:4
 
     1 | <template>
     2 |   <img alt=\\"Vue logo\\" src=\\"./assets/logo.png\\" />
