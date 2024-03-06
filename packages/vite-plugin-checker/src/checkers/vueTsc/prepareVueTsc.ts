@@ -11,7 +11,7 @@ const _require = createRequire(import.meta.url)
 // isomorphic __dirname https://antfu.me/posts/isomorphic-dirname
 const _filename = fileURLToPath(import.meta.url)
 const _dirname = dirname(_filename)
-const proxyApiPath = _require.resolve('vue-tsc/out/index')
+const proxyApiPath = _require.resolve('vue-tsc/index')
 
 export async function prepareVueTsc() {
   // 1. copy typescript to folder
