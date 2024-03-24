@@ -154,11 +154,13 @@ export function createFrame({
   source,
   location,
 }: {
-  source: string // file source code
+  /** file source code */
+  source: string
   location: SourceLocation
 }) {
   return codeFrameColumns(source, location, {
-    highlightCode: true,
+    // worker tty did not fork parent process stdout, let's make a workaround
+    forceColor: true,
   })
     .split('\n')
     .map((line) => '  ' + line)
