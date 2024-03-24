@@ -1,12 +1,7 @@
 import chalk from 'chalk'
 import os from 'node:os'
 import strip from 'strip-ansi'
-import * as _vscodeUri from 'vscode-uri'
 
-// hack to compatible with Jiti
-// see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
-// @ts-expect-error
-const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
 import { parentPort } from 'node:worker_threads'
 
 import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
@@ -22,8 +17,6 @@ import { isMainThread } from './utils.js'
 
 export { codeFrameColumns, strip }
 export type { SourceLocation }
-
-import type { LineAndCharacter } from 'typescript'
 
 export interface NormalizedDiagnostic {
   /** error message */
@@ -161,28 +154,15 @@ export function createFrame({
   source,
   location,
 }: {
-  /** file source code */
-  source: string
+  source: string // file source code
   location: SourceLocation
 }) {
-  const frame = codeFrameColumns(source, location, {
-    // worker tty did not fork parent process stdout, let's make a workaround
-    forceColor: true,
+  return codeFrameColumns(source, location, {
+    highlightCode: true,
   })
     .split('\n')
     .map((line) => '  ' + line)
     .join(os.EOL)
-
-  return frame
-}
-
-export function tsLocationToBabelLocation(
-  tsLoc: Record<'start' | 'end', LineAndCharacter /** 0-based */>
-): SourceLocation {
-  return {
-    start: { line: tsLoc.start.line + 1, column: tsLoc.start.character + 1 },
-    end: { line: tsLoc.end.line + 1, column: tsLoc.end.character + 1 },
-  }
 }
 
 export function wrapCheckerSummary(checkerName: string, rawSummary: string): string {

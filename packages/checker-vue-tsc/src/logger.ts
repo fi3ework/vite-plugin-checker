@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module'
 import { createFrame, strip } from 'vite-plugin-checker/logger'
-import { DiagnosticLevel } from 'vite-plugin-checker/types'
+import type { DiagnosticLevel } from 'vite-plugin-checker/types'
 import type { NormalizedDiagnostic, SourceLocation } from 'vite-plugin-checker/logger'
 import type {
   Diagnostic as TsDiagnostic,
