@@ -115,6 +115,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       if (typeof pluginConfig.typescript === 'object' && pluginConfig.typescript.buildMode) {
         const host = ts.createSolutionBuilderWithWatchHost(
           ts.sys,
+          /* eslint-disable */
           (
             rootNames: readonly string[] | undefined,
             options: ts.CompilerOptions | undefined,
@@ -132,6 +133,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
               projectReferences
             )
           },
+          /* eslint-enable */
           reportDiagnostic,
           undefined,
           reportWatchStatusChanged
