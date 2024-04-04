@@ -109,11 +109,14 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       // https://github.com/microsoft/TypeScript/issues/32385
       // https://github.com/microsoft/TypeScript/pull/33082/files
       const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram
+      const addtionalTypescriptOptions = typeof pluginConfig.typescript === "object" ? pluginConfig.typescript.extraTSOptions : {}
 
       if (typeof pluginConfig.typescript === 'object' && pluginConfig.typescript.buildMode) {
         const host = ts.createSolutionBuilderWithWatchHost(
           ts.sys,
-          createProgram,
+          (rootNames: readonly string[] | undefined, options: ts.CompilerOptions | undefined, host?: ts.CompilerHost, oldProgram?: ts.EmitAndSemanticDiagnosticsBuilderProgram, configFileParsingDiagnostics?: readonly ts.Diagnostic[], projectReferences?: readonly ts.ProjectReference[] | undefined)=> {
+            return createProgram(rootNames,{...options, ...addtionalTypescriptOptions}, host, oldProgram, configFileParsingDiagnostics, projectReferences)
+          },
           reportDiagnostic,
           undefined,
           reportWatchStatusChanged
@@ -123,7 +126,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       } else {
         const host = ts.createWatchCompilerHost(
           configFile,
-          { noEmit: true },
+          { noEmit: true, ...addtionalTypescriptOptions},
           ts.sys,
           createProgram,
           reportDiagnostic,
