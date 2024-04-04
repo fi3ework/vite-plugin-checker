@@ -3,7 +3,7 @@ import type { Worker } from 'worker_threads'
 import type { ESLint } from 'eslint'
 import type * as Stylelint from 'stylelint'
 import type { VlsOptions } from './checkers/vls/initParams.js'
-import type * as ts from "typescript"
+import type * as ts from 'typescript'
 
 /* ----------------------------- userland plugin options ----------------------------- */
 
