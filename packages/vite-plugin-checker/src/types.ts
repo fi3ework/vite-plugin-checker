@@ -24,7 +24,7 @@ interface TsConfigOptions {
   /**
    * Additional Compiler options to merge with tsconfig
    */
-  extraTSOptions: ts.CompilerOptions
+  extraTSOptions?: ts.CompilerOptions
 }
 
 /**
