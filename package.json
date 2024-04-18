@@ -25,6 +25,7 @@
       }
     }
   },
+  "packageManager": "pnpm@7.0.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "pnpm -r --filter=./packages/** --parallel run dev",
