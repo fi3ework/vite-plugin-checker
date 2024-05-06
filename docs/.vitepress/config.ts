@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   lang: 'en-US',
   title: 'vite-plugin-checker',
-  description: 'Vite plugin that provide checks of TypeScript, ESLint, vue-tsc, and more.',
+  description: 'Vite plugin that provide checks of TypeScript, ESLint, Biome, vue-tsc, and more.',
   lastUpdated: true,
   themeConfig: {
     outline: 'deep',
@@ -46,6 +46,7 @@ function sidebar() {
         { text: 'TypeScript', link: '/checkers/typescript' },
         { text: 'vue-tsc', link: '/checkers/vue-tsc' },
         { text: 'ESLint', link: '/checkers/eslint' },
+        { text: 'Biome', link: '/checkers/biome' },
         { text: 'Stylelint', link: '/checkers/stylelint' },
         { text: 'VLS', link: '/checkers/vls' },
       ],

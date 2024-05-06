@@ -2,10 +2,9 @@ import type { NormalizedDiagnostic } from './logger.js'
 
 class FileDiagnosticManager {
   public diagnostics: NormalizedDiagnostic[] = []
-  private initialized = false
 
   /**
-   * Only used when initializing the manager
+   * Resets the diagnostics array
    */
   public initWith(diagnostics: NormalizedDiagnostic[]) {
     if (this.initialized) {

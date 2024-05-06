@@ -30,6 +30,7 @@ const buildInCheckerKeys: BuildInCheckerNames[] = [
   'vls',
   'eslint',
   'stylelint',
+  'biome',
 ]
 
 async function createCheckers(
