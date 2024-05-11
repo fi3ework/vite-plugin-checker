@@ -19,6 +19,14 @@ interface TsConfigOptions {
    * root path of cwd
    */
   buildMode: boolean
+  /**
+   * include directories in typechecking
+   */
+  include: string | string[]
+  /**
+   * exclude directories from typechecking
+   */
+  exclude: string | string[]
 }
 
 /**
