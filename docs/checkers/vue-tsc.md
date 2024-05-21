@@ -10,8 +10,8 @@ You can use vue-tsc checker for your Vue3 project. If you're still using Vue2, c
    pnpm add vue-tsc@latest typescript -D
    ```
 
-   ::: tip
-   The `vue-tsc` version **must** be >= `0.33.9`. `vue-tsc` has released a `1.0.0` version, it's recommended to try it out.
+   ::: warning
+   The `vue-tsc` version **must** be `^1.3.9`.
    :::
 
 2. Add `vueTsc` field to plugin config.
