@@ -1,5 +1,5 @@
 ---
-"vite-plugin-checker": minor
+"vite-plugin-checker": patch
 ---
 
 fix: compatibility with vue-tsc 2.x
