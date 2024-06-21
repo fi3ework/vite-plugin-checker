@@ -1,5 +1,5 @@
 import { defineConfig, Options } from 'tsup'
-import { rename, stat } from 'fs/promises'
+import { rename } from 'fs/promises'
 
 const shared: Options = {
   entry: ['src'],
