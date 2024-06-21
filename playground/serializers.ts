@@ -1,7 +1,7 @@
 import os from 'os'
 
-const winPathReg = /(\/)?(\D:\/)?\D\/vite-plugin-checker\/vite-plugin-checker\/playground-temp/im
 const winNewLineReg = /\/r\/n/gim
+const winSepReg = /\\/g
 
 function doesUseDoubleSlashAsPath(val: string) {
   return val.includes('//vite-plugin-checker//')
@@ -12,10 +12,7 @@ export const normalizeWindowsLogSerializer = {
     let result = val
     if (os.platform() === 'win32') {
       result = result.replace(winNewLineReg, '/n')
-
-      if (winPathReg.test(result)) {
-        result = result.replace(winPathReg, '<PROJECT_ROOT>/playground-temp')
-      }
+      result = result.replace(process.cwd().replace(winSepReg, '/'), '<PROJECT_ROOT>')
 
       if (doesUseDoubleSlashAsPath(result)) {
         result = result.replace(
@@ -32,7 +29,8 @@ export const normalizeWindowsLogSerializer = {
     if (typeof val !== 'string') return false
 
     if (
-      (os.platform() === 'win32' && (winPathReg.test(val) || winNewLineReg.test(val))) ||
+      (os.platform() === 'win32' &&
+        (val.includes(process.cwd().replace(winSepReg, '/')) || winNewLineReg.test(val))) ||
       doesUseDoubleSlashAsPath(val)
     ) {
       return true
