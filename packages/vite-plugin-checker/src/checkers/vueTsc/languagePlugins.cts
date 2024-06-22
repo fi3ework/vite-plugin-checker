@@ -1,14 +1,14 @@
 import type ts from 'typescript'
-const vue = require('@vue/language-core')
-const { removeEmitGlobalTypes } = require('vue-tsc')
+import * as vue from '@vue/language-core'
+import { removeEmitGlobalTypes } from 'vue-tsc'
 
 const windowsPathReg = /\\/g
 
 // #region copied from https://github.com/vuejs/language-tools/blob/0781998a29f176ad52c30d3139d5c78a5688bd5d/packages/tsc/index.ts
-exports.getLanguagePlugins = (
+export function getLanguagePlugins(
   ts: typeof import('typescript'),
   options: ts.CreateProgramOptions,
-) => {
+) {
   const { configFilePath } = options.options
   const vueOptions =
     typeof configFilePath === 'string'
