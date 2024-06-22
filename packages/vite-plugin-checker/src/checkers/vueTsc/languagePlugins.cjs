@@ -1,5 +1,5 @@
-import path from 'path'
-import { removeEmitGlobalTypes } from 'vue-tsc'
+const path = require('path')
+const { removeEmitGlobalTypes } = require('vue-tsc')
 
 const vueTscDir = path.dirname(require.resolve('vue-tsc/package.json'))
 const vue = /** @type {typeof import('@vue/language-core')} */ (
@@ -12,7 +12,7 @@ const windowsPathReg = /\\/g
  * @param {typeof import('typescript')} ts
  * @param {import('typescript').CreateProgramOptions} options
  */
-export function getLanguagePlugins(ts, options) {
+exports.getLanguagePlugins = (ts, options) => {
   const { configFilePath } = options.options
   const vueOptions =
     typeof configFilePath === 'string'
