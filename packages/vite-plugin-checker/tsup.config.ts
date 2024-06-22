@@ -23,16 +23,16 @@ export default defineConfig([
       }
     },
     async onSuccess() {
-      //try {
-        await rename(
-          'dist/cjs/checkers/vueTsc/languagePlugins.js',
-          'dist/cjs/checkers/vueTsc/languagePlugins.cjs'
-        )
+      await rename(
+        'dist/cjs/checkers/vueTsc/languagePlugins.js',
+        'dist/cjs/checkers/vueTsc/languagePlugins.cjs'
+      )
+      try {
         await copyFile(
           'dist/cjs/checkers/vueTsc/languagePlugins.js.map',
           'dist/cjs/checkers/vueTsc/languagePlugins.cjs.map'
         )
-      //} catch (e) {}
+      } catch (e) {}
     },
     ...shared,
   },
@@ -40,18 +40,18 @@ export default defineConfig([
     format: ['esm'],
     outDir: 'dist/esm',
     async onSuccess() {
-      //try {
-        await rm('dist/esm/checkers/vueTsc/languagePlugins.js')
-        await rm('dist/esm/checkers/vueTsc/languagePlugins.js.map')
-        await copyFile(
-          'dist/cjs/checkers/vueTsc/languagePlugins.cjs',
-          'dist/esm/checkers/vueTsc/languagePlugins.cjs'
-        )
+      await rm('dist/esm/checkers/vueTsc/languagePlugins.js')
+      await rm('dist/esm/checkers/vueTsc/languagePlugins.js.map')
+      await copyFile(
+        'dist/cjs/checkers/vueTsc/languagePlugins.cjs',
+        'dist/esm/checkers/vueTsc/languagePlugins.cjs'
+      )
+      try {
         await copyFile(
           'dist/cjs/checkers/vueTsc/languagePlugins.cjs.map',
           'dist/esm/checkers/vueTsc/languagePlugins.cjs.map'
         )
-      //} catch (e) {}
+      } catch (e) {}
     },
     ...shared,
   },
