@@ -5,10 +5,11 @@
     "@tsconfig/esm/tsconfig"
   ],
   "compilerOptions": {
+    "allowJs": true,
     "isolatedModules": true,
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false
   },
   "include": ["src", "__tests__"],
-  "exclude": ["src/@runtime", "src/checkers/vueTsc/languagePlugins.cjs"]
+  "exclude": ["src/@runtime"]
 }
