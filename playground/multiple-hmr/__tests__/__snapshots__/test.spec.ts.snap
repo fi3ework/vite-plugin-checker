@@ -1,35 +1,38 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`multiple-hmr > serve > get initial error and subsequent error 1`] = `"[{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   var [count, setCount] = useState<string>(1)/n      |                                            ^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx\\",\\"level\\":1,\\"loc\\":{\\"column\\":44,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.\\",\\"stack\\":\\"\\"}]"`;
+exports[`multiple-hmr > serve > get initial error and subsequent error 1`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: number = 0/n      |     ^^^^^^^^^^^^^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Type number trivially inferred from a number literal, remove type annotation. (@typescript-eslint/no-inferrable-types)\\",\\"stack\\":\\"\\"},{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: number = 0/n      | ^^^^^^^^^^^^^^^^^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":1,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Unexpected var, use let or const instead. (no-var)\\",\\"stack\\":\\"\\"},{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"    4 | const hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text + count/n    8 |/n    9 | export {}\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/main.ts\\",\\"level\\":0,\\"loc\\":{\\"column\\":17,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/main.ts\\",\\"line\\":6},\\"message\\":\\"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)\\",\\"stack\\":\\"\\"}]"`;
 
 exports[`multiple-hmr > serve > get initial error and subsequent error 2`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx:6:3
+ FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/main.ts:3:1
 
-    4 |
-    5 | function App() {
-  > 6 |   var [count, setCount] = useState<string>(1)
-      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    7 |   return (
-    8 |     <div className=\\"App\\">
-    9 |       <header className=\\"App-header\\">
-[ESLint] Found 1 error and 0 warning
- ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx:6:44
+    1 | import { text } from './text'
+    2 |
+  > 3 | var count: number = 0
+      | ^^^^^^^^^^^^^^^^^^^^^
+    4 | const hello = 'Hello'
+    5 |
+    6 | const rootDom = document.querySelector('#root')!
+ ERROR(ESLint)  Type number trivially inferred from a number literal, remove type annotation. (@typescript-eslint/no-inferrable-types)
+ FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/main.ts:3:5
 
-    4 |
-    5 | function App() {
-  > 6 |   var [count, setCount] = useState<string>(1)
-      |                                            ^
-    7 |   return (
-    8 |     <div className=\\"App\\">
-    9 |       <header className=\\"App-header\\">
+    1 | import { text } from './text'
+    2 |
+  > 3 | var count: number = 0
+      |     ^^^^^^^^^^^^^^^^^
+    4 | const hello = 'Hello'
+    5 |
+    6 | const rootDom = document.querySelector('#root')!
+ WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
+ FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/main.ts:6:17
 
-[TypeScript] Found 1 error. Watching for file changes."
+    4 | const hello = 'Hello'
+    5 |
+  > 6 | const rootDom = document.querySelector('#root')!
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    7 | rootDom.innerHTML = hello + text + count
+    8 |
+    9 | export {}
+[ESLint] Found 2 errors and 1 warning
+[TypeScript] Found 0 errors. Watching for file changes."
 `;
-
-exports[`multiple-hmr > serve > get initial error and subsequent error 3`] = `"[{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   var [count, setCount] = useState<string>(2)/n      |                                            ^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx\\",\\"level\\":1,\\"loc\\":{\\"column\\":44,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.\\",\\"stack\\":\\"\\"}]"`;
-
-exports[`multiple-hmr > serve > get initial error and subsequent error 4`] = `"[]"`;
-
-exports[`multiple-hmr > serve > get initial error and subsequent error 5`] = `"[]"`;

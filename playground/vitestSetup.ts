@@ -191,7 +191,9 @@ export async function startDefaultServe(_server?: ViteDevServer, port?: number):
       const payload = args?.[1]
 
       if (type === 'vite-plugin-checker' && payload.event === 'vite-plugin-checker:error') {
-        diagnostics = payload.data.diagnostics
+        // append to diagnostics, diagnostics is array
+        diagnostics ??= []
+        diagnostics.push(...payload.data.diagnostics)
       }
 
       // @ts-ignore
