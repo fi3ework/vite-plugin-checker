@@ -10,5 +10,5 @@
     "exactOptionalPropertyTypes": false
   },
   "include": ["src", "__tests__"],
-  "exclude": ["src/@runtime"]
+  "exclude": ["src/@runtime", "src/checkers/vueTsc/languagePlugins.cjs"]
 }

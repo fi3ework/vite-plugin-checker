@@ -1,5 +1,5 @@
 import { defineConfig, Options } from 'tsup'
-import { copyFile, rename, rm } from 'fs/promises'
+import { rename } from 'fs/promises'
 
 const shared: Options = {
   entry: ['src'],
@@ -17,7 +17,7 @@ export default defineConfig([
     format: ['cjs'],
     outDir: 'dist/cjs',
     shims: true,
-    outExtension({ format }) {
+    outExtension() {
       return {
         js: `.js`,
       }
@@ -34,9 +34,8 @@ export default defineConfig([
     format: ['esm'],
     outDir: 'dist/esm',
     async onSuccess() {
-      await rm('dist/esm/checkers/vueTsc/languagePlugins.js')
-      await copyFile(
-        'dist/cjs/checkers/vueTsc/languagePlugins.cjs',
+      await rename(
+        'dist/esm/checkers/vueTsc/languagePlugins.js',
         'dist/esm/checkers/vueTsc/languagePlugins.cjs'
       )
     },
