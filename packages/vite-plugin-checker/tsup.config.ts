@@ -23,7 +23,7 @@ export default defineConfig([
       }
     },
     async onSuccess() {
-      try {
+      //try {
         await rename(
           'dist/cjs/checkers/vueTsc/languagePlugins.js',
           'dist/cjs/checkers/vueTsc/languagePlugins.cjs'
@@ -32,7 +32,7 @@ export default defineConfig([
           'dist/cjs/checkers/vueTsc/languagePlugins.js.map',
           'dist/cjs/checkers/vueTsc/languagePlugins.cjs.map'
         )
-      } catch (e) {}
+      //} catch (e) {}
     },
     ...shared,
   },
@@ -40,7 +40,7 @@ export default defineConfig([
     format: ['esm'],
     outDir: 'dist/esm',
     async onSuccess() {
-      try {
+      //try {
         await rm('dist/esm/checkers/vueTsc/languagePlugins.js')
         await rm('dist/esm/checkers/vueTsc/languagePlugins.js.map')
         await copyFile(
@@ -51,7 +51,7 @@ export default defineConfig([
           'dist/cjs/checkers/vueTsc/languagePlugins.cjs.map',
           'dist/esm/checkers/vueTsc/languagePlugins.cjs.map'
         )
-      } catch (e) {}
+      //} catch (e) {}
     },
     ...shared,
   },
