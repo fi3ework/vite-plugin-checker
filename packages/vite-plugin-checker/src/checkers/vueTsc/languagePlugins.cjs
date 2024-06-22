@@ -19,8 +19,9 @@ export function getLanguagePlugins(ts, options) {
       ? vue.createParsedCommandLine(ts, ts.sys, configFilePath.replace(windowsPathReg, '/'))
           .vueOptions
       : vue.resolveVueCompilerOptions({})
-  const writeFile = options.host.writeFile.bind(options.host)
-  options.host.writeFile = (fileName, contents, ...args) => {
+  const host = /** @type {import('typescript').CompilerHost} */ (options.host)
+  const writeFile = host.writeFile.bind(host)
+  host.writeFile = (fileName, contents, ...args) => {
     return writeFile(fileName, removeEmitGlobalTypes(contents), ...args)
   }
   const vueLanguagePlugin = vue.createVueLanguagePlugin(
@@ -28,7 +29,7 @@ export function getLanguagePlugins(ts, options) {
     (id) => id,
     () => '',
     (fileName) => {
-      const fileMap = new vue.FileMap(options.host?.useCaseSensitiveFileNames?.() ?? false)
+      const fileMap = new vue.FileMap(host?.useCaseSensitiveFileNames?.() ?? false)
       for (const vueFileName of options.rootNames.map((rootName) =>
         rootName.replace(windowsPathReg, '/')
       )) {
