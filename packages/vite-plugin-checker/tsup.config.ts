@@ -12,20 +12,24 @@ const shared: Options = {
   dts: true,
 }
 
+const createRenameFunction = (type: 'esm' | 'cjs') => async () => {
+  try {
+    await rename(
+      `dist/${type}/checkers/vueTsc/languagePlugins.js`,
+      `dist/${type}/checkers/vueTsc/languagePlugins.cjs`
+    )
+    await rename(
+      `dist/${type}/checkers/vueTsc/languagePlugins.js.map`,
+      `dist/${type}/checkers/vueTsc/languagePlugins.cjs.map`
+    )
+  } catch (e) {}
+}
+
 export default defineConfig([
   {
     format: ['esm'],
     outDir: 'dist/esm',
-    async onSuccess() {
-      await rename(
-        'dist/esm/checkers/vueTsc/languagePlugins.js',
-        'dist/esm/checkers/vueTsc/languagePlugins.cjs'
-      )
-      await rename(
-        'dist/esm/checkers/vueTsc/languagePlugins.js.map',
-        'dist/esm/checkers/vueTsc/languagePlugins.cjs.map'
-      )
-    },
+    onSuccess: createRenameFunction('esm'),
     ...shared,
   },
   {
@@ -37,16 +41,7 @@ export default defineConfig([
         js: `.js`,
       }
     },
-    async onSuccess() {
-      await rename(
-        'dist/cjs/checkers/vueTsc/languagePlugins.js',
-        'dist/cjs/checkers/vueTsc/languagePlugins.cjs'
-      )
-      await rename(
-        'dist/cjs/checkers/vueTsc/languagePlugins.js.map',
-        'dist/cjs/checkers/vueTsc/languagePlugins.cjs.map'
-      )
-    },
+    onSuccess: createRenameFunction('cjs'),
     ...shared,
   },
 ])
