@@ -1,8 +1,8 @@
+import path from 'path'
 import type ts from 'typescript'
 import { removeEmitGlobalTypes } from 'vue-tsc'
 
-let vueTscDir = require.resolve('vue-tsc/package.json');
-vueTscDir = vueTscDir.substring(0, vueTscDir.lastIndexOf('/'));
+const vueTscDir = path.dirname(require.resolve('vue-tsc/package.json'));
 const vue: typeof import('@vue/language-core') = require(require.resolve('@vue/language-core', { paths: [vueTscDir] }));
 const windowsPathReg = /\\/g
 
