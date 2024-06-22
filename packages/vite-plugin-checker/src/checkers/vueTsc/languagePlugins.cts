@@ -15,8 +15,8 @@ exports.getLanguagePlugins = (
       ? vue.createParsedCommandLine(ts, ts.sys, configFilePath.replace(windowsPathReg, '/'))
           .vueOptions
       : vue.resolveVueCompilerOptions({})
-  const writeFile = options.host.writeFile.bind(options.host)
-  options.host.writeFile = (fileName, contents, ...args) => {
+  const writeFile = options.host!.writeFile.bind(options.host)
+  options.host!.writeFile = (fileName, contents, ...args) => {
     return writeFile(fileName, removeEmitGlobalTypes(contents), ...args)
   }
   const vueLanguagePlugin = vue.createVueLanguagePlugin<string>(
