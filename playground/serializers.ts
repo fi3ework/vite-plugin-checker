@@ -14,13 +14,13 @@ export const normalizeWindowsLogSerializer = {
       result = result.replace(winNewLineReg, '/n')
       result = result.replace(process.cwd().replace(winSepReg, '/'), '<PROJECT_ROOT>')
 
-      if (doesUseDoubleSlashAsPath(result)) {
-        result = result.replace(
-          `//a//vite-plugin-checker//vite-plugin-checker//playground-temp`,
-          '<PROJECT_ROOT>/playground-temp'
-        )
-        result = result.split('//').join('/')
-      }
+      // if (doesUseDoubleSlashAsPath(result)) {
+      result = result.replace(
+        /([a-zA-Z]:)?\/[a-zA-Z]\/vite-plugin-checker\/vite-plugin-checker\/playground-temp/g,
+        '<PROJECT_ROOT>/playground-temp'
+      )
+      result = result.split('//').join('/')
+      // }
     }
 
     return serialize(result)
