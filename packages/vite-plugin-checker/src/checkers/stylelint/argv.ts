@@ -9,6 +9,7 @@ function parseArgsStringToArgv(value: string, env?: string, file?: string): stri
 
   // (['"])([^\5]*?)\5 or Match "quoted text" without quotes
   // `\3` and `\5` are a backreference to the quote style (' or ") captured
+  // @ts-expect-error Bypass typescript validation
   const myRegexp = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi
   const myString = value
   const myArray: string[] = []
