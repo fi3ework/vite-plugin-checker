@@ -1,5 +1,5 @@
 import { defineConfig, Options } from 'tsup'
-import { rename } from 'fs/promises'
+import { copyFile, rename, rm } from 'fs/promises'
 
 const shared: Options = {
   entry: ['src'],
@@ -12,26 +12,7 @@ const shared: Options = {
   dts: true,
 }
 
-const createRenameFunction = (type: 'esm' | 'cjs') => async () => {
-  try {
-    await rename(
-      `dist/${type}/checkers/vueTsc/languagePlugins.js`,
-      `dist/${type}/checkers/vueTsc/languagePlugins.cjs`
-    )
-    await rename(
-      `dist/${type}/checkers/vueTsc/languagePlugins.js.map`,
-      `dist/${type}/checkers/vueTsc/languagePlugins.cjs.map`
-    )
-  } catch (e) {}
-}
-
 export default defineConfig([
-  {
-    format: ['esm'],
-    outDir: 'dist/esm',
-    onSuccess: createRenameFunction('esm'),
-    ...shared,
-  },
   {
     format: ['cjs'],
     outDir: 'dist/cjs',
@@ -41,7 +22,37 @@ export default defineConfig([
         js: `.js`,
       }
     },
-    onSuccess: createRenameFunction('cjs'),
+    async onSuccess() {
+      try {
+        await rename(
+          'dist/cjs/checkers/vueTsc/languagePlugins.js',
+          'dist/cjs/checkers/vueTsc/languagePlugins.cjs'
+        )
+        await copyFile(
+          'dist/cjs/checkers/vueTsc/languagePlugins.js.map',
+          'dist/cjs/checkers/vueTsc/languagePlugins.cjs.map'
+        )
+      } catch (e) {}
+    },
+    ...shared,
+  },
+  {
+    format: ['esm'],
+    outDir: 'dist/esm',
+    async onSuccess() {
+      try {
+        await rm('dist/esm/checkers/vueTsc/languagePlugins.js')
+        await rm('dist/esm/checkers/vueTsc/languagePlugins.js.map')
+        await copyFile(
+          'dist/cjs/checkers/vueTsc/languagePlugins.cjs',
+          'dist/esm/checkers/vueTsc/languagePlugins.cjs'
+        )
+        await copyFile(
+          'dist/cjs/checkers/vueTsc/languagePlugins.cjs.map',
+          'dist/esm/checkers/vueTsc/languagePlugins.cjs.map'
+        )
+      } catch (e) {}
+    },
     ...shared,
   },
 ])
