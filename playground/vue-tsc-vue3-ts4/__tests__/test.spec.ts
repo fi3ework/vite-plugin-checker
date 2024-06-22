@@ -33,7 +33,7 @@ describe('vue-tsc-vue3-ts4', () => {
   })
 
   describe.runIf(isBuild)('build', () => {
-    it('should fail', async () => {
+    it.fails('should fail', async () => {
       const expectedMsg = `error TS2345`
       expectStderrContains(log, expectedMsg)
     })

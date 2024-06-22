@@ -255,10 +255,10 @@ importers:
         specifier: ^5.0.4
         version: 5.5.2
       vls:
-        specifier: ^0.7.6
-        version: 0.7.6
+        specifier: ^0.8.5
+        version: 0.8.5
       vti:
-        specifier: ^0.1.7
+        specifier: ^0.1.11
         version: 0.1.11
       vue-tsc:
         specifier: ^2.0.14
@@ -798,9 +798,15 @@ importers:
       '@types/react-dom':
         specifier: ^17.0.0
         version: 17.0.25
-      '@vitejs/plugin-react':
-        specifier: ^2.0.0
-        version: 2.2.0(vite@4.5.3(@types/node@16.18.101)(sass@1.77.6))
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.59.0
+        version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.2))(eslint@8.57.0)(typescript@5.5.2)
+      '@typescript-eslint/parser':
+        specifier: ^5.59.0
+        version: 5.62.0(eslint@8.57.0)(typescript@5.5.2)
+      eslint:
+        specifier: ^8.11.0
+        version: 8.57.0
       typescript:
         specifier: ^5.0.4
         version: 5.5.2
@@ -879,16 +885,16 @@ importers:
         specifier: ^2.6.14
         version: 2.7.16
       vue-class-component:
-        specifier: ^7.2.6
+        specifier: 7.2.6
         version: 7.2.6(vue@2.7.16)
       vue-property-decorator:
-        specifier: ^9.1.2
+        specifier: 9.1.2
         version: 9.1.2(vue-class-component@7.2.6(vue@2.7.16))(vue@2.7.16)
       vue-router:
-        specifier: ^3.5.1
-        version: 3.6.5(vue@2.7.16)
+        specifier: 3.5.1
+        version: 3.5.1(vue@2.7.16)
       vuex:
-        specifier: ^3.6.2
+        specifier: 3.6.2
         version: 3.6.2(vue@2.7.16)
     devDependencies:
       '@types/node':
@@ -937,10 +943,10 @@ importers:
         specifier: ^1.9.0
         version: 1.9.3(lodash@4.17.21)(vite@4.5.3(@types/node@15.14.9)(sass@1.77.6))(vue-template-compiler@2.7.16)(vue@2.7.16)
       vls:
-        specifier: ^0.8.1
+        specifier: ^0.8.5
         version: 0.8.5
       vti:
-        specifier: ^0.1.7
+        specifier: ^0.1.11
         version: 0.1.11
       vue-template-compiler:
         specifier: ^2.6.14
@@ -5561,11 +5567,6 @@ packages:
       webdriverio:
         optional: true
 
-  vls@0.7.6:
-    resolution: {integrity: sha512-UaE5peKpeT0dsTg4KAbxRVKLotD4i0DW3wb/srcJgNJmpBmTv2HAkE3hMR/naf1bMmUTpQyQPUaZOJE5ihBqlA==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   vls@0.8.5:
     resolution: {integrity: sha512-61kbdO2COZWBMC4wq59QfDdev9ruXd0226f57DFJTFpFXv85S+qnHakQlAmbSYFFLGKcx95HB2UjnuQh4YRwFA==}
     engines: {node: '>=10'}
@@ -5633,8 +5634,8 @@ packages:
       vue: '*'
       vue-class-component: '*'
 
-  vue-router@3.6.5:
-    resolution: {integrity: sha512-VYXZQLtjuvKxxcshuRAwjHnciqZVoXAjTjcqBTz4rKc8qih9g9pI3hbDjmqXaHdgL3v8pV6P8Z335XvHzESxLQ==}
+  vue-router@3.5.1:
+    resolution: {integrity: sha512-RRQNLT8Mzr8z7eL4p7BtKvRaTSGdCbTy2+Mm5HTJvLGYSSeG9gDzNasJPP/yOYKLy+/cLG/ftrqq5fvkFwBJEw==}
     peerDependencies:
       vue: ^2
 
@@ -10543,17 +10544,6 @@ snapshots:
       - supports-color
       - terser
 
-  vls@0.7.6:
-    dependencies:
-      eslint: 7.32.0
-      eslint-plugin-vue: 7.20.0(eslint@7.32.0)
-      prettier: 2.6.0
-      pug-lexer: 5.0.1
-      tslint: 6.1.3(typescript@4.9.5)
-      typescript: 4.9.5
-    transitivePeerDependencies:
-      - supports-color
-
   vls@0.8.5:
     dependencies:
       eslint: 8.57.0
@@ -10634,7 +10624,7 @@ snapshots:
       vue: 2.7.16
       vue-class-component: 7.2.6(vue@2.7.16)
 
-  vue-router@3.6.5(vue@2.7.16):
+  vue-router@3.5.1(vue@2.7.16):
     dependencies:
       vue: 2.7.16
 

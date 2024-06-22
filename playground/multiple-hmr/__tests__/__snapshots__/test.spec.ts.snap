@@ -1,35 +1,27 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`multiple-hmr > serve > get initial error and subsequent error 1`] = `"[{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   var [count, setCount] = useState<string>(1)/n      |                                            ^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx\\",\\"level\\":1,\\"loc\\":{\\"column\\":44,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.\\",\\"stack\\":\\"\\"}]"`;
+exports[`multiple-hmr > serve > get initial error and subsequent error 1`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"  > 1 | export var value: string = 1/n      |        ^^^^^^^^^^^^^^^^^^^^^/n    2 |\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":8,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"line\\":1},\\"message\\":\\"Unexpected var, use let or const instead. (no-var)\\",\\"stack\\":\\"\\"},{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"  > 1 | export var value: string = 1/n      |            ^^^^^/n    2 |\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":12,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"line\\":1},\\"message\\":\\"Type 'number' is not assignable to type 'string'.\\",\\"stack\\":\\"\\"}]"`;
 
 exports[`multiple-hmr > serve > get initial error and subsequent error 2`] = `
 " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx:6:3
+ FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts:1:8
 
-    4 |
-    5 | function App() {
-  > 6 |   var [count, setCount] = useState<string>(1)
-      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    7 |   return (
-    8 |     <div className=\\"App\\">
-    9 |       <header className=\\"App-header\\">
+  > 1 | export var value: string = 1
+      |        ^^^^^^^^^^^^^^^^^^^^^
+    2 |
 [ESLint] Found 1 error and 0 warning
- ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx:6:44
+ ERROR(TypeScript)  Type 'number' is not assignable to type 'string'.
+ FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts:1:12
 
-    4 |
-    5 | function App() {
-  > 6 |   var [count, setCount] = useState<string>(1)
-      |                                            ^
-    7 |   return (
-    8 |     <div className=\\"App\\">
-    9 |       <header className=\\"App-header\\">
+  > 1 | export var value: string = 1
+      |            ^^^^^
+    2 |
 
 [TypeScript] Found 1 error. Watching for file changes."
 `;
 
-exports[`multiple-hmr > serve > get initial error and subsequent error 3`] = `"[{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    4 |/n    5 | function App() {/n  > 6 |   var [count, setCount] = useState<string>(2)/n      |                                            ^/n    7 |   return (/n    8 |     <div className=/\\"App/\\">/n    9 |       <header className=/\\"App-header/\\">\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx\\",\\"level\\":1,\\"loc\\":{\\"column\\":44,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/App.tsx\\",\\"line\\":6},\\"message\\":\\"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.\\",\\"stack\\":\\"\\"}]"`;
+exports[`multiple-hmr > serve > get initial error and subsequent error 3`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"  > 1 | export var value: string = 2/n      |        ^^^^^^^^^^^^^^^^^^^^^/n    2 |\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":8,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"line\\":1},\\"message\\":\\"Unexpected var, use let or const instead. (no-var)\\",\\"stack\\":\\"\\"},{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"  > 1 | export var value: string = 2/n      |            ^^^^^/n    2 |\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":12,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"line\\":1},\\"message\\":\\"Type 'number' is not assignable to type 'string'.\\",\\"stack\\":\\"\\"}]"`;
 
-exports[`multiple-hmr > serve > get initial error and subsequent error 4`] = `"[]"`;
+exports[`multiple-hmr > serve > get initial error and subsequent error 4`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"  > 1 | export var value = 2/n      |        ^^^^^^^^^^^^^/n    2 |\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":8,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts\\",\\"line\\":1},\\"message\\":\\"Unexpected var, use let or const instead. (no-var)\\",\\"stack\\":\\"\\"}]"`;
 
 exports[`multiple-hmr > serve > get initial error and subsequent error 5`] = `"[]"`;

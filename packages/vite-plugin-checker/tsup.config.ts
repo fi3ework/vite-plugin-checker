@@ -1,8 +1,8 @@
 import { defineConfig, Options } from 'tsup'
-import { rename } from 'fs/promises'
+import { copyFile } from 'fs/promises'
 
 const shared: Options = {
-  entry: ['src'],
+  entry: ['src', '!src/checkers/vueTsc/languagePlugins.cjs'],
   splitting: false,
   bundle: false,
   sourcemap: true,
@@ -23,8 +23,8 @@ export default defineConfig([
       }
     },
     async onSuccess() {
-      await rename(
-        'dist/cjs/checkers/vueTsc/languagePlugins.js',
+      await copyFile(
+        'src/checkers/vueTsc/languagePlugins.cjs',
         'dist/cjs/checkers/vueTsc/languagePlugins.cjs'
       )
     },
@@ -34,8 +34,8 @@ export default defineConfig([
     format: ['esm'],
     outDir: 'dist/esm',
     async onSuccess() {
-      await rename(
-        'dist/esm/checkers/vueTsc/languagePlugins.js',
+      await copyFile(
+        'src/checkers/vueTsc/languagePlugins.cjs',
         'dist/esm/checkers/vueTsc/languagePlugins.cjs'
       )
     },
