@@ -1,25 +1,25 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`eslint > serve > get initial error and subsequent error 1`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"  > 1 | const a = /\\"hello/\\"/n      |                  ^/n  > 2 |/n      | ^\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js\\",\\"level\\":1,\\"loc\\":{\\"column\\":18,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js\\",\\"line\\":1},\\"message\\":\\"Missing semicolon. (semi)\\",\\"stack\\":\\"\\"}]"`;
+exports[`eslint > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"ESLint","frame":"  > 1 | const a = /"hello/"/n      |                  ^/n  > 2 |/n      | ^","id":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","level":1,"loc":{"column":18,"file":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","line":1},"message":"Missing semicolon. (semi)","stack":""}]"`;
 
 exports[`eslint > serve > get initial error and subsequent error 2`] = `
 " ERROR(ESLint)  Missing semicolon. (semi)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js:1:18
 
-  > 1 | const a = \\"hello\\"
+  > 1 | const a = "hello"
       |                  ^
   > 2 |
       | ^
 [ESLint] Found 1 error and 0 warning"
 `;
 
-exports[`eslint > serve > get initial error and subsequent error 3`] = `"[{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"  > 1 | const a = /\\"hello/\\"/n      |                  ^/n  > 2 |/n      | ^\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js\\",\\"level\\":1,\\"loc\\":{\\"column\\":18,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js\\",\\"line\\":1},\\"message\\":\\"Missing semicolon. (semi)\\",\\"stack\\":\\"\\"},{\\"checkerId\\":\\"ESLint\\",\\"frame\\":\\"  > 1 | const a = /\\"hello/\\"/n      |                  ^/n  > 2 |/n      | ^\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js\\",\\"level\\":1,\\"loc\\":{\\"column\\":18,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js\\",\\"line\\":1},\\"message\\":\\"Missing semicolon. (semi)\\",\\"stack\\":\\"\\"}]"`;
+exports[`eslint > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"ESLint","frame":"  > 1 | const a = /"hello/"/n      |                  ^/n  > 2 |/n      | ^","id":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","level":1,"loc":{"column":18,"file":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","line":1},"message":"Missing semicolon. (semi)","stack":""},{"checkerId":"ESLint","frame":"  > 1 | const a = /"hello/"/n      |                  ^/n  > 2 |/n      | ^","id":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","level":1,"loc":{"column":18,"file":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","line":1},"message":"Missing semicolon. (semi)","stack":""}]"`;
 
 exports[`eslint > serve > get initial error and subsequent error 4`] = `
 " ERROR(ESLint)  Missing semicolon. (semi)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js:1:18
 
-  > 1 | const a = \\"hello\\"
+  > 1 | const a = "hello"
       |                  ^
   > 2 |
       | ^

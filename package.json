@@ -99,7 +99,7 @@
     "typescript": "^5.0.4",
     "vite": "^4.3.0",
     "vite-plugin-checker": "workspace:*",
-    "vitest": "^0.30.1",
+    "vitest": "^1.6.0",
     "ws": "^8.5.0"
   }
 }
