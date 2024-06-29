@@ -400,40 +400,6 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
 
-  playground/config-initialIsOpen-error-clean:
-    dependencies:
-      react:
-        specifier: ^17.0.0
-        version: 17.0.2
-      react-dom:
-        specifier: ^17.0.0
-        version: 17.0.2(react@17.0.2)
-    devDependencies:
-      '@types/react':
-        specifier: ^17.0.0
-        version: 17.0.80
-      '@types/react-dom':
-        specifier: ^17.0.0
-        version: 17.0.25
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.59.0
-        version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.5.2))(eslint@8.57.0)(typescript@5.5.2)
-      '@typescript-eslint/parser':
-        specifier: ^5.59.0
-        version: 5.62.0(eslint@8.57.0)(typescript@5.5.2)
-      eslint:
-        specifier: ^8.11.0
-        version: 8.57.0
-      typescript:
-        specifier: ^5.0.4
-        version: 5.5.2
-      vite:
-        specifier: ^4.3.0
-        version: 4.5.3(@types/node@16.18.101)(sass@1.77.6)
-      vite-plugin-checker:
-        specifier: workspace:*
-        version: link:../../packages/vite-plugin-checker
-
   playground/config-initialIsOpen-error-warnings:
     dependencies:
       react:
