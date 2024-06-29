@@ -10,6 +10,7 @@ import {
   isServe,
   resetDiagnostics,
   resetReceivedLog,
+  log,
   sleepForEdit,
   sleepForServerReady,
   stripedLog,
@@ -20,7 +21,7 @@ describe('multiple-hmr', () => {
     it('get initial error and subsequent error', async () => {
       await sleepForServerReady()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
+      expect(stable(stripedLog)).toMatchSnapshot()
 
       console.log('-- edit with error --')
       resetDiagnostics()
@@ -60,7 +61,7 @@ describe('multiple-hmr', () => {
     ]
 
     it('should fail', async () => {
-      expectStderrContains(stripedLog, expectedMsg)
+      expectStderrContains(log, expectedMsg)
     })
   })
 })

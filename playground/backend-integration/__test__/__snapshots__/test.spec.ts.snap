@@ -3,7 +3,8 @@
 exports[`backend-integration > serve > get initial error 1`] = `"[{"checkerId":"TypeScript","frame":"    4 |/n    5 | function App() {/n  > 6 |   const [count, setCount] = useState<string>(0)/n      |                                              ^/n    7 |/n    8 |   return (/n    9 |     <div className=/"App/">","id":"<PROJECT_ROOT>/playground-temp/backend-integration/src/App.tsx","level":1,"loc":{"column":46,"file":"<PROJECT_ROOT>/playground-temp/backend-integration/src/App.tsx","line":6},"message":"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.","stack":""}]"`;
 
 exports[`backend-integration > serve > get initial error 2`] = `
-"
+[
+  "
  ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
  FILE  <PROJECT_ROOT>/playground-temp/backend-integration/src/App.tsx:6:46
 
@@ -15,5 +16,6 @@ exports[`backend-integration > serve > get initial error 2`] = `
     8 |   return (
     9 |     <div className="App">
 
-[TypeScript] Found 1 error. Watching for file changes."
+[TypeScript] Found 1 error. Watching for file changes.",
+]
 `;

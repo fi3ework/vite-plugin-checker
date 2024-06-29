@@ -3,13 +3,8 @@
 exports[`multiple-hmr > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"ESLint","frame":"  > 1 | export var value: string = 1/n      |        ^^^^^^^^^^^^^^^^^^^^^/n    2 |","id":"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts","level":1,"loc":{"column":8,"file":"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts","line":1},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"TypeScript","frame":"  > 1 | export var value: string = 1/n      |            ^^^^^/n    2 |","id":"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts","level":1,"loc":{"column":12,"file":"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts","line":1},"message":"Type 'number' is not assignable to type 'string'.","stack":""}]"`;
 
 exports[`multiple-hmr > serve > get initial error and subsequent error 2`] = `
-" ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts:1:8
-
-  > 1 | export var value: string = 1
-      |        ^^^^^^^^^^^^^^^^^^^^^
-    2 |
-[ESLint] Found 1 error and 0 warning
+[
+  "
  ERROR(TypeScript)  Type 'number' is not assignable to type 'string'.
  FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts:1:12
 
@@ -17,7 +12,16 @@ exports[`multiple-hmr > serve > get initial error and subsequent error 2`] = `
       |            ^^^^^
     2 |
 
-[TypeScript] Found 1 error. Watching for file changes."
+[TypeScript] Found 1 error. Watching for file changes.",
+  " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
+ FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts:1:8
+
+  > 1 | export var value: string = 1
+      |        ^^^^^^^^^^^^^^^^^^^^^
+    2 |
+",
+  "[ESLint] Found 1 error and 0 warning",
+]
 `;
 
 exports[`multiple-hmr > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"ESLint","frame":"  > 1 | export var value: string = 2/n      |        ^^^^^^^^^^^^^^^^^^^^^/n    2 |","id":"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts","level":1,"loc":{"column":8,"file":"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts","line":1},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"TypeScript","frame":"  > 1 | export var value: string = 2/n      |            ^^^^^/n    2 |","id":"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts","level":1,"loc":{"column":12,"file":"<PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts","line":1},"message":"Type 'number' is not assignable to type 'string'.","stack":""}]"`;

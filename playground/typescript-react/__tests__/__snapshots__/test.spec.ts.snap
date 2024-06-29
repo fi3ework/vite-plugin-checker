@@ -3,7 +3,8 @@
 exports[`typescript-react > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"TypeScript","frame":"    4 |/n    5 | function App() {/n  > 6 |   const [count, setCount] = useState<string>(1)/n      |                                              ^/n    7 |   return (/n    8 |     <div className=/"App/">/n    9 |       <header className=/"App-header/">","id":"<PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx","level":1,"loc":{"column":46,"file":"<PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx","line":6},"message":"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.","stack":""}]"`;
 
 exports[`typescript-react > serve > get initial error and subsequent error 2`] = `
-"
+[
+  "
  ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
  FILE  <PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx:6:46
 
@@ -15,13 +16,15 @@ exports[`typescript-react > serve > get initial error and subsequent error 2`] =
     8 |     <div className="App">
     9 |       <header className="App-header">
 
-[TypeScript] Found 1 error. Watching for file changes."
+[TypeScript] Found 1 error. Watching for file changes.",
+]
 `;
 
 exports[`typescript-react > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"TypeScript","frame":"    4 |/n    5 | function App() {/n  > 6 |   const [count, setCount] = useState<string>(1)/n      |                                              ^/n    7 |   return (/n    8 |     <div className=/"App/">/n    9 |       <header className=/"App-header/">","id":"<PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx","level":1,"loc":{"column":46,"file":"<PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx","line":6},"message":"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.","stack":""},{"checkerId":"TypeScript","frame":"    4 |/n    5 | function App() {/n  > 6 |   const [count, setCount] = useState<string>(2)/n      |                                              ^/n    7 |   return (/n    8 |     <div className=/"App/">/n    9 |       <header className=/"App-header/">","id":"<PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx","level":1,"loc":{"column":46,"file":"<PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx","line":6},"message":"Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.","stack":""}]"`;
 
 exports[`typescript-react > serve > get initial error and subsequent error 4`] = `
-"
+[
+  "
  ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
  FILE  <PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx:6:46
 
@@ -33,5 +36,6 @@ exports[`typescript-react > serve > get initial error and subsequent error 4`] =
     8 |     <div className="App">
     9 |       <header className="App-header">
 
-[TypeScript] Found 1 error. Watching for file changes."
+[TypeScript] Found 1 error. Watching for file changes.",
+]
 `;

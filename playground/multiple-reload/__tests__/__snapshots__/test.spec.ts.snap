@@ -3,27 +3,8 @@
 exports[`multiple-reload > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: string = 0/n      | ^^^^^^^^^^^^^^^^^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":3},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | const hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text + count/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"TypeScript","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: string = 0/n      |     ^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":3},"message":"Type 'number' is not assignable to type 'string'.","stack":""}]"`;
 
 exports[`multiple-reload > serve > get initial error and subsequent error 2`] = `
-" ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
-
-    1 | import { text } from './text'
-    2 |
-  > 3 | var count: string = 0
-      | ^^^^^^^^^^^^^^^^^^^^^
-    4 | const hello = 'Hello'
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
- WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:6:17
-
-    4 | const hello = 'Hello'
-    5 |
-  > 6 | const rootDom = document.querySelector('#root')!
-      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    7 | rootDom.innerHTML = hello + text + count
-    8 |
-    9 | export {}
-[ESLint] Found 1 error and 1 warning
+[
+  "
  ERROR(TypeScript)  Type 'number' is not assignable to type 'string'.
  FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
 
@@ -35,7 +16,31 @@ exports[`multiple-reload > serve > get initial error and subsequent error 2`] = 
     5 |
     6 | const rootDom = document.querySelector('#root')!
 
-[TypeScript] Found 1 error. Watching for file changes."
+[TypeScript] Found 1 error. Watching for file changes.",
+  " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
+ FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
+
+    1 | import { text } from './text'
+    2 |
+  > 3 | var count: string = 0
+      | ^^^^^^^^^^^^^^^^^^^^^
+    4 | const hello = 'Hello'
+    5 |
+    6 | const rootDom = document.querySelector('#root')!
+",
+  " WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
+ FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:6:17
+
+    4 | const hello = 'Hello'
+    5 |
+  > 6 | const rootDom = document.querySelector('#root')!
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    7 | rootDom.innerHTML = hello + text + count
+    8 |
+    9 | export {}
+",
+  "[ESLint] Found 1 error and 1 warning",
+]
 `;
 
 exports[`multiple-reload > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: string = 0/n      | ^^^^^^^^^^^^^^^^^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":3},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | const hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text + count/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""}]"`;

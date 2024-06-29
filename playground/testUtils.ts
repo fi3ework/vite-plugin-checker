@@ -23,10 +23,12 @@ export function editFileTo(filename: string, content: string): void {
   fs.writeFileSync(filePath, content)
 }
 
-export function expectStderrContains(str: string, expectedErrorMsg: string | string[]) {
+export function expectStderrContains(str: string | string[], expectedErrorMsg: string | string[]) {
+  const strArr = Array.isArray(str) ? str : [str]
   const errorMsgArr = Array.isArray(expectedErrorMsg) ? expectedErrorMsg : [expectedErrorMsg]
   errorMsgArr.forEach((msg) => {
-    expect(str).toContain(msg)
+    const found = strArr.some((str) => str.includes(msg))
+    expect(found).toBe(true)
   })
 }
 

@@ -1,9 +1,10 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`eslint-default > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello'/n      | ^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"TypeScript","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"Type 'number' is not assignable to type 'string'.","stack":""}]"`;
+exports[`eslint-default > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello'/n      | ^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""}]"`;
 
 exports[`eslint-default > serve > get initial error and subsequent error 2`] = `
-" WARNING(ESLint)  'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)
+[
+  " WARNING(ESLint)  'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:3:5
 
     1 | import { text } from './text'
@@ -13,7 +14,8 @@ exports[`eslint-default > serve > get initial error and subsequent error 2`] = `
     4 | var hello = 'Hello'
     5 |
     6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  'count' is never reassigned. Use 'const' instead. (prefer-const)
+",
+  " ERROR(ESLint)  'count' is never reassigned. Use 'const' instead. (prefer-const)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:3:5
 
     1 | import { text } from './text'
@@ -23,7 +25,8 @@ exports[`eslint-default > serve > get initial error and subsequent error 2`] = `
     4 | var hello = 'Hello'
     5 |
     6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
+",
+  " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:4:1
 
     2 |
@@ -33,7 +36,8 @@ exports[`eslint-default > serve > get initial error and subsequent error 2`] = `
     5 |
     6 | const rootDom = document.querySelector('#root')!
     7 | rootDom.innerHTML = hello + text
- WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
+",
+  " WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:6:17
 
     4 | var hello = 'Hello'
@@ -43,25 +47,16 @@ exports[`eslint-default > serve > get initial error and subsequent error 2`] = `
     7 | rootDom.innerHTML = hello + text
     8 |
     9 | export {}
-[ESLint] Found 2 errors and 2 warnings
- ERROR(TypeScript)  Type 'number' is not assignable to type 'string'.
- FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:3:5
-
-    1 | import { text } from './text'
-    2 |
-  > 3 | let count: string = 0
-      |     ^^^^^
-    4 | var hello = 'Hello'
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-
-[TypeScript] Found 1 error. Watching for file changes."
+",
+  "[ESLint] Found 2 errors and 2 warnings",
+]
 `;
 
-exports[`eslint-default > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello'/n      | ^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"TypeScript","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"Type 'number' is not assignable to type 'string'.","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello~'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"TypeScript","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"Type 'number' is not assignable to type 'string'.","stack":""}]"`;
+exports[`eslint-default > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello'/n      | ^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello~'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""}]"`;
 
 exports[`eslint-default > serve > get initial error and subsequent error 4`] = `
-" WARNING(ESLint)  'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)
+[
+  " WARNING(ESLint)  'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:3:5
 
     1 | import { text } from './text'
@@ -71,7 +66,8 @@ exports[`eslint-default > serve > get initial error and subsequent error 4`] = `
     4 | var hello = 'Hello~'
     5 |
     6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  'count' is never reassigned. Use 'const' instead. (prefer-const)
+",
+  " ERROR(ESLint)  'count' is never reassigned. Use 'const' instead. (prefer-const)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:3:5
 
     1 | import { text } from './text'
@@ -81,7 +77,8 @@ exports[`eslint-default > serve > get initial error and subsequent error 4`] = `
     4 | var hello = 'Hello~'
     5 |
     6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
+",
+  " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:4:1
 
     2 |
@@ -91,7 +88,8 @@ exports[`eslint-default > serve > get initial error and subsequent error 4`] = `
     5 |
     6 | const rootDom = document.querySelector('#root')!
     7 | rootDom.innerHTML = hello + text
- WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
+",
+  " WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:6:17
 
     4 | var hello = 'Hello~'
@@ -101,25 +99,16 @@ exports[`eslint-default > serve > get initial error and subsequent error 4`] = `
     7 | rootDom.innerHTML = hello + text
     8 |
     9 | export {}
-[ESLint] Found 2 errors and 2 warnings
- ERROR(TypeScript)  Type 'number' is not assignable to type 'string'.
- FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:3:5
-
-    1 | import { text } from './text'
-    2 |
-  > 3 | let count: string = 0
-      |     ^^^^^
-    4 | var hello = 'Hello~'
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-
-[TypeScript] Found 1 error. Watching for file changes."
+",
+  "[ESLint] Found 2 errors and 2 warnings",
+]
 `;
 
-exports[`eslint-default > serve > get initial error and subsequent error 5`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello'/n      | ^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"TypeScript","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"Type 'number' is not assignable to type 'string'.","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello~'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"TypeScript","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"Type 'number' is not assignable to type 'string'.","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello~'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"TypeScript","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"Type 'number' is not assignable to type 'string'.","stack":""}]"`;
+exports[`eslint-default > serve > get initial error and subsequent error 5`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello'/n      | ^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello~'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)","stack":""},{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | let count: string = 0/n      |     ^^^^^^^^^^^^^/n    4 | var hello = 'Hello~'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":3},"message":"'count' is never reassigned. Use 'const' instead. (prefer-const)","stack":""},{"checkerId":"ESLint","frame":"    2 |/n    3 | let count: string = 0/n  > 4 | var hello = 'Hello~'/n      | ^^^^^^^^^^^^^^^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello + text","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":4},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | var hello = 'Hello~'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""}]"`;
 
 exports[`eslint-default > serve > get initial error and subsequent error 6`] = `
-" WARNING(ESLint)  'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)
+[
+  " WARNING(ESLint)  'count' is assigned a value but never used. (@typescript-eslint/no-unused-vars)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:3:5
 
     1 | import { text } from './text'
@@ -129,7 +118,8 @@ exports[`eslint-default > serve > get initial error and subsequent error 6`] = `
     4 | var hello = 'Hello~'
     5 |
     6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  'count' is never reassigned. Use 'const' instead. (prefer-const)
+",
+  " ERROR(ESLint)  'count' is never reassigned. Use 'const' instead. (prefer-const)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:3:5
 
     1 | import { text } from './text'
@@ -139,7 +129,8 @@ exports[`eslint-default > serve > get initial error and subsequent error 6`] = `
     4 | var hello = 'Hello~'
     5 |
     6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
+",
+  " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:4:1
 
     2 |
@@ -149,7 +140,8 @@ exports[`eslint-default > serve > get initial error and subsequent error 6`] = `
     5 |
     6 | const rootDom = document.querySelector('#root')!
     7 | rootDom.innerHTML = hello + text
- WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
+",
+  " WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
  FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:6:17
 
     4 | var hello = 'Hello~'
@@ -159,17 +151,7 @@ exports[`eslint-default > serve > get initial error and subsequent error 6`] = `
     7 | rootDom.innerHTML = hello + text
     8 |
     9 | export {}
-[ESLint] Found 2 errors and 2 warnings
- ERROR(TypeScript)  Type 'number' is not assignable to type 'string'.
- FILE  <PROJECT_ROOT>/playground-temp/eslint-default/src/main.ts:3:5
-
-    1 | import { text } from './text'
-    2 |
-  > 3 | let count: string = 0
-      |     ^^^^^
-    4 | var hello = 'Hello~'
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-
-[TypeScript] Found 1 error. Watching for file changes."
+",
+  "[ESLint] Found 2 errors and 2 warnings",
+]
 `;

@@ -10,6 +10,7 @@ import {
   isServe,
   resetDiagnostics,
   resetReceivedLog,
+  log,
   sleepForEdit,
   sleepForServerReady,
   stripedLog,
@@ -20,7 +21,7 @@ describe('multiple-reload', () => {
     it('get initial error and subsequent error', async () => {
       await sleepForServerReady()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
+      expect(stable(stripedLog)).toMatchSnapshot()
 
       console.log('-- edit with error --')
       resetDiagnostics()
@@ -33,7 +34,7 @@ describe('multiple-reload', () => {
       // don't know why striped log in disorder on Linux, while correct on mac and Windows
       // comment out for now to pass test cases stably and striped log is duplicated with diagnostics somehow.
       // Need help to figure out what went wrong. 😅
-      // expect(stripedLog).toMatchSnapshot()
+      // expect(stable(stripedLog)).toMatchSnapshot()
 
       console.log('-- fix typescript error --')
       resetDiagnostics()
@@ -60,7 +61,7 @@ describe('multiple-reload', () => {
     ]
 
     it('should fail', async () => {
-      expectStderrContains(stripedLog, expectedMsg)
+      expectStderrContains(log, expectedMsg)
     })
   })
 })
