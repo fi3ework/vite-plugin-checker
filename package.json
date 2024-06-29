@@ -2,7 +2,7 @@
   "private": true,
   "version": "0.0.0",
   "engines": {
-    "pnpm": "^7.0.0",
+    "pnpm": "^9.0.0",
     "yarn": "forbidden, use pnpm",
     "npm": "forbidden, use pnpm"
   },
@@ -25,7 +25,7 @@
       }
     }
   },
-  "packageManager": "pnpm@7.5.0",
+  "packageManager": "pnpm@9.4.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "pnpm -r --filter=./packages/** --parallel run dev",
@@ -71,7 +71,6 @@
     "@types/node": "^16.0.0",
     "@types/prompts": "^2.0.13",
     "@types/rimraf": "^3.0.0",
-    "@types/semver": "^7.3.6",
     "@types/ws": "^8.5.3",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
@@ -93,7 +92,6 @@
     "prompts": "^2.4.1",
     "publint": "^0.1.9",
     "rimraf": "^3.0.2",
-    "semver": "^7.5.0",
     "simple-git-hooks": "^2.8.0",
     "sort-deep-object-arrays": "^1.1.2",
     "strip-ansi": "^7.0.0",
@@ -101,7 +99,7 @@
     "typescript": "^5.0.4",
     "vite": "^4.3.0",
     "vite-plugin-checker": "workspace:*",
-    "vitest": "^0.30.1",
+    "vitest": "^1.6.0",
     "ws": "^8.5.0"
   }
 }

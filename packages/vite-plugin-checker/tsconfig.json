@@ -5,6 +5,7 @@
     "@tsconfig/esm/tsconfig"
   ],
   "compilerOptions": {
+    "allowJs": true,
     "isolatedModules": true,
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false

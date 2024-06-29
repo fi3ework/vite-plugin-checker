@@ -13,7 +13,7 @@ import {
   stripedLog,
 } from '../../testUtils'
 
-describe('eslint', () => {
+describe('eslint-default', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
       await sleepForServerReady()
@@ -37,7 +37,7 @@ describe('eslint', () => {
   })
 
   describe.runIf(isBuild)('build', () => {
-    const expectedMsg = 'Unexpected var, use let or const instead  no-var'
+    const expectedMsg = 'Unexpected var, use let or const instead'
 
     it('should fail', async () => {
       expectStderrContains(log, expectedMsg)

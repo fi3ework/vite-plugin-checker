@@ -24,8 +24,7 @@ import {
   StreamMessageWriter,
 } from 'vscode-languageserver/node.js'
 import type { URI as IURI } from 'vscode-uri'
-import pkg from 'vscode-uri'
-const { URI } = pkg
+import { URI } from 'vscode-uri'
 
 import {
   diagnosticToTerminalLog,
