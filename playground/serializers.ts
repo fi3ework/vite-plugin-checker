@@ -8,14 +8,14 @@ function doesUseDoubleSlashAsPath(val: string) {
 }
 
 export const normalizeWindowsLogSerializer = {
-  print(val, serialize) {
+  print(val: string, serialize) {
     let result = val
     if (os.platform() === 'win32') {
-      result = result.replace(winNewLineReg, '/n')
-      result = result.replace(process.cwd().replace(winSepReg, '/'), '<PROJECT_ROOT>')
+      result = result.replaceAll(winNewLineReg, '/n')
+      result = result.replaceAll(process.cwd().replace(winSepReg, '/'), '<PROJECT_ROOT>')
 
       if (doesUseDoubleSlashAsPath(result)) {
-        result = result.replace(
+        result = result.replaceAll(
           `//a//vite-plugin-checker//vite-plugin-checker//playground-temp`,
           '<PROJECT_ROOT>/playground-temp'
         )
