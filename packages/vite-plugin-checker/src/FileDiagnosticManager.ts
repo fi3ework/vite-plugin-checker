@@ -12,10 +12,7 @@ class FileDiagnosticManager {
       throw new Error('FileDiagnosticManager is already initialized')
     }
 
-    diagnostics.forEach((d) => {
-      this.diagnostics.push(d)
-    })
-
+    this.diagnostics = [...diagnostics]
     this.initialized = true
   }
 
@@ -28,12 +25,7 @@ class FileDiagnosticManager {
   }
 
   public updateByFileId(fileId: string, next: NormalizedDiagnostic[] | null) {
-    for (let i = 0; i < this.diagnostics.length; i++) {
-      if (this.diagnostics[i]?.id === fileId) {
-        this.diagnostics.splice(i, 1)
-        i--
-      }
-    }
+    this.diagnostics = this.diagnostics.filter((d) => d.id !== fileId)
 
     if (next?.length) {
       this.diagnostics.push(...next)
