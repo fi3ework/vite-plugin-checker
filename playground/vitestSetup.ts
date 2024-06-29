@@ -53,7 +53,7 @@ export let testName: string
 export let viteConfig: InlineConfig | undefined
 
 export let log = ''
-export let stripedLog = ''
+export let stripedLog: string[] = []
 export let diagnostics: string[] = []
 export let buildSucceed: boolean
 
@@ -227,7 +227,7 @@ export async function startDefaultServe({
       buildSucceed = true
     } catch (e) {
       log = (e as any).toString()
-      stripedLog += strip(log)
+      stripedLog.push(strip(log))
       buildSucceed = false
     }
   }
@@ -238,10 +238,10 @@ function setCheckerLoggerForTest(checker: typeof Checker, accumulate = true) {
     (...args: any[]) => {
       if (accumulate) {
         log += args[0].payload
-        stripedLog += strip(args[0].payload)
+        stripedLog.push(strip(args[0].payload))
       } else {
         log = args[0].payload
-        stripedLog = strip(args[0].payload)
+        stripedLog.push(strip(args[0].payload))
       }
     },
   ]
@@ -253,7 +253,7 @@ export function slash(p: string): string {
 
 export function resetReceivedLog() {
   log = ''
-  stripedLog = ''
+  stripedLog = []
 }
 
 export function resetDiagnostics() {

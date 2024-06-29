@@ -3,7 +3,8 @@
 exports[`stylelint > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"Stylelint","frame":"  > 1 | #root {/n      |       ^/n  > 2 | }/n      | ^^/n    3 |/n    4 | body {/n    5 |   color: rgb(0, 0, 0);","id":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","line":1},"message":"Unexpected empty block (block-no-empty) (block-no-empty)","stack":""},{"checkerId":"Stylelint","frame":"    3 |/n    4 | body {/n  > 5 |   color: rgb(0, 0, 0);/n      |          ^^^^^^^^^^^^/n    6 | }/n    7 |","id":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","level":1,"loc":{"column":10,"file":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","line":5},"message":"Expected modern color-function notation (color-function-notation) (color-function-notation)","stack":""}]"`;
 
 exports[`stylelint > serve > get initial error and subsequent error 2`] = `
-" ERROR(Stylelint)  Unexpected empty block (block-no-empty) (block-no-empty)
+[
+  " ERROR(Stylelint)  Unexpected empty block (block-no-empty) (block-no-empty)
  FILE  <PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css:1:7
 
   > 1 | #root {
@@ -13,7 +14,8 @@ exports[`stylelint > serve > get initial error and subsequent error 2`] = `
     3 |
     4 | body {
     5 |   color: rgb(0, 0, 0);
- ERROR(Stylelint)  Expected modern color-function notation (color-function-notation) (color-function-notation)
+",
+  " ERROR(Stylelint)  Expected modern color-function notation (color-function-notation) (color-function-notation)
  FILE  <PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css:5:10
 
     3 |
@@ -22,13 +24,16 @@ exports[`stylelint > serve > get initial error and subsequent error 2`] = `
       |          ^^^^^^^^^^^^
     6 | }
     7 |
-[Stylelint] Found 2 errors and 0 warning"
+",
+  "[Stylelint] Found 2 errors and 0 warning",
+]
 `;
 
 exports[`stylelint > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"Stylelint","frame":"  > 1 | #root {/n      |       ^/n  > 2 | }/n      | ^^/n    3 |/n    4 | body {/n    5 |   color: rgb(0, 0, 0);","id":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","line":1},"message":"Unexpected empty block (block-no-empty) (block-no-empty)","stack":""},{"checkerId":"Stylelint","frame":"    3 |/n    4 | body {/n  > 5 |   color: rgb(0, 0, 0);/n      |          ^^^^^^^^^^^^/n    6 | }/n    7 |","id":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","level":1,"loc":{"column":10,"file":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","line":5},"message":"Expected modern color-function notation (color-function-notation) (color-function-notation)","stack":""},{"checkerId":"Stylelint","frame":"  > 1 | #root {/n      |       ^/n  > 2 | }/n      | ^^/n    3 |/n    4 | body {/n    5 |   color: #fff;","id":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css","line":1},"message":"Unexpected empty block (block-no-empty) (block-no-empty)","stack":""}]"`;
 
 exports[`stylelint > serve > get initial error and subsequent error 4`] = `
-" ERROR(Stylelint)  Unexpected empty block (block-no-empty) (block-no-empty)
+[
+  " ERROR(Stylelint)  Unexpected empty block (block-no-empty) (block-no-empty)
  FILE  <PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css:1:7
 
   > 1 | #root {
@@ -38,5 +43,7 @@ exports[`stylelint > serve > get initial error and subsequent error 4`] = `
     3 |
     4 | body {
     5 |   color: #fff;
-[Stylelint] Found 1 error and 0 warning"
+",
+  "[Stylelint] Found 1 error and 0 warning",
+]
 `;

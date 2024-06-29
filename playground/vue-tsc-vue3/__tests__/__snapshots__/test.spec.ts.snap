@@ -3,7 +3,8 @@
 exports[`vue-tsc-vue3 > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"vue-tsc","frame":"    1 | <template>/n    2 |   <img alt=/"Vue logo/" src=/"./assets/logo.png/" />/n  > 3 |   <HelloWorld msg1=/"Diana/" />/n      |    ^^^^^^^^^^/n    4 | </template>/n    5 |/n    6 | <script lang=/"ts/">","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue","level":1,"loc":{"column":4,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue","line":3},"message":"Argument of type '{ msg1: string; }' is not assignable to parameter of type 'Partial<{}> & Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<...>, never> & Record<...>'./n  Property 'msg' is missing in type '{ msg1: string; }' but required in type 'Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>>, never>'.","stack":""}]"`;
 
 exports[`vue-tsc-vue3 > serve > get initial error and subsequent error 2`] = `
-"
+[
+  "
  ERROR(vue-tsc)  Argument of type '{ msg1: string; }' is not assignable to parameter of type 'Partial<{}> & Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<...>, never> & Record<...>'.
   Property 'msg' is missing in type '{ msg1: string; }' but required in type 'Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>>, never>'.
  FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue:3:4
@@ -16,13 +17,15 @@ exports[`vue-tsc-vue3 > serve > get initial error and subsequent error 2`] = `
     5 |
     6 | <script lang="ts">
 
-[vue-tsc] Found 1 error. Watching for file changes."
+[vue-tsc] Found 1 error. Watching for file changes.",
+]
 `;
 
 exports[`vue-tsc-vue3 > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"vue-tsc","frame":"    1 | <template>/n    2 |   <img alt=/"Vue logo/" src=/"./assets/logo.png/" />/n  > 3 |   <HelloWorld msg1=/"Diana/" />/n      |    ^^^^^^^^^^/n    4 | </template>/n    5 |/n    6 | <script lang=/"ts/">","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue","level":1,"loc":{"column":4,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue","line":3},"message":"Argument of type '{ msg1: string; }' is not assignable to parameter of type 'Partial<{}> & Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<...>, never> & Record<...>'./n  Property 'msg' is missing in type '{ msg1: string; }' but required in type 'Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>>, never>'.","stack":""},{"checkerId":"vue-tsc","frame":"    1 | <template>/n    2 |   <img alt=/"Vue logo/" src=/"./assets/logo.png/" />/n  > 3 |   <HelloWorld msg2=/"Diana/" />/n      |    ^^^^^^^^^^/n    4 | </template>/n    5 |/n    6 | <script lang=/"ts/">","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue","level":1,"loc":{"column":4,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue","line":3},"message":"Argument of type '{ msg2: string; }' is not assignable to parameter of type 'Partial<{}> & Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<...>, never> & Record<...>'./n  Property 'msg' is missing in type '{ msg2: string; }' but required in type 'Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>>, never>'.","stack":""}]"`;
 
 exports[`vue-tsc-vue3 > serve > get initial error and subsequent error 4`] = `
-"
+[
+  "
  ERROR(vue-tsc)  Argument of type '{ msg2: string; }' is not assignable to parameter of type 'Partial<{}> & Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<...>, never> & Record<...>'.
   Property 'msg' is missing in type '{ msg2: string; }' but required in type 'Omit<{ readonly msg: string; } & VNodeProps & AllowedComponentProps & ComponentCustomProps & Readonly<ExtractPropTypes<{ msg: { type: StringConstructor; required: true; }; }>>, never>'.
  FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-vue3/src/App.vue:3:4
@@ -35,5 +38,6 @@ exports[`vue-tsc-vue3 > serve > get initial error and subsequent error 4`] = `
     5 |
     6 | <script lang="ts">
 
-[vue-tsc] Found 1 error. Watching for file changes."
+[vue-tsc] Found 1 error. Watching for file changes.",
+]
 `;
