@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "vue": "^2.6.14",
-    "vue-class-component": "^7.2.6",
-    "vue-property-decorator": "^9.1.2",
-    "vue-router": "^3.5.1",
-    "vuex": "^3.6.2"
+    "vue-class-component": "7.2.6",
+    "vue-property-decorator": "9.1.2",
+    "vue-router": "3.5.1",
+    "vuex": "3.6.2"
   },
   "devDependencies": {
     "@types/node": "^15.0.0",
@@ -31,8 +31,8 @@
     "vite-plugin-checker": "workspace:*",
     "vite-plugin-components": "^0.12.2",
     "vite-plugin-vue2": "^1.9.0",
-    "vls": "^0.8.1",
-    "vti": "^0.1.7",
+    "vls": "^0.8.5",
+    "vti": "^0.1.11",
     "vue-template-compiler": "^2.6.14"
   }
 }
