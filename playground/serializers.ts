@@ -7,12 +7,19 @@ function doesUseDoubleSlashAsPath(val: string) {
   return val.includes('//vite-plugin-checker//')
 }
 
+function getNormalizedCwd() {
+  return process
+    .cwd()
+    .replace(/[a-zA-Z]:\\/g, '\\')
+    .replace(winSepReg, '/')
+}
+
 export const normalizeWindowsLogSerializer = {
   print(val: string, serialize) {
     let result = val
     if (os.platform() === 'win32') {
       result = result.replaceAll(winNewLineReg, '/n')
-      result = result.replaceAll(process.cwd().replace(winSepReg, '/'), '<PROJECT_ROOT>')
+      result = result.replaceAll(getNormalizedCwd(), '<PROJECT_ROOT>')
 
       if (doesUseDoubleSlashAsPath(result)) {
         result = result.replaceAll(
@@ -30,7 +37,7 @@ export const normalizeWindowsLogSerializer = {
 
     if (
       (os.platform() === 'win32' &&
-        (val.includes(process.cwd().replace(winSepReg, '/')) || winNewLineReg.test(val))) ||
+        (val.includes(getNormalizedCwd()) || winNewLineReg.test(val))) ||
       doesUseDoubleSlashAsPath(val)
     ) {
       return true
