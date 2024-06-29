@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`config-initialIsOpen-error-warnings > serve > should not show overlay when only warning exists 1`] = `
+"    1 | import { text } from './text'
+    2 |
+  > 3 | var rootDom = document.querySelector('#root')! as HTMLElement
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4 | rootDom.innerHTML = text
+    5 |
+    6 | export {}"
+`;
