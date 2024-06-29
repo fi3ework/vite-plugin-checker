@@ -82,7 +82,6 @@
     "fast-glob": "^3.2.7",
     "fast-json-stable-stringify": "^2.1.0",
     "fs-extra": "^11.1.0",
-    "jest-serializer-path": "^0.1.15",
     "klaw": "^4.0.1",
     "lint-staged": "^11.0.0",
     "minimist": "^1.2.5",

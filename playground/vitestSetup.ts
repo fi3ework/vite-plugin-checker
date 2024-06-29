@@ -1,6 +1,5 @@
 import execa from 'execa'
 import fs from 'fs-extra'
-import pathSerializer from 'jest-serializer-path'
 import type * as http from 'node:http'
 import os from 'node:os'
 import path, { dirname, join, resolve } from 'node:path'
@@ -10,14 +9,13 @@ import { createServer, mergeConfig } from 'vite'
 import { beforeAll, expect } from 'vitest'
 import type { Checker } from 'vite-plugin-checker/dist/Checker'
 
-import { normalizeWindowsLogSerializer } from './serializers'
+import { normalizeLogSerializer } from './serializers'
 
 import type { Browser, Page } from 'playwright-chromium'
 import type { InlineConfig, ResolvedConfig, ViteDevServer } from 'vite'
 import type { File } from 'vitest'
 
-expect.addSnapshotSerializer(pathSerializer)
-expect.addSnapshotSerializer(normalizeWindowsLogSerializer)
+expect.addSnapshotSerializer(normalizeLogSerializer)
 
 export const workspaceRoot = resolve(__dirname, '../')
 
