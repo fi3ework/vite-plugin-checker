@@ -19,6 +19,7 @@ export const normalizeWindowsLogSerializer = {
     let result = val
     if (os.platform() === 'win32') {
       result = result.replaceAll(winNewLineReg, '/n')
+      result = result.replaceAll(process.cwd().replace(winSepReg, '/'), '<PROJECT_ROOT>')
       result = result.replaceAll(getNormalizedCwd(), '<PROJECT_ROOT>')
 
       if (doesUseDoubleSlashAsPath(result)) {
