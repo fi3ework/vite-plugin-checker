@@ -10,14 +10,14 @@ import { createServer, mergeConfig } from 'vite'
 import { beforeAll, expect } from 'vitest'
 import type { Checker } from 'vite-plugin-checker/dist/Checker'
 
-import { normalizeWindowsLogSerializer } from './serializers'
+// import { normalizeWindowsLogSerializer } from './serializers'
 
 import type { Browser, Page } from 'playwright-chromium'
 import type { InlineConfig, ResolvedConfig, ViteDevServer } from 'vite'
 import type { File } from 'vitest'
 
 expect.addSnapshotSerializer(pathSerializer)
-expect.addSnapshotSerializer(normalizeWindowsLogSerializer)
+// expect.addSnapshotSerializer(normalizeWindowsLogSerializer)
 
 export const workspaceRoot = resolve(__dirname, '../')
 
