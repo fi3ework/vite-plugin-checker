@@ -17,11 +17,9 @@ function createResult(val: string) {
 
 export const normalizeLogSerializer: SnapshotSerializer = {
   print(val: string, print) {
-    console.log('normalizeLogSerializer: print')
     return print(createResult(val))
   },
   test(val) {
-    console.log('normalizeLogSerializer: test')
     return typeof val === 'string' && val && createResult(val) !== val
   },
 }
