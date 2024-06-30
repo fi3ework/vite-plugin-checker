@@ -14,7 +14,13 @@ export default defineConfig({
       pattern: 'https://github.com/fi3ework/vite-plugin-checker/edit/main/docs/:path',
       text: 'Edit this page on GitHub',
     },
-    socialLinks: [{ icon: 'github', link: 'https://github.com/fi3ework/vite-plugin-checker' }],
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/fi3ework/vite-plugin-checker' },
+      {
+        icon: 'npm',
+        link: 'https://www.npmjs.com/package/vite-plugin-checker',
+      },
+    ],
     footer: {
       message: 'Released under the MIT License.',
       copyright: 'Copyright fi3ework',
