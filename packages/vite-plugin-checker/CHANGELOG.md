@@ -1,5 +1,11 @@
 # vite-plugin-checker
 
+## 0.7.0
+
+### Minor Changes
+
+- 0747729: fix: compatibility with vue-tsc 2.x
+
 ## 0.6.4
 
 ### Patch Changes
