@@ -1,7 +1,7 @@
-import type { ErrorPayload, ConfigEnv } from 'vite'
-import type { Worker } from 'worker_threads'
+import type { Worker } from 'node:worker_threads'
 import type { ESLint } from 'eslint'
 import type * as Stylelint from 'stylelint'
+import type { ConfigEnv, ErrorPayload } from 'vite'
 import type { VlsOptions } from './checkers/vls/initParams.js'
 
 /* ----------------------------- userland plugin options ----------------------------- */

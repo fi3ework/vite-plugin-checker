@@ -1,7 +1,7 @@
+import fs from 'node:fs'
+import { createRequire } from 'node:module'
+import os from 'node:os'
 import chalk from 'chalk'
-import fs from 'fs'
-import { createRequire } from 'module'
-import os from 'os'
 import strip from 'strip-ansi'
 import * as _vscodeUri from 'vscode-uri'
 
@@ -9,32 +9,32 @@ import * as _vscodeUri from 'vscode-uri'
 // see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
 // @ts-expect-error
 const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
-import { parentPort } from 'worker_threads'
+import { parentPort } from 'node:worker_threads'
 
-import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
+import { type SourceLocation, codeFrameColumns } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
 import {
   ACTION_TYPES,
+  type ClientDiagnosticPayload,
   DiagnosticLevel,
   type DiagnosticToRuntime,
-  type ClientDiagnosticPayload,
 } from './types.js'
 import { isMainThread } from './utils.js'
 
 const _require = createRequire(import.meta.url)
-import type { Range } from 'vscode-languageclient'
 import type { ESLint } from 'eslint'
 import type Stylelint from 'stylelint'
+import type { Range } from 'vscode-languageclient'
 import type {
   Diagnostic as LspDiagnostic,
   PublishDiagnosticsParams,
 } from 'vscode-languageclient/node'
 
 import type {
+  LineAndCharacter,
   Diagnostic as TsDiagnostic,
   flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
-  LineAndCharacter,
 } from 'typescript'
 
 export interface NormalizedDiagnostic {
@@ -82,10 +82,9 @@ export function filterLogLevel(
       if (typeof d.level !== 'number') return false
       return level.includes(d.level)
     })
-  } else {
-    if (!diagnostics.level) return null
-    return level.includes(diagnostics.level) ? diagnostics : null
   }
+  if (!diagnostics.level) return null
+  return level.includes(diagnostics.level) ? diagnostics : null
 }
 
 export function diagnosticToTerminalLog(
@@ -103,14 +102,14 @@ export function diagnosticToTerminalLog(
   }
 
   const levelLabel = labelMap[d.level ?? DiagnosticLevel.Error]
-  const fileLabel = boldBlack.bgCyanBright(' FILE ') + ' '
+  const fileLabel = `${boldBlack.bgCyanBright(' FILE ')} `
   const position = d.loc
-    ? chalk.yellow(d.loc.start.line) + ':' + chalk.yellow(d.loc.start.column)
+    ? `${chalk.yellow(d.loc.start.line)}:${chalk.yellow(d.loc.start.column)}`
     : ''
 
   return [
-    levelLabel + ' ' + d.message,
-    fileLabel + d.id + ':' + position + os.EOL,
+    `${levelLabel} ${d.message}`,
+    `${fileLabel + d.id}:${position}${os.EOL}`,
     d.codeFrame + os.EOL,
     d.conclusion,
   ]
@@ -176,7 +175,7 @@ export function createFrame({
     forceColor: true,
   })
     .split('\n')
-    .map((line) => '  ' + line)
+    .map((line) => `  ${line}`)
     .join(os.EOL)
 
   return frame

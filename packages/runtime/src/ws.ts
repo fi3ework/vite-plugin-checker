@@ -24,10 +24,16 @@ export function prepareListen() {
   const onMessage = async (data: any) => {
     switch (data.event) {
       case WS_CHECKER_ERROR_EVENT:
-        onCustomMessage.forEach((callbackfn) => callbackfn(data.data))
+        for (const callbackfn of onCustomMessage) {
+          callbackfn(data.data)
+        }
+
         break
       case WS_CHECKER_RECONNECT_EVENT:
-        onReconnectMessage.forEach((callbackfn) => callbackfn(data.data))
+        for (const callbackfn of onReconnectMessage) {
+          callbackfn(data.data)
+        }
+
         break
     }
   }

@@ -1,10 +1,10 @@
 import Module from 'node:module'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
-import path from 'path'
 import invariant from 'tiny-invariant'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
@@ -25,7 +25,7 @@ const __filename = fileURLToPath(import.meta.url)
 const require = Module.createRequire(import.meta.url)
 
 const manager = new FileDiagnosticManager()
-let createServeAndBuild
+let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types'
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
@@ -84,9 +84,10 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
         if (terminal) {
-          diagnostics.forEach((d) => {
+          for (const d of diagnostics) {
             consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
-          })
+          }
+
           const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
           const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
           consoleLog(composeCheckerSummary('ESLint', errorCount, warningCount))
@@ -118,9 +119,9 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           manager.updateByFileId(absPath, [])
         } else if (type === 'change') {
           const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
-          const newDiagnostics = diagnosticsOfChangedFile
-            .map((d) => normalizeEslintDiagnostic(d))
-            .flat(1)
+          const newDiagnostics = diagnosticsOfChangedFile.flatMap((d) =>
+            normalizeEslintDiagnostic(d)
+          )
           manager.updateByFileId(absPath, newDiagnostics)
         }
 
@@ -131,7 +132,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const files = options._.slice(1)
       const diagnostics = await eslint.lintFiles(files)
 
-      manager.initWith(diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1))
+      manager.initWith(diagnostics.flatMap((p) => normalizeEslintDiagnostic(p)))
       dispatchDiagnostics()
 
       // watch lint

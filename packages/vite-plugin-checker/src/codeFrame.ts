@@ -1,7 +1,7 @@
-import os from 'os'
+import os from 'node:os'
 import type ts from 'typescript'
 
-import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
+import { type SourceLocation, codeFrameColumns } from '@babel/code-frame'
 
 export function createFrame({
   source,
@@ -14,7 +14,7 @@ export function createFrame({
     highlightCode: true,
   })
     .split('\n')
-    .map((line) => '  ' + line)
+    .map((line) => `  ${line}`)
     .join(os.EOL)
 
   return frame

@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { prepareListen, listenToCustomMessage, listenToReconnectMessage } from './ws'
+import { listenToCustomMessage, listenToReconnectMessage, prepareListen } from './ws'
 
 const checkerResults = ref<any[]>([])
 

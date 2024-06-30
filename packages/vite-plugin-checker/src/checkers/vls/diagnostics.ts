@@ -1,16 +1,14 @@
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { Duplex } from 'node:stream'
 import chalk from 'chalk'
 import chokidar from 'chokidar'
 import glob from 'fast-glob'
-import fs from 'fs'
-import os from 'os'
-import path from 'path'
-import { Duplex } from 'stream'
 import { VLS } from 'vls'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import {
-  createConnection,
-  createProtocolConnection,
-  Diagnostic,
+  type Diagnostic,
   DiagnosticSeverity,
   DidChangeTextDocumentNotification,
   DidChangeWatchedFilesNotification,
@@ -22,18 +20,19 @@ import {
   type ServerCapabilities,
   StreamMessageReader,
   StreamMessageWriter,
+  createConnection,
+  createProtocolConnection,
 } from 'vscode-languageserver/node.js'
-import type { URI as IURI } from 'vscode-uri'
 import { URI } from 'vscode-uri'
 
 import {
+  type NormalizedDiagnostic,
   diagnosticToTerminalLog,
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
-  type NormalizedDiagnostic,
 } from '../../logger.js'
 import type { DeepPartial } from '../../types.js'
-import { getInitParams, type VlsOptions } from './initParams.js'
+import { type VlsOptions, getInitParams } from './initParams.js'
 
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 
@@ -73,7 +72,7 @@ export async function diagnostics(
     console.log('====================================')
     console.log('Getting Vetur diagnostics')
   }
-  let workspaceUri
+  let workspaceUri: URI
 
   if (workspace) {
     const absPath = path.resolve(process.cwd(), workspace)
@@ -126,7 +125,7 @@ function suppressConsole() {
 }
 
 export async function prepareClientConnection(
-  workspaceUri: IURI,
+  workspaceUri: URI,
   severity: DiagnosticSeverity,
   options: DiagnosticOptions
 ) {
@@ -212,7 +211,7 @@ export async function prepareClientConnection(
 }
 
 function extToGlobs(exts: string[]) {
-  return exts.map((e) => '**/*' + e)
+  return exts.map((e) => `**/*${e}`)
 }
 
 const watchedDidChangeContent = ['.vue']
@@ -220,7 +219,7 @@ const watchedDidChangeWatchedFiles = ['.js', '.ts', '.json']
 const watchedDidChangeContentGlob = extToGlobs(watchedDidChangeContent)
 
 async function getDiagnostics(
-  workspaceUri: IURI,
+  workspaceUri: URI,
   severity: DiagnosticSeverity,
   options: DiagnosticOptions
 ): Promise<{ initialErrorCount: number; initialWarningCount: number } | null> {
@@ -290,14 +289,14 @@ async function getDiagnostics(
               )
               .join(os.EOL)
 
-          diagnostics.forEach((d) => {
+          for (const d of diagnostics) {
             if (d.severity === DiagnosticSeverity.Error) {
               initialErrorCount++
             }
             if (d.severity === DiagnosticSeverity.Warning) {
               initialWarningCount++
             }
-          })
+          }
         }
 
         console.log(logChunk)
@@ -363,6 +362,7 @@ async function getDiagnostics(
   return null
 }
 
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
 function isObject(item: any): item is {} {
   return item && typeof item === 'object' && !Array.isArray(item)
 }

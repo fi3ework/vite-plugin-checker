@@ -1,5 +1,5 @@
-import { defineConfig, Options } from 'tsup'
-import { copyFile } from 'fs/promises'
+import { copyFile } from 'node:fs/promises'
+import { type Options, defineConfig } from 'tsup'
 
 const shared: Options = {
   entry: ['src', '!src/checkers/vueTsc/languagePlugins.cjs'],
@@ -19,7 +19,7 @@ export default defineConfig([
     shims: true,
     outExtension() {
       return {
-        js: `.js`,
+        js: '.js',
       }
     },
     async onSuccess() {

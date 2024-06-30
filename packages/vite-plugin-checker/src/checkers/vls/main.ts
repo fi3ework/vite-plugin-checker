@@ -1,6 +1,6 @@
-import os from 'os'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
+import os from 'node:os'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 
 import { Checker } from '../../Checker.js'
 import {
@@ -18,7 +18,7 @@ import type { CreateDiagnostic } from '../../types.js'
 
 const __filename = fileURLToPath(import.meta.url)
 
-let createServeAndBuild
+let createServeAndBuild: any
 
 export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
   let overlay = true
@@ -81,7 +81,7 @@ export class VlsChecker extends Checker<'vls'> {
               [
                 'diagnostics',
                 // Escape quotes so that the system shell doesn't strip them out:
-                '"' + JSON.stringify(config.vls).replace(/[\\"]/g, '\\$&') + '"',
+                `"${JSON.stringify(config.vls).replace(/[\\"]/g, '\\$&')}"`,
               ],
             ]
           }

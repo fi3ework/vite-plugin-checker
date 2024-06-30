@@ -1,28 +1,28 @@
+import { spawn } from 'node:child_process'
 import chalk from 'chalk'
-import { spawn } from 'child_process'
 import npmRunPath from 'npm-run-path'
 
+import type { ConfigEnv, Logger, Plugin } from 'vite'
 import { Checker } from './Checker.js'
 import {
-  composePreambleCode,
   RUNTIME_CLIENT_ENTRY_PATH,
   RUNTIME_CLIENT_RUNTIME_PATH,
+  WS_CHECKER_RECONNECT_EVENT,
+  composePreambleCode,
   runtimeCode,
   wrapVirtualPrefix,
-  WS_CHECKER_RECONNECT_EVENT,
 } from './client/index.js'
 import {
   ACTION_TYPES,
+  type Action,
   type BuildCheckBinStr,
   type BuildInCheckerNames,
   type ClientDiagnosticPayload,
   type ClientReconnectPayload,
-  type Action,
   type PluginConfig,
   type ServeAndBuildChecker,
   type UserPluginConfig,
 } from './types.js'
-import type { ConfigEnv, Plugin, Logger } from 'vite'
 
 const buildInCheckerKeys: BuildInCheckerNames[] = [
   'typescript',
@@ -86,14 +86,14 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       checkers = await createCheckers(userConfig || {}, env)
       if (viteMode !== 'serve') return
 
-      checkers.forEach((checker) => {
+      for (const checker of checkers) {
         const workerConfig = checker.serve.config
         workerConfig({
           enableOverlay,
           enableTerminal,
           env,
         })
-      })
+      }
     },
     configResolved(config) {
       logger = config.logger
@@ -105,10 +105,10 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       if (initialized) return
 
       if (viteMode === 'serve') {
-        checkers.forEach((checker) => {
+        for (const checker of checkers) {
           const { worker } = checker.serve
           worker.terminate()
-        })
+        }
       }
     },
     resolveId(id) {
@@ -168,7 +168,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     configureServer(server) {
       if (initialized) return
 
-      let latestOverlayErrors: ClientReconnectPayload['data'] = new Array(checkers.length)
+      const latestOverlayErrors: ClientReconnectPayload['data'] = new Array(checkers.length)
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
       checkers.forEach((checker, index) => {

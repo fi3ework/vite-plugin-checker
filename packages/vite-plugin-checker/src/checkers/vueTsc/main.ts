@@ -1,10 +1,10 @@
-import { createRequire } from 'module'
-import os from 'os'
-import path from 'path'
+import { createRequire } from 'node:module'
+import os from 'node:os'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 import invariant from 'tiny-invariant'
 import type ts from 'typescript'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker.js'
 import {
@@ -22,7 +22,7 @@ import { prepareVueTsc } from './prepareVueTsc.js'
 const _require = createRequire(import.meta.url)
 const __filename = fileURLToPath(import.meta.url)
 
-let createServeAndBuild
+let createServeAndBuild: any
 
 const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
   let overlay = true
@@ -47,9 +47,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
               tsconfigPath: pluginConfig.vueTsc.tsconfigPath ?? 'tsconfig.json',
             }
 
-      let configFile: string | undefined
-
-      configFile = vueTs.findConfigFile(
+      const configFile = vueTs.findConfigFile(
         finalConfig.root,
         vueTs.sys.fileExists,
         finalConfig.tsconfigPath
@@ -150,7 +148,7 @@ export class VueTscChecker extends Checker<'vueTsc'> {
           if (typeof config.vueTsc === 'object') {
             const { root = '', tsconfigPath = '' } = config.vueTsc
 
-            let args = ['--noEmit']
+            const args = ['--noEmit']
             // Custom config path
             let projectPath = ''
             if (root || tsconfigPath) {

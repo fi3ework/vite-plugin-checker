@@ -1,19 +1,19 @@
+import { Worker, parentPort, workerData } from 'node:worker_threads'
 import type { ConfigEnv } from 'vite'
-import { parentPort, Worker, workerData } from 'worker_threads'
 
 import { ACTION_TYPES } from './types.js'
 
 import type {
-  ServeChecker,
-  ConfigureServeChecker,
-  ConfigAction,
-  ConfigureServerAction,
-  CheckerDiagnostic,
   BuildCheckBin,
+  BuildInCheckers,
+  CheckerDiagnostic,
+  ConfigAction,
+  ConfigureServeChecker,
+  ConfigureServerAction,
   ServeAndBuildChecker,
+  ServeChecker,
   SharedConfig,
   UnrefAction,
-  BuildInCheckers,
 } from './types.js'
 
 interface WorkerScriptOptions {
