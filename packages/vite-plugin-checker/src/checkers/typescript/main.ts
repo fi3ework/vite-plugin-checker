@@ -1,9 +1,9 @@
-import os from 'os'
-import path from 'path'
+import os from 'node:os'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker.js'
 import {
@@ -18,7 +18,7 @@ import {
 import { ACTION_TYPES, type CreateDiagnostic, type DiagnosticToRuntime } from '../../types.js'
 
 const __filename = fileURLToPath(import.meta.url)
-let createServeAndBuild
+let createServeAndBuild: any
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true

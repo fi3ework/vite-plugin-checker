@@ -1,8 +1,8 @@
+import { access, readFile, rm, writeFile } from 'node:fs/promises'
+import { createRequire } from 'node:module'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import fsExtra from 'fs-extra'
-import { createRequire } from 'module'
-import path, { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { writeFile, access, readFile, rm } from 'fs/promises'
 
 const { copy, mkdir } = fsExtra
 const _require = createRequire(import.meta.url)
@@ -11,10 +11,10 @@ const _require = createRequire(import.meta.url)
 const _filename = fileURLToPath(import.meta.url)
 const _dirname = dirname(_filename)
 const vueTscDir = dirname(_require.resolve('vue-tsc/package.json'))
-let proxyApiPath = _require.resolve('@volar/typescript/lib/node/proxyCreateProgram', {
+const proxyApiPath = _require.resolve('@volar/typescript/lib/node/proxyCreateProgram', {
   paths: [vueTscDir],
 })
-let runExtensions = ['.vue']
+const runExtensions = ['.vue']
 
 export async function prepareVueTsc() {
   // 1. copy typescript to folder
@@ -57,31 +57,28 @@ async function overrideTscJs(tscJsPath: string) {
   // #region copied from https://github.com/volarjs/volar.js/blob/ae7f2e01caa08f64cbc687c80841dab2a0f7c426/packages/typescript/lib/quickstart/runTsc.ts
   // add *.vue files to allow extensions
   const extsText = runExtensions.map((ext) => `"${ext}"`).join(', ')
-  tsc = replace(tsc, /supportedTSExtensions = .*(?=;)/, (s) => s + `.concat([[${extsText}]])`)
-  tsc = replace(tsc, /supportedJSExtensions = .*(?=;)/, (s) => s + `.concat([[${extsText}]])`)
-  tsc = replace(tsc, /allSupportedExtensions = .*(?=;)/, (s) => s + `.concat([[${extsText}]])`)
+  tsc = replace(tsc, /supportedTSExtensions = .*(?=;)/, (s) => `${s}.concat([[${extsText}]])`)
+  tsc = replace(tsc, /supportedJSExtensions = .*(?=;)/, (s) => `${s}.concat([[${extsText}]])`)
+  tsc = replace(tsc, /allSupportedExtensions = .*(?=;)/, (s) => `${s}.concat([[${extsText}]])`)
 
   // proxy createProgram
   tsc = replace(
     tsc,
     /function createProgram\(.+\) {/,
     (s) =>
-      `var createProgram = require(${JSON.stringify(proxyApiPath)}).proxyCreateProgram(` +
-      [
-        `new Proxy({}, { get(_target, p, _receiver) { return eval(p); } } )`,
-        `_createProgram`,
+      `var createProgram = require(${JSON.stringify(proxyApiPath)}).proxyCreateProgram(${[
+        'new Proxy({}, { get(_target, p, _receiver) { return eval(p); } } )',
+        '_createProgram',
         `require(${JSON.stringify(languagePluginsFile)}).getLanguagePlugins`,
-      ].join(', ') +
-      `);\n` +
-      s.replace('createProgram', '_createProgram')
+      ].join(', ')});\n${s.replace('createProgram', '_createProgram')}`
   )
 
-  function replace(_text: string, ...[search, replace]: Parameters<String['replace']>) {
+  function replace(_text: string, ...[search, replace]: Parameters<string['replace']>) {
     const before = _text
     const text = _text.replace(search, replace)
     const after = text
     if (after === before) {
-      throw 'Search string not found: ' + JSON.stringify(search.toString())
+      throw `Search string not found: ${JSON.stringify(search.toString())}`
     }
     return after
   }

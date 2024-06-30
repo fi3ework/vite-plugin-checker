@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('node:path')
 const { removeEmitGlobalTypes } = require('vue-tsc')
 
 const vueTscDir = path.dirname(require.resolve('vue-tsc/package.json'))

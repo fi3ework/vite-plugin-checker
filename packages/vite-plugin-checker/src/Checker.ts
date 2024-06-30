@@ -1,13 +1,13 @@
 import invariant from 'tiny-invariant'
 import { isInVitestEntryThread, isMainThread } from './utils.js'
 
-import { createScript, type Script } from './worker.js'
+import { type Script, createScript } from './worker.js'
 
 import type {
-  CreateDiagnostic,
-  BuildInCheckers,
-  ServeAndBuildChecker,
   BuildInCheckerNames,
+  BuildInCheckers,
+  CreateDiagnostic,
+  ServeAndBuildChecker,
 } from './types.js'
 
 if (!(isMainThread || isInVitestEntryThread)) {
@@ -26,7 +26,9 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
   public static logger: ((...v: string[]) => unknown)[] = []
 
   public static log(...args: any[]) {
-    this.logger.forEach((fn) => fn(...args))
+    for (const fn of Checker.logger) {
+      fn(...args)
+    }
   }
 
   public name: T
