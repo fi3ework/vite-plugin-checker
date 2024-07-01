@@ -10,7 +10,10 @@ const _require = createRequire(import.meta.url)
 // isomorphic __dirname https://antfu.me/posts/isomorphic-dirname
 const _filename = fileURLToPath(import.meta.url)
 const _dirname = dirname(_filename)
-let proxyApiPath = _require.resolve('@volar/typescript/lib/node/proxyCreateProgram')
+const vueTscDir = dirname(_require.resolve('vue-tsc/package.json'))
+let proxyApiPath = _require.resolve('@volar/typescript/lib/node/proxyCreateProgram', {
+  paths: [vueTscDir],
+})
 let runExtensions = ['.vue']
 
 export async function prepareVueTsc() {
