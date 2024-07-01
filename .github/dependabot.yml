@@ -2,7 +2,8 @@ version: 2
 updates:
   - package-ecosystem: 'npm'
     versioning-strategy: 'increase'
-    directory: '/'
+    directories:
+      - '**/*'
     schedule:
       interval: 'daily'
     labels:
