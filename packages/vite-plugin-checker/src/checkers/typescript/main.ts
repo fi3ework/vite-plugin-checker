@@ -11,6 +11,7 @@ import {
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   ensureCall,
+  NormalizedDiagnostic,
   normalizeTsDiagnostic,
   toClientPayload,
   wrapCheckerSummary,
@@ -19,12 +20,23 @@ import { ACTION_TYPES, type CreateDiagnostic, type DiagnosticToRuntime } from '.
 
 const __filename = fileURLToPath(import.meta.url)
 let createServeAndBuild
-
+// check diagnostic is all same
+const checkSameDiagnostic = function (a: NormalizedDiagnostic, b: NormalizedDiagnostic) {
+  return (
+    a.id === b.id &&
+    a.loc?.start.line === b.loc?.start.line &&
+    a.loc?.start.column === b.loc?.start.column &&
+    a.loc?.end?.line === b.loc?.end?.line &&
+    a.loc?.end?.column === b.loc?.end?.column &&
+    a.message === b.message &&
+    a.level === b.level
+  )
+}
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true
   let terminal = true
   let currDiagnostics: DiagnosticToRuntime[] = []
-
+  let normalizedDiagnosticsStore: NormalizedDiagnostic[] = []
   return {
     config: async ({ enableOverlay, enableTerminal }) => {
       overlay = enableOverlay
@@ -58,9 +70,12 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
         if (normalizedDiagnostic === null) {
           return
         }
-
-        currDiagnostics.push(diagnosticToRuntimeError(normalizedDiagnostic))
-        logChunk += os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'TypeScript')
+        // delete repeat diagnostic
+        normalizedDiagnosticsStore = normalizedDiagnosticsStore.filter(
+          (n) => !checkSameDiagnostic(n, normalizedDiagnostic)
+        )
+        // push new diagnostic to store
+        normalizedDiagnosticsStore.push(normalizedDiagnostic)
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
@@ -71,6 +86,15 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
         // eslint-disable-next-line max-params
       ) => {
         if (diagnostic.code === 6031) return
+
+        // reset current time output
+        logChunk = ''
+        currDiagnostics = []
+        // use cached normalizedDiagnostics to generate outputs
+        normalizedDiagnosticsStore.forEach((n) => {
+          currDiagnostics.push(diagnosticToRuntimeError(n))
+          logChunk += os.EOL + diagnosticToTerminalLog(n, 'TypeScript')
+        })
         // https://github.com/microsoft/TypeScript/issues/32542
         // https://github.com/microsoft/TypeScript/blob/dc237b317ed4bbccd043ddda802ffde00362a387/src/compiler/diagnosticMessages.json#L4086-L4088
         switch (diagnostic.code) {
@@ -80,22 +104,24 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             logChunk = ''
             // currErr = null
             currDiagnostics = []
+            normalizedDiagnosticsStore = []
             return
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
+            // reset normalizedDiagnostics after reportDiagnostic
             if (overlay) {
-              parentPort?.postMessage({
-                type: ACTION_TYPES.overlayError,
-                payload: toClientPayload('typescript', currDiagnostics),
+              ensureCall(() => {
+                parentPort?.postMessage({
+                  type: ACTION_TYPES.overlayError,
+                  payload: toClientPayload('typescript', currDiagnostics),
+                })
               })
             }
         }
+        // reset for next time
+        normalizedDiagnosticsStore = []
 
         ensureCall(() => {
-          if (errorCount === 0) {
-            logChunk = ''
-          }
-
           if (terminal) {
             consoleLog(
               logChunk +
