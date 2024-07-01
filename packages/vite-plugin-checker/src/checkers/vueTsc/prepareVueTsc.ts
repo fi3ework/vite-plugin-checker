@@ -11,7 +11,9 @@ const _require = createRequire(import.meta.url)
 const _filename = fileURLToPath(import.meta.url)
 const _dirname = dirname(_filename)
 const vueTscDir = dirname(require.resolve('vue-tsc/package.json'))
-let proxyApiPath = _require.resolve('@volar/typescript/lib/node/proxyCreateProgram', { paths: [vueTscDir] })
+let proxyApiPath = _require.resolve('@volar/typescript/lib/node/proxyCreateProgram', {
+  paths: [vueTscDir],
+})
 let runExtensions = ['.vue']
 
 export async function prepareVueTsc() {
