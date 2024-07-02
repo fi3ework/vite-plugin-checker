@@ -19,7 +19,7 @@
     "@types/node": "^15.0.0",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.16.1",
-    "@vue/eslint-config-prettier": "6.0.0",
+    "@vue/eslint-config-prettier": "9.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
     "eslint": "^7.28.0",
     "eslint-plugin-prettier": "^3.3.1",
