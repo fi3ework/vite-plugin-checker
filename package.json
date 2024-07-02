@@ -62,7 +62,7 @@
     "@biomejs/biome": "^1.8.3",
     "@changesets/cli": "^2.26.1",
     "@tsconfig/esm": "^1.0.2",
-    "@tsconfig/node18": "^1.0.1",
+    "@tsconfig/node18": "^18.2.4",
     "@tsconfig/strictest": "^2.0.0",
     "@types/babel__code-frame": "^7.0.2",
     "@types/debug": "^4.1.5",
