@@ -98,7 +98,6 @@
     "esbuild": "^0.14.27",
     "meow": "^9.0.0",
     "npm-run-all": "^4.1.5",
-    "optionator": "^0.9.1",
     "stylelint": "^14.0.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4",
