@@ -33,7 +33,7 @@ jobs:
     name: 'Build&Test: node-${{ matrix.node_version }}, ${{ matrix.os }}'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2.2.2
