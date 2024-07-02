@@ -92,7 +92,7 @@
     "sort-deep-object-arrays": "^1.1.2",
     "strip-ansi": "^7.0.0",
     "tiny-invariant": "^1.1.0",
-    "typescript": "^5.0.4",
+    "typescript": "^5.5.3",
     "vite": "^5.3.2",
     "vite-plugin-checker": "workspace:*",
     "vitest": "^1.6.0",
