@@ -4,6 +4,10 @@ import Badge from './components/Badge.ce.vue'
 import List from './components/List.ce.vue'
 import { useChecker } from './useChecker'
 
+defineOptions({
+  inheritAttrs: false,
+})
+
 const props = withDefaults(
   defineProps<{
     checkerResults: any[]
