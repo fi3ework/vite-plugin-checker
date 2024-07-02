@@ -22,6 +22,13 @@ export async function prepareVueTsc() {
   const vueTscFlagFile = path.resolve(targetTsDir, 'vue-tsc-resolve-path')
   const currTsVersion = _require('typescript/package.json').version
 
+  const tsMajorVersion = Number(currTsVersion.split('.')[0])
+  if (tsMajorVersion < 5) {
+    throw new Error(
+      "\x1b[35m[vite-plugin-checker] Since 0.7.0, vue-tsc checkers requires TypeScript 5.0.0 or newer version.\nPlease upgrade TypeScript, or use v0.6.4 which works with vue-tsc^1 if you can't upgrade. Check the pull request https://github.com/fi3ework/vite-plugin-checker/pull/327 for detail.\x1b[39m\n"
+    )
+  }
+
   let shouldBuildFixture = true
   try {
     await access(targetTsDir)
