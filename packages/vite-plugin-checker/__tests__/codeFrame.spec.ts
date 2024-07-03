@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { SourceLocation } from '@babel/code-frame'
-
-import { tsLocationToBabelLocation } from '../src/codeFrame'
+import { locationToBabelLocation, tsLocationToBabelLocation } from '../src/codeFrame'
 
 describe('code frame', () => {
   it('should add 1 offset to TS location', () => {
@@ -14,6 +12,20 @@ describe('code frame', () => {
     expect(babelLoc).toEqual({
       start: { line: 2, column: 3 },
       end: { line: 4, column: 5 },
-    } as SourceLocation)
+    })
+  })
+
+  it('should add 1 offset to TS location', () => {
+    const babelLoc = locationToBabelLocation({
+      line: 1,
+      column: 2,
+      endLine: 3,
+      endColumn: 4,
+    })
+
+    expect(babelLoc).toEqual({
+      start: { line: 1, column: 2 },
+      end: { line: 3, column: 4 },
+    })
   })
 })
