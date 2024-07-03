@@ -1,6 +1,6 @@
 import os from 'node:os'
 
-import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
+import { type SourceLocation, codeFrameColumns } from '@babel/code-frame'
 
 /**
  * Create a code frame from source code and location
