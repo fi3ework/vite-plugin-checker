@@ -196,7 +196,7 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
   const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition?.(d.start)
   if (pos && d.file && typeof d.start === 'number' && typeof d.length === 'number') {
     loc = tsLocationToBabelLocation({
-      start: d.file.getLineAndCharacterOfPosition(d.start),
+      start: pos,
       end: d.file.getLineAndCharacterOfPosition(d.start + d.length),
     })
   }
