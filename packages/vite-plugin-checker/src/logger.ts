@@ -11,9 +11,10 @@ import * as _vscodeUri from 'vscode-uri'
 const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
 import { parentPort } from 'node:worker_threads'
 
-import { type SourceLocation } from '@babel/code-frame'
+import type { SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
+import { createFrame, locationToBabelLocation, tsLocationToBabelLocation } from './codeFrame.js'
 import {
   ACTION_TYPES,
   type ClientDiagnosticPayload,
@@ -21,7 +22,6 @@ import {
   type DiagnosticToRuntime,
 } from './types.js'
 import { isMainThread } from './utils.js'
-import { tsLocationToBabelLocation, createFrame, locationToBabelLocation } from './codeFrame.js'
 
 const _require = createRequire(import.meta.url)
 import type { ESLint } from 'eslint'
