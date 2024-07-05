@@ -14,7 +14,7 @@ import { parentPort } from 'node:worker_threads'
 import type { SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
-import { createFrame, locationToBabelLocation, tsLocationToBabelLocation } from './codeFrame.js'
+import { createFrame, locationToBabelLocation, tsLikeLocToBabelLoc } from './codeFrame.js'
 import {
   ACTION_TYPES,
   type ClientDiagnosticPayload,
@@ -195,7 +195,7 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
   let loc: SourceLocation | undefined
   const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition?.(d.start)
   if (pos && d.file && typeof d.start === 'number' && typeof d.length === 'number') {
-    loc = tsLocationToBabelLocation({
+    loc = tsLikeLocToBabelLoc({
       start: pos,
       end: d.file.getLineAndCharacterOfPosition(d.start + d.length),
     })
@@ -230,7 +230,7 @@ export function normalizeLspDiagnostic({
   fileText: string
 }): NormalizedDiagnostic {
   let level = DiagnosticLevel.Error
-  const loc = tsLocationToBabelLocation(diagnostic.range)
+  const loc = tsLikeLocToBabelLoc(diagnostic.range)
   const codeFrame = createFrame(fileText, loc)
 
   switch (diagnostic.severity) {

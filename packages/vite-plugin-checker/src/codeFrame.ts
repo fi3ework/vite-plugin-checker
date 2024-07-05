@@ -17,7 +17,7 @@ export function createFrame(source: string, location: SourceLocation): string {
     .join(os.EOL)
 }
 
-export function tsLocationToBabelLocation(
+export function tsLikeLocToBabelLoc(
   tsLoc: Record<'start' | 'end', { line: number; character: number } /** 0-based */>
 ): SourceLocation {
   return {
