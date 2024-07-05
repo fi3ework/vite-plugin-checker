@@ -14,7 +14,7 @@ const vueTscDir = dirname(_require.resolve('vue-tsc/package.json'))
 const proxyApiPath = _require.resolve('@volar/typescript/lib/node/proxyCreateProgram', {
   paths: [vueTscDir],
 })
-const runExtensions = ['.vue']
+const extraSupportedExtensions = ['.vue']
 
 export async function prepareVueTsc() {
   // 1. copy typescript to folder
@@ -61,12 +61,28 @@ export async function prepareVueTsc() {
 async function overrideTscJs(tscJsPath: string) {
   const languagePluginsFile = path.resolve(_dirname, 'languagePlugins.cjs')
   let tsc = await readFile(tscJsPath, 'utf8')
-  // #region copied from https://github.com/volarjs/volar.js/blob/ae7f2e01caa08f64cbc687c80841dab2a0f7c426/packages/typescript/lib/quickstart/runTsc.ts
+  // #region copied from https://github.com/volarjs/volar.js/blob/630f31118d3986c00cc730eb83cd896709fd547e/packages/typescript/lib/quickstart/runTsc.ts
   // add *.vue files to allow extensions
-  const extsText = runExtensions.map((ext) => `"${ext}"`).join(', ')
-  tsc = replace(tsc, /supportedTSExtensions = .*(?=;)/, (s) => `${s}.concat([[${extsText}]])`)
-  tsc = replace(tsc, /supportedJSExtensions = .*(?=;)/, (s) => `${s}.concat([[${extsText}]])`)
-  tsc = replace(tsc, /allSupportedExtensions = .*(?=;)/, (s) => `${s}.concat([[${extsText}]])`)
+  const extsText = extraSupportedExtensions.map((ext) => `"${ext}"`).join(', ')
+  // tsc = replace(tsc, /supportedTSExtensions = .*(?=;)/, (s) => `${s}.concat([[${extsText}]])`)
+  tsc = replace(
+    tsc,
+    /supportedTSExtensions = .*(?=;)/,
+    // biome-ignore lint/style/useTemplate: <explanation>
+    (s) => s + `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`
+  )
+  tsc = replace(
+    tsc,
+    /supportedJSExtensions = .*(?=;)/,
+    // biome-ignore lint/style/useTemplate: <explanation>
+    (s) => s + `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`
+  )
+  tsc = replace(
+    tsc,
+    /allSupportedExtensions = .*(?=;)/,
+    // biome-ignore lint/style/useTemplate: <explanation>
+    (s) => s + `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`
+  )
 
   // proxy createProgram
   tsc = replace(
