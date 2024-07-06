@@ -1,5 +1,17 @@
 # vite-plugin-checker
 
+## 0.7.1
+
+### Patch Changes
+
+- 909182e: Remove extraneous non props attributes warning
+- e881c44: Bump @vitejs/plugin-vue to resolve runtime warning, see #346
+- 80ca69c: Resolve optionaltor from ESLint path, do not requires to install optionator anymore
+- 78fc007: Throw error and hint user when vue-tsc working with typescript lower than 5.0.0
+- 52423b2: sync runTsc https://github.com/volarjs/volar.js/blob/630f31118d3986c00cc730eb83cd896709fd547e/packages/typescript/lib/quickstart/runTsc.ts
+- 2a0af74: refactor: reuse codeFrame helper in logger and deduplicate code
+- 7d985e7: refactor: import `@volar/typescript` from `vue-tsc`
+
 ## 0.7.0
 
 ### Minor Changes
