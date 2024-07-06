@@ -1,38 +1,38 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`vue2-vls > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"VLS","frame":"  1 | <template>/n  2 |   <div class=/"hello/">/n> 3 |     <h1>{{ msg1 }}</h1>/n    |            ^^^^/n  4 |     <p>/n  5 |       For a guide and recipes on how to configure / customize this project,<br />/n  6 |       check out the","id":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","level":1,"loc":{"column":12,"file":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","line":3},"message":"Property 'msg1' does not exist on type 'CombinedVueInstance<ExtractComputedReturns<{}> & { msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<...>> & ShallowUnwrapRef<...> & Vue<...>, ... 7 more ..., OptionTypesType<...>>'. Did you mean 'msg'?","stack":""}]"`;
+exports[`vue2-vls > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"VLS","frame":"    1 | <template>/n    2 |   <div class=/"hello/">/n  > 3 |     <h1>{{ msg1 }}</h1>/n      |            ^^^^/n    4 |     <p>/n    5 |       For a guide and recipes on how to configure / customize this project,<br />/n    6 |       check out the","id":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","level":1,"loc":{"column":12,"file":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","line":3},"message":"Property 'msg1' does not exist on type 'CombinedVueInstance<ExtractComputedReturns<{}> & { msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<...>> & ShallowUnwrapRef<...> & Vue<...>, ... 7 more ..., OptionTypesType<...>>'. Did you mean 'msg'?","stack":""}]"`;
 
 exports[`vue2-vls > serve > get initial error and subsequent error 2`] = `
 [
   " ERROR(VLS)  Property 'msg1' does not exist on type 'CombinedVueInstance<ExtractComputedReturns<{}> & { msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<...>> & ShallowUnwrapRef<...> & Vue<...>, ... 7 more ..., OptionTypesType<...>>'. Did you mean 'msg'?
  FILE  <PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue:3:12
 
-  1 | <template>
-  2 |   <div class="hello">
-> 3 |     <h1>{{ msg1 }}</h1>
-    |            ^^^^
-  4 |     <p>
-  5 |       For a guide and recipes on how to configure / customize this project,<br />
-  6 |       check out the
+    1 | <template>
+    2 |   <div class="hello">
+  > 3 |     <h1>{{ msg1 }}</h1>
+      |            ^^^^
+    4 |     <p>
+    5 |       For a guide and recipes on how to configure / customize this project,<br />
+    6 |       check out the
 ",
   "[VLS] Found 1 error and 0 warning",
 ]
 `;
 
-exports[`vue2-vls > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"VLS","frame":"  1 | <template>/n  2 |   <div class=/"hello/">/n> 3 |     <h1>{{ msg1 }}</h1>/n    |            ^^^^/n  4 |     <p>/n  5 |       For a guide and recipes on how to configure / customize this project,<br />/n  6 |       check out the","id":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","level":1,"loc":{"column":12,"file":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","line":3},"message":"Property 'msg1' does not exist on type 'CombinedVueInstance<ExtractComputedReturns<{}> & { msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<...>> & ShallowUnwrapRef<...> & Vue<...>, ... 7 more ..., OptionTypesType<...>>'. Did you mean 'msg'?","stack":""},{"checkerId":"VLS","frame":"  1 | <template>/n  2 |   <div class=/"hello/">/n> 3 |     <h1>{{ msg2 }}</h1>/n    |            ^^^^/n  4 |     <p>/n  5 |       For a guide and recipes on how to configure / customize this project,<br />/n  6 |       check out the","id":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","level":1,"loc":{"column":12,"file":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","line":3},"message":"Property 'msg2' does not exist on type 'CombinedVueInstance<ExtractComputedReturns<{}> & { msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<...>> & ShallowUnwrapRef<...> & Vue<...>, ... 7 more ..., OptionTypesType<...>>'. Did you mean 'msg'?","stack":""}]"`;
+exports[`vue2-vls > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"VLS","frame":"    1 | <template>/n    2 |   <div class=/"hello/">/n  > 3 |     <h1>{{ msg1 }}</h1>/n      |            ^^^^/n    4 |     <p>/n    5 |       For a guide and recipes on how to configure / customize this project,<br />/n    6 |       check out the","id":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","level":1,"loc":{"column":12,"file":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","line":3},"message":"Property 'msg1' does not exist on type 'CombinedVueInstance<ExtractComputedReturns<{}> & { msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<...>> & ShallowUnwrapRef<...> & Vue<...>, ... 7 more ..., OptionTypesType<...>>'. Did you mean 'msg'?","stack":""},{"checkerId":"VLS","frame":"    1 | <template>/n    2 |   <div class=/"hello/">/n  > 3 |     <h1>{{ msg2 }}</h1>/n      |            ^^^^/n    4 |     <p>/n    5 |       For a guide and recipes on how to configure / customize this project,<br />/n    6 |       check out the","id":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","level":1,"loc":{"column":12,"file":"<PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue","line":3},"message":"Property 'msg2' does not exist on type 'CombinedVueInstance<ExtractComputedReturns<{}> & { msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<...>> & ShallowUnwrapRef<...> & Vue<...>, ... 7 more ..., OptionTypesType<...>>'. Did you mean 'msg'?","stack":""}]"`;
 
 exports[`vue2-vls > serve > get initial error and subsequent error 4`] = `
 [
   " ERROR(VLS)  Property 'msg2' does not exist on type 'CombinedVueInstance<ExtractComputedReturns<{}> & { msg: string; } & Vue<Record<string, any>, Record<string, any>, never, never, (event: string, ...args: any[]) => Vue<...>> & ShallowUnwrapRef<...> & Vue<...>, ... 7 more ..., OptionTypesType<...>>'. Did you mean 'msg'?
  FILE  <PROJECT_ROOT>/playground-temp/vls-vue2/src/components/HelloWorld.vue:3:12
 
-  1 | <template>
-  2 |   <div class="hello">
-> 3 |     <h1>{{ msg2 }}</h1>
-    |            ^^^^
-  4 |     <p>
-  5 |       For a guide and recipes on how to configure / customize this project,<br />
-  6 |       check out the
+    1 | <template>
+    2 |   <div class="hello">
+  > 3 |     <h1>{{ msg2 }}</h1>
+      |            ^^^^
+    4 |     <p>
+    5 |       For a guide and recipes on how to configure / customize this project,<br />
+    6 |       check out the
 ",
   "[VLS] Found 1 error and 0 warning",
 ]

@@ -11,9 +11,10 @@ import * as _vscodeUri from 'vscode-uri'
 const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
 import { parentPort } from 'node:worker_threads'
 
-import { type SourceLocation, codeFrameColumns } from '@babel/code-frame'
+import type { SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
+import { createFrame, lineColLocToBabelLoc, tsLikeLocToBabelLoc } from './codeFrame.js'
 import {
   ACTION_TYPES,
   type ClientDiagnosticPayload,
@@ -25,14 +26,12 @@ import { isMainThread } from './utils.js'
 const _require = createRequire(import.meta.url)
 import type { ESLint } from 'eslint'
 import type Stylelint from 'stylelint'
-import type { Range } from 'vscode-languageclient'
 import type {
   Diagnostic as LspDiagnostic,
   PublishDiagnosticsParams,
 } from 'vscode-languageclient/node'
 
 import type {
-  LineAndCharacter,
   Diagnostic as TsDiagnostic,
   flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
 } from 'typescript'
@@ -162,34 +161,6 @@ export function toClientPayload(
   }
 }
 
-export function createFrame({
-  source,
-  location,
-}: {
-  /** file source code */
-  source: string
-  location: SourceLocation
-}) {
-  const frame = codeFrameColumns(source, location, {
-    // worker tty did not fork parent process stdout, let's make a workaround
-    forceColor: true,
-  })
-    .split('\n')
-    .map((line) => `  ${line}`)
-    .join(os.EOL)
-
-  return frame
-}
-
-export function tsLocationToBabelLocation(
-  tsLoc: Record<'start' | 'end', LineAndCharacter /** 0-based */>
-): SourceLocation {
-  return {
-    start: { line: tsLoc.start.line + 1, column: tsLoc.start.character + 1 },
-    end: { line: tsLoc.end.line + 1, column: tsLoc.end.character + 1 },
-  }
-}
-
 export function wrapCheckerSummary(checkerName: string, rawSummary: string): string {
   return `[${checkerName}] ${rawSummary}`
 }
@@ -224,18 +195,15 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
   let loc: SourceLocation | undefined
   const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition?.(d.start)
   if (pos && d.file && typeof d.start === 'number' && typeof d.length === 'number') {
-    loc = tsLocationToBabelLocation({
-      start: d.file?.getLineAndCharacterOfPosition(d.start),
-      end: d.file?.getLineAndCharacterOfPosition(d.start + d.length),
+    loc = tsLikeLocToBabelLoc({
+      start: pos,
+      end: d.file.getLineAndCharacterOfPosition(d.start + d.length),
     })
   }
 
   let codeFrame: string | undefined
   if (loc) {
-    codeFrame = createFrame({
-      source: d.file!.text,
-      location: loc,
-    })
+    codeFrame = createFrame(d.file!.text, loc)
   }
 
   return {
@@ -262,8 +230,8 @@ export function normalizeLspDiagnostic({
   fileText: string
 }): NormalizedDiagnostic {
   let level = DiagnosticLevel.Error
-  const loc = lspRange2Location(diagnostic.range)
-  const codeFrame = codeFrameColumns(fileText, loc)
+  const loc = tsLikeLocToBabelLoc(diagnostic.range)
+  const codeFrame = createFrame(fileText, loc)
 
   switch (diagnostic.severity) {
     case 1: // Error
@@ -315,19 +283,6 @@ export function uriToAbsPath(documentUri: string): string {
   return URI.parse(documentUri).fsPath
 }
 
-export function lspRange2Location(range: Range): SourceLocation {
-  return {
-    start: {
-      line: range.start.line + 1,
-      column: range.start.character + 1,
-    },
-    end: {
-      line: range.end.line + 1,
-      column: range.end.character + 1,
-    },
-  }
-}
-
 /* --------------------------------- vue-tsc -------------------------------- */
 
 export function normalizeVueTscDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
@@ -360,21 +315,9 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
           break
       }
 
-      const loc: SourceLocation = {
-        start: {
-          line: d.line,
-          column: d.column,
-        },
-        end: {
-          line: d.endLine || 0,
-          column: d.endColumn,
-        },
-      }
+      const loc = lineColLocToBabelLoc(d)
 
-      const codeFrame = createFrame({
-        source: diagnostic.source ?? '',
-        location: loc,
-      })
+      const codeFrame = createFrame(diagnostic.source ?? '', loc)
 
       return {
         message: `${d.message} (${d.ruleId})`,
@@ -410,22 +353,13 @@ export function normalizeStylelintDiagnostic(
           return null
       }
 
-      const loc: SourceLocation = {
-        start: {
-          line: d.line,
-          column: d.column,
-        },
-        end: {
-          line: d.endLine || 0,
-          column: d.endColumn,
-        },
-      }
+      const loc = lineColLocToBabelLoc(d)
 
-      const codeFrame = createFrame({
+      const codeFrame = createFrame(
         // @ts-ignore
-        source: diagnostic._postcssResult.css ?? '',
-        location: loc,
-      })
+        diagnostic._postcssResult.css ?? '',
+        loc
+      )
 
       return {
         message: `${d.text} (${d.rule})`,
