@@ -26,7 +26,7 @@ export function tsLikeLocToBabelLoc(
   }
 }
 
-export function locationToBabelLocation(d: {
+export function lineColLocToBabelLoc(d: {
   line: number
   column: number
   endLine?: number

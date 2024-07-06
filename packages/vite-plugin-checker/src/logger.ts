@@ -14,7 +14,7 @@ import { parentPort } from 'node:worker_threads'
 import type { SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
-import { createFrame, locationToBabelLocation, tsLikeLocToBabelLoc } from './codeFrame.js'
+import { createFrame, lineColLocToBabelLoc, tsLikeLocToBabelLoc } from './codeFrame.js'
 import {
   ACTION_TYPES,
   type ClientDiagnosticPayload,
@@ -315,7 +315,7 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
           break
       }
 
-      const loc = locationToBabelLocation(d)
+      const loc = lineColLocToBabelLoc(d)
 
       const codeFrame = createFrame(diagnostic.source ?? '', loc)
 
@@ -353,7 +353,7 @@ export function normalizeStylelintDiagnostic(
           return null
       }
 
-      const loc = locationToBabelLocation(d)
+      const loc = lineColLocToBabelLoc(d)
 
       const codeFrame = createFrame(
         // @ts-ignore

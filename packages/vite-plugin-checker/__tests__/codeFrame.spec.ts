@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { locationToBabelLocation, tsLikeLocToBabelLoc } from '../src/codeFrame'
+import { lineColLocToBabelLoc, tsLikeLocToBabelLoc } from '../src/codeFrame'
 
 describe('code frame', () => {
   it('should add 1 offset to TS location', () => {
@@ -16,7 +16,7 @@ describe('code frame', () => {
   })
 
   it('transform location without offset', () => {
-    const babelLoc = locationToBabelLocation({
+    const babelLoc = lineColLocToBabelLoc({
       line: 1,
       column: 2,
       endLine: 3,
