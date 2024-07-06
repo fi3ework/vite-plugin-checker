@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'volarjs/volar.js'
           fetch-depth: 0
@@ -20,6 +20,7 @@ jobs:
         id: check_changes
         run: |
           CHANGED=$(git log --name-only --since="24 hours ago" --pretty=format: | sort | uniq | grep -q "packages/typescript/lib/quickstart/runTsc.ts" && echo "true" || echo "false")
+          echo "file_changed=${CHANGED}"
           echo "file_changed=${CHANGED}" >> $GITHUB_OUTPUT
 
       - name: Create issue if runTsc.ts changed
