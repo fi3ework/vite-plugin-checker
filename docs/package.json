@@ -2,6 +2,10 @@
   "private": true,
   "name": "docs",
   "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build"
+  },
   "dependencies": {
     "@vueuse/core": "^8.9.4",
     "body-scroll-lock": "4.0.0-beta.0",
