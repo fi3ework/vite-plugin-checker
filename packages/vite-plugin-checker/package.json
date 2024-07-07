@@ -96,7 +96,7 @@
     }
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.7.2",
+    "@biomejs/biome": "^1.8.3",
     "@types/eslint": "^7.2.14",
     "@types/fs-extra": "^11.0.1",
     "@vue/language-core": "^2.0.14",

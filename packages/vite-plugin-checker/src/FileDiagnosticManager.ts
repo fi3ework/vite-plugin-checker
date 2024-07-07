@@ -4,15 +4,10 @@ class FileDiagnosticManager {
   public diagnostics: NormalizedDiagnostic[] = []
 
   /**
-   * Resets the diagnostics array
+   * Initialize and reset the diagnostics array
    */
   public initWith(diagnostics: NormalizedDiagnostic[]) {
-    if (this.initialized) {
-      throw new Error('FileDiagnosticManager is already initialized')
-    }
-
     this.diagnostics = [...diagnostics]
-    this.initialized = true
   }
 
   public getDiagnostics(fileName?: string) {

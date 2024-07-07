@@ -1,8 +1,10 @@
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'node:url'
 import chokidar from 'chokidar'
 
+import path from 'node:path'
+import { parentPort } from 'node:worker_threads'
 import { Checker } from '../../Checker.js'
-import { ACTION_TYPES, DiagnosticLevel, type CreateDiagnostic } from '../../types.js'
+import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
   composeCheckerSummary,
   consoleLog,
@@ -11,15 +13,13 @@ import {
   filterLogLevel,
   toClientPayload,
 } from '../../logger.js'
-import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
-import { parentPort } from 'worker_threads'
-import path from 'path'
+import { ACTION_TYPES, type CreateDiagnostic, DiagnosticLevel } from '../../types.js'
 import { getBiomeCommand, runBiome, severityMap } from './cli.js'
 
 const __filename = fileURLToPath(import.meta.url)
 
 const manager = new FileDiagnosticManager()
-let createServeAndBuild
+let createServeAndBuild: any
 
 const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
   let overlay = true
@@ -53,9 +53,10 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
         if (terminal) {
-          diagnostics.forEach((d) => {
+          for (const d of diagnostics) {
             consoleLog(diagnosticToTerminalLog(d, 'Biome'))
-          })
+          }
+
           const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
           const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
           consoleLog(composeCheckerSummary('Biome', errorCount, warningCount))
@@ -81,11 +82,11 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
 
           if (isConfigFile) {
             const runCommand = getBiomeCommand(command, flags, root)
-            const diagnostics = await runBiome(runCommand)
+            const diagnostics = await runBiome(runCommand, root)
             manager.initWith(diagnostics)
           } else {
             const runCommand = getBiomeCommand(command, flags, absPath)
-            const diagnosticsOfChangedFile = await runBiome(runCommand)
+            const diagnosticsOfChangedFile = await runBiome(runCommand, root)
             manager.updateByFileId(absPath, diagnosticsOfChangedFile)
           }
         }
@@ -95,10 +96,9 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
 
       // initial check
       const runCommand = getBiomeCommand(command, flags, root)
-      const diagnostics = await runBiome(runCommand)
+      const diagnostics = await runBiome(runCommand, root)
 
       manager.initWith(diagnostics)
-
       dispatchDiagnostics()
 
       // watch lint
@@ -126,9 +126,9 @@ export class BiomeChecker extends Checker<'biome'> {
         buildBin: (pluginConfig) => {
           if (typeof pluginConfig.biome === 'object') {
             const { command, flags } = pluginConfig.biome
-            return ['biome', [command || 'check', flags || ''] as const]
+            return ['biome', [command || 'lint', flags || ''] as const]
           }
-          return ['biome', ['check']]
+          return ['biome', ['lint']]
         },
       },
       createDiagnostic,

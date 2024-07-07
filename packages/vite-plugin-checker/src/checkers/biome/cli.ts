@@ -1,5 +1,7 @@
-import { exec } from 'child_process'
-import { type NormalizedDiagnostic } from '../../logger.js'
+import { exec } from 'node:child_process'
+import strip from 'strip-ansi'
+import { createFrame } from '../../codeFrame.js'
+import type { NormalizedDiagnostic } from '../../logger.js'
 import { DiagnosticLevel } from '../../types.js'
 import type { BiomeOutput } from './types.js'
 
@@ -14,11 +16,17 @@ export function getBiomeCommand(command: string, flags: string, files: string) {
   return ['biome', command || 'lint', flags, defaultFlags, files].filter(Boolean).join(' ')
 }
 
-export function runBiome(command: string) {
+export function runBiome(command: string, cwd: string) {
   return new Promise<NormalizedDiagnostic[]>((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      resolve([...parseBiomeOutput(stdout)])
-    })
+    exec(
+      command,
+      {
+        cwd,
+      },
+      (error, stdout, stderr) => {
+        resolve([...parseBiomeOutput(stdout)])
+      }
+    )
   })
 }
 
@@ -31,18 +39,23 @@ function parseBiomeOutput(output: string) {
   }
 
   const diagnostics: NormalizedDiagnostic[] = parsed.diagnostics.map((d) => {
+    const loc = {
+      file: d.location.path || '',
+      start: getLineAndColumn(d.location.sourceCode, d.location.span?.[0]),
+      end: getLineAndColumn(d.location.sourceCode, d.location.span?.[1]),
+    }
+
+    const codeFrame = createFrame(d.location.sourceCode || '', loc)
+
     return {
-      level: severityMap[d.severity as keyof typeof severityMap] ?? DiagnosticLevel.Error,
       message: `[${d.category}] ${d.description}`,
       conclusion: '',
+      level: severityMap[d.severity as keyof typeof severityMap] ?? DiagnosticLevel.Error,
       checker: 'Biome',
-      id: d.location.path.file,
-      codeFrame: d.source || '',
-      loc: {
-        file: d.location.path.file,
-        start: getLineAndColumn(d.location.sourceCode, d.location.span?.[0]),
-        end: getLineAndColumn(d.location.sourceCode, d.location.span?.[1]),
-      },
+      id: d.location.path?.file,
+      codeFrame,
+      stripedCodeFrame: codeFrame && strip(codeFrame),
+      loc,
     }
   })
 
