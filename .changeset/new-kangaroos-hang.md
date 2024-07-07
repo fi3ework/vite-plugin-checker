@@ -1,5 +1,5 @@
 ---
-'vite-plugin-checker': minor
+'vite-plugin-checker': patch
 ---
 
 Added basic support for Biome
