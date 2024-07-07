@@ -40,7 +40,7 @@ function parseBiomeOutput(output: string) {
 
   const diagnostics: NormalizedDiagnostic[] = parsed.diagnostics.map((d) => {
     const loc = {
-      file: d.location.path || '',
+      file: d.location.path?.file || '',
       start: getLineAndColumn(d.location.sourceCode, d.location.span?.[0]),
       end: getLineAndColumn(d.location.sourceCode, d.location.span?.[1]),
     }

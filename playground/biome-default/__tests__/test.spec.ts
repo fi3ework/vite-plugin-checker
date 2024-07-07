@@ -7,6 +7,7 @@ import {
   isBuild,
   isServe,
   log,
+  resetDiagnostics,
   resetReceivedLog,
   sleepForEdit,
   sleepForServerReady,
@@ -22,6 +23,7 @@ describe('biome', () => {
 
       console.log('-- edit error file --')
       resetReceivedLog()
+      resetDiagnostics()
       editFile('src/index.js', (code) => code.replace(`var b = 'world'`, `const b = 'world'`))
       await sleepForEdit()
       expect(stringify(diagnostics)).toMatchSnapshot()
