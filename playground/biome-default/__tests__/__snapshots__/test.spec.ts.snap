@@ -27,10 +27,29 @@ exports[`biome > serve > get initial error and subsequent error 2`] = `
 ]
 `;
 
-exports[`biome > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"Biome","frame":"    2 | const b = 'world'/n    3 | const c = '!'/n  > 4 | var d = a + b + c/n      | ^^^^^^^^^^^^^^^^^/n    5 |","id":"<PROJECT_ROOT>/playground-temp/biome-default/src/index.js","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/biome-default/src/index.js","line":4},"message":"[lint/style/noVar] Use let or const instead of var.","stack":""}]"`;
+exports[`biome > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"Biome","frame":"    1 | const a = 'hello'/n  > 2 | var b = 'world'/n      | ^^^^^^^^^^^^^^^/n    3 | const c = '!'/n    4 | var d = a + b + c/n    5 |","id":"<PROJECT_ROOT>/playground-temp/biome-default/src/index.js","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/biome-default/src/index.js","line":2},"message":"[lint/style/noVar] Use let or const instead of var.","stack":""},{"checkerId":"Biome","frame":"    2 | var b = 'world'/n    3 | const c = '!'/n  > 4 | var d = a + b + c/n      | ^^^^^^^^^^^^^^^^^/n    5 |","id":"<PROJECT_ROOT>/playground-temp/biome-default/src/index.js","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/biome-default/src/index.js","line":4},"message":"[lint/style/noVar] Use let or const instead of var.","stack":""},{"checkerId":"Biome","frame":"    2 | const b = 'world'/n    3 | const c = '!'/n  > 4 | var d = a + b + c/n      | ^^^^^^^^^^^^^^^^^/n    5 |","id":"<PROJECT_ROOT>/playground-temp/biome-default/src/index.js","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/biome-default/src/index.js","line":4},"message":"[lint/style/noVar] Use let or const instead of var.","stack":""}]"`;
 
 exports[`biome > serve > get initial error and subsequent error 4`] = `
 [
+  " ERROR(Biome)  [lint/style/noVar] Use let or const instead of var.
+ FILE  <PROJECT_ROOT>/playground-temp/biome-default/src/index.js:2:1
+
+    1 | const a = 'hello'
+  > 2 | var b = 'world'
+      | ^^^^^^^^^^^^^^^
+    3 | const c = '!'
+    4 | var d = a + b + c
+    5 |
+",
+  " ERROR(Biome)  [lint/style/noVar] Use let or const instead of var.
+ FILE  <PROJECT_ROOT>/playground-temp/biome-default/src/index.js:4:1
+
+    2 | var b = 'world'
+    3 | const c = '!'
+  > 4 | var d = a + b + c
+      | ^^^^^^^^^^^^^^^^^
+    5 |
+",
   " ERROR(Biome)  [lint/style/noVar] Use let or const instead of var.
  FILE  <PROJECT_ROOT>/playground-temp/biome-default/src/index.js:4:1
 
@@ -40,6 +59,6 @@ exports[`biome > serve > get initial error and subsequent error 4`] = `
       | ^^^^^^^^^^^^^^^^^
     5 |
 ",
-  "[Biome] Found 1 error and 0 warning",
+  "[Biome] Found 3 errors and 0 warning",
 ]
 `;
