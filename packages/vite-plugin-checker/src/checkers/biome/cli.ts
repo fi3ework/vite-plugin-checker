@@ -1,4 +1,5 @@
 import { exec } from 'node:child_process'
+import path from 'node:path'
 import strip from 'strip-ansi'
 import { createFrame } from '../../codeFrame.js'
 import type { NormalizedDiagnostic } from '../../logger.js'
@@ -39,8 +40,11 @@ function parseBiomeOutput(output: string) {
   }
 
   const diagnostics: NormalizedDiagnostic[] = parsed.diagnostics.map((d) => {
+    let file = d.location.path?.file
+    if (file) file = path.normalize(file)
+
     const loc = {
-      file: d.location.path?.file || '',
+      file: file || '',
       start: getLineAndColumn(d.location.sourceCode, d.location.span?.[0]),
       end: getLineAndColumn(d.location.sourceCode, d.location.span?.[1]),
     }
@@ -52,7 +56,7 @@ function parseBiomeOutput(output: string) {
       conclusion: '',
       level: severityMap[d.severity as keyof typeof severityMap] ?? DiagnosticLevel.Error,
       checker: 'Biome',
-      id: d.location.path?.file,
+      id: file,
       codeFrame,
       stripedCodeFrame: codeFrame && strip(codeFrame),
       loc,

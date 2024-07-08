@@ -1,8 +1,7 @@
-import { fileURLToPath } from 'node:url'
-import chokidar from 'chokidar'
-
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
+import chokidar from 'chokidar'
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
