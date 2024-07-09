@@ -1,0 +1,13 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: ['config:recommended', 'schedule:weekly'],
+  ignorePaths: ['**/tests/**', '**/node_modules/**'],
+  ignoreDeps: [
+    // manually update some packages
+    'pnpm',
+    'typescript',
+    // align Node.js version minimum requirements
+    '@types/node',
+    'node',
+  ],
+}
