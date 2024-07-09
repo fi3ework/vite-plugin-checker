@@ -1,0 +1,9 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.0/schema.json",
+  "linter": {
+    "include": ["./src/**/*.js"],
+    "rules": {
+      "recommended": true
+    }
+  }
+}

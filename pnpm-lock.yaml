@@ -203,6 +203,9 @@ importers:
         specifier: ^3.0.2
         version: 3.0.8
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.8.3
+        version: 1.8.3
       '@types/eslint':
         specifier: ^7.2.14
         version: 7.29.0
@@ -270,6 +273,18 @@ importers:
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
+      vite:
+        specifier: ^5.3.2
+        version: 5.3.2(@types/node@16.18.101)(sass@1.77.6)
+      vite-plugin-checker:
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-checker
+
+  playground/biome-default:
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.8.3
+        version: 1.8.3
       vite:
         specifier: ^5.3.2
         version: 5.3.2(@types/node@16.18.101)(sass@1.77.6)

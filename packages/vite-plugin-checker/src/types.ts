@@ -81,6 +81,18 @@ export type StylelintConfig =
       }>
     }
 
+/** Biome checker configuration */
+export type BiomeConfig =
+  | boolean
+  | {
+      command?: 'lint' | 'check' | 'format' | 'ci'
+      flags?: string
+      dev?: Partial<{
+        /** which level of the diagnostic will be emitted from plugin */
+        logLevel: ('error' | 'warning' | 'info')[]
+      }>
+    }
+
 export enum DiagnosticLevel {
   Warning = 0,
   Error = 1,
@@ -177,6 +189,7 @@ export interface BuildInCheckers {
   vls: VlsConfig
   eslint: EslintConfig
   stylelint: StylelintConfig
+  biome: BiomeConfig
 }
 
 export type BuildInCheckerNames = keyof BuildInCheckers
