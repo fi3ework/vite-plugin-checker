@@ -84,6 +84,19 @@ async function overrideTscJs(tscJsPath: string) {
     (s) => s + `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`
   )
 
+  const extsText2 = extraSupportedExtensions.map((ext) => `"${ext}"`).join(', ')
+  tsc = replace(
+    tsc,
+    /function changeExtension\(/,
+    (s) =>
+      // biome-ignore lint/style/useTemplate: <explanation>
+      `function changeExtension(path, newExtension) {
+					return [${extsText2}].some(ext => path.endsWith(ext))
+						? path + newExtension
+						: _changeExtension(path, newExtension)
+					}\n` + s.replace('changeExtension', '_changeExtension')
+  )
+
   // proxy createProgram
   tsc = replace(
     tsc,
