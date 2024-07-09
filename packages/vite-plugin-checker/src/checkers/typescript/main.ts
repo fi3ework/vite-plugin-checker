@@ -24,6 +24,21 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true
   let terminal = true
   let currDiagnostics: DiagnosticToRuntime[] = []
+  let includePaths: string[] | undefined
+  let excludePaths: string[] | undefined
+
+  const resolveIncludeExcludePaths = (rootDir: string) => {
+    if (!pluginConfig.typescript || pluginConfig.typescript === true) {
+      return
+    }
+    const { include, exclude } = pluginConfig.typescript
+
+    const includeArr = typeof include === 'string' ? [include] : include
+    const excludeArr = typeof exclude === 'string' ? [exclude] : exclude
+
+    includePaths = includeArr?.map((includePath) => path.resolve(rootDir, includePath))
+    excludePaths = excludeArr?.map((excludePath) => path.resolve(rootDir, excludePath))
+  }
 
   return {
     config: async ({ enableOverlay, enableTerminal }) => {
@@ -59,6 +74,18 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           return
         }
 
+        const filename = diagnostic.file?.fileName
+        if (filename) {
+          if (
+            includePaths &&
+            !includePaths.some((includePath) => filename.startsWith(includePath))
+          ) {
+            return
+          }
+          if (excludePaths?.some((excludePath) => filename.startsWith(excludePath))) {
+            return
+          }
+        }
         currDiagnostics.push(diagnosticToRuntimeError(normalizedDiagnostic))
         logChunk += os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'TypeScript')
       }
@@ -92,7 +119,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
         }
 
         ensureCall(() => {
-          if (errorCount === 0) {
+          if (currDiagnostics.length === 0) {
             logChunk = ''
           }
 
@@ -100,7 +127,10 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             consoleLog(
               logChunk +
                 os.EOL +
-                wrapCheckerSummary('TypeScript', diagnostic.messageText.toString())
+                wrapCheckerSummary(
+                  'TypeScript',
+                  `Found ${currDiagnostics.length} errors. Waiting for file changes.`
+                )
             )
           }
         })
@@ -119,6 +149,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           reportWatchStatusChanged
         )
 
+        resolveIncludeExcludePaths(host.getCurrentDirectory())
         ts.createSolutionBuilderWithWatch(host, [configFile], {}).build()
       } else {
         const host = ts.createWatchCompilerHost(
@@ -130,6 +161,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           reportWatchStatusChanged
         )
 
+        resolveIncludeExcludePaths(host.getCurrentDirectory())
         ts.createWatchProgram(host)
       }
     },
