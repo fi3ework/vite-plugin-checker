@@ -43,7 +43,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const options = optionator.parse(pluginConfig.eslint.lintCommand)
       invariant(
         !options.fix,
-        'Using `--fix` in `config.eslint.lintCommand` is not allowed in vite-plugin-checker, you could using `--fix` with editor.'
+        'Using `--fix` in `config.eslint.lintCommand` is not allowed in vite-plugin-checker, you could using `--fix` with editor.',
       )
 
       const translatedOptions = translateOptions(options) as ESLint.Options
@@ -68,13 +68,18 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       let eslint: ESLint
       if (pluginConfig.eslint.useFlatConfig) {
-        const { FlatESLint, shouldUseFlatConfig } = require('eslint/use-at-your-own-risk')
+        const {
+          FlatESLint,
+          shouldUseFlatConfig,
+        } = require('eslint/use-at-your-own-risk')
         if (shouldUseFlatConfig?.()) {
           eslint = new FlatESLint({
             cwd: root,
           })
         } else {
-          throw Error('Please upgrade your eslint to latest version to use `useFlatConfig` option.')
+          throw Error(
+            'Please upgrade your eslint to latest version to use `useFlatConfig` option.',
+          )
         }
       } else {
         eslint = new ESLint(eslintOptions)
@@ -88,8 +93,12 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
             consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
           }
 
-          const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
-          const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
+          const errorCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Error,
+          ).length
+          const warningCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Warning,
+          ).length
           consoleLog(composeCheckerSummary('ESLint', errorCount, warningCount))
         }
 
@@ -98,13 +107,16 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
             type: ACTION_TYPES.overlayError,
             payload: toClientPayload(
               'eslint',
-              diagnostics.map((d) => diagnosticToRuntimeError(d))
+              diagnostics.map((d) => diagnosticToRuntimeError(d)),
             ),
           })
         }
       }
 
-      const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
+      const handleFileChange = async (
+        filePath: string,
+        type: 'change' | 'unlink',
+      ) => {
         // See: https://github.com/eslint/eslint/pull/4465
         const extension = path.extname(filePath)
         const { extensions } = eslintOptions
@@ -120,7 +132,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         } else if (type === 'change') {
           const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
           const newDiagnostics = diagnosticsOfChangedFile.flatMap((d) =>
-            normalizeEslintDiagnostic(d)
+            normalizeEslintDiagnostic(d),
           )
           manager.updateByFileId(absPath, newDiagnostics)
         }

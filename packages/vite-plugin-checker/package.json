@@ -2,8 +2,19 @@
   "name": "vite-plugin-checker",
   "version": "0.7.1",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
-  "types": "./dist/esm/main.d.ts",
-  "main": "./dist/cjs/main.js",
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "typescript"
+  ],
+  "homepage": "https://github.com/fi3ework/vite-plugin-checker",
+  "bugs": "https://github.com/fi3ework/vite-plugin-checker/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fi3ework/vite-plugin-checker.git"
+  },
+  "license": "MIT",
+  "author": "fi3ework <fi3ework@gmail.com>",
   "type": "module",
   "exports": {
     ".": {
@@ -12,9 +23,8 @@
       "require": "./dist/cjs/main.js"
     }
   },
-  "engines": {
-    "node": ">=14.16"
-  },
+  "main": "./dist/cjs/main.js",
+  "types": "./dist/esm/main.d.ts",
   "files": [
     "dist",
     "!dist/checkers/vueTsc/typescript-vue-tsc"
@@ -25,19 +35,6 @@
     "build": "tsup && node ../../scripts/patchCjs.mjs",
     "build:test": "tsup --sourcemap inline"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fi3ework/vite-plugin-checker.git"
-  },
-  "keywords": [
-    "vite",
-    "vite-plugin",
-    "typescript"
-  ],
-  "author": "fi3ework <fi3ework@gmail.com>",
-  "license": "MIT",
-  "bugs": "https://github.com/fi3ework/vite-plugin-checker/issues",
-  "homepage": "https://github.com/fi3ework/vite-plugin-checker",
   "dependencies": {
     "@babel/code-frame": "^7.12.13",
     "ansi-escapes": "^4.3.0",
@@ -53,6 +50,21 @@
     "vscode-languageserver": "^7.0.0",
     "vscode-languageserver-textdocument": "^1.0.1",
     "vscode-uri": "^3.0.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@types/eslint": "^7.2.14",
+    "@types/fs-extra": "^11.0.1",
+    "@vue/language-core": "^2.0.14",
+    "esbuild": "^0.14.27",
+    "meow": "^9.0.0",
+    "npm-run-all": "^4.1.5",
+    "stylelint": "^14.0.0",
+    "tsup": "^6.7.0",
+    "typescript": "^5.5.3",
+    "vls": "^0.8.5",
+    "vti": "^0.1.11",
+    "vue-tsc": "^2.0.14"
   },
   "peerDependencies": {
     "@biomejs/biome": ">=1.7",
@@ -76,6 +88,9 @@
     "meow": {
       "optional": true
     },
+    "optionator": {
+      "optional": true
+    },
     "stylelint": {
       "optional": true
     },
@@ -88,26 +103,11 @@
     "vti": {
       "optional": true
     },
-    "optionator": {
-      "optional": true
-    },
     "vue-tsc": {
       "optional": true
     }
   },
-  "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
-    "@types/eslint": "^7.2.14",
-    "@types/fs-extra": "^11.0.1",
-    "@vue/language-core": "^2.0.14",
-    "esbuild": "^0.14.27",
-    "meow": "^9.0.0",
-    "npm-run-all": "^4.1.5",
-    "stylelint": "^14.0.0",
-    "tsup": "^6.7.0",
-    "typescript": "^5.5.3",
-    "vls": "^0.8.5",
-    "vti": "^0.1.11",
-    "vue-tsc": "^2.0.14"
+  "engines": {
+    "node": ">=14.16"
   }
 }

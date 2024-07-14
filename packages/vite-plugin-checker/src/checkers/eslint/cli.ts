@@ -77,7 +77,9 @@ export function translateOptions({
       rules: rule,
     },
     overrideConfigFile: config,
-    reportUnusedDisableDirectives: reportUnusedDisableDirectives ? 'error' : void 0,
+    reportUnusedDisableDirectives: reportUnusedDisableDirectives
+      ? 'error'
+      : void 0,
     resolvePluginsRelativeTo,
     rulePaths: rulesdir,
     useEslintrc: eslintrc,

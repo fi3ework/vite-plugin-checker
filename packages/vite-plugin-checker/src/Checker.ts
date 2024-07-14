@@ -22,7 +22,9 @@ export interface CheckerMeta<T extends BuildInCheckerNames> {
   script?: Script<any>
 }
 
-export abstract class Checker<T extends BuildInCheckerNames> implements CheckerMeta<T> {
+export abstract class Checker<T extends BuildInCheckerNames>
+  implements CheckerMeta<T>
+{
   public static logger: ((...v: string[]) => unknown)[] = []
 
   public static log(...args: any[]) {
@@ -37,7 +39,12 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
   public build: ServeAndBuildChecker['build']
   public script?: Script<any>
 
-  public constructor({ name, absFilePath, createDiagnostic, build }: CheckerMeta<T>) {
+  public constructor({
+    name,
+    absFilePath,
+    createDiagnostic,
+    build,
+  }: CheckerMeta<T>) {
     this.name = name
     this.absFilePath = absFilePath
     this.build = build
@@ -57,7 +64,10 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
   }
 
   public initMainThread() {
-    invariant(this.script, `script should be created in 'prepare', but got ${this.script}`)
+    invariant(
+      this.script,
+      `script should be created in 'prepare', but got ${this.script}`,
+    )
 
     if (isMainThread || isInVitestEntryThread) {
       const createServeAndBuild = this.script.mainScript()
@@ -68,7 +78,10 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
   }
 
   public initWorkerThread() {
-    invariant(this.script, `script should be created in 'prepare', but got ${this.script}`)
+    invariant(
+      this.script,
+      `script should be created in 'prepare', but got ${this.script}`,
+    )
 
     if (!(isMainThread || isInVitestEntryThread)) {
       this.script.workerScript()

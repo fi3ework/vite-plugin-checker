@@ -35,7 +35,7 @@ const buildInCheckerKeys: BuildInCheckerNames[] = [
 
 async function createCheckers(
   userConfig: UserPluginConfig,
-  env: ConfigEnv
+  env: ConfigEnv,
 ): Promise<ServeAndBuildChecker[]> {
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
   const { enableBuild, overlay } = userConfig
@@ -46,7 +46,7 @@ async function createCheckers(
     if (!userConfig[name]) continue
     const { createServeAndBuild } = await import(`./checkers/${name}/main.js`)
     serveAndBuildCheckers.push(
-      createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env)
+      createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env),
     )
   }
 
@@ -57,7 +57,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   const enableBuild = userConfig?.enableBuild ?? true
   const enableOverlay = userConfig?.overlay !== false
   const enableTerminal = userConfig?.terminal !== false
-  const overlayConfig = typeof userConfig?.overlay === 'object' ? userConfig?.overlay : {}
+  const overlayConfig =
+    typeof userConfig?.overlay === 'object' ? userConfig?.overlay : {}
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
@@ -98,7 +99,9 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     configResolved(config) {
       logger = config.logger
-      baseWithOrigin = config.server.origin ? config.server.origin + config.base : config.base
+      baseWithOrigin = config.server.origin
+        ? config.server.origin + config.base
+        : config.base
       isProduction ||= config.isProduction || config.command === 'build'
       buildWatch = !!config.build.watch
     },
@@ -113,7 +116,10 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       }
     },
     resolveId(id) {
-      if (id === RUNTIME_CLIENT_RUNTIME_PATH || id === RUNTIME_CLIENT_ENTRY_PATH) {
+      if (
+        id === RUNTIME_CLIENT_RUNTIME_PATH ||
+        id === RUNTIME_CLIENT_ENTRY_PATH
+      ) {
         return wrapVirtualPrefix(id)
       }
 
@@ -157,7 +163,9 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       // spawn an async runner that we don't wait for in order to avoid blocking the build from continuing in parallel
       ;(async () => {
         const exitCodes = await Promise.all(
-          checkers.map((checker) => spawnChecker(checker, userConfig, localEnv))
+          checkers.map((checker) =>
+            spawnChecker(checker, userConfig, localEnv),
+          ),
         )
         const exitCode = exitCodes.find((code) => code !== 0) ?? 0
         // do not exit the process if run `vite build --watch`
@@ -169,7 +177,9 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     configureServer(server) {
       if (initialized) return
 
-      const latestOverlayErrors: ClientReconnectPayload['data'] = new Array(checkers.length)
+      const latestOverlayErrors: ClientReconnectPayload['data'] = new Array(
+        checkers.length,
+      )
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
       checkers.forEach((checker, index) => {
@@ -177,7 +187,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         workerConfigureServer({ root: userConfig.root || server.config.root })
         worker.on('message', (action: Action) => {
           if (action.type === ACTION_TYPES.overlayError) {
-            latestOverlayErrors[index] = action.payload as ClientDiagnosticPayload
+            latestOverlayErrors[index] =
+              action.payload as ClientDiagnosticPayload
             if (action.payload) {
               server.ws.send('vite-plugin-checker', action.payload)
             }
@@ -209,8 +220,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         setTimeout(() => {
           logger!.warn(
             chalk.yellow(
-              '[vite-plugin-checker]: `server.ws.on` is introduced to Vite in 2.6.8, see [PR](https://github.com/vitejs/vite/pull/5273) and [changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). \nvite-plugin-checker relies on `server.ws.on` to send overlay message to client. Support for Vite < 2.6.8 will be removed in the next major version release.'
-            )
+              '[vite-plugin-checker]: `server.ws.on` is introduced to Vite in 2.6.8, see [PR](https://github.com/vitejs/vite/pull/5273) and [changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). \nvite-plugin-checker relies on `server.ws.on` to send overlay message to client. Support for Vite < 2.6.8 will be removed in the next major version release.',
+            ),
           )
           // make a delay to avoid flush by Vite's console
         }, 5000)
@@ -222,7 +233,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
 function spawnChecker(
   checker: ServeAndBuildChecker,
   userConfig: Partial<PluginConfig>,
-  localEnv: npmRunPath.ProcessEnv
+  localEnv: npmRunPath.ProcessEnv,
 ) {
   return new Promise<number>((resolve) => {
     const buildBin = checker.build.buildBin

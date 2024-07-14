@@ -11,9 +11,12 @@ const _require = createRequire(import.meta.url)
 const _filename = fileURLToPath(import.meta.url)
 const _dirname = dirname(_filename)
 const vueTscDir = dirname(_require.resolve('vue-tsc/package.json'))
-const proxyApiPath = _require.resolve('@volar/typescript/lib/node/proxyCreateProgram', {
-  paths: [vueTscDir],
-})
+const proxyApiPath = _require.resolve(
+  '@volar/typescript/lib/node/proxyCreateProgram',
+  {
+    paths: [vueTscDir],
+  },
+)
 const extraSupportedExtensions = ['.vue']
 
 export async function prepareVueTsc() {
@@ -25,18 +28,23 @@ export async function prepareVueTsc() {
   const tsMajorVersion = Number(currTsVersion.split('.')[0])
   if (tsMajorVersion < 5) {
     throw new Error(
-      "\x1b[35m[vite-plugin-checker] Since 0.7.0, vue-tsc checkers requires TypeScript 5.0.0 or newer version.\nPlease upgrade TypeScript, or use v0.6.4 which works with vue-tsc^1 if you can't upgrade. Check the pull request https://github.com/fi3ework/vite-plugin-checker/pull/327 for detail.\x1b[39m\n"
+      "\x1b[35m[vite-plugin-checker] Since 0.7.0, vue-tsc checkers requires TypeScript 5.0.0 or newer version.\nPlease upgrade TypeScript, or use v0.6.4 which works with vue-tsc^1 if you can't upgrade. Check the pull request https://github.com/fi3ework/vite-plugin-checker/pull/327 for detail.\x1b[39m\n",
     )
   }
 
   let shouldBuildFixture = true
   try {
     await access(targetTsDir)
-    const targetTsVersion = _require(path.resolve(targetTsDir, 'package.json')).version
+    const targetTsVersion = _require(
+      path.resolve(targetTsDir, 'package.json'),
+    ).version
     // check fixture versions before re-use
     await access(vueTscFlagFile)
     const fixtureFlagContent = await readFile(vueTscFlagFile, 'utf8')
-    if (targetTsVersion === currTsVersion && fixtureFlagContent === proxyApiPath) {
+    if (
+      targetTsVersion === currTsVersion &&
+      fixtureFlagContent === proxyApiPath
+    ) {
       shouldBuildFixture = false
     }
   } catch (e) {
@@ -52,7 +60,9 @@ export async function prepareVueTsc() {
     await writeFile(vueTscFlagFile, proxyApiPath)
 
     // 2. sync modification of lib/tsc.js with vue-tsc
-    await overrideTscJs(_require.resolve(path.resolve(targetTsDir, 'lib/typescript.js')))
+    await overrideTscJs(
+      _require.resolve(path.resolve(targetTsDir, 'lib/typescript.js')),
+    )
   }
 
   return { targetTsDir }
@@ -68,20 +78,26 @@ async function overrideTscJs(tscJsPath: string) {
   tsc = replace(
     tsc,
     /supportedTSExtensions = .*(?=;)/,
-    // biome-ignore lint/style/useTemplate: <explanation>
-    (s) => s + `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`
+    (s) =>
+      // biome-ignore lint/style/useTemplate: <explanation>
+      s +
+      `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`,
   )
   tsc = replace(
     tsc,
     /supportedJSExtensions = .*(?=;)/,
-    // biome-ignore lint/style/useTemplate: <explanation>
-    (s) => s + `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`
+    (s) =>
+      // biome-ignore lint/style/useTemplate: <explanation>
+      s +
+      `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`,
   )
   tsc = replace(
     tsc,
     /allSupportedExtensions = .*(?=;)/,
-    // biome-ignore lint/style/useTemplate: <explanation>
-    (s) => s + `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`
+    (s) =>
+      // biome-ignore lint/style/useTemplate: <explanation>
+      s +
+      `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`,
   )
 
   const extsText2 = extraSupportedExtensions.map((ext) => `"${ext}"`).join(', ')
@@ -94,7 +110,7 @@ async function overrideTscJs(tscJsPath: string) {
 					return [${extsText2}].some(ext => path.endsWith(ext))
 						? path + newExtension
 						: _changeExtension(path, newExtension)
-					}\n` + s.replace('changeExtension', '_changeExtension')
+					}\n` + s.replace('changeExtension', '_changeExtension'),
   )
 
   // proxy createProgram
@@ -102,14 +118,19 @@ async function overrideTscJs(tscJsPath: string) {
     tsc,
     /function createProgram\(.+\) {/,
     (s) =>
-      `var createProgram = require(${JSON.stringify(proxyApiPath)}).proxyCreateProgram(${[
+      `var createProgram = require(${JSON.stringify(
+        proxyApiPath,
+      )}).proxyCreateProgram(${[
         'new Proxy({}, { get(_target, p, _receiver) { return eval(p); } } )',
         '_createProgram',
         `require(${JSON.stringify(languagePluginsFile)}).getLanguagePlugins`,
-      ].join(', ')});\n${s.replace('createProgram', '_createProgram')}`
+      ].join(', ')});\n${s.replace('createProgram', '_createProgram')}`,
   )
 
-  function replace(_text: string, ...[search, replace]: Parameters<string['replace']>) {
+  function replace(
+    _text: string,
+    ...[search, replace]: Parameters<string['replace']>
+  ) {
     const before = _text
     const text = _text.replace(search, replace)
     const after = text

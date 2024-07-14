@@ -20,7 +20,8 @@ export default defineConfig({
     globals: true,
     reporters: 'dot',
     onConsoleLog(log) {
-      if (log.match(/experimental|jit engine|emitted file|tailwind/i)) return false
+      if (log.match(/experimental|jit engine|emitted file|tailwind/i))
+        return false
     },
   },
   esbuild: {

@@ -1,8 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
   "organizeImports": {
-    "enabled": true,
-    "include": ["./**/*.js", "./**/*.jsx", "./**/*.ts", "./**/*.tsx", "./**/*.mjs", "./**/*.cjs"]
+    "include": [
+      "./**/*.js",
+      "./**/*.jsx",
+      "./**/*.ts",
+      "./**/*.tsx",
+      "./**/*.mjs",
+      "./**/*.cjs"
+    ]
   },
   "vcs": {
     "enabled": true,
@@ -15,12 +21,19 @@
       "*.vue",
       "playground",
       "packages/vite-plugin-checker/src/checkers/eslint/options.ts",
-      "packages/vite-plugin-checker/src/checkers/stylelint/options.ts"
+      "packages/vite-plugin-checker/src/checkers/stylelint/options.ts",
+      "playground/*/src/**/*.*"
     ],
     "ignoreUnknown": true
   },
   "formatter": {
-    "enabled": false
+    "indentStyle": "space"
+  },
+  "javascript": {
+    "formatter": {
+      "semicolons": "asNeeded",
+      "quoteStyle": "single"
+    }
   },
   "linter": {
     "enabled": true,

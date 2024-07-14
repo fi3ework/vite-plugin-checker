@@ -34,27 +34,33 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
     async configureServer({ root }) {
       const workDir: string = root
 
-      const onDispatchDiagnosticsSummary: DiagnosticOptions['onDispatchDiagnosticsSummary'] = (
-        errorCount,
-        warningCount
-      ) => {
-        if (!terminal) return
+      const onDispatchDiagnosticsSummary: DiagnosticOptions['onDispatchDiagnosticsSummary'] =
+        (errorCount, warningCount) => {
+          if (!terminal) return
 
-        consoleLog(composeCheckerSummary('VLS', errorCount, warningCount))
-      }
-
-      const onDispatchDiagnostics: DiagnosticOptions['onDispatchDiagnostics'] = (normalized) => {
-        if (overlay && command === 'serve') {
-          parentPort?.postMessage({
-            type: ACTION_TYPES.overlayError,
-            payload: toClientPayload('vls', diagnosticToRuntimeError(normalized)),
-          })
+          consoleLog(composeCheckerSummary('VLS', errorCount, warningCount))
         }
 
-        if (terminal) {
-          consoleLog(normalized.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
+      const onDispatchDiagnostics: DiagnosticOptions['onDispatchDiagnostics'] =
+        (normalized) => {
+          if (overlay && command === 'serve') {
+            parentPort?.postMessage({
+              type: ACTION_TYPES.overlayError,
+              payload: toClientPayload(
+                'vls',
+                diagnosticToRuntimeError(normalized),
+              ),
+            })
+          }
+
+          if (terminal) {
+            consoleLog(
+              normalized
+                .map((d) => diagnosticToTerminalLog(d, 'VLS'))
+                .join(os.EOL),
+            )
+          }
         }
-      }
 
       const vlsConfig = pluginConfig?.vls
       await diagnostics(workDir, 'WARN', {

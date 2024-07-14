@@ -7,11 +7,14 @@ const __dirname = dirname(__filename)
 
 async function main() {
   await fs.outputJson(
-    path.resolve(__dirname, '../packages/vite-plugin-checker/dist/cjs/package.json'),
+    path.resolve(
+      __dirname,
+      '../packages/vite-plugin-checker/dist/cjs/package.json',
+    ),
     { type: 'commonjs' },
     {
       spaces: 2,
-    }
+    },
   )
 }
 

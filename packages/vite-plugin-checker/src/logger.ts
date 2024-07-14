@@ -14,7 +14,11 @@ import { parentPort } from 'node:worker_threads'
 import type { SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
-import { createFrame, lineColLocToBabelLoc, tsLikeLocToBabelLoc } from './codeFrame.js'
+import {
+  createFrame,
+  lineColLocToBabelLoc,
+  tsLikeLocToBabelLoc,
+} from './codeFrame.js'
 import {
   ACTION_TYPES,
   type ClientDiagnosticPayload,
@@ -66,15 +70,15 @@ const defaultLogLevel = [
 
 export function filterLogLevel(
   diagnostics: NormalizedDiagnostic,
-  level?: DiagnosticLevel[]
+  level?: DiagnosticLevel[],
 ): NormalizedDiagnostic | null
 export function filterLogLevel(
   diagnostics: NormalizedDiagnostic[],
-  level?: DiagnosticLevel[]
+  level?: DiagnosticLevel[],
 ): NormalizedDiagnostic[]
 export function filterLogLevel(
   diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[],
-  level: DiagnosticLevel[] = defaultLogLevel
+  level: DiagnosticLevel[] = defaultLogLevel,
 ): NormalizedDiagnostic | null | NormalizedDiagnostic[] {
   if (Array.isArray(diagnostics)) {
     return diagnostics.filter((d) => {
@@ -88,16 +92,22 @@ export function filterLogLevel(
 
 export function diagnosticToTerminalLog(
   d: NormalizedDiagnostic,
-  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint' | 'Stylelint' | 'Biome'
+  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint' | 'Stylelint' | 'Biome',
 ): string {
   const nameInLabel = name ? `(${name})` : ''
   const boldBlack = chalk.bold.rgb(0, 0, 0)
 
   const labelMap: Record<DiagnosticLevel, string> = {
     [DiagnosticLevel.Error]: boldBlack.bgRedBright(` ERROR${nameInLabel} `),
-    [DiagnosticLevel.Warning]: boldBlack.bgYellowBright(` WARNING${nameInLabel} `),
-    [DiagnosticLevel.Suggestion]: boldBlack.bgBlueBright(` SUGGESTION${nameInLabel} `),
-    [DiagnosticLevel.Message]: boldBlack.bgCyanBright(` MESSAGE${nameInLabel} `),
+    [DiagnosticLevel.Warning]: boldBlack.bgYellowBright(
+      ` WARNING${nameInLabel} `,
+    ),
+    [DiagnosticLevel.Suggestion]: boldBlack.bgBlueBright(
+      ` SUGGESTION${nameInLabel} `,
+    ),
+    [DiagnosticLevel.Message]: boldBlack.bgCyanBright(
+      ` MESSAGE${nameInLabel} `,
+    ),
   }
 
   const levelLabel = labelMap[d.level ?? DiagnosticLevel.Error]
@@ -116,12 +126,18 @@ export function diagnosticToTerminalLog(
     .join(os.EOL)
 }
 
-export function diagnosticToRuntimeError(d: NormalizedDiagnostic): DiagnosticToRuntime
-export function diagnosticToRuntimeError(d: NormalizedDiagnostic[]): DiagnosticToRuntime[]
 export function diagnosticToRuntimeError(
-  diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[]
+  d: NormalizedDiagnostic,
+): DiagnosticToRuntime
+export function diagnosticToRuntimeError(
+  d: NormalizedDiagnostic[],
+): DiagnosticToRuntime[]
+export function diagnosticToRuntimeError(
+  diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[],
 ): DiagnosticToRuntime | DiagnosticToRuntime[] {
-  const diagnosticsArray = Array.isArray(diagnostics) ? diagnostics : [diagnostics]
+  const diagnosticsArray = Array.isArray(diagnostics)
+    ? diagnostics
+    : [diagnostics]
 
   const results: DiagnosticToRuntime[] = diagnosticsArray.map((d) => {
     let loc: DiagnosticToRuntime['loc']
@@ -136,7 +152,11 @@ export function diagnosticToRuntimeError(
     return {
       message: d.message ?? '',
       stack:
-        typeof d.stack === 'string' ? d.stack : Array.isArray(d.stack) ? d.stack.join(os.EOL) : '',
+        typeof d.stack === 'string'
+          ? d.stack
+          : Array.isArray(d.stack)
+            ? d.stack.join(os.EOL)
+            : '',
       id: d.id,
       frame: d.stripedCodeFrame,
       checkerId: d.checker,
@@ -150,7 +170,7 @@ export function diagnosticToRuntimeError(
 
 export function toClientPayload(
   id: string,
-  diagnostics: DiagnosticToRuntime[]
+  diagnostics: DiagnosticToRuntime[],
 ): ClientDiagnosticPayload {
   return {
     event: WS_CHECKER_ERROR_EVENT,
@@ -161,14 +181,17 @@ export function toClientPayload(
   }
 }
 
-export function wrapCheckerSummary(checkerName: string, rawSummary: string): string {
+export function wrapCheckerSummary(
+  checkerName: string,
+  rawSummary: string,
+): string {
   return `[${checkerName}] ${rawSummary}`
 }
 
 export function composeCheckerSummary(
   checkerName: string,
   errorCount: number,
-  warningCount: number
+  warningCount: number,
 ): string {
   const message = `Found ${errorCount} error${
     errorCount > 1 ? 's' : ''
@@ -193,8 +216,16 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
   const message = flattenDiagnosticMessageText(d.messageText, os.EOL)
 
   let loc: SourceLocation | undefined
-  const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition?.(d.start)
-  if (pos && d.file && typeof d.start === 'number' && typeof d.length === 'number') {
+  const pos =
+    d.start === undefined
+      ? null
+      : d.file?.getLineAndCharacterOfPosition?.(d.start)
+  if (
+    pos &&
+    d.file &&
+    typeof d.start === 'number' &&
+    typeof d.length === 'number'
+  ) {
     loc = tsLikeLocToBabelLoc({
       start: pos,
       end: d.file.getLineAndCharacterOfPosition(d.start + d.length),
@@ -261,7 +292,7 @@ export function normalizeLspDiagnostic({
 }
 
 export async function normalizePublishDiagnosticParams(
-  publishDiagnostics: PublishDiagnosticsParams
+  publishDiagnostics: PublishDiagnosticsParams,
 ): Promise<NormalizedDiagnostic[]> {
   const diagnostics = publishDiagnostics.diagnostics
   const absFilePath = uriToAbsPath(publishDiagnostics.uri)
@@ -285,7 +316,9 @@ export function uriToAbsPath(documentUri: string): string {
 
 /* --------------------------------- vue-tsc -------------------------------- */
 
-export function normalizeVueTscDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
+export function normalizeVueTscDiagnostic(
+  d: TsDiagnostic,
+): NormalizedDiagnostic {
   const diagnostic = normalizeTsDiagnostic(d)
   diagnostic.checker = 'vue-tsc'
   return diagnostic
@@ -294,12 +327,14 @@ export function normalizeVueTscDiagnostic(d: TsDiagnostic): NormalizedDiagnostic
 /* --------------------------------- ESLint --------------------------------- */
 
 const isNormalizedDiagnostic = (
-  d: NormalizedDiagnostic | null | undefined
+  d: NormalizedDiagnostic | null | undefined,
 ): d is NormalizedDiagnostic => {
   return Boolean(d)
 }
 
-export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): NormalizedDiagnostic[] {
+export function normalizeEslintDiagnostic(
+  diagnostic: ESLint.LintResult,
+): NormalizedDiagnostic[] {
   return diagnostic.messages
     .map((d) => {
       let level = DiagnosticLevel.Error
@@ -336,7 +371,7 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
 /* --------------------------------- Stylelint --------------------------------- */
 
 export function normalizeStylelintDiagnostic(
-  diagnostic: Stylelint.LintResult
+  diagnostic: Stylelint.LintResult,
 ): NormalizedDiagnostic[] {
   return diagnostic.warnings
     .map((d) => {
@@ -358,7 +393,7 @@ export function normalizeStylelintDiagnostic(
       const codeFrame = createFrame(
         // @ts-ignore
         diagnostic._postcssResult.css ?? '',
-        loc
+        loc,
       )
 
       return {

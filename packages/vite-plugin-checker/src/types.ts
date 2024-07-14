@@ -282,7 +282,9 @@ export type Action =
 
 export type BuildCheckBin = BuildCheckBinStr | BuildCheckBinFn
 export type BuildCheckBinStr = [string, ReadonlyArray<string>]
-export type BuildCheckBinFn = (config: UserPluginConfig) => [string, ReadonlyArray<string>]
+export type BuildCheckBinFn = (
+  config: UserPluginConfig,
+) => [string, ReadonlyArray<string>]
 
 export interface ConfigureServeChecker {
   worker: Worker
@@ -309,7 +311,7 @@ export interface CheckerDiagnostic {
 }
 
 export type CreateDiagnostic<T extends BuildInCheckerNames = any> = (
-  config: Pick<BuildInCheckers, T> & SharedConfig
+  config: Pick<BuildInCheckers, T> & SharedConfig,
 ) => CheckerDiagnostic
 
 /* ----------------------------- generic utility types ----------------------------- */
