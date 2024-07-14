@@ -1,7 +1,10 @@
 import path from 'node:path'
 import fs from 'fs-extra'
 
-const tempRuntimePath = path.resolve(__dirname, '../packages/vite-plugin-checker/src/@runtime')
+const tempRuntimePath = path.resolve(
+  __dirname,
+  '../packages/vite-plugin-checker/src/@runtime',
+)
 
 export async function setup(): Promise<void> {
   await fs.ensureDir(tempRuntimePath)
@@ -11,7 +14,7 @@ export async function setup(): Promise<void> {
     tempRuntimePath,
     {
       dereference: false,
-    }
+    },
   )
 }
 

@@ -23,7 +23,10 @@ interface WorkerScriptOptions {
 }
 
 export interface Script<T> {
-  mainScript: () => (config: T & SharedConfig, env: ConfigEnv) => ServeAndBuildChecker
+  mainScript: () => (
+    config: T & SharedConfig,
+    env: ConfigEnv,
+  ) => ServeAndBuildChecker
   workerScript: () => void
 }
 
@@ -39,7 +42,7 @@ export function createScript<T extends Partial<BuildInCheckers>>({
       // initialized in main thread
       const createWorker = (
         checkerConfig: CheckerConfig,
-        env: ConfigEnv
+        env: ConfigEnv,
       ): ConfigureServeChecker => {
         const isBuild = env.command === 'build'
         const worker = new Worker(absFilename, {
@@ -52,7 +55,10 @@ export function createScript<T extends Partial<BuildInCheckers>>({
           config: (config) => {
             if (isBuild) return // just run the command
 
-            const configAction: ConfigAction = { type: ACTION_TYPES.config, payload: config }
+            const configAction: ConfigAction = {
+              type: ACTION_TYPES.config,
+              payload: config,
+            }
             worker.postMessage(configAction)
           },
           configureServer: (serverConfig) => {
@@ -76,7 +82,8 @@ export function createScript<T extends Partial<BuildInCheckers>>({
     workerScript: () => {
       // runs in worker thread
       let diagnostic: CheckerDiagnostic | null = null
-      if (!parentPort) throw Error('should have parentPort as file runs in worker thread')
+      if (!parentPort)
+        throw Error('should have parentPort as file runs in worker thread')
       const isBuild = workerData.env.command === 'build'
       // only run bin command and do not listen message in build mode
 
@@ -92,14 +99,16 @@ export function createScript<T extends Partial<BuildInCheckers>>({
             }
             case ACTION_TYPES.configureServer:
               if (!diagnostic)
-                throw Error('diagnostic should be initialized in `config` hook of Vite')
+                throw Error(
+                  'diagnostic should be initialized in `config` hook of Vite',
+                )
               diagnostic.configureServer(action.payload)
               break
             case ACTION_TYPES.unref:
               port.unref()
               break
           }
-        }
+        },
       )
 
       if (isBuild) {

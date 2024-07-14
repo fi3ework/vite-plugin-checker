@@ -3,7 +3,8 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   lang: 'en-US',
   title: 'vite-plugin-checker',
-  description: 'Vite plugin that provide checks of TypeScript, ESLint, Biome, vue-tsc, and more.',
+  description:
+    'Vite plugin that provide checks of TypeScript, ESLint, Biome, vue-tsc, and more.',
   lastUpdated: true,
   themeConfig: {
     outline: 'deep',
@@ -11,11 +12,15 @@ export default defineConfig({
       '/': sidebar(),
     },
     editLink: {
-      pattern: 'https://github.com/fi3ework/vite-plugin-checker/edit/main/docs/:path',
+      pattern:
+        'https://github.com/fi3ework/vite-plugin-checker/edit/main/docs/:path',
       text: 'Edit this page on GitHub',
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/fi3ework/vite-plugin-checker' },
+      {
+        icon: 'github',
+        link: 'https://github.com/fi3ework/vite-plugin-checker',
+      },
       {
         icon: 'npm',
         link: 'https://www.npmjs.com/package/vite-plugin-checker',

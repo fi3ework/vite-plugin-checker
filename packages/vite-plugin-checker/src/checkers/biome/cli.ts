@@ -17,10 +17,12 @@ export function getBiomeCommand(command: string, flags: string, files: string) {
   if (flags.includes('--flags')) {
     throw Error(
       `vite-plugin-checker will force append "--reporter json" to the flags in dev mode, please don't use "--flags" in "config.biome.flags".
-If you need to customize "--flags" in build mode, please use "config.biome.build.flags" instead.`
+If you need to customize "--flags" in build mode, please use "config.biome.build.flags" instead.`,
     )
   }
-  return ['biome', command, flags, defaultFlags, files].filter(Boolean).join(' ')
+  return ['biome', command, flags, defaultFlags, files]
+    .filter(Boolean)
+    .join(' ')
 }
 
 export function runBiome(command: string, cwd: string) {
@@ -32,7 +34,7 @@ export function runBiome(command: string, cwd: string) {
       },
       (error, stdout, stderr) => {
         resolve([...parseBiomeOutput(stdout)])
-      }
+      },
     )
   })
 }
@@ -60,7 +62,9 @@ function parseBiomeOutput(output: string) {
     return {
       message: `[${d.category}] ${d.description}`,
       conclusion: '',
-      level: severityMap[d.severity as keyof typeof severityMap] ?? DiagnosticLevel.Error,
+      level:
+        severityMap[d.severity as keyof typeof severityMap] ??
+        DiagnosticLevel.Error,
       checker: 'Biome',
       id: file,
       codeFrame,

@@ -25,7 +25,7 @@ export default defineConfig([
     async onSuccess() {
       await copyFile(
         'src/checkers/vueTsc/languagePlugins.cjs',
-        'dist/cjs/checkers/vueTsc/languagePlugins.cjs'
+        'dist/cjs/checkers/vueTsc/languagePlugins.cjs',
       )
     },
     ...shared,
@@ -36,7 +36,7 @@ export default defineConfig([
     async onSuccess() {
       await copyFile(
         'src/checkers/vueTsc/languagePlugins.cjs',
-        'dist/esm/checkers/vueTsc/languagePlugins.cjs'
+        'dist/esm/checkers/vueTsc/languagePlugins.cjs',
       )
     },
     ...shared,

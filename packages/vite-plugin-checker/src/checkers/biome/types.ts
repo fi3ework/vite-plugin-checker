@@ -6,7 +6,12 @@ export interface BiomeOutput {
  * The following code are copied from https://www.npmjs.com/package/@biomejs/wasm-nodejs/v/1.8.3?activeTab=code
  */
 
-type DiagnosticTag = 'fixable' | 'internal' | 'unnecessaryCode' | 'deprecatedCode' | 'verbose'
+type DiagnosticTag =
+  | 'fixable'
+  | 'internal'
+  | 'unnecessaryCode'
+  | 'deprecatedCode'
+  | 'verbose'
 type DiagnosticTags = DiagnosticTag[]
 // NOTE: only use { file: string } for now
 // type Resource_for_String = 'argv' | 'memory' | { file: string }

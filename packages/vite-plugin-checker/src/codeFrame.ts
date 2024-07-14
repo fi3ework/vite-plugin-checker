@@ -18,7 +18,10 @@ export function createFrame(source: string, location: SourceLocation): string {
 }
 
 export function tsLikeLocToBabelLoc(
-  tsLoc: Record<'start' | 'end', { line: number; character: number } /** 0-based */>
+  tsLoc: Record<
+    'start' | 'end',
+    { line: number; character: number } /** 0-based */
+  >,
 ): SourceLocation {
   return {
     start: { line: tsLoc.start.line + 1, column: tsLoc.start.character + 1 },

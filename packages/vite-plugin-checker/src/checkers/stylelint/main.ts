@@ -37,7 +37,9 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
     async configureServer({ root }) {
       if (!pluginConfig.stylelint) return
 
-      const translatedOptions = await translateOptions(pluginConfig.stylelint.lintCommand)
+      const translatedOptions = await translateOptions(
+        pluginConfig.stylelint.lintCommand,
+      )
       const baseConfig = {
         cwd: root,
         ...translatedOptions,
@@ -63,9 +65,15 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
             consoleLog(diagnosticToTerminalLog(d, 'Stylelint'))
           }
 
-          const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
-          const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
-          consoleLog(composeCheckerSummary('Stylelint', errorCount, warningCount))
+          const errorCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Error,
+          ).length
+          const warningCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Warning,
+          ).length
+          consoleLog(
+            composeCheckerSummary('Stylelint', errorCount, warningCount),
+          )
         }
 
         if (overlay) {
@@ -73,13 +81,16 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
             type: ACTION_TYPES.overlayError,
             payload: toClientPayload(
               'stylelint',
-              diagnostics.map((d) => diagnosticToRuntimeError(d))
+              diagnostics.map((d) => diagnosticToRuntimeError(d)),
             ),
           })
         }
       }
 
-      const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
+      const handleFileChange = async (
+        filePath: string,
+        type: 'change' | 'unlink',
+      ) => {
         const absPath = path.resolve(root, filePath)
 
         if (type === 'unlink') {
@@ -90,7 +101,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
             files: filePath,
           })
           const newDiagnostics = diagnosticsOfChangedFile.flatMap((d) =>
-            normalizeStylelintDiagnostic(d)
+            normalizeStylelintDiagnostic(d),
           )
           manager.updateByFileId(absPath, newDiagnostics)
         }
@@ -104,7 +115,9 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         ...pluginConfig.stylelint.dev?.overrideConfig,
       })
 
-      manager.initWith(diagnostics.flatMap((p) => normalizeStylelintDiagnostic(p)))
+      manager.initWith(
+        diagnostics.flatMap((p) => normalizeStylelintDiagnostic(p)),
+      )
       dispatchDiagnostics()
 
       // watch lint

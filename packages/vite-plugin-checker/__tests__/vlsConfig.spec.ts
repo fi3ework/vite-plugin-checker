@@ -3,19 +3,19 @@ import { describe, expect, it } from 'vitest'
 import { ShutdownRequest } from 'vscode-languageserver/node'
 import { URI } from 'vscode-uri'
 
-import { logLevel2Severity, prepareClientConnection } from '../src/checkers/vls/diagnostics'
+import {
+  logLevel2Severity,
+  prepareClientConnection,
+} from '../src/checkers/vls/diagnostics'
 
 async function testVslConfig(overrideConfig?: any) {
   const workspaceUri = URI.file(path.join(__dirname, 'fixtures'))
-  const { clientConnection, serverConnection, vls, up, down } = await prepareClientConnection(
-    workspaceUri,
-    logLevel2Severity.WARN,
-    {
+  const { clientConnection, serverConnection, vls, up, down } =
+    await prepareClientConnection(workspaceUri, logLevel2Severity.WARN, {
       watch: false,
       verbose: false,
       config: overrideConfig || null,
-    }
-  )
+    })
 
   // @ts-expect-error
   expect(vls.workspaceConfig).toMatchSnapshot()

@@ -40,7 +40,7 @@ enum DOC_VERSION {
   init = -1,
 }
 
-export type LogLevel = typeof logLevels[number]
+export type LogLevel = (typeof logLevels)[number]
 export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 
 let disposeSuppressConsole: ReturnType<typeof suppressConsole>
@@ -60,13 +60,16 @@ export interface DiagnosticOptions {
   verbose: boolean
   config: DeepPartial<VlsOptions> | null
   onDispatchDiagnostics?: (normalized: NormalizedDiagnostic[]) => void
-  onDispatchDiagnosticsSummary?: (errorCount: number, warningCount: number) => void
+  onDispatchDiagnosticsSummary?: (
+    errorCount: number,
+    warningCount: number,
+  ) => void
 }
 
 export async function diagnostics(
   workspace: string | null,
   logLevel: LogLevel,
-  options: DiagnosticOptions = { watch: false, verbose: false, config: null }
+  options: DiagnosticOptions = { watch: false, verbose: false, config: null },
 ) {
   if (options.verbose) {
     console.log('====================================')
@@ -79,11 +82,17 @@ export async function diagnostics(
     console.log(`Loading Vetur in workspace path: ${chalk.green(absPath)}`)
     workspaceUri = URI.file(absPath)
   } else {
-    console.log(`Loading Vetur in current directory: ${chalk.green(process.cwd())}`)
+    console.log(
+      `Loading Vetur in current directory: ${chalk.green(process.cwd())}`,
+    )
     workspaceUri = URI.file(process.cwd())
   }
 
-  const result = await getDiagnostics(workspaceUri, logLevel2Severity[logLevel], options)
+  const result = await getDiagnostics(
+    workspaceUri,
+    logLevel2Severity[logLevel],
+    options,
+  )
 
   if (options.verbose) {
     console.log('====================================')
@@ -92,7 +101,10 @@ export async function diagnostics(
   // dispatch error summary in build mode
   if (!options.watch && typeof result === 'object' && result !== null) {
     const { initialErrorCount, initialWarningCount } = result
-    options?.onDispatchDiagnosticsSummary?.(initialErrorCount, initialWarningCount)
+    options?.onDispatchDiagnosticsSummary?.(
+      initialErrorCount,
+      initialWarningCount,
+    )
     process.exit(initialErrorCount > 0 ? 1 : 0)
   }
 }
@@ -127,7 +139,7 @@ function suppressConsole() {
 export async function prepareClientConnection(
   workspaceUri: URI,
   severity: DiagnosticSeverity,
-  options: DiagnosticOptions
+  options: DiagnosticOptions,
 ) {
   const up = new TestStream()
   const down = new TestStream()
@@ -136,12 +148,12 @@ export async function prepareClientConnection(
   const clientConnection = createProtocolConnection(
     new StreamMessageReader(down),
     new StreamMessageWriter(up),
-    logger
+    logger,
   )
 
   const serverConnection = createConnection(
     new StreamMessageReader(up),
-    new StreamMessageWriter(down)
+    new StreamMessageWriter(down),
   )
 
   // hijack sendDiagnostics
@@ -152,13 +164,21 @@ export async function prepareClientConnection(
     }
 
     const absFilePath = URI.parse(publishDiagnostics.uri).fsPath
-    publishDiagnostics.diagnostics = filterDiagnostics(publishDiagnostics.diagnostics, severity)
-    const nextDiagnosticInFile = await normalizePublishDiagnosticParams(publishDiagnostics)
+    publishDiagnostics.diagnostics = filterDiagnostics(
+      publishDiagnostics.diagnostics,
+      severity,
+    )
+    const nextDiagnosticInFile =
+      await normalizePublishDiagnosticParams(publishDiagnostics)
     fileDiagnosticManager.updateByFileId(absFilePath, nextDiagnosticInFile)
 
     const normalized = fileDiagnosticManager.getDiagnostics()
-    const errorCount = normalized.filter((d) => d.level === DiagnosticSeverity.Error).length
-    const warningCount = normalized.filter((d) => d.level === DiagnosticSeverity.Warning).length
+    const errorCount = normalized.filter(
+      (d) => d.level === DiagnosticSeverity.Error,
+    ).length
+    const warningCount = normalized.filter(
+      (d) => d.level === DiagnosticSeverity.Warning,
+    ).length
     initialVueFilesTick++
     // only starts to log when all .vue files are loaded
     // onDispatchDiagnostics will dispatch diagnostics of all watched files
@@ -170,7 +190,10 @@ export async function prepareClientConnection(
 
   const vls = new VLS(serverConnection as any)
 
-  vls.validateTextDocument = async (textDocument: TextDocument, cancellationToken?: any) => {
+  vls.validateTextDocument = async (
+    textDocument: TextDocument,
+    cancellationToken?: any,
+  ) => {
     const diagnostics = await vls.doValidate(textDocument, cancellationToken)
     if (diagnostics) {
       // @ts-expect-error
@@ -182,18 +205,20 @@ export async function prepareClientConnection(
     }
   }
 
-  serverConnection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
-    await vls.init(params)
+  serverConnection.onInitialize(
+    async (params: InitializeParams): Promise<InitializeResult> => {
+      await vls.init(params)
 
-    if (options.verbose) {
-      console.log('Vetur initialized')
-      console.log('====================================')
-    }
+      if (options.verbose) {
+        console.log('Vetur initialized')
+        console.log('====================================')
+      }
 
-    return {
-      capabilities: vls.capabilities as ServerCapabilities,
-    }
-  })
+      return {
+        capabilities: vls.capabilities as ServerCapabilities,
+      }
+    },
+  )
 
   vls.listen()
   clientConnection.listen()
@@ -221,9 +246,13 @@ const watchedDidChangeContentGlob = extToGlobs(watchedDidChangeContent)
 async function getDiagnostics(
   workspaceUri: URI,
   severity: DiagnosticSeverity,
-  options: DiagnosticOptions
+  options: DiagnosticOptions,
 ): Promise<{ initialErrorCount: number; initialWarningCount: number } | null> {
-  const { clientConnection } = await prepareClientConnection(workspaceUri, severity, options)
+  const { clientConnection } = await prepareClientConnection(
+    workspaceUri,
+    severity,
+    options,
+  )
 
   const files = glob.sync([...watchedDidChangeContentGlob], {
     cwd: workspaceUri.fsPath,
@@ -266,10 +295,13 @@ async function getDiagnostics(
       // use $/getDiagnostics to get diagnostics from server side directly
       if (options.watch) return
       try {
-        let diagnostics = (await clientConnection.sendRequest('$/getDiagnostics', {
-          uri: URI.file(absFilePath).toString(),
-          version: DOC_VERSION.init,
-        })) as Diagnostic[]
+        let diagnostics = (await clientConnection.sendRequest(
+          '$/getDiagnostics',
+          {
+            uri: URI.file(absFilePath).toString(),
+            version: DOC_VERSION.init,
+          },
+        )) as Diagnostic[]
 
         diagnostics = filterDiagnostics(diagnostics, severity)
         let logChunk = ''
@@ -284,8 +316,8 @@ async function getDiagnostics(
                     absFilePath,
                     fileText,
                   }),
-                  'VLS'
-                )
+                  'VLS',
+                ),
               )
               .join(os.EOL)
 
@@ -305,7 +337,7 @@ async function getDiagnostics(
         console.error(err.stack)
         return { initialErrorCount, initialWarningCount }
       }
-    })
+    }),
   )
 
   if (!options.watch) {
@@ -325,7 +357,7 @@ async function getDiagnostics(
           text: fileText,
         },
       })
-    })
+    }),
   )
 
   const watcher = chokidar.watch([], {
@@ -348,14 +380,17 @@ async function getDiagnostics(
 
     // .js,.ts,.json file changed
     if (watchedDidChangeWatchedFiles.includes(extname)) {
-      clientConnection.sendNotification(DidChangeWatchedFilesNotification.type, {
-        changes: [
-          {
-            uri: URI.file(filePath).toString(),
-            type: event === 'add' ? 1 : event === 'unlink' ? 3 : 2,
-          },
-        ],
-      })
+      clientConnection.sendNotification(
+        DidChangeWatchedFilesNotification.type,
+        {
+          changes: [
+            {
+              uri: URI.file(filePath).toString(),
+              type: event === 'add' ? 1 : event === 'unlink' ? 3 : 2,
+            },
+          ],
+        },
+      )
     }
   })
 
@@ -382,7 +417,10 @@ function mergeDeep<T>(target: T, source: DeepPartial<T> | undefined) {
   return target
 }
 
-function filterDiagnostics(diagnostics: Diagnostic[], severity: number): Diagnostic[] {
+function filterDiagnostics(
+  diagnostics: Diagnostic[],
+  severity: number,
+): Diagnostic[] {
   /**
    * Ignore eslint errors for now
    */

@@ -12,7 +12,11 @@ import {
   filterLogLevel,
   toClientPayload,
 } from '../../logger.js'
-import { ACTION_TYPES, type CreateDiagnostic, DiagnosticLevel } from '../../types.js'
+import {
+  ACTION_TYPES,
+  type CreateDiagnostic,
+  DiagnosticLevel,
+} from '../../types.js'
 import { getBiomeCommand, runBiome, severityMap } from './cli.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -57,8 +61,12 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
             consoleLog(diagnosticToTerminalLog(d, 'Biome'))
           }
 
-          const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
-          const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
+          const errorCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Error,
+          ).length
+          const warningCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Warning,
+          ).length
           consoleLog(composeCheckerSummary('Biome', errorCount, warningCount))
         }
 
@@ -67,13 +75,16 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
             type: ACTION_TYPES.overlayError,
             payload: toClientPayload(
               'biome',
-              diagnostics.map((d) => diagnosticToRuntimeError(d))
+              diagnostics.map((d) => diagnosticToRuntimeError(d)),
             ),
           })
         }
       }
 
-      const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
+      const handleFileChange = async (
+        filePath: string,
+        type: 'change' | 'unlink',
+      ) => {
         const absPath = path.resolve(root, filePath)
 
         if (type === 'unlink') {
