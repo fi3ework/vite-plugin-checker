@@ -1,5 +1,12 @@
 # vite-plugin-checker
 
+## 0.7.2
+
+### Patch Changes
+
+- 568b782: Added basic support for Biome
+- 82972e0: fix: tweak biome configs
+
 ## 0.7.1
 
 ### Patch Changes
