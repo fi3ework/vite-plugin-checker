@@ -14,7 +14,13 @@ export const severityMap = {
 
 export function getBiomeCommand(command: string, flags: string, files: string) {
   const defaultFlags = '--reporter json'
-  return ['biome', command || 'lint', flags, defaultFlags, files].filter(Boolean).join(' ')
+  if (flags.includes('--flags')) {
+    throw Error(
+      `vite-plugin-checker will force append "--reporter json" to the flags in dev mode, please don't use "--flags" in "config.biome.flags".
+If you need to customize "--flags" in build mode, please use "config.biome.build.flags" instead.`
+    )
+  }
+  return ['biome', command, flags, defaultFlags, files].filter(Boolean).join(' ')
 }
 
 export function runBiome(command: string, cwd: string) {

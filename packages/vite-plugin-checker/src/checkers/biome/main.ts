@@ -21,15 +21,16 @@ const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
 
 const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
+  const biomeConfig = pluginConfig.biome
   let overlay = true
   let terminal = true
 
-  let command = ''
+  let command = 'lint'
   let flags = ''
 
-  if (typeof pluginConfig.biome === 'object') {
-    command = pluginConfig.biome.command || ''
-    flags = pluginConfig.biome.flags || ''
+  if (typeof biomeConfig === 'object') {
+    command = biomeConfig?.dev?.command || biomeConfig?.command || 'lint'
+    flags = biomeConfig?.dev?.flags || biomeConfig?.flags || ''
   }
 
   return {
@@ -38,11 +39,11 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
       terminal = enableTerminal
     },
     async configureServer({ root }) {
-      if (!pluginConfig.biome) return
+      if (!biomeConfig) return
 
       const logLevel = (() => {
-        if (typeof pluginConfig.biome !== 'object') return undefined
-        const userLogLevel = pluginConfig.biome.dev?.logLevel
+        if (typeof biomeConfig !== 'object') return undefined
+        const userLogLevel = biomeConfig.dev?.logLevel
         if (!userLogLevel) return undefined
 
         return userLogLevel.map((l) => severityMap[l])
@@ -74,6 +75,7 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
 
       const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
         const absPath = path.resolve(root, filePath)
+
         if (type === 'unlink') {
           manager.updateByFileId(absPath, [])
         } else if (type === 'change') {
@@ -125,9 +127,9 @@ export class BiomeChecker extends Checker<'biome'> {
         buildBin: (pluginConfig) => {
           if (typeof pluginConfig.biome === 'object') {
             const { command, flags } = pluginConfig.biome
-            return ['biome', [command || 'lint', flags || ''] as const]
+            return ['biome', [command || 'check', flags || ''] as const]
           }
-          return ['biome', ['lint']]
+          return ['biome', ['check']]
         },
       },
       createDiagnostic,
