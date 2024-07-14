@@ -2,6 +2,8 @@
   $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   extends: ['config:recommended', 'schedule:weekly'],
   ignorePaths: ['**/tests/**', '**/node_modules/**'],
+  labels: ['dependencies'],
+  rangeStrategy: 'bump',
   ignoreDeps: [
     // manually update some packages
     'pnpm',

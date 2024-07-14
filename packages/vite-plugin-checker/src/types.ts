@@ -81,15 +81,34 @@ export type StylelintConfig =
       }>
     }
 
+type BiomeCommand = 'lint' | 'check' | 'format' | 'ci'
 /** Biome checker configuration */
 export type BiomeConfig =
   | boolean
   | {
-      command?: 'lint' | 'check' | 'format' | 'ci'
+      /**
+       * Command will be used in dev and build mode, will be override
+       * if `dev.command` or `build.command` is set their mode.
+       */
+      command?: BiomeCommand
+      /**
+       * Flags of the command, will be override if `dev.flags`
+       * or `build.command` is set their mode.
+       * */
       flags?: string
       dev?: Partial<{
-        /** which level of the diagnostic will be emitted from plugin */
+        /** Command will be used in dev mode */
+        command: BiomeCommand
+        /** Flags of the command */
+        flags?: string
+        /** Which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning' | 'info')[]
+      }>
+      build?: Partial<{
+        /** Command will be used in build mode */
+        command: BiomeCommand
+        /** Flags of the command */
+        flags?: string
       }>
     }
 
