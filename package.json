@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
-    "@changesets/cli": "^2.26.1",
+    "@changesets/cli": "^2.27.7",
     "@tsconfig/esm": "^1.0.2",
     "@tsconfig/node20": "^20.1.4",
     "@tsconfig/strictest": "^2.0.0",
