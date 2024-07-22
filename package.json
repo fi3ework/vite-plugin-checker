@@ -37,7 +37,7 @@
     "@changesets/cli": "^2.27.7",
     "@tsconfig/esm": "^1.0.2",
     "@tsconfig/node20": "^20.1.4",
-    "@tsconfig/strictest": "^2.0.0",
+    "@tsconfig/strictest": "^2.0.5",
     "@types/babel__code-frame": "^7.0.2",
     "@types/debug": "^4.1.5",
     "@types/fs-extra": "^11.0.1",
