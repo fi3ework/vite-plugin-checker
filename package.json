@@ -38,7 +38,7 @@
     "@tsconfig/esm": "^1.0.5",
     "@tsconfig/node20": "^20.1.4",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/babel__code-frame": "^7.0.2",
+    "@types/babel__code-frame": "^7.0.6",
     "@types/debug": "^4.1.12",
     "@types/fs-extra": "^11.0.1",
     "@types/klaw": "^3.0.3",

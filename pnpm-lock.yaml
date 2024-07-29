@@ -26,7 +26,7 @@ importers:
         specifier: ^2.0.5
         version: 2.0.5
       '@types/babel__code-frame':
-        specifier: ^7.0.2
+        specifier: ^7.0.6
         version: 7.0.6
       '@types/debug':
         specifier: ^4.1.12
