@@ -873,7 +873,7 @@ importers:
         specifier: ^7.28.0
         version: 7.32.0
       eslint-plugin-prettier:
-        specifier: ^3.3.1
+        specifier: ^3.4.1
         version: 3.4.1(eslint@7.32.0)(prettier@2.6.0)
       eslint-plugin-vue:
         specifier: ^7.6.0
