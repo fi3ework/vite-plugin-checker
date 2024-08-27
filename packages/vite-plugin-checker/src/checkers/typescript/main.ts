@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
+import chalk from 'chalk'
 
 import { Checker } from '../../Checker.js'
 import {
@@ -107,13 +108,16 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           }
 
           if (terminal) {
+            const color = errorCount > 0 ? 'red' : 'green'
             consoleLog(
-              logChunk +
+              chalk[color](
+                logChunk +
                 os.EOL +
                 wrapCheckerSummary(
                   'TypeScript',
                   diagnostic.messageText.toString(),
-                ),
+                )
+              ),
             )
           }
         })
