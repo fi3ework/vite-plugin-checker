@@ -108,7 +108,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           }
 
           if (terminal) {
-            const color = errorCount > 0 ? 'red' : 'green'
+            const color = errorCount && errorCount > 0 ? 'red' : 'green'
             consoleLog(
               chalk[color](
                 logChunk +
