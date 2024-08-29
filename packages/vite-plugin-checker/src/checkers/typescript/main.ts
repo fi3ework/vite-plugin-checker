@@ -2,9 +2,9 @@ import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
+import chalk from 'chalk'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
-import chalk from 'chalk'
 
 import { Checker } from '../../Checker.js'
 import {
