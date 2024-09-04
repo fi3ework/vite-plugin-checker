@@ -29,21 +29,9 @@ exports.getLanguagePlugins = (ts, options) => {
   }
   const vueLanguagePlugin = vue.createVueLanguagePlugin(
     ts,
-    (id) => id,
-    () => '',
-    (fileName) => {
-      const fileMap = new vue.FileMap(
-        host?.useCaseSensitiveFileNames?.() ?? false,
-      )
-      for (const vueFileName of options.rootNames.map((rootName) =>
-        rootName.replace(windowsPathReg, '/'),
-      )) {
-        fileMap.set(vueFileName, undefined)
-      }
-      return fileMap.has(fileName)
-    },
     options.options,
     vueOptions,
+    (id) => id,
   )
   return [vueLanguagePlugin]
 }
