@@ -213,7 +213,7 @@ importers:
         specifier: ^11.0.1
         version: 11.0.4
       '@vue/language-core':
-        specifier: ^2.1.4
+        specifier: ~2.1.4
         version: 2.1.4(typescript@5.5.3)
       esbuild:
         specifier: ^0.14.27
