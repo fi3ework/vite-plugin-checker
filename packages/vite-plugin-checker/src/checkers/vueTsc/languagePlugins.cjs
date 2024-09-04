@@ -1,11 +1,20 @@
 const path = require('node:path')
-const { removeEmitGlobalTypes } = require('vue-tsc')
 
 const vueTscDir = path.dirname(require.resolve('vue-tsc/package.json'))
 const vue = /** @type {typeof import('@vue/language-core')} */ (
   require(require.resolve('@vue/language-core', { paths: [vueTscDir] }))
 )
 const windowsPathReg = /\\/g
+
+const removeEmitGlobalTypesRegexp = /^[^\n]*__VLS_globalTypesStart[\w\W]*__VLS_globalTypesEnd[^\n]*\n?$/mg;
+
+/**
+ * @param dts {string}
+ * @returns {string}
+ */
+export function removeEmitGlobalTypes(dts) {
+  return dts.replace(removeEmitGlobalTypesRegexp, '');
+}
 
 // #region copied from https://github.com/vuejs/language-tools/blob/0781998a29f176ad52c30d3139d5c78a5688bd5d/packages/tsc/index.ts
 /**

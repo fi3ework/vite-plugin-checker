@@ -213,8 +213,8 @@ importers:
         specifier: ^11.0.1
         version: 11.0.4
       '@vue/language-core':
-        specifier: ^2.0.14
-        version: 2.0.21(typescript@5.5.3)
+        specifier: ^2.1.4
+        version: 2.1.4(typescript@5.5.3)
       esbuild:
         specifier: ^0.14.27
         version: 0.14.54
@@ -2094,14 +2094,8 @@ packages:
   '@vitest/utils@1.6.0':
     resolution: {integrity: sha512-21cPiuGMoMZwiOHa2i4LXkMkMkCGzA+MVFV70jRwHo95dL4x/ts5GZhML1QWuy7yfp3WzK3lRvZi3JnXTYqrBw==}
 
-  '@volar/language-core@2.3.0':
-    resolution: {integrity: sha512-pvhL24WUh3VDnv7Yw5N1sjhPtdx7q9g+Wl3tggmnkMcyK8GcCNElF2zHiKznryn0DiUGk+eez/p2qQhz+puuHw==}
-
   '@volar/language-core@2.4.1':
     resolution: {integrity: sha512-9AKhC7Qn2mQYxj7Dz3bVxeOk7gGJladhWixUYKef/o0o7Bm4an+A3XvmcTHVqZ8stE6lBVH++g050tBtJ4TZPQ==}
-
-  '@volar/source-map@2.3.0':
-    resolution: {integrity: sha512-G/228aZjAOGhDjhlyZ++nDbKrS9uk+5DMaEstjvzglaAw7nqtDyhnQAsYzUg6BMP9BtwZ59RIw5HGePrutn00Q==}
 
   '@volar/source-map@2.4.1':
     resolution: {integrity: sha512-Xq6ep3OZg9xUqN90jEgB9ztX5SsTz1yiV8wiQbcYNjWkek+Ie3dc8l7AVt3EhDm9mSIR58oWczHkzM2H6HIsmQ==}
@@ -2201,14 +2195,6 @@ packages:
       '@typescript-eslint/parser': ^4.4.0
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
       eslint-plugin-vue: ^5.2.3 || ^6.0.0 || ^7.0.0
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
-  '@vue/language-core@2.0.21':
-    resolution: {integrity: sha512-vjs6KwnCK++kIXT+eI63BGpJHfHNVJcUCr3RnvJsccT3vbJnZV5IhHR2puEkoOkIbDdp0Gqi1wEnv3hEd3WsxQ==}
-    peerDependencies:
       typescript: '*'
     peerDependenciesMeta:
       typescript:
@@ -6626,17 +6612,9 @@ snapshots:
       loupe: 2.3.7
       pretty-format: 29.7.0
 
-  '@volar/language-core@2.3.0':
-    dependencies:
-      '@volar/source-map': 2.3.0
-
   '@volar/language-core@2.4.1':
     dependencies:
       '@volar/source-map': 2.4.1
-
-  '@volar/source-map@2.3.0':
-    dependencies:
-      muggle-string: 0.4.1
 
   '@volar/source-map@2.4.1': {}
 
@@ -6863,18 +6841,6 @@ snapshots:
       typescript: 4.3.5
     transitivePeerDependencies:
       - supports-color
-
-  '@vue/language-core@2.0.21(typescript@5.5.3)':
-    dependencies:
-      '@volar/language-core': 2.3.0
-      '@vue/compiler-dom': 3.4.29
-      '@vue/shared': 3.4.29
-      computeds: 0.0.1
-      minimatch: 9.0.4
-      path-browserify: 1.0.1
-      vue-template-compiler: 2.7.16
-    optionalDependencies:
-      typescript: 5.5.3
 
   '@vue/language-core@2.1.4(typescript@5.5.3)':
     dependencies:
