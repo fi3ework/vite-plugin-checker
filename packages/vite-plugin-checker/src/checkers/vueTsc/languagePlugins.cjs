@@ -12,7 +12,7 @@ const removeEmitGlobalTypesRegexp = /^[^\n]*__VLS_globalTypesStart[\w\W]*__VLS_g
  * @param dts {string}
  * @returns {string}
  */
-export function removeEmitGlobalTypes(dts) {
+function removeEmitGlobalTypes(dts) {
   return dts.replace(removeEmitGlobalTypesRegexp, '');
 }
 
