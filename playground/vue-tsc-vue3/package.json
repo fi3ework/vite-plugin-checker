@@ -1,11 +1,11 @@
 {
-  "private": true,
   "name": "@playground/vue-tsc-vue3",
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
+    "dev": "vite",
     "serve": "vite preview"
   },
   "dependencies": {
@@ -16,6 +16,6 @@
     "typescript": "^5.5.3",
     "vite": "^5.3.2",
     "vite-plugin-checker": "workspace:*",
-    "vue-tsc": "^2.0.14"
+    "vue-tsc": "~2.1.6"
   }
 }
