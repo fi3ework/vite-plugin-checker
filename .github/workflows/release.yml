@@ -50,6 +50,7 @@ jobs:
 
       - name: Publish to NPM
         run: |
+          cp README.md packages/vite-plugin-checker/README.md
           git tag vite-plugin-checker@${{ steps.version_to_release.outputs.result }}
           git push origin vite-plugin-checker@${{ steps.version_to_release.outputs.result }}
           pnpm -r publish --no-git-checks

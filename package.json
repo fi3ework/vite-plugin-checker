@@ -20,8 +20,7 @@
     "test-unit:watch": "vitest",
     "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit",
     "docs:dev": "pnpm --filter docs run dev",
-    "docs:build": "pnpm --filter docs run build",
-    "release": "cp README.md packages/vite-plugin-checker/README.md && changeset publish && git push --follow-tags"
+    "docs:build": "pnpm --filter docs run build"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged"
