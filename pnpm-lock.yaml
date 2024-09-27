@@ -35,7 +35,7 @@ importers:
         specifier: ^11.0.1
         version: 11.0.4
       '@types/klaw':
-        specifier: ^3.0.3
+        specifier: ^3.0.6
         version: 3.0.6
       '@types/minimist':
         specifier: ^1.2.2
