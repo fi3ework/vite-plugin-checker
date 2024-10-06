@@ -105,8 +105,8 @@ importers:
         specifier: ^7.26.2
         version: 7.26.2
       chokidar:
-        specifier: ^3.6.0
-        version: 3.6.0
+        specifier: ^4.0.3
+        version: 4.0.3
       colorette:
         specifier: ^2.0.20
         version: 2.0.20
