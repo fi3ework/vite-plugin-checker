@@ -68,7 +68,7 @@
   },
   "peerDependencies": {
     "@biomejs/biome": ">=1.7",
-    "eslint": ">=7",
+    "eslint": ">=9.16.0",
     "meow": "^9.0.0",
     "optionator": "^0.9.1",
     "stylelint": ">=13",
