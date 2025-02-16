@@ -2,7 +2,7 @@ import { rmSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import glob from 'fast-glob'
+import { glob } from 'tinyglobby'
 import { chromium } from 'playwright-chromium'
 
 import type { BrowserServer } from 'playwright-chromium'
