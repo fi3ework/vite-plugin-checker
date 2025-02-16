@@ -56,23 +56,20 @@ export function translateOptions({
     ignorePath,
     overrideConfig: {
       env:
-        env &&
         // @ts-expect-error
-        env.reduce((obj, name) => {
+        env?.reduce((obj, name) => {
           obj[name] = true
           return obj
         }, {}),
-      globals:
-        global &&
-        // @ts-expect-error
-        global.reduce((obj, name) => {
-          if (name.endsWith(':true')) {
-            obj[name.slice(0, -5)] = 'writable'
-          } else {
-            obj[name] = 'readonly'
-          }
-          return obj
-        }, {}),
+      // @ts-expect-error
+      globals: global?.reduce((obj, name) => {
+        if (name.endsWith(':true')) {
+          obj[name.slice(0, -5)] = 'writable'
+        } else {
+          obj[name] = 'readonly'
+        }
+        return obj
+      }, {}),
       ignorePatterns: ignorePattern,
       parser,
       parserOptions,
@@ -80,7 +77,9 @@ export function translateOptions({
       rules: rule,
     },
     overrideConfigFile: config,
-    reportUnusedDisableDirectives: reportUnusedDisableDirectives ? 'error' : void 0,
+    reportUnusedDisableDirectives: reportUnusedDisableDirectives
+      ? 'error'
+      : void 0,
     resolvePluginsRelativeTo,
     rulePaths: rulesdir,
     useEslintrc: eslintrc,

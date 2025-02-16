@@ -1,9 +1,10 @@
+import Module from 'node:module'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 import chokidar from 'chokidar'
 import { ESLint } from 'eslint'
-import path from 'path'
 import invariant from 'tiny-invariant'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
@@ -21,9 +22,10 @@ import { translateOptions } from './cli.js'
 import { options as optionator } from './options.js'
 
 const __filename = fileURLToPath(import.meta.url)
+const require = Module.createRequire(import.meta.url)
 
 const manager = new FileDiagnosticManager()
-let createServeAndBuild
+let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types'
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
@@ -41,7 +43,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const options = optionator.parse(pluginConfig.eslint.lintCommand)
       invariant(
         !options.fix,
-        'Using `--fix` in `config.eslint.lintCommand` is not allowed in vite-plugin-checker, you could using `--fix` with editor.'
+        'Using `--fix` in `config.eslint.lintCommand` is not allowed in vite-plugin-checker, you could using `--fix` with editor.',
       )
 
       const translatedOptions = translateOptions(options) as ESLint.Options
@@ -63,17 +65,40 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ...translatedOptions,
         ...pluginConfig.eslint.dev?.overrideConfig,
       }
-      const eslint = new ESLint(eslintOptions)
+
+      let eslint: ESLint
+      if (pluginConfig.eslint.useFlatConfig) {
+        const {
+          FlatESLint,
+          shouldUseFlatConfig,
+        } = require('eslint/use-at-your-own-risk')
+        if (shouldUseFlatConfig?.()) {
+          eslint = new FlatESLint({
+            cwd: root,
+          })
+        } else {
+          throw Error(
+            'Please upgrade your eslint to latest version to use `useFlatConfig` option.',
+          )
+        }
+      } else {
+        eslint = new ESLint(eslintOptions)
+      }
 
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
         if (terminal) {
-          diagnostics.forEach((d) => {
+          for (const d of diagnostics) {
             consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
-          })
-          const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
-          const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
+          }
+
+          const errorCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Error,
+          ).length
+          const warningCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Warning,
+          ).length
           consoleLog(composeCheckerSummary('ESLint', errorCount, warningCount))
         }
 
@@ -82,13 +107,16 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
             type: ACTION_TYPES.overlayError,
             payload: toClientPayload(
               'eslint',
-              diagnostics.map((d) => diagnosticToRuntimeError(d))
+              diagnostics.map((d) => diagnosticToRuntimeError(d)),
             ),
           })
         }
       }
 
-      const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
+      const handleFileChange = async (
+        filePath: string,
+        type: 'change' | 'unlink',
+      ) => {
         // See: https://github.com/eslint/eslint/pull/4465
         const extension = path.extname(filePath)
         const { extensions } = eslintOptions
@@ -103,9 +131,9 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           manager.updateByFileId(absPath, [])
         } else if (type === 'change') {
           const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
-          const newDiagnostics = diagnosticsOfChangedFile
-            .map((d) => normalizeEslintDiagnostic(d))
-            .flat(1)
+          const newDiagnostics = diagnosticsOfChangedFile.flatMap((d) =>
+            normalizeEslintDiagnostic(d),
+          )
           manager.updateByFileId(absPath, newDiagnostics)
         }
 
@@ -116,7 +144,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const files = options._.slice(1)
       const diagnostics = await eslint.lintFiles(files)
 
-      manager.initWith(diagnostics.map((p) => normalizeEslintDiagnostic(p)).flat(1))
+      manager.initWith(diagnostics.flatMap((p) => normalizeEslintDiagnostic(p)))
       dispatchDiagnostics()
 
       // watch lint

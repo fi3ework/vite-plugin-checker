@@ -1,18 +1,18 @@
-# vue-tsc (Volar)
+# vue-tsc (Vue Language Tools)
 
-You can use vue-tsc checker for your Vue3 project. If you're still using Vue2, choose [VLS](/checkers/vls) checker.
+You can use vue-tsc checker for your Vue 3 project. If you're still using Vue2, choose [VLS](/checkers/vls) checker.
 
 ## Installation
+
+::: info
+Since `0.7.0`, `vue-tsc` requires at least >= `2.0.0`, with typescript >= `5.0.0`. If you can't upgrade to the latest version, please use `0.6.x` or below version.
+:::
 
 1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) & [typescript](https://www.npmjs.com/package/typescript) are installed as a peer dependency of your Vite project.
 
    ```bash
    pnpm add vue-tsc@latest typescript -D
    ```
-
-   ::: tip
-   The `vue-tsc` version **must** be >= `0.33.9`. `vue-tsc` has released a `1.0.0` version, it's recommended to try it out.
-   :::
 
 2. Add `vueTsc` field to plugin config.
 

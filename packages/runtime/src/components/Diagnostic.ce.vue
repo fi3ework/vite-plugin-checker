@@ -36,6 +36,7 @@ function calcLink(text: string) {
 const checkerColorMap: Record<string, string> = {
   TypeScript: '#3178c6',
   ESLint: '#7b7fe3',
+  Biome: '#60a5fa',
   VLS: '#64b587',
   'vue-tsc': '#64b587',
   Stylelint: '#ffffff',

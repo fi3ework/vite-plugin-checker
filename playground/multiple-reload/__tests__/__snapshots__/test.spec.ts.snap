@@ -1,148 +1,50 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`multiple-reload > serve > get initial error and subsequent error 1`] = `"[{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello1: number = 'Hello1'/n      |     ^^^^^^/n    4 | var hello2: boolean = 'Hello2'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Type 'string' is not assignable to type 'number'.\\",\\"stack\\":\\"\\"},{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    2 |/n    3 | var hello1: number = 'Hello1'/n  > 4 | var hello2: boolean = 'Hello2'/n      |     ^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello1 + text\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"line\\":4},\\"message\\":\\"Type 'string' is not assignable to type 'boolean'.\\",\\"stack\\":\\"\\"}]"`;
+exports[`multiple-reload > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: string = 0/n      | ^^^^^^^^^^^^^^^^^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":3},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | const hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text + count/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""},{"checkerId":"TypeScript","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: string = 0/n      |     ^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":1,"loc":{"column":5,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":3},"message":"Type 'number' is not assignable to type 'string'.","stack":""}]"`;
 
 exports[`multiple-reload > serve > get initial error and subsequent error 2`] = `
-" ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
-
-    1 | import { text } from './text'
-    2 |
-  > 3 | var hello1: number = 'Hello1'
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    4 | var hello2: boolean = 'Hello2'
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:1
-
-    2 |
-    3 | var hello1: number = 'Hello1'
-  > 4 | var hello2: boolean = 'Hello2'
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-    7 | rootDom.innerHTML = hello1 + text
-[ESLint] Found 2 errors and 0 warning
- ERROR(TypeScript)  Type 'string' is not assignable to type 'number'.
+[
+  "
+ ERROR(TypeScript)  Type 'number' is not assignable to type 'string'.
  FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
 
     1 | import { text } from './text'
     2 |
-  > 3 | var hello1: number = 'Hello1'
-      |     ^^^^^^
-    4 | var hello2: boolean = 'Hello2'
+  > 3 | var count: string = 0
+      |     ^^^^^
+    4 | const hello = 'Hello'
     5 |
     6 | const rootDom = document.querySelector('#root')!
 
- ERROR(TypeScript)  Type 'string' is not assignable to type 'boolean'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:5
-
-    2 |
-    3 | var hello1: number = 'Hello1'
-  > 4 | var hello2: boolean = 'Hello2'
-      |     ^^^^^^
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-    7 | rootDom.innerHTML = hello1 + text
-
-[TypeScript] Found 2 errors. Watching for file changes."
-`;
-
-exports[`multiple-reload > serve > get initial error and subsequent error 3`] = `"[{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello1: number = 'Hello1~'/n      |     ^^^^^^/n    4 | var hello2: boolean = 'Hello2'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Type 'string' is not assignable to type 'number'.\\",\\"stack\\":\\"\\"},{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    2 |/n    3 | var hello1: number = 'Hello1~'/n  > 4 | var hello2: boolean = 'Hello2'/n      |     ^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello1 + text\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"line\\":4},\\"message\\":\\"Type 'string' is not assignable to type 'boolean'.\\",\\"stack\\":\\"\\"}]"`;
-
-exports[`multiple-reload > serve > get initial error and subsequent error 4`] = `
-" ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
+[TypeScript] Found 1 error. Watching for file changes.",
+  " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
  FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
 
     1 | import { text } from './text'
     2 |
-  > 3 | var hello1: number = 'Hello1~'
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    4 | var hello2: boolean = 'Hello2'
+  > 3 | var count: string = 0
+      | ^^^^^^^^^^^^^^^^^^^^^
+    4 | const hello = 'Hello'
     5 |
     6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:1
+",
+  " WARNING(ESLint)  Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)
+ FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:6:17
 
-    2 |
-    3 | var hello1: number = 'Hello1~'
-  > 4 | var hello2: boolean = 'Hello2'
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4 | const hello = 'Hello'
     5 |
-    6 | const rootDom = document.querySelector('#root')!
-    7 | rootDom.innerHTML = hello1 + text
-[ESLint] Found 2 errors and 0 warning
- ERROR(TypeScript)  Type 'string' is not assignable to type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
-
-    1 | import { text } from './text'
-    2 |
-  > 3 | var hello1: number = 'Hello1~'
-      |     ^^^^^^
-    4 | var hello2: boolean = 'Hello2'
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-
- ERROR(TypeScript)  Type 'string' is not assignable to type 'boolean'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:5
-
-    2 |
-    3 | var hello1: number = 'Hello1~'
-  > 4 | var hello2: boolean = 'Hello2'
-      |     ^^^^^^
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-    7 | rootDom.innerHTML = hello1 + text
-
-[TypeScript] Found 2 errors. Watching for file changes."
+  > 6 | const rootDom = document.querySelector('#root')!
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    7 | rootDom.innerHTML = hello + text + count
+    8 |
+    9 | export {}
+",
+  "[ESLint] Found 1 error and 1 warning",
+]
 `;
 
-exports[`multiple-reload > serve > get initial error and subsequent error 5`] = `"[{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    1 | import { text } from './text'/n    2 |/n  > 3 | var hello1: number = 'Hello1~'/n      |     ^^^^^^/n    4 | var hello2: boolean = 'Hello2'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"line\\":3},\\"message\\":\\"Type 'string' is not assignable to type 'number'.\\",\\"stack\\":\\"\\"},{\\"checkerId\\":\\"TypeScript\\",\\"frame\\":\\"    2 |/n    3 | var hello1: number = 'Hello1~'/n  > 4 | var hello2: boolean = 'Hello2'/n      |     ^^^^^^/n    5 |/n    6 | const rootDom = document.querySelector('#root')!/n    7 | rootDom.innerHTML = hello1 + text\\",\\"id\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"level\\":1,\\"loc\\":{\\"column\\":5,\\"file\\":\\"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts\\",\\"line\\":4},\\"message\\":\\"Type 'string' is not assignable to type 'boolean'.\\",\\"stack\\":\\"\\"}]"`;
+exports[`multiple-reload > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: string = 0/n      | ^^^^^^^^^^^^^^^^^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":3},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | const hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text + count/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""}]"`;
 
-exports[`multiple-reload > serve > get initial error and subsequent error 6`] = `
-" ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:1
+exports[`multiple-reload > serve > get initial error and subsequent error 4`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: string = 0/n      | ^^^^^^^^^^^^^^^^^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":3},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | const hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text + count/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""}]"`;
 
-    1 | import { text } from './text'
-    2 |
-  > 3 | var hello1: number = 'Hello1~'
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    4 | var hello2: boolean = 'Hello2'
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
- ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:1
-
-    2 |
-    3 | var hello1: number = 'Hello1~'
-  > 4 | var hello2: boolean = 'Hello2'
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-    7 | rootDom.innerHTML = hello1 + text
-[ESLint] Found 2 errors and 0 warning
- ERROR(TypeScript)  Type 'string' is not assignable to type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:3:5
-
-    1 | import { text } from './text'
-    2 |
-  > 3 | var hello1: number = 'Hello1~'
-      |     ^^^^^^
-    4 | var hello2: boolean = 'Hello2'
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-
- ERROR(TypeScript)  Type 'string' is not assignable to type 'boolean'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts:4:5
-
-    2 |
-    3 | var hello1: number = 'Hello1~'
-  > 4 | var hello2: boolean = 'Hello2'
-      |     ^^^^^^
-    5 |
-    6 | const rootDom = document.querySelector('#root')!
-    7 | rootDom.innerHTML = hello1 + text
-
-[TypeScript] Found 2 errors. Watching for file changes."
-`;
+exports[`multiple-reload > serve > get initial error and subsequent error 5`] = `"[{"checkerId":"ESLint","frame":"    1 | import { text } from './text'/n    2 |/n  > 3 | var count: string = 0/n      | ^^^^^^^^^^^^^^^^^^^^^/n    4 | const hello = 'Hello'/n    5 |/n    6 | const rootDom = document.querySelector('#root')!","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":3},"message":"Unexpected var, use let or const instead. (no-var)","stack":""},{"checkerId":"ESLint","frame":"    4 | const hello = 'Hello'/n    5 |/n  > 6 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    7 | rootDom.innerHTML = hello + text + count/n    8 |/n    9 | export {}","id":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/multiple-reload/src/main.ts","line":6},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","stack":""}]"`;

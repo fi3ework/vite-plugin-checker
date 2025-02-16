@@ -1,11 +1,14 @@
-import { describe, expect, it } from 'vitest'
 import strip from 'strip-ansi'
+import { describe, expect, it } from 'vitest'
 
-import { diagnosticToTerminalLog, normalizeEslintDiagnostic } from '../src/logger'
+import {
+  diagnosticToTerminalLog,
+  normalizeEslintDiagnostic,
+} from '../src/logger'
 import {
   error1 as eslintError1,
-  warning1 as eslintWarning1,
   eslintResult1,
+  warning1 as eslintWarning1,
 } from './fixtures/eslintDiagnostic'
 
 describe('logger', () => {

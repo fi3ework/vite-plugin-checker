@@ -2,14 +2,20 @@
 // to make less breaking change, we'll make it a dependency before v1.0.0
 
 export { parseArgsStringToArgv as default, parseArgsStringToArgv }
-function parseArgsStringToArgv(value: string, env?: string, file?: string): string[] {
+function parseArgsStringToArgv(
+  value: string,
+  env?: string,
+  file?: string,
+): string[] {
   // ([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*) Matches nested quotes until the first space outside of quotes
 
   // [^\s'"]+ or Match if not a space ' or "
 
   // (['"])([^\5]*?)\5 or Match "quoted text" without quotes
   // `\3` and `\5` are a backreference to the quote style (' or ") captured
-  const myRegexp = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi
+  const myRegexp =
+    // @ts-expect-error Bypass typescript validation
+    /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi
   const myString = value
   const myArray: string[] = []
   if (env) {

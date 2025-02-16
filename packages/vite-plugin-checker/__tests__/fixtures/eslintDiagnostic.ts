@@ -1,5 +1,5 @@
-import type { NormalizedDiagnostic } from './../../src/logger'
 import type { ESLint } from 'eslint'
+import type { NormalizedDiagnostic } from './../../src/logger'
 
 export const error1: NormalizedDiagnostic = {
   message: 'Unexpected var, use let or const instead.',

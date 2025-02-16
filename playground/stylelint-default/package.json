@@ -10,17 +10,17 @@
     "lint": "stylelint \"./**/*.css\""
   },
   "dependencies": {
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "meow": "^9.0.0",
-    "stylelint": "^14.0.0",
+    "stylelint": "^14.16.1",
     "stylelint-config-standard": "^28.0.0",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.0",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.14",
     "vite-plugin-checker": "workspace:*"
   }
 }

@@ -28,7 +28,8 @@ export const diagnostic1 = {
     //     parent: [Circular *1],
     //     kind: 1
     //   },
-    fileName: '/Users/fi3ework/vite-plugin-checker/playground/react-ts/src/App.tsx',
+    fileName:
+      '/Users/fi3ework/vite-plugin-checker/playground/react-ts/src/App.tsx',
     text:
       "import React, { useState } from 'react'\n" +
       "import logo from './logo.svg'\n" +
@@ -134,8 +135,10 @@ export const diagnostic1 = {
     parseDiagnostics: [],
     version: 'e38e5afa683ca0a1613c6d335a73db12ae58b69c4555ac645ccc8f6a15dce3d6',
     path: '/users/fi3ework/vite-plugin-checker/playground/react-ts/src/app.tsx',
-    resolvedPath: '/users/fi3ework/vite-plugin-checker/playground/react-ts/src/app.tsx',
-    originalFileName: '/Users/fi3ework/vite-plugin-checker/playground/react-ts/src/App.tsx',
+    resolvedPath:
+      '/users/fi3ework/vite-plugin-checker/playground/react-ts/src/app.tsx',
+    originalFileName:
+      '/Users/fi3ework/vite-plugin-checker/playground/react-ts/src/App.tsx',
     // imports: [ [TokenObject], [TokenObject], [TokenObject] ],
     moduleAugmentations: [],
     ambientModuleNames: [],
@@ -185,9 +188,9 @@ export const diagnostic1 = {
     // classifiableNames: Set(4) { 'React', 'useState', 'logo', 'default' },
     id: 14728,
     lineMap: [
-      0, 40, 70, 89, 90, 107, 171, 219, 230, 256, 294, 353, 388, 400, 492, 505, 517, 583, 596, 608,
-      621, 654, 693, 721, 759, 771, 795, 810, 828, 841, 874, 932, 960, 998, 1010, 1032, 1047, 1060,
-      1076, 1087, 1091, 1093, 1094, 1113,
+      0, 40, 70, 89, 90, 107, 171, 219, 230, 256, 294, 353, 388, 400, 492, 505,
+      517, 583, 596, 608, 621, 654, 693, 721, 759, 771, 795, 810, 828, 841, 874,
+      932, 960, 998, 1010, 1032, 1047, 1060, 1076, 1087, 1091, 1093, 1094, 1113,
     ],
   },
   start: 216,

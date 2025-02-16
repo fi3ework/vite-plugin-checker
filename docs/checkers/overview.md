@@ -1,6 +1,6 @@
 # Checkers overview
 
-vite-plugin-checkers provide built-in checkers. For now, it supports [TypeScript](/checkers/typescript), [ESLint](/checkers/eslint), [vue-tsc](/checkers/vue-tsc), [VLS](/checkers/vls), [Stylelint](/checkers/stylelint).
+vite-plugin-checkers provide built-in checkers. For now, it supports [TypeScript](/checkers/typescript), [ESLint](/checkers/eslint), [Biome](/checkers/biome), [vue-tsc](/checkers/vue-tsc), [VLS](/checkers/vls), [Stylelint](/checkers/stylelint).
 
 ## How to add a checker
 
