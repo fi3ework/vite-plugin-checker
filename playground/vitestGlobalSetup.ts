@@ -1,3 +1,4 @@
+import { rmSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
@@ -53,6 +54,6 @@ export async function setup(): Promise<void> {
 export async function teardown(): Promise<void> {
   browserServer?.close()
   if (!process.env.VITE_PRESERVE_BUILD_ARTIFACTS) {
-    await fs.rm(path.resolve(__dirname, '../playground-temp'), { force: true, recursive: true })
+    rmSync(path.resolve(__dirname, '../playground-temp'), { force: true, recursive: true })
   }
 }

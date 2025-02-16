@@ -1,3 +1,4 @@
+import { rmSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
@@ -20,5 +21,5 @@ export async function setup(): Promise<void> {
 }
 
 export async function teardown(): Promise<void> {
-  await fs.rm(tempRuntimePath, { force: true, recursive: true })
+  rmSync(tempRuntimePath, { force: true, recursive: true })
 }
