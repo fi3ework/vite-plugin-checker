@@ -142,9 +142,6 @@ importers:
 
   packages/runtime:
     devDependencies:
-      '@unplugin-vue-ce/sub-style':
-        specifier: 1.0.0-beta.14
-        version: 1.0.0-beta.14(ansi-colors@4.1.3)(vue@3.5.13(typescript@5.5.3))
       '@vitejs/plugin-vue':
         specifier: ^5.2.1
         version: 5.2.1(vite@5.4.14(@types/node@16.18.101)(sass@1.77.6))(vue@3.5.13(typescript@5.5.3))
@@ -1189,29 +1186,6 @@ packages:
     resolution: {integrity: sha512-vN5p+1kl59GVKMvTHt55NzzmYVxprfJD+ql7U9NFIfKCBkYE55LYtS+WtPlaYOyzydrKI8Nezd+aZextrd+FMA==}
     engines: {node: '>=6.9.0'}
 
-  '@baiwusanyu/utils-com@1.0.18':
-    resolution: {integrity: sha512-BZ0sF4igk14ZNlIG2stAFjNYtlRcFBBcbvPv283IqoI72zQiyvR/WwTh4QqMvjKo4A0Pl/Ms3N+7G9ucwV1dAg==}
-    peerDependencies:
-      ansi-colors: ^4.1.3
-
-  '@baiwusanyu/utils-date@1.0.18':
-    resolution: {integrity: sha512-PdiA92JUaBHE0cIKgl5yrqZ0iiMMsEpEkmvpYLYSj4njyf9XR9g21pGIrzyzlOvK9KIBBi56f4zpfRKwAk/q2Q==}
-
-  '@baiwusanyu/utils-is@1.0.18':
-    resolution: {integrity: sha512-wXsgXCrgfSS3kMftaWNBbN6Ew8e6epbpDoBtCLKylwfm0OX2v/z4iMCYjbxivKrByMYBy9ZdANRH13//hTke1A==}
-
-  '@baiwusanyu/utils-log@1.0.18':
-    resolution: {integrity: sha512-XpvhfCd3W4bsBNzTZp0ChZ247vAHeX/9FVuzhBXJ9/ZCCw/2tkaKxN/4Cahn89nXTXpLrdnfolqKbJagbmWifA==}
-
-  '@baiwusanyu/utils-normalize@1.0.18':
-    resolution: {integrity: sha512-SFuBZJk6wvI1yrteZBRI5fWYKDo24qtxqYlqrMFX4RM7FMDoYlon6tC7W6xG50dgAqKPNRyjdvszPtl9+Wk4vA==}
-
-  '@baiwusanyu/utils-obj@1.0.18':
-    resolution: {integrity: sha512-fEJEUEoA1t7lik21p6P1y1coEc6TIulEthVr/MXyWnrE2/MqtkH+kiNozoHOD6NSFBofTh2pNHTJfqBiWgQUSA==}
-
-  '@baiwusanyu/utils-task@1.0.18':
-    resolution: {integrity: sha512-/0hlK00c3vje4XtOUW2UTrhneAYopX/vEqN5OcpZLGppstU02Fo82QpyJUSVZgO2XH3fGouJl/97bTmWjuFXsA==}
-
   '@biomejs/biome@1.8.3':
     resolution: {integrity: sha512-/uUV3MV+vyAczO+vKrPdOW0Iaet7UnJMU4bNMinggGJTAnBPjCoLEYcyYtYHNnUNYlv4xZMH6hVIQCAozq8d5w==}
     engines: {node: '>=14.21.3'}
@@ -2210,16 +2184,6 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
-  '@unplugin-vue-ce/sub-style@1.0.0-beta.14':
-    resolution: {integrity: sha512-ya79LwoSEdxNeUY8QBD9vfF1iGfOflSS1IpOejU6eKAr3Bkyr1uBbjWgC3NmiK3k4U7XDUJiVQL9TBXs45RRPg==}
-    peerDependencies:
-      vue: ^3.3.2
-
-  '@unplugin-vue-ce/utils@1.0.0-beta.21':
-    resolution: {integrity: sha512-XvIVOO2D8+6u3bywJf/rWXXLecSo82AdI2SRo95HyP0s7v4uoXM+WrABW+6CfZNoScgLFcizujl5OyjruPJ1+A==}
-    peerDependencies:
-      vue: ^3.3.2
-
   '@vitejs/plugin-react@2.2.0':
     resolution: {integrity: sha512-FFpefhvExd1toVRlokZgxgy2JtnBOdp4ZDsq7ldCWaqGSGn9UhWMAVm/1lxPL14JfNS5yGz+s9yFrQY6shoStA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -2563,9 +2527,6 @@ packages:
   at-least-node@1.0.0:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
     engines: {node: '>= 4.0.0'}
-
-  baiwusanyu-utils@1.0.18:
-    resolution: {integrity: sha512-wOBdqD2brZwNWkX9IKEWTEXQWh+a5UCpQxQXlu+abSL6MnalMBMwJf1tqGF49hfFT+RzVnWXWirhNNycGGZ0fQ==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -3365,9 +3326,6 @@ packages:
     resolution: {integrity: sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA==}
     engines: {node: '>=4.0'}
 
-  estree-walker-ts@1.0.1:
-    resolution: {integrity: sha512-6SuTR3lHCJXZJ8DLb14cZB0FnUCnl6YW2mO4AZlKGK1jGB4kSYm5vOGPvqZeMRWNuqeRoSbvh8VONM1FXV245A==}
-
   estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
 
@@ -4097,9 +4055,6 @@ packages:
 
   mlly@1.7.1:
     resolution: {integrity: sha512-rrVRZRELyQzrIUAVMHxP97kv+G786pHmOKzuFII8zDYahFBS7qnHh2AlYSl1GAHhaMPCz6/oHjVMcfFYgFYHgA==}
-
-  moment@2.30.1:
-    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
 
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
@@ -5003,10 +4958,6 @@ packages:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
     engines: {node: '>= 0.8'}
 
-  unplugin@1.10.1:
-    resolution: {integrity: sha512-d6Mhq8RJeGA8UfKCu54Um4lFA0eSaRa3XxdAJg8tIdxbu1ubW0hBCZUL7yI2uGyYCRndvbK8FLHzqy2XKfeMsg==}
-    engines: {node: '>=14.0.0'}
-
   update-browserslist-db@1.0.16:
     resolution: {integrity: sha512-KVbTxlBYlckhF5wgfyZXTWnMn7MMZjMu9XG8bPlliUOP9ThaF4QnhP8qrjrH7DRzHfSk0oQv1wToW+iA5GajEQ==}
     hasBin: true
@@ -5221,13 +5172,6 @@ packages:
 
   webidl-conversions@4.0.2:
     resolution: {integrity: sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==}
-
-  webpack-sources@3.2.3:
-    resolution: {integrity: sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==}
-    engines: {node: '>=10.13.0'}
-
-  webpack-virtual-modules@0.6.2:
-    resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
 
   whatwg-url@7.1.0:
     resolution: {integrity: sha512-WUu7Rg1DroM7oQvGWfOiAK21n74Gg+T4elXEQYkOhtyLeWiJFoOGLXPKI/9gzIie9CtwVLm8wtw6YJdKyxSjeg==}
@@ -5682,30 +5626,6 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
-
-  '@baiwusanyu/utils-com@1.0.18(ansi-colors@4.1.3)':
-    dependencies:
-      ansi-colors: 4.1.3
-      hash-sum: 2.0.0
-
-  '@baiwusanyu/utils-date@1.0.18':
-    dependencies:
-      ansi-colors: 4.1.3
-      moment: 2.30.1
-
-  '@baiwusanyu/utils-is@1.0.18': {}
-
-  '@baiwusanyu/utils-log@1.0.18':
-    dependencies:
-      ansi-colors: 4.1.3
-
-  '@baiwusanyu/utils-normalize@1.0.18': {}
-
-  '@baiwusanyu/utils-obj@1.0.18': {}
-
-  '@baiwusanyu/utils-task@1.0.18':
-    dependencies:
-      '@baiwusanyu/utils-log': 1.0.18
 
   '@biomejs/biome@1.8.3':
     optionalDependencies:
@@ -6623,33 +6543,6 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@unplugin-vue-ce/sub-style@1.0.0-beta.14(ansi-colors@4.1.3)(vue@3.5.13(typescript@5.5.3))':
-    dependencies:
-      '@babel/parser': 7.26.3
-      '@babel/types': 7.26.3
-      '@unplugin-vue-ce/utils': 1.0.0-beta.21(ansi-colors@4.1.3)(vue@3.5.13(typescript@5.5.3))
-      baiwusanyu-utils: 1.0.18(ansi-colors@4.1.3)
-      estree-walker-ts: 1.0.1
-      fast-glob: 3.3.2
-      fs-extra: 11.2.0
-      magic-string: 0.30.17
-      unplugin: 1.10.1
-      vue: 3.5.13(typescript@5.5.3)
-    transitivePeerDependencies:
-      - ansi-colors
-
-  '@unplugin-vue-ce/utils@1.0.0-beta.21(ansi-colors@4.1.3)(vue@3.5.13(typescript@5.5.3))':
-    dependencies:
-      baiwusanyu-utils: 1.0.18(ansi-colors@4.1.3)
-      estree-walker-ts: 1.0.1
-      fast-glob: 3.3.2
-      fs-extra: 11.2.0
-      magic-string: 0.30.17
-      unplugin: 1.10.1
-      vue: 3.5.13(typescript@5.5.3)
-    transitivePeerDependencies:
-      - ansi-colors
-
   '@vitejs/plugin-react@2.2.0(vite@5.4.14(@types/node@16.18.101)(sass@1.77.6))':
     dependencies:
       '@babel/core': 7.24.7
@@ -7120,19 +7013,6 @@ snapshots:
   astral-regex@2.0.0: {}
 
   at-least-node@1.0.0: {}
-
-  baiwusanyu-utils@1.0.18(ansi-colors@4.1.3):
-    dependencies:
-      '@baiwusanyu/utils-com': 1.0.18(ansi-colors@4.1.3)
-      '@baiwusanyu/utils-date': 1.0.18
-      '@baiwusanyu/utils-is': 1.0.18
-      '@baiwusanyu/utils-log': 1.0.18
-      '@baiwusanyu/utils-normalize': 1.0.18
-      '@baiwusanyu/utils-obj': 1.0.18
-      '@baiwusanyu/utils-task': 1.0.18
-      hash-sum: 2.0.0
-    transitivePeerDependencies:
-      - ansi-colors
 
   balanced-match@1.0.2: {}
 
@@ -7714,8 +7594,6 @@ snapshots:
   estraverse@4.3.0: {}
 
   estraverse@5.3.0: {}
-
-  estree-walker-ts@1.0.1: {}
 
   estree-walker@2.0.2: {}
 
@@ -8446,8 +8324,6 @@ snapshots:
       pathe: 1.1.2
       pkg-types: 1.1.1
       ufo: 1.5.3
-
-  moment@2.30.1: {}
 
   mri@1.2.0: {}
 
@@ -9337,13 +9213,6 @@ snapshots:
 
   unpipe@1.0.0: {}
 
-  unplugin@1.10.1:
-    dependencies:
-      acorn: 8.12.0
-      chokidar: 3.6.0
-      webpack-sources: 3.2.3
-      webpack-virtual-modules: 0.6.2
-
   update-browserslist-db@1.0.16(browserslist@4.23.1):
     dependencies:
       browserslist: 4.23.1
@@ -9696,10 +9565,6 @@ snapshots:
       vue: 2.7.16
 
   webidl-conversions@4.0.2: {}
-
-  webpack-sources@3.2.3: {}
-
-  webpack-virtual-modules@0.6.2: {}
 
   whatwg-url@7.1.0:
     dependencies:
