@@ -57,7 +57,7 @@
     "esbuild": "^0.25.0",
     "meow": "^13.2.0",
     "npm-run-all2": "^5.0.0",
-    "stylelint": "^14.16.1",
+    "stylelint": "^16.14.1",
     "tsup": "^6.7.0",
     "typescript": "^5.5.3",
     "vls": "^0.8.5",
