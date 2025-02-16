@@ -833,7 +833,7 @@ importers:
   playground/vls-vue2:
     dependencies:
       vue:
-        specifier: ^2.6.14
+        specifier: ^2.7.16
         version: 2.7.16
       vue-class-component:
         specifier: 7.2.6
