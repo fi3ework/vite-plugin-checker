@@ -1,12 +1,9 @@
 name: Release
 
-on:
-  push:
-    branches:
-      - main
+permissions:
+  contents: write
 
-env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+on: workflow_dispatch
 
 jobs:
   release:
@@ -30,10 +27,10 @@ jobs:
         # https://github.com/changesets/action/issues/98#issuecomment-917292485
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: pnpm i
 
-      - name: Prepare for Release
+      - name: Prepare for release
         run: |
           pnpm run format
           pnpm run lint
@@ -42,13 +39,23 @@ jobs:
           pnpm run build
           pnpm run publint
 
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
-        uses: changesets/action@v1
+      - uses: actions/github-script@v7
+        id: version_to_release
         with:
-          title: 'chore: next release'
-          publish: pnpm release
-          commit: 'release: publish'
+          result-encoding: string
+          script: |
+            const fs = require('fs');
+            const packageJson = JSON.parse(fs.readFileSync('./packages/vite-plugin-checker/package.json', 'utf8'));
+            return packageJson.version;
+
+      - name: Publish to NPM
+        run: |
+          cp README.md packages/vite-plugin-checker/README.md
+          git tag vite-plugin-checker@${{ steps.version_to_release.outputs.result }}
+          git push origin vite-plugin-checker@${{ steps.version_to_release.outputs.result }}
+          pnpm -r publish --no-git-checks
+
+      - name: GitHub release
+        run: pnpx changelogithub
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

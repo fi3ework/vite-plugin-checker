@@ -2,6 +2,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
+import chalk from 'chalk'
 import invariant from 'tiny-invariant'
 import ts from 'typescript'
 
@@ -107,13 +108,16 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           }
 
           if (terminal) {
+            const color = errorCount && errorCount > 0 ? 'red' : 'green'
             consoleLog(
-              logChunk +
+              chalk[color](
+                logChunk +
                 os.EOL +
                 wrapCheckerSummary(
                   'TypeScript',
                   diagnostic.messageText.toString(),
-                ),
+                )
+              ),
             )
           }
         })

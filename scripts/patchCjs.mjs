@@ -1,20 +1,17 @@
+import fs from 'node:fs/promises'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import fs from 'fs-extra'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 async function main() {
-  await fs.outputJson(
+  await fs.writeFile(
     path.resolve(
       __dirname,
       '../packages/vite-plugin-checker/dist/cjs/package.json',
     ),
-    { type: 'commonjs' },
-    {
-      spaces: 2,
-    },
+    JSON.stringify({ type: 'commonjs' }, null, 2),
   )
 }
 
