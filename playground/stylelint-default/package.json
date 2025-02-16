@@ -16,9 +16,9 @@
   "devDependencies": {
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
-    "meow": "^9.0.0",
-    "stylelint": "^14.16.1",
-    "stylelint-config-standard": "^28.0.0",
+    "meow": "^13.2.0",
+    "stylelint": "^16.14.1",
+    "stylelint-config-standard": "^36.0.0",
     "typescript": "^5.5.3",
     "vite": "^5.4.14",
     "vite-plugin-checker": "workspace:*"
