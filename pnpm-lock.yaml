@@ -833,20 +833,20 @@ importers:
   playground/vls-vue2:
     dependencies:
       vue:
-        specifier: ^2.7.16
-        version: 2.7.16
+        specifier: ^3.0.0
+        version: 3.5.13(typescript@4.3.5)
       vue-class-component:
         specifier: 7.2.6
-        version: 7.2.6(vue@2.7.16)
+        version: 7.2.6(vue@3.5.13(typescript@4.3.5))
       vue-property-decorator:
         specifier: 9.1.2
-        version: 9.1.2(vue-class-component@7.2.6(vue@2.7.16))(vue@2.7.16)
+        version: 9.1.2(vue-class-component@7.2.6(vue@3.5.13(typescript@4.3.5)))(vue@3.5.13(typescript@4.3.5))
       vue-router:
         specifier: 3.5.1
-        version: 3.5.1(vue@2.7.16)
+        version: 3.5.1(vue@3.5.13(typescript@4.3.5))
       vuex:
         specifier: 3.6.2
-        version: 3.6.2(vue@2.7.16)
+        version: 3.6.2(vue@3.5.13(typescript@4.3.5))
     devDependencies:
       '@types/node':
         specifier: ^15.0.0
@@ -892,7 +892,7 @@ importers:
         version: 0.12.2(vite@5.4.14(@types/node@15.14.9)(sass@1.77.6))
       vite-plugin-vue2:
         specifier: ^1.9.0
-        version: 1.9.3(lodash@4.17.21)(vite@5.4.14(@types/node@15.14.9)(sass@1.77.6))(vue-template-compiler@2.7.16)(vue@2.7.16)
+        version: 1.9.3(lodash@4.17.21)(vite@5.4.14(@types/node@15.14.9)(sass@1.77.6))(vue-template-compiler@2.7.16)(vue@3.5.13(typescript@4.3.5))
       vls:
         specifier: ^0.8.5
         version: 0.8.5
@@ -2274,9 +2274,6 @@ packages:
 
   '@vue/compiler-dom@3.5.13':
     resolution: {integrity: sha512-ZOJ46sMOKUjO3e94wPdCzQ6P1Lx/vhp2RSvfaab88Ajexs0AHeV0uasYhi99WPaogmBlRHNRuly8xV75cNTMDA==}
-
-  '@vue/compiler-sfc@2.7.16':
-    resolution: {integrity: sha512-KWhJ9k5nXuNtygPU7+t1rX6baZeqOYLEforUPjgNDBnLicfHCoi48H87Q8XyLZOrNNsmhuwKqtpDQWjEFe6Ekg==}
 
   '@vue/compiler-sfc@3.5.13':
     resolution: {integrity: sha512-6VdaljMpD82w6c2749Zhf5T9u5uLBWKnVue6XWxprDobftnletJ8+oel7sexFfM3qIxNmVE7LSFGTpv6obNyaQ==}
@@ -5163,10 +5160,6 @@ packages:
     peerDependencies:
       typescript: '>=5.0.0'
 
-  vue@2.7.16:
-    resolution: {integrity: sha512-4gCtFXaAA3zYZdTp5s4Hl2sozuySsgz4jy1EnpBHNfpMa9dK1ZCG7viqBPCwXtmgc8nHqUsAu3G4gtmXkkY3Sw==}
-    deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
-
   vue@3.5.13:
     resolution: {integrity: sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==}
     peerDependencies:
@@ -6627,7 +6620,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vue/babel-preset-jsx@1.4.0(@babel/core@7.24.7)(vue@2.7.16)':
+  '@vue/babel-preset-jsx@1.4.0(@babel/core@7.24.7)(vue@3.5.13(typescript@4.3.5))':
     dependencies:
       '@babel/core': 7.24.7
       '@vue/babel-helper-vue-jsx-merge-props': 1.4.0
@@ -6639,7 +6632,7 @@ snapshots:
       '@vue/babel-sugar-v-model': 1.4.0(@babel/core@7.24.7)
       '@vue/babel-sugar-v-on': 1.4.0(@babel/core@7.24.7)
     optionalDependencies:
-      vue: 2.7.16
+      vue: 3.5.13(typescript@4.3.5)
     transitivePeerDependencies:
       - supports-color
 
@@ -6696,14 +6689,6 @@ snapshots:
     dependencies:
       '@vue/compiler-core': 3.5.13
       '@vue/shared': 3.5.13
-
-  '@vue/compiler-sfc@2.7.16':
-    dependencies:
-      '@babel/parser': 7.26.3
-      postcss: 8.5.1
-      source-map: 0.6.1
-    optionalDependencies:
-      prettier: 2.6.0
 
   '@vue/compiler-sfc@3.5.13':
     dependencies:
@@ -6859,6 +6844,12 @@ snapshots:
       '@vue/runtime-core': 3.5.13
       '@vue/shared': 3.5.13
       csstype: 3.1.3
+
+  '@vue/server-renderer@3.5.13(vue@3.5.13(typescript@4.3.5))':
+    dependencies:
+      '@vue/compiler-ssr': 3.5.13
+      '@vue/shared': 3.5.13
+      vue: 3.5.13(typescript@4.3.5)
 
   '@vue/server-renderer@3.5.13(vue@3.5.13(typescript@5.5.3))':
     dependencies:
@@ -9281,7 +9272,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-vue2@1.9.3(lodash@4.17.21)(vite@5.4.14(@types/node@15.14.9)(sass@1.77.6))(vue-template-compiler@2.7.16)(vue@2.7.16):
+  vite-plugin-vue2@1.9.3(lodash@4.17.21)(vite@5.4.14(@types/node@15.14.9)(sass@1.77.6))(vue-template-compiler@2.7.16)(vue@3.5.13(typescript@4.3.5)):
     dependencies:
       '@babel/core': 7.24.7
       '@babel/parser': 7.26.3
@@ -9290,7 +9281,7 @@ snapshots:
       '@babel/plugin-transform-typescript': 7.24.7(@babel/core@7.24.7)
       '@rollup/pluginutils': 4.2.1
       '@vue/babel-helper-vue-jsx-merge-props': 1.4.0
-      '@vue/babel-preset-jsx': 1.4.0(@babel/core@7.24.7)(vue@2.7.16)
+      '@vue/babel-preset-jsx': 1.4.0(@babel/core@7.24.7)(vue@3.5.13(typescript@4.3.5))
       '@vue/component-compiler-utils': 3.3.0(lodash@4.17.21)
       consolidate: 0.16.0(lodash@4.17.21)
       debug: 4.3.5(supports-color@8.1.1)
@@ -9505,9 +9496,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vue-class-component@7.2.6(vue@2.7.16):
+  vue-class-component@7.2.6(vue@3.5.13(typescript@4.3.5)):
     dependencies:
-      vue: 2.7.16
+      vue: 3.5.13(typescript@4.3.5)
 
   vue-demi@0.14.8(vue@3.5.13(typescript@5.5.3)):
     dependencies:
@@ -9539,14 +9530,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vue-property-decorator@9.1.2(vue-class-component@7.2.6(vue@2.7.16))(vue@2.7.16):
+  vue-property-decorator@9.1.2(vue-class-component@7.2.6(vue@3.5.13(typescript@4.3.5)))(vue@3.5.13(typescript@4.3.5)):
     dependencies:
-      vue: 2.7.16
-      vue-class-component: 7.2.6(vue@2.7.16)
+      vue: 3.5.13(typescript@4.3.5)
+      vue-class-component: 7.2.6(vue@3.5.13(typescript@4.3.5))
 
-  vue-router@3.5.1(vue@2.7.16):
+  vue-router@3.5.1(vue@3.5.13(typescript@4.3.5)):
     dependencies:
-      vue: 2.7.16
+      vue: 3.5.13(typescript@4.3.5)
 
   vue-template-compiler@2.7.16:
     dependencies:
@@ -9562,10 +9553,15 @@ snapshots:
       semver: 7.6.2
       typescript: 5.5.3
 
-  vue@2.7.16:
+  vue@3.5.13(typescript@4.3.5):
     dependencies:
-      '@vue/compiler-sfc': 2.7.16
-      csstype: 3.1.3
+      '@vue/compiler-dom': 3.5.13
+      '@vue/compiler-sfc': 3.5.13
+      '@vue/runtime-dom': 3.5.13
+      '@vue/server-renderer': 3.5.13(vue@3.5.13(typescript@4.3.5))
+      '@vue/shared': 3.5.13
+    optionalDependencies:
+      typescript: 4.3.5
 
   vue@3.5.13(typescript@5.5.3):
     dependencies:
@@ -9577,9 +9573,9 @@ snapshots:
     optionalDependencies:
       typescript: 5.5.3
 
-  vuex@3.6.2(vue@2.7.16):
+  vuex@3.6.2(vue@3.5.13(typescript@4.3.5)):
     dependencies:
-      vue: 2.7.16
+      vue: 3.5.13(typescript@4.3.5)
 
   webidl-conversions@4.0.2: {}
 
