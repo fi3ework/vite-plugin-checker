@@ -41,7 +41,7 @@ importers:
         specifier: ^2.0.13
         version: 2.4.9
       '@types/rimraf':
-        specifier: ^3.0.0
+        specifier: ^3.0.2
         version: 3.0.2
       '@types/ws':
         specifier: ^8.5.3
