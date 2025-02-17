@@ -26,7 +26,8 @@
         "eslint",
         "meow",
         "stylelint",
-        "vls"
+        "vls",
+        "vue-tsc"
       ]
     },
     "playground/backend-integration": {
