@@ -11,7 +11,7 @@
     "format": "biome format . --write",
     "postinstall": "simple-git-hooks install",
     "lint": "biome check . --diagnostic-level=warn",
-    "publint": "pnpm -r --filter='vite-plugin-checker' exec publint",
+    "publint": "pnpm build && pnpm -r --filter='vite-plugin-checker' exec publint",
     "sort-package-json": "npx sort-package-json \"packages/*/package.json\"",
     "test": "run-s test-unit test-serve test-build",
     "test-build": "VITE_TEST_BUILD=1 vitest run -c vitest.config.e2e.ts",

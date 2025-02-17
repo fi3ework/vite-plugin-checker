@@ -18,13 +18,12 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/esm/main.d.ts",
       "import": "./dist/esm/main.js",
-      "require": "./dist/cjs/main.js"
+      "require": "./dist/cjs/main.cjs"
     }
   },
-  "main": "./dist/cjs/main.js",
-  "types": "./dist/esm/main.d.ts",
+  "main": "./dist/cjs/main.cjs",
+  "types": "./dist/cjs/main.d.cts",
   "files": [
     "dist",
     "!dist/checkers/vueTsc/typescript-vue-tsc"

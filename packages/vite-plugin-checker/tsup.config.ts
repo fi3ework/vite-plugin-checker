@@ -19,7 +19,7 @@ export default defineConfig([
     shims: true,
     outExtension() {
       return {
-        js: '.js',
+        js: '.cjs',
       }
     },
     async onSuccess() {
