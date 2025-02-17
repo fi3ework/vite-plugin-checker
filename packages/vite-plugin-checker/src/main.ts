@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process'
-import chalk from 'chalk'
+import * as colors from 'colorette'
 import npmRunPath from 'npm-run-path'
 
 import type { ConfigEnv, Logger, Plugin } from 'vite'
@@ -219,7 +219,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       } else {
         setTimeout(() => {
           logger!.warn(
-            chalk.yellow(
+            colors.yellow(
               '[vite-plugin-checker]: `server.ws.on` is introduced to Vite in 2.6.8, see [PR](https://github.com/vitejs/vite/pull/5273) and [changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). \nvite-plugin-checker relies on `server.ws.on` to send overlay message to client. Support for Vite < 2.6.8 will be removed in the next major version release.',
             ),
           )

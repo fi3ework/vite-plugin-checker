@@ -29,9 +29,9 @@ importers:
       '@types/node':
         specifier: ^16.18.126
         version: 16.18.126
-      chalk:
-        specifier: ^4.1.2
-        version: 4.1.2
+      colorette:
+        specifier: ^2.0.20
+        version: 2.0.20
       execa:
         specifier: ^5.1.1
         version: 5.1.1
@@ -116,12 +116,12 @@ importers:
       '@babel/code-frame':
         specifier: ^7.26.2
         version: 7.26.2
-      chalk:
-        specifier: ^4.1.2
-        version: 4.1.2
       chokidar:
         specifier: ^3.6.0
         version: 3.6.0
+      colorette:
+        specifier: ^2.0.20
+        version: 2.0.20
       npm-run-path:
         specifier: ^4.0.1
         version: 4.0.1
