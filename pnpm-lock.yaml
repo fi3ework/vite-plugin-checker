@@ -56,7 +56,7 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       lint-staged:
-        specifier: ^11.0.0
+        specifier: ^11.2.6
         version: 11.2.6
       minimist:
         specifier: ^1.2.5
