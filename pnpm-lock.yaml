@@ -32,7 +32,7 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12
       '@types/minimist':
-        specifier: ^1.2.2
+        specifier: ^1.2.5
         version: 1.2.5
       '@types/node':
         specifier: ^16.0.0
@@ -59,7 +59,7 @@ importers:
         specifier: ^11.2.6
         version: 11.2.6
       minimist:
-        specifier: ^1.2.5
+        specifier: ^1.2.8
         version: 1.2.8
       npm-run-all2:
         specifier: ^5.0.0
