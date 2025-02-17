@@ -1,21 +1,15 @@
 {
-  "private": true,
   "name": "@playground/stylelint-default",
-  "type": "module",
   "version": "0.0.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview",
-    "lint": "stylelint \"./**/*.css\""
-  },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "dev": "vite",
+    "lint": "stylelint \"./**/*.css\"",
+    "serve": "vite preview"
   },
   "devDependencies": {
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
     "meow": "^13.2.0",
     "stylelint": "^16.14.1",
     "stylelint-config-standard": "^36.0.1",
