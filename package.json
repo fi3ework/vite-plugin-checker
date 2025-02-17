@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "sort-package-json": "npx sort-package-json \"packages/*/package.json\"",
-    "preinstall": "npx only-allow pnpm",
+    "postinstall": "simple-git-hooks install",
     "dev": "pnpm -r --filter='./packages/**' --parallel run dev",
     "build": "pnpm -r --filter='./packages/**' run build",
     "build:test": "pnpm -r --filter='./packages/**' run build:test",
@@ -13,11 +13,11 @@
     "publint": "pnpm -r --filter='vite-plugin-checker' exec publint",
     "test": "run-s test-unit test-serve test-build",
     "test-unit": "vitest run",
+    "test-unit:watch": "vitest",
     "test-serve": "vitest run -c vitest.config.e2e.ts",
     "test-build": "VITE_TEST_BUILD=1 vitest run -c vitest.config.e2e.ts",
     "test-serve-cjs": "VITEST_TEST_CJS=1 pnpm run test-serve",
     "test-build-cjs": "VITEST_TEST_CJS=1 pnpm run test-build",
-    "test-unit:watch": "vitest",
     "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit",
     "docs:dev": "pnpm --filter docs run dev",
     "docs:build": "pnpm --filter docs run build"

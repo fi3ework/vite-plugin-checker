@@ -112,11 +112,11 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             consoleLog(
               chalk[color](
                 logChunk +
-                os.EOL +
-                wrapCheckerSummary(
-                  'TypeScript',
-                  diagnostic.messageText.toString(),
-                )
+                  os.EOL +
+                  wrapCheckerSummary(
+                    'TypeScript',
+                    diagnostic.messageText.toString(),
+                  ),
               ),
             )
           }
