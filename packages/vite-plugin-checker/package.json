@@ -53,7 +53,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
     "@types/eslint": "^7.29.0",
-    "@vue/language-core": "~2.1.6",
+    "@vue/language-core": "~2.2.2",
     "esbuild": "^0.25.0",
     "meow": "^13.2.0",
     "npm-run-all2": "^5.0.0",
@@ -62,7 +62,7 @@
     "typescript": "^5.5.3",
     "vls": "^0.8.5",
     "vti": "^0.1.11",
-    "vue-tsc": "~2.1.6"
+    "vue-tsc": "~2.2.2"
   },
   "peerDependencies": {
     "@biomejs/biome": ">=1.7",
@@ -74,7 +74,7 @@
     "vite": ">=2.0.0",
     "vls": "*",
     "vti": "*",
-    "vue-tsc": "~2.1.6"
+    "vue-tsc": "~2.2.2"
   },
   "peerDependenciesMeta": {
     "@biomejs/biome": {
