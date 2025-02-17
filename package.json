@@ -43,6 +43,7 @@
     "execa": "^5.1.1",
     "fast-json-stable-stringify": "^2.1.0",
     "lint-staged": "^11.2.6",
+    "pkg-pr-new": "^0.0.39",
     "playwright-chromium": "^1.50.1",
     "publint": "^0.1.16",
     "rimraf": "^3.0.2",
