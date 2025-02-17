@@ -13,9 +13,10 @@
     "lint": "biome check . --diagnostic-level=warn",
     "publint": "pnpm build && pnpm -r --filter='vite-plugin-checker' exec publint",
     "sort-package-json": "npx sort-package-json \"packages/*/package.json\"",
-    "test": "run-s test-unit test-serve test-build",
+    "test": "pnpm test-unit && pnpm test-serve && pnpm test-build",
     "test-build": "VITE_TEST_BUILD=1 vitest run -c vitest.config.e2e.ts",
     "test-build-cjs": "VITEST_TEST_CJS=1 pnpm run test-build",
+    "test-knip": "knip",
     "test-serve": "vitest run -c vitest.config.e2e.ts",
     "test-serve-cjs": "VITEST_TEST_CJS=1 pnpm run test-serve",
     "test-unit": "vitest run",
@@ -23,7 +24,7 @@
     "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm exec lint-staged"
+    "pre-commit": "npx lint-staged"
   },
   "lint-staged": {
     "package.json": "sort-package-json",
@@ -33,15 +34,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@changesets/cli": "^2.27.12",
     "@tsconfig/esm": "^1.0.5",
     "@tsconfig/node20": "^20.1.4",
     "@tsconfig/strictest": "^2.0.5",
     "@types/babel__code-frame": "^7.0.6",
     "@types/node": "^16.18.126",
-    "colorette": "^2.0.20",
     "execa": "^5.1.1",
     "fast-json-stable-stringify": "^2.1.0",
+    "knip": "^5.44.0",
     "lint-staged": "^11.2.6",
     "playwright-chromium": "^1.50.1",
     "publint": "^0.1.16",
@@ -54,7 +54,6 @@
     "tinyglobby": "^0.2.10",
     "typescript": "^5.7.3",
     "vite": "^6.1.0",
-    "vite-plugin-checker": "workspace:*",
     "vitest": "^3.0.5"
   },
   "packageManager": "pnpm@9.15.5",

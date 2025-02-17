@@ -79,6 +79,9 @@ jobs:
       - name: Publint
         run: pnpm run publint
 
+      - name: Knip
+        run: pnpm run test-knip
+
       - name: Type check
         run: pnpm run type-check
 
