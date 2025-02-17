@@ -38,15 +38,15 @@
     "@tsconfig/node20": "^20.1.4",
     "@tsconfig/strictest": "^2.0.5",
     "@types/babel__code-frame": "^7.0.6",
-    "@types/node": "^16.18.126",
-    "execa": "^5.1.1",
+    "@types/node": "^18.19.76",
+    "execa": "^9.5.2",
     "fast-json-stable-stringify": "^2.1.0",
-    "knip": "^5.44.0",
-    "lint-staged": "^11.2.6",
+    "knip": "^5.44.1",
+    "lint-staged": "^15.4.3",
     "pkg-pr-new": "^0.0.39",
     "playwright-chromium": "^1.50.1",
-    "publint": "^0.1.16",
-    "rimraf": "^3.0.2",
+    "publint": "^0.3.5",
+    "rimraf": "^5.0.10",
     "simple-git-hooks": "^2.11.1",
     "sort-deep-object-arrays": "^1.1.2",
     "sort-package-json": "^2.14.0",
@@ -57,10 +57,5 @@
     "vite": "^6.1.0",
     "vitest": "^3.0.5"
   },
-  "packageManager": "pnpm@9.15.5",
-  "engines": {
-    "npm": "forbidden, use pnpm",
-    "pnpm": "^9.0.0",
-    "yarn": "forbidden, use pnpm"
-  }
+  "packageManager": "pnpm@9.15.5"
 }

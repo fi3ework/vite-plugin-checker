@@ -1,4 +1,4 @@
-import execa from 'execa'
+import { execa } from 'execa'
 import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import type * as http from 'node:http'
