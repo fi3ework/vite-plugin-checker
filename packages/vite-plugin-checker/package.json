@@ -30,10 +30,10 @@
     "!dist/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
-    "dev": "tsup --watch",
-    "clean": "rimraf dist",
     "build": "tsup && node ../../scripts/patchCjs.mjs",
-    "build:test": "tsup --sourcemap inline"
+    "build:test": "tsup --sourcemap inline",
+    "clean": "rimraf dist",
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@babel/code-frame": "^7.26.2",
@@ -49,9 +49,7 @@
     "@biomejs/biome": "^1.9.4",
     "@types/eslint": "^7.29.0",
     "@vue/language-core": "~2.2.2",
-    "esbuild": "^0.25.0",
     "meow": "^13.2.0",
-    "npm-run-all2": "^5.0.2",
     "stylelint": "^16.14.1",
     "tsup": "^6.7.0",
     "typescript": "^5.7.3",

@@ -2,25 +2,25 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "sort-package-json": "npx sort-package-json \"packages/*/package.json\"",
-    "postinstall": "simple-git-hooks install",
-    "dev": "pnpm -r --filter='./packages/**' --parallel run dev",
     "build": "pnpm -r --filter='./packages/**' run build",
     "build:test": "pnpm -r --filter='./packages/**' run build:test",
     "clean": "pnpm -r --filter='./packages/**' run clean",
+    "dev": "pnpm -r --filter='./packages/**' --parallel run dev",
+    "docs:build": "pnpm --filter docs run build",
+    "docs:dev": "pnpm --filter docs run dev",
     "format": "biome format . --write",
+    "postinstall": "simple-git-hooks install",
     "lint": "biome check . --diagnostic-level=warn",
     "publint": "pnpm -r --filter='vite-plugin-checker' exec publint",
+    "sort-package-json": "npx sort-package-json \"packages/*/package.json\"",
     "test": "run-s test-unit test-serve test-build",
+    "test-build": "VITE_TEST_BUILD=1 vitest run -c vitest.config.e2e.ts",
+    "test-build-cjs": "VITEST_TEST_CJS=1 pnpm run test-build",
+    "test-serve": "vitest run -c vitest.config.e2e.ts",
+    "test-serve-cjs": "VITEST_TEST_CJS=1 pnpm run test-serve",
     "test-unit": "vitest run",
     "test-unit:watch": "vitest",
-    "test-serve": "vitest run -c vitest.config.e2e.ts",
-    "test-build": "VITE_TEST_BUILD=1 vitest run -c vitest.config.e2e.ts",
-    "test-serve-cjs": "VITEST_TEST_CJS=1 pnpm run test-serve",
-    "test-build-cjs": "VITEST_TEST_CJS=1 pnpm run test-build",
-    "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit",
-    "docs:dev": "pnpm --filter docs run dev",
-    "docs:build": "pnpm --filter docs run build"
+    "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged"
@@ -38,20 +38,12 @@
     "@tsconfig/node20": "^20.1.4",
     "@tsconfig/strictest": "^2.0.5",
     "@types/babel__code-frame": "^7.0.6",
-    "@types/debug": "^4.1.12",
-    "@types/minimist": "^1.2.5",
     "@types/node": "^16.18.126",
-    "@types/prompts": "^2.4.9",
-    "@types/rimraf": "^3.0.2",
-    "@types/ws": "^8.5.14",
     "chalk": "^4.1.2",
     "execa": "^5.1.1",
     "fast-json-stable-stringify": "^2.1.0",
     "lint-staged": "^11.2.6",
-    "minimist": "^1.2.8",
-    "npm-run-all2": "^5.0.2",
     "playwright-chromium": "^1.50.1",
-    "prompts": "^2.4.2",
     "publint": "^0.1.16",
     "rimraf": "^3.0.2",
     "simple-git-hooks": "^2.11.1",
@@ -63,32 +55,12 @@
     "typescript": "^5.7.3",
     "vite": "^6.1.0",
     "vite-plugin-checker": "workspace:*",
-    "vitest": "^3.0.5",
-    "ws": "^8.18.0"
+    "vitest": "^3.0.5"
   },
   "packageManager": "pnpm@9.15.5",
   "engines": {
     "npm": "forbidden, use pnpm",
     "pnpm": "^9.0.0",
     "yarn": "forbidden, use pnpm"
-  },
-  "pnpm": {
-    "packageExtensions": {
-      "@baiwusanyu/utils-com": {
-        "dependencies": {
-          "hash-sum": "*"
-        }
-      },
-      "@baiwusanyu/utils-log": {
-        "dependencies": {
-          "ansi-colors": "^4.1.3"
-        }
-      },
-      "@baiwusanyu/utils-task": {
-        "dependencies": {
-          "@baiwusanyu/utils-log": "*"
-        }
-      }
-    }
   }
 }
