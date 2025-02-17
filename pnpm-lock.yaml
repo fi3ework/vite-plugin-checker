@@ -132,9 +132,6 @@ importers:
       '@vue/language-core':
         specifier: ~2.2.2
         version: 2.2.2(typescript@5.7.3)
-      eslint:
-        specifier: ^8.57.1
-        version: 8.57.1
       meow:
         specifier: ^13.2.0
         version: 13.2.0
