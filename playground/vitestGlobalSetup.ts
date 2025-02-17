@@ -46,7 +46,7 @@ export async function setup(): Promise<void> {
     for (const packageJson of packageJsons) {
       const packageJsonContents = await fs.readFile(packageJson, 'utf-8').then(r => JSON.parse(r.toString()))
       delete packageJsonContents['module']
-      await fs.writeFile(packageJson, JSON.stringify(packageJsonContents, null, 2))
+      await fs.writeFile(packageJson, JSON.stringify(packageJsonContents, null, 2) + '\n')
     }
   }
 }
