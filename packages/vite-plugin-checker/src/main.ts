@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process'
-import * as colors from 'colorette'
 import { type ProcessEnv, npmRunPathEnv } from 'npm-run-path'
+import colors from 'picocolors'
 
 import type { ConfigEnv, Logger, Plugin } from 'vite'
 import { Checker } from './Checker.js'
