@@ -1,11 +1,11 @@
 {
   "name": "@playground/backend-integration",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node server.js",
     "build": "vite build",
+    "dev": "node server.js",
     "preview": "vite preview"
   },
   "dependencies": {

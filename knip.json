@@ -5,15 +5,10 @@
   },
   "workspaces": {
     ".": {
-      "entry": [
-        "scripts/*",
-        "playground/*"
-      ]
+      "entry": ["scripts/*", "playground/*"]
     },
     "docs": {
-      "entry": [
-        ".vitepress/config.ts"
-      ]
+      "entry": [".vitepress/config.ts"]
     },
     "packages/vite-plugin-checker": {
       "entry": [
@@ -31,17 +26,10 @@
       ]
     },
     "playground/backend-integration": {
-      "entry": [
-        "vite.config.js",
-        "src/*.{js,ts,tsx}",
-        "__test__/serve.js"
-      ]
+      "entry": ["vite.config.js", "src/*.{js,ts,tsx}", "__test__/serve.js"]
     },
     "playground/vls-vue2": {
-      "entry": [
-        "vetur.config.cjs",
-        "src/**/*"
-      ],
+      "entry": ["vetur.config.cjs", "src/**/*"],
       "ignoreDependencies": [
         "tslib",
         "vue-class-component",
