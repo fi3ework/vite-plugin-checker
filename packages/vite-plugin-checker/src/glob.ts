@@ -13,7 +13,7 @@ export function createIgnore(_root: string, pattern: string | string[] = []) {
       const isDirectory =
         !relativePath.includes('*') && statSync(resolvedPath).isDirectory()
       if (isDirectory) {
-        return [relativePath, join(relativePath, '**/*')]
+        return [relativePath, join(relativePath, '**/*').replace(/\\/g, '/')]
       }
     } catch {}
     return [relativePath]
