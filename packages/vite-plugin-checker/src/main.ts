@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process'
 import * as colors from 'colorette'
-import npmRunPath from 'npm-run-path'
+import { type ProcessEnv, npmRunPathEnv } from 'npm-run-path'
 
 import type { ConfigEnv, Logger, Plugin } from 'vite'
 import { Checker } from './Checker.js'
@@ -154,7 +154,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       // run a bin command in a separated process
       if (!isProduction || !enableBuild) return
 
-      const localEnv = npmRunPath.env({
+      const localEnv = npmRunPathEnv({
         env: process.env,
         cwd: process.cwd(),
         execPath: process.execPath,
@@ -233,7 +233,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
 function spawnChecker(
   checker: ServeAndBuildChecker,
   userConfig: Partial<PluginConfig>,
-  localEnv: npmRunPath.ProcessEnv,
+  localEnv: ProcessEnv,
 ) {
   return new Promise<number>((resolve) => {
     const buildBin = checker.build.buildBin

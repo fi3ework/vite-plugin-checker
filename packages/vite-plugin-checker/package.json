@@ -17,19 +17,16 @@
   "author": "fi3ework <fi3ework@gmail.com>",
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./dist/esm/main.js",
-      "require": "./dist/cjs/main.cjs"
-    }
+    ".": "./dist/main.js"
   },
-  "main": "./dist/cjs/main.cjs",
-  "types": "./dist/cjs/main.d.cts",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
   "files": [
     "dist",
     "!dist/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
-    "build": "tsup && node ../../scripts/patchCjs.mjs",
+    "build": "tsup",
     "build:test": "tsup --sourcemap inline",
     "clean": "rimraf dist",
     "dev": "tsup --watch"
@@ -38,10 +35,10 @@
     "@babel/code-frame": "^7.26.2",
     "chokidar": "^3.6.0",
     "colorette": "^2.0.20",
-    "npm-run-path": "^4.0.1",
-    "strip-ansi": "^6.0.1",
+    "npm-run-path": "^6.0.0",
+    "strip-ansi": "^7.1.0",
     "tiny-invariant": "^1.3.3",
-    "tinyglobby": "^0.2.10",
+    "tinyglobby": "^0.2.11",
     "vscode-uri": "^3.1.0"
   },
   "devDependencies": {
