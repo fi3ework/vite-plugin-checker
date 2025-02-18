@@ -17,19 +17,16 @@
   "author": "fi3ework <fi3ework@gmail.com>",
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./dist/esm/main.js",
-      "require": "./dist/cjs/main.cjs"
-    }
+    ".": "./dist/main.js"
   },
-  "main": "./dist/cjs/main.cjs",
-  "types": "./dist/cjs/main.d.cts",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
   "files": [
     "dist",
     "!dist/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
-    "build": "tsup && node ../../scripts/patchCjs.mjs",
+    "build": "tsup",
     "build:test": "tsup --sourcemap inline",
     "clean": "rimraf dist",
     "dev": "tsup --watch"
