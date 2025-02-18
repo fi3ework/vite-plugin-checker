@@ -67,6 +67,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
   let logger: Logger | null = null
+  let checkerPromise: Promise<void> | null = null
 
   return {
     name: 'vite-plugin-checker',
@@ -105,7 +106,11 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       isProduction ||= config.isProduction || config.command === 'build'
       buildWatch = !!config.build.watch
     },
-    buildEnd() {
+    async buildEnd() {
+      if (viteMode !== 'serve') {
+        await checkerPromise
+      }
+
       if (initialized) return
 
       if (viteMode === 'serve') {
@@ -160,19 +165,18 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         execPath: process.execPath,
       })
 
-      // spawn an async runner that we don't wait for in order to avoid blocking the build from continuing in parallel
-      ;(async () => {
-        const exitCodes = await Promise.all(
-          checkers.map((checker) =>
-            spawnChecker(checker, userConfig, localEnv),
-          ),
-        )
+      const spawnedCheckers = checkers.map((checker) =>
+        spawnChecker(checker, userConfig, localEnv),
+      )
+
+      // wait for checker states while avoiding blocking the build from continuing in parallel
+      checkerPromise = Promise.all(spawnedCheckers).then((exitCodes) => {
         const exitCode = exitCodes.find((code) => code !== 0) ?? 0
         // do not exit the process if run `vite build --watch`
         if (exitCode !== 0 && !buildWatch) {
           process.exit(exitCode)
         }
-      })()
+      })
     },
     configureServer(server) {
       if (initialized) return
