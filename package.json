@@ -15,10 +15,8 @@
     "sort-package-json": "npx sort-package-json \"packages/*/package.json\"",
     "test": "pnpm test-unit && pnpm test-serve && pnpm test-build",
     "test-build": "VITE_TEST_BUILD=1 vitest run -c vitest.config.e2e.ts",
-    "test-build-cjs": "VITEST_TEST_CJS=1 pnpm run test-build",
     "test-knip": "knip",
     "test-serve": "vitest run -c vitest.config.e2e.ts",
-    "test-serve-cjs": "VITEST_TEST_CJS=1 pnpm run test-serve",
     "test-unit": "vitest run",
     "test-unit:watch": "vitest",
     "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit"
