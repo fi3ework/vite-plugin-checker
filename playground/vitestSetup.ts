@@ -1,4 +1,4 @@
-import execa from 'execa'
+import { execa } from 'execa'
 import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import type * as http from 'node:http'
@@ -8,7 +8,7 @@ import { chromium } from 'playwright-chromium'
 import strip from 'strip-ansi'
 import { createServer, mergeConfig } from 'vite'
 import { beforeAll, expect } from 'vitest'
-import type { Checker } from 'vite-plugin-checker/dist/Checker'
+import type { Checker } from '../packages/vite-plugin-checker/src/Checker'
 
 import { normalizeLogSerializer } from './serializers'
 

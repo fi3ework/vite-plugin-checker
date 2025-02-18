@@ -2,7 +2,6 @@ import { rmSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { glob } from 'tinyglobby'
 import { chromium } from 'playwright-chromium'
 
 import type { BrowserServer } from 'playwright-chromium'
@@ -40,15 +39,6 @@ export async function setup(): Promise<void> {
         throw error
       }
     })
-
-  if (process.env['VITEST_TEST_CJS']) {
-    const packageJsons = await glob(`${tempDir}/**/package.json`)
-    for (const packageJson of packageJsons) {
-      const packageJsonContents = await fs.readFile(packageJson, 'utf-8').then(r => JSON.parse(r.toString()))
-      delete packageJsonContents['module']
-      await fs.writeFile(packageJson, JSON.stringify(packageJsonContents, null, 2))
-    }
-  }
 }
 
 export async function teardown(): Promise<void> {
