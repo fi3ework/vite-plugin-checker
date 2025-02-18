@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import os from 'node:os'
-import * as colors from 'colorette'
+import colors from 'picocolors'
 import strip from 'strip-ansi'
 import * as _vscodeUri from 'vscode-uri'
 

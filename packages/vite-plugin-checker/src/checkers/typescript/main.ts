@@ -2,7 +2,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
-import * as colors from 'colorette'
+import colors from 'picocolors'
 import invariant from 'tiny-invariant'
 import type * as typescript from 'typescript'
 
