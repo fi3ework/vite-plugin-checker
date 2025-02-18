@@ -113,6 +113,9 @@ importers:
       npm-run-path:
         specifier: ^6.0.0
         version: 6.0.0
+      picomatch:
+        specifier: ^4.0.2
+        version: 4.0.2
       strip-ansi:
         specifier: ^7.1.0
         version: 7.1.0
@@ -125,13 +128,13 @@ importers:
       vscode-uri:
         specifier: ^3.1.0
         version: 3.1.0
-      zeptomatch:
-        specifier: ^2.0.0
-        version: 2.0.0
     devDependencies:
       '@types/eslint':
         specifier: ^7.29.0
         version: 7.29.0
+      '@types/picomatch':
+        specifier: ^3.0.2
+        version: 3.0.2
       '@vue/language-core':
         specifier: ~2.2.2
         version: 2.2.2(typescript@5.7.3)
@@ -1844,6 +1847,9 @@ packages:
   '@types/node@18.19.76':
     resolution: {integrity: sha512-yvR7Q9LdPz2vGpmpJX5LolrgRdWvB67MJKDPSgIIzpFbaf9a1j/f5DnLp5VDyHGMR0QZHlTr1afsD87QCXFHKw==}
 
+  '@types/picomatch@3.0.2':
+    resolution: {integrity: sha512-n0i8TD3UDB7paoMMxA3Y65vUncFJXjcUf7lQY7YyKGl6031FNjfsLs6pdLFCy2GNFxItPJG8GvvpbZc2skH7WA==}
+
   '@types/prop-types@15.7.12':
     resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
 
@@ -3371,9 +3377,6 @@ packages:
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
-
-  grammex@3.1.6:
-    resolution: {integrity: sha512-WpQUhgQG7WIo7OEdsBW9v1yETn5/iE23tyX4J8H6zoOAMVnmOLbpx2zXuFiXM5DEjLUUwBx0RtdUja8XXSqq4A==}
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
@@ -5000,9 +5003,6 @@ packages:
     resolution: {integrity: sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ==}
     engines: {node: '>=18'}
 
-  zeptomatch@2.0.0:
-    resolution: {integrity: sha512-xjsIq0tpg7dNtJcbl0tNf4d4It4UK1ujSYJZXvGygse3GNgX44v/b2FRbM8sCGZS2qh4o983u8+1CBNNF+106g==}
-
   zod-package-json@1.1.0:
     resolution: {integrity: sha512-RvEsa3W/NCqEBMtnoE09GRVelA3IqRcKaijEiM6CEGsD19qLurf0HjrYMHwOqImOszlLL0ja63DPJeeU4pm7oQ==}
     engines: {node: '>=20'}
@@ -6139,6 +6139,8 @@ snapshots:
   '@types/node@18.19.76':
     dependencies:
       undici-types: 5.26.5
+
+  '@types/picomatch@3.0.2': {}
 
   '@types/prop-types@15.7.12': {}
 
@@ -7632,8 +7634,6 @@ snapshots:
       get-intrinsic: 1.2.4
 
   graceful-fs@4.2.11: {}
-
-  grammex@3.1.6: {}
 
   graphemer@1.4.0: {}
 
@@ -9375,10 +9375,6 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yoctocolors@2.1.1: {}
-
-  zeptomatch@2.0.0:
-    dependencies:
-      grammex: 3.1.6
 
   zod-package-json@1.1.0:
     dependencies:

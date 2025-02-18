@@ -1,6 +1,6 @@
 import { type Stats, statSync } from 'node:fs'
 import { join, relative, resolve } from 'node:path'
-import zeptomatch from 'zeptomatch'
+import picomatch from 'picomatch'
 
 export function createIgnore(_root: string, pattern: string | string[] = []) {
   const paths = Array.isArray(pattern) ? pattern : [pattern]
@@ -19,11 +19,13 @@ export function createIgnore(_root: string, pattern: string | string[] = []) {
     return [relativePath]
   })
 
+  const matcher = picomatch(globs, { cwd: root })
+
   return (path: string, _stats?: Stats) => {
     return (
       path.includes('node_modules') ||
       (path !== root &&
-        !zeptomatch(globs, relative(root, path).replace(/\\/g, '/')) &&
+        !matcher(relative(root, path).replace(/\\/g, '/')) &&
         !(_stats ?? statSync(path)).isDirectory())
     )
   }
