@@ -33,13 +33,14 @@
   },
   "dependencies": {
     "@babel/code-frame": "^7.26.2",
-    "chokidar": "^3.6.0",
+    "chokidar": "^4.0.3",
     "colorette": "^2.0.20",
     "npm-run-path": "^6.0.0",
     "strip-ansi": "^7.1.0",
     "tiny-invariant": "^1.3.3",
     "tinyglobby": "^0.2.11",
-    "vscode-uri": "^3.1.0"
+    "vscode-uri": "^3.1.0",
+    "zeptomatch": "^2.0.0"
   },
   "devDependencies": {
     "@types/eslint": "^7.29.0",
