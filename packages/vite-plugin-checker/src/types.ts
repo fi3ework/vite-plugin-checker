@@ -1,7 +1,7 @@
-import type { ErrorPayload, ConfigEnv } from 'vite'
-import type { Worker } from 'worker_threads'
+import type { Worker } from 'node:worker_threads'
 import type { ESLint } from 'eslint'
 import type * as Stylelint from 'stylelint'
+import type { ConfigEnv, ErrorPayload } from 'vite'
 import type { VlsOptions } from './checkers/vls/initParams.js'
 
 /* ----------------------------- userland plugin options ----------------------------- */
@@ -56,6 +56,10 @@ export type EslintConfig =
        * default config for dev mode when options.eslint.dev.eslint is nullable.
        */
       lintCommand: string
+      /**
+       * @default false
+       */
+      useFlatConfig?: boolean
       dev?: Partial<{
         /** You can override the options of translated from lintCommand. */
         overrideConfig: ESLint.Options
@@ -78,6 +82,37 @@ export type StylelintConfig =
         overrideConfig: Stylelint.LinterOptions
         /** which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning')[]
+      }>
+    }
+
+type BiomeCommand = 'lint' | 'check' | 'format' | 'ci'
+/** Biome checker configuration */
+export type BiomeConfig =
+  | boolean
+  | {
+      /**
+       * Command will be used in dev and build mode, will be override
+       * if `dev.command` or `build.command` is set their mode.
+       */
+      command?: BiomeCommand
+      /**
+       * Flags of the command, will be override if `dev.flags`
+       * or `build.command` is set their mode.
+       * */
+      flags?: string
+      dev?: Partial<{
+        /** Command will be used in dev mode */
+        command: BiomeCommand
+        /** Flags of the command */
+        flags?: string
+        /** Which level of the diagnostic will be emitted from plugin */
+        logLevel: ('error' | 'warning' | 'info')[]
+      }>
+      build?: Partial<{
+        /** Command will be used in build mode */
+        command: BiomeCommand
+        /** Flags of the command */
+        flags?: string
       }>
     }
 
@@ -177,6 +212,7 @@ export interface BuildInCheckers {
   vls: VlsConfig
   eslint: EslintConfig
   stylelint: StylelintConfig
+  biome: BiomeConfig
 }
 
 export type BuildInCheckerNames = keyof BuildInCheckers
@@ -250,7 +286,9 @@ export type Action =
 
 export type BuildCheckBin = BuildCheckBinStr | BuildCheckBinFn
 export type BuildCheckBinStr = [string, ReadonlyArray<string>]
-export type BuildCheckBinFn = (config: UserPluginConfig) => [string, ReadonlyArray<string>]
+export type BuildCheckBinFn = (
+  config: UserPluginConfig,
+) => [string, ReadonlyArray<string>]
 
 export interface ConfigureServeChecker {
   worker: Worker
@@ -277,7 +315,7 @@ export interface CheckerDiagnostic {
 }
 
 export type CreateDiagnostic<T extends BuildInCheckerNames = any> = (
-  config: Pick<BuildInCheckers, T> & SharedConfig
+  config: Pick<BuildInCheckers, T> & SharedConfig,
 ) => CheckerDiagnostic
 
 /* ----------------------------- generic utility types ----------------------------- */

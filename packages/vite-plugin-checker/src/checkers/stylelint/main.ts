@@ -1,9 +1,9 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 import chokidar from 'chokidar'
 import stylelint from 'stylelint'
 import { translateOptions } from './options.js'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
@@ -19,7 +19,7 @@ import {
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
 
 const manager = new FileDiagnosticManager()
-let createServeAndBuild
+let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types.js'
 
@@ -37,7 +37,9 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
     async configureServer({ root }) {
       if (!pluginConfig.stylelint) return
 
-      const translatedOptions = await translateOptions(pluginConfig.stylelint.lintCommand)
+      const translatedOptions = await translateOptions(
+        pluginConfig.stylelint.lintCommand,
+      )
       const baseConfig = {
         cwd: root,
         ...translatedOptions,
@@ -59,12 +61,19 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
         if (terminal) {
-          diagnostics.forEach((d) => {
+          for (const d of diagnostics) {
             consoleLog(diagnosticToTerminalLog(d, 'Stylelint'))
-          })
-          const errorCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Error).length
-          const warningCount = diagnostics.filter((d) => d.level === DiagnosticLevel.Warning).length
-          consoleLog(composeCheckerSummary('Stylelint', errorCount, warningCount))
+          }
+
+          const errorCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Error,
+          ).length
+          const warningCount = diagnostics.filter(
+            (d) => d.level === DiagnosticLevel.Warning,
+          ).length
+          consoleLog(
+            composeCheckerSummary('Stylelint', errorCount, warningCount),
+          )
         }
 
         if (overlay) {
@@ -72,13 +81,16 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
             type: ACTION_TYPES.overlayError,
             payload: toClientPayload(
               'stylelint',
-              diagnostics.map((d) => diagnosticToRuntimeError(d))
+              diagnostics.map((d) => diagnosticToRuntimeError(d)),
             ),
           })
         }
       }
 
-      const handleFileChange = async (filePath: string, type: 'change' | 'unlink') => {
+      const handleFileChange = async (
+        filePath: string,
+        type: 'change' | 'unlink',
+      ) => {
         const absPath = path.resolve(root, filePath)
 
         if (type === 'unlink') {
@@ -88,9 +100,9 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
             ...baseConfig,
             files: filePath,
           })
-          const newDiagnostics = diagnosticsOfChangedFile
-            .map((d) => normalizeStylelintDiagnostic(d))
-            .flat(1)
+          const newDiagnostics = diagnosticsOfChangedFile.flatMap((d) =>
+            normalizeStylelintDiagnostic(d),
+          )
           manager.updateByFileId(absPath, newDiagnostics)
         }
 
@@ -103,7 +115,9 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         ...pluginConfig.stylelint.dev?.overrideConfig,
       })
 
-      manager.initWith(diagnostics.map((p) => normalizeStylelintDiagnostic(p)).flat(1))
+      manager.initWith(
+        diagnostics.flatMap((p) => normalizeStylelintDiagnostic(p)),
+      )
       dispatchDiagnostics()
 
       // watch lint

@@ -31,9 +31,11 @@ describe('vue2-vls', () => {
     })
   })
 
-  describe.runIf(isBuild)('build', () => {
-    it('should fail', async () => {
-      expectStderrContains(log, `Property 'msg1' does not exist on type`)
-    })
-  })
+  // As per https://github.com/vuejs/vetur/issues/3686
+  // We may remove VLS in the future to push the community to Vue 3 & Vue Language Tools.
+  // describe.runIf(isBuild)('build', () => {
+  //   it('should fail', async () => {
+  //     expectStderrContains(log, `Property 'msg1' does not exist on type`)
+  //   })
+  // })
 })

@@ -1,20 +1,20 @@
 import invariant from 'tiny-invariant'
 import { isInVitestEntryThread, isMainThread } from './utils.js'
 
-import { createScript, type Script } from './worker.js'
+import { type Script, createScript } from './worker.js'
 
 import type {
-  CreateDiagnostic,
-  BuildInCheckers,
-  ServeAndBuildChecker,
   BuildInCheckerNames,
+  BuildInCheckers,
+  CreateDiagnostic,
+  ServeAndBuildChecker,
 } from './types.js'
 
 if (!(isMainThread || isInVitestEntryThread)) {
   process.stdout.isTTY = true
 }
 
-export interface CheckerMeta<T extends BuildInCheckerNames> {
+interface CheckerMeta<T extends BuildInCheckerNames> {
   name: T
   absFilePath: string
   createDiagnostic: CreateDiagnostic<T>
@@ -22,11 +22,15 @@ export interface CheckerMeta<T extends BuildInCheckerNames> {
   script?: Script<any>
 }
 
-export abstract class Checker<T extends BuildInCheckerNames> implements CheckerMeta<T> {
+export abstract class Checker<T extends BuildInCheckerNames>
+  implements CheckerMeta<T>
+{
   public static logger: ((...v: string[]) => unknown)[] = []
 
   public static log(...args: any[]) {
-    this.logger.forEach((fn) => fn(...args))
+    for (const fn of Checker.logger) {
+      fn(...args)
+    }
   }
 
   public name: T
@@ -35,7 +39,12 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
   public build: ServeAndBuildChecker['build']
   public script?: Script<any>
 
-  public constructor({ name, absFilePath, createDiagnostic, build }: CheckerMeta<T>) {
+  public constructor({
+    name,
+    absFilePath,
+    createDiagnostic,
+    build,
+  }: CheckerMeta<T>) {
     this.name = name
     this.absFilePath = absFilePath
     this.build = build
@@ -55,7 +64,10 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
   }
 
   public initMainThread() {
-    invariant(this.script, `script should be created in 'prepare', but got ${this.script}`)
+    invariant(
+      this.script,
+      `script should be created in 'prepare', but got ${this.script}`,
+    )
 
     if (isMainThread || isInVitestEntryThread) {
       const createServeAndBuild = this.script.mainScript()
@@ -66,7 +78,10 @@ export abstract class Checker<T extends BuildInCheckerNames> implements CheckerM
   }
 
   public initWorkerThread() {
-    invariant(this.script, `script should be created in 'prepare', but got ${this.script}`)
+    invariant(
+      this.script,
+      `script should be created in 'prepare', but got ${this.script}`,
+    )
 
     if (!(isMainThread || isInVitestEntryThread)) {
       this.script.workerScript()

@@ -1,43 +1,25 @@
-import os from 'os'
+import type { SnapshotSerializer } from 'vitest'
 
-const winPathReg = /(\/)?(\D:\/)?\D\/vite-plugin-checker\/vite-plugin-checker\/playground-temp/im
-const winNewLineReg = /\/r\/n/gim
-
-function doesUseDoubleSlashAsPath(val: string) {
-  return val.includes('//vite-plugin-checker//')
+function normalizePaths(val: string) {
+  return val
+    .replace(/\\/gim, '/') // replace slashes
+    .replace(/\/\//gim, '/') // replace slashes
+    .replace(/[a-zA-Z]:\//gim, '/') // Remove win32 drive letters, C:\ -> \
 }
 
-export const normalizeWindowsLogSerializer = {
-  print(val, serialize) {
-    let result = val
-    if (os.platform() === 'win32') {
-      result = result.replace(winNewLineReg, '/n')
+function createResult(val: string) {
+  const cwd = normalizePaths(process.cwd())
 
-      if (winPathReg.test(result)) {
-        result = result.replace(winPathReg, '<PROJECT_ROOT>/playground-temp')
-      }
+  return normalizePaths(val)
+    .replaceAll(cwd, '<PROJECT_ROOT>')
+    .replace(/\/r\/n/gim, '/n')
+}
 
-      if (doesUseDoubleSlashAsPath(result)) {
-        result = result.replace(
-          `//a//vite-plugin-checker//vite-plugin-checker//playground-temp`,
-          '<PROJECT_ROOT>/playground-temp'
-        )
-        result = result.split('//').join('/')
-      }
-    }
-
-    return serialize(result)
+export const normalizeLogSerializer: SnapshotSerializer = {
+  print(val: string, print) {
+    return print(createResult(val))
   },
   test(val) {
-    if (typeof val !== 'string') return false
-
-    if (
-      (os.platform() === 'win32' && (winPathReg.test(val) || winNewLineReg.test(val))) ||
-      doesUseDoubleSlashAsPath(val)
-    ) {
-      return true
-    }
-
-    return false
+    return typeof val === 'string' && val && createResult(val) !== val
   },
 }

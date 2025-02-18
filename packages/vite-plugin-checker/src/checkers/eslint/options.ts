@@ -8,13 +8,20 @@
  */
 
 'use strict'
-// import { createRequire } from 'module'
+
+import { createRequire } from 'node:module'
+const _require = createRequire(import.meta.url)
+import { dirname } from 'node:path'
+
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-// @ts-ignore
-import optionator from 'optionator'
+const eslintDir = dirname(_require.resolve('eslint/package.json'))
+const optionatorPath = _require.resolve('optionator', {
+  paths: [eslintDir],
+})
+const optionator = _require(optionatorPath)
 
 //------------------------------------------------------------------------------
 // Typedefs

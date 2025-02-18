@@ -1,10 +1,10 @@
-import { createRequire } from 'module'
-import os from 'os'
-import path from 'path'
+import { createRequire } from 'node:module'
+import os from 'node:os'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
 import invariant from 'tiny-invariant'
 import type ts from 'typescript'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
 
 import { Checker } from '../../Checker.js'
 import {
@@ -16,13 +16,17 @@ import {
   toClientPayload,
   wrapCheckerSummary,
 } from '../../logger.js'
-import { ACTION_TYPES, type CreateDiagnostic, type DiagnosticToRuntime } from '../../types.js'
+import {
+  ACTION_TYPES,
+  type CreateDiagnostic,
+  type DiagnosticToRuntime,
+} from '../../types.js'
 import { prepareVueTsc } from './prepareVueTsc.js'
 
 const _require = createRequire(import.meta.url)
 const __filename = fileURLToPath(import.meta.url)
 
-let createServeAndBuild
+let createServeAndBuild: any
 
 const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
   let overlay = true
@@ -47,17 +51,15 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
               tsconfigPath: pluginConfig.vueTsc.tsconfigPath ?? 'tsconfig.json',
             }
 
-      let configFile: string | undefined
-
-      configFile = vueTs.findConfigFile(
+      const configFile = vueTs.findConfigFile(
         finalConfig.root,
         vueTs.sys.fileExists,
-        finalConfig.tsconfigPath
+        finalConfig.tsconfigPath,
       )
 
       if (configFile === undefined) {
         throw Error(
-          `Failed to find a valid tsconfig.json: ${finalConfig.tsconfigPath} at ${finalConfig.root} is not a valid tsconfig`
+          `Failed to find a valid tsconfig.json: ${finalConfig.tsconfigPath} at ${finalConfig.root} is not a valid tsconfig`,
         )
       }
 
@@ -72,14 +74,15 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
         }
 
         currDiagnostics.push(diagnosticToRuntimeError(normalizedDiagnostic))
-        logChunk += os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'vue-tsc')
+        logChunk +=
+          os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'vue-tsc')
       }
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
         diagnostic,
         newLine,
         options,
-        errorCount
+        errorCount,
         // eslint-disable-next-line max-params
       ) => {
         if (diagnostic.code === 6031) return
@@ -110,7 +113,9 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
 
           if (terminal) {
             logChunk =
-              logChunk + os.EOL + wrapCheckerSummary('vue-tsc', diagnostic.messageText.toString())
+              logChunk +
+              os.EOL +
+              wrapCheckerSummary('vue-tsc', diagnostic.messageText.toString())
             if (logChunk === prevLogChunk) {
               return
             }
@@ -132,7 +137,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
         vueTs.sys,
         createProgram,
         reportDiagnostic,
-        reportWatchStatusChanged
+        reportWatchStatusChanged,
       )
 
       vueTs.createWatchProgram(host)
@@ -150,7 +155,7 @@ export class VueTscChecker extends Checker<'vueTsc'> {
           if (typeof config.vueTsc === 'object') {
             const { root = '', tsconfigPath = '' } = config.vueTsc
 
-            let args = ['--noEmit']
+            const args = ['--noEmit']
             // Custom config path
             let projectPath = ''
             if (root || tsconfigPath) {

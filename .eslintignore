@@ -1,7 +1,0 @@
-lib
-node_modules
-playground/react-ts
-playground/vue2-vls
-playground/vue3-vue-tsc
-playground/eslint/__tests__
-playground/eslint/dist

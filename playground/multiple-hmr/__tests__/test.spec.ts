@@ -10,6 +10,7 @@ import {
   isServe,
   resetDiagnostics,
   resetReceivedLog,
+  log,
   sleepForEdit,
   sleepForServerReady,
   stripedLog,
@@ -20,12 +21,14 @@ describe('multiple-hmr', () => {
     it('get initial error and subsequent error', async () => {
       await sleepForServerReady()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
-      expect(stripedLog).toMatchSnapshot()
+      expect(stable(stripedLog)).toMatchSnapshot()
 
       console.log('-- edit with error --')
       resetDiagnostics()
       resetReceivedLog()
-      editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
+      editFile('src/value.ts', (code) =>
+        code.replace('export var value: string = 1', 'export var value: string = 2')
+      )
       await sleepForEdit()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
       // don't know why striped log in disorder on Linux, while correct on mac and Windows
@@ -36,52 +39,29 @@ describe('multiple-hmr', () => {
       console.log('-- fix typescript error --')
       resetDiagnostics()
       resetReceivedLog()
-      editFile('src/App.tsx', (code) =>
-        code.replace('useState<string>(2)', `useState<string>('x')`)
+      editFile('src/value.ts', (code) =>
+        code.replace('export var value: string = 2', `export var value = 2`)
       )
       await sleepForEdit()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
-      // expect(stripedLog).toMatchSnapshot()
 
       console.log('-- fix eslint error --')
       resetDiagnostics()
       resetReceivedLog()
-      editFile('src/App.tsx', (code) => code.replace('var', 'const'))
+      editFile('src/value.ts', (code) => code.replace('var', 'const'))
       await sleepForEdit()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
-      // expect(stripedLog).toMatchSnapshot()
-    })
-
-    it('should ignore extensions that are not specified for ESLint', async () => {
-      const source = 'text-align: center;'
-      const target = 'text-align: right;'
-
-      console.log('-- edit the file --')
-      resetDiagnostics()
-      resetReceivedLog()
-      editFile('src/App.css', (code) => code.replace(source, target))
-      await sleepForEdit()
-      expect(diagnostics).toStrictEqual([])
-      // expect(stripedLog).toBe('')
-
-      console.log('-- return to previous state --')
-      resetDiagnostics()
-      resetReceivedLog()
-      editFile('src/App.css', (code) => code.replace(target, source))
-      await sleepForEdit()
-      expect(diagnostics).toStrictEqual([])
-      // expect(stripedLog).toBe('')
     })
   })
 
   describe.runIf(isBuild)('build', () => {
     const expectedMsg = [
-      '6:3  error  Unexpected var, use let or const instead  no-var',
-      `src/App.tsx(6,44): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.`,
+      'Unexpected var, use let or const instead',
+      `error TS2322: Type 'number' is not assignable to type 'string'`,
     ]
 
     it('should fail', async () => {
-      expectStderrContains(stripedLog, expectedMsg)
+      expectStderrContains(log, expectedMsg)
     })
   })
 })

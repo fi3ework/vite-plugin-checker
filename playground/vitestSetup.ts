@@ -1,23 +1,22 @@
-import execa from 'execa'
-import fs from 'fs-extra'
-import pathSerializer from 'jest-serializer-path'
-import * as http from 'node:http'
+import { execa } from 'execa'
+import fs from 'node:fs/promises'
+import { existsSync } from 'node:fs'
+import type * as http from 'node:http'
 import os from 'node:os'
 import path, { dirname, join, resolve } from 'node:path'
 import { chromium } from 'playwright-chromium'
 import strip from 'strip-ansi'
 import { createServer, mergeConfig } from 'vite'
 import { beforeAll, expect } from 'vitest'
-import { Checker } from 'vite-plugin-checker/dist/Checker'
+import type { Checker } from '../packages/vite-plugin-checker/src/Checker'
 
-import { normalizeWindowsLogSerializer } from './serializers'
+import { normalizeLogSerializer } from './serializers'
 
 import type { Browser, Page } from 'playwright-chromium'
 import type { InlineConfig, ResolvedConfig, ViteDevServer } from 'vite'
 import type { File } from 'vitest'
 
-expect.addSnapshotSerializer(pathSerializer)
-expect.addSnapshotSerializer(normalizeWindowsLogSerializer)
+expect.addSnapshotSerializer(normalizeLogSerializer)
 
 export const workspaceRoot = resolve(__dirname, '../')
 
@@ -55,8 +54,8 @@ export let testName: string
 export let viteConfig: InlineConfig | undefined
 
 export let log = ''
-export let stripedLog = ''
-export let diagnostics: string[]
+export let stripedLog: string[] = []
+export let diagnostics: string[] = []
 export let buildSucceed: boolean
 
 export let resolvedConfig: ResolvedConfig = undefined!
@@ -90,7 +89,7 @@ beforeAll(async (s) => {
     return
   }
 
-  const wsEndpoint = fs.readFileSync(join(DIR, 'wsEndpoint'), 'utf-8')
+  const wsEndpoint = await fs.readFile(join(DIR, 'wsEndpoint'), 'utf-8')
   if (!wsEndpoint) {
     throw new Error('wsEndpoint not found')
   }
@@ -111,12 +110,12 @@ beforeAll(async (s) => {
 
       // when `root` dir is present, use it as vite's root
       const testCustomRoot = resolve(testDir, 'root')
-      rootDir = fs.existsSync(testCustomRoot) ? testCustomRoot : testDir
+      rootDir = existsSync(testCustomRoot) ? testCustomRoot : testDir
 
       const testCustomServe = [
         resolve(dirname(rootDir), 'serve.ts'),
         resolve(dirname(rootDir), 'serve.js'),
-      ].find((i) => fs.existsSync(i))
+      ].find((i) => existsSync(i))
 
       if (testCustomServe && isServe) {
         // test has custom server configuration.
@@ -129,10 +128,10 @@ beforeAll(async (s) => {
         if (serve) {
           server = await serve()
           viteServer = mod.viteServer
-          startDefaultServe((server as any).viteDevServer, (server as any).port)
+          startDefaultServe({ _server: (server as any).viteDevServer, port: (server as any).port })
         }
       } else {
-        await startDefaultServe()
+        await startDefaultServe({ port: 5173 + Number(process.env.VITEST_POOL_ID) })
       }
     }
   } catch (e) {
@@ -152,17 +151,27 @@ beforeAll(async (s) => {
   }
 })
 
-export async function startDefaultServe(_server?: ViteDevServer, port?: number): Promise<void> {
+export async function startDefaultServe({
+  _server,
+  port,
+}: {
+  _server?: ViteDevServer
+  port?: number
+} = {}): Promise<void> {
   const testCustomConfig = resolve(testDir, 'vite.config.js')
 
   let config: InlineConfig | undefined
-  if (fs.existsSync(testCustomConfig)) {
+  if (existsSync(testCustomConfig)) {
     // test has custom server configuration.
     config = await import(testCustomConfig).then((r) => r.default)
   }
 
   const options: InlineConfig = {
     root: rootDir,
+    server: {
+      port,
+    },
+    configFile: false,
   }
 
   if (!isBuild) {
@@ -170,7 +179,7 @@ export async function startDefaultServe(_server?: ViteDevServer, port?: number):
     const testConfig = mergeConfig(options, config || {})
     viteConfig = testConfig
 
-    const viteDevServer = _server || (await createServer({ root: rootDir }))
+    const viteDevServer = _server || (await createServer(testConfig))
     const checker = viteDevServer.config.plugins.filter(
       ({ name }) => name === 'vite-plugin-checker'
     )[0]
@@ -191,14 +200,25 @@ export async function startDefaultServe(_server?: ViteDevServer, port?: number):
       const payload = args?.[1]
 
       if (type === 'vite-plugin-checker' && payload.event === 'vite-plugin-checker:error') {
-        diagnostics = payload.data.diagnostics
+        const existedCheckerIds = diagnostics.map((d) => d)
+        const currentCheckerId = payload.data.diagnostics[0]?.checkerId
+        const checkerReported = existedCheckerIds.some((id) => id === currentCheckerId)
+
+        if (checkerReported) {
+          // update diagnostics for the same checker
+          diagnostics = diagnostics.filter((d) => d !== currentCheckerId)
+        }
+
+        diagnostics = diagnostics.concat(payload.data.diagnostics)
       }
 
       // @ts-ignore
       return rawWsSend(...args)
     }
 
-    await page.goto(viteTestUrl)
+    await page.goto(viteTestUrl, {
+      timeout: 1000 * 60 * 3, // 3min
+    })
   } else {
     const testConfig = mergeConfig(options, config || {})
     const binPath = path.resolve(testDir, 'node_modules/vite/bin/vite.js')
@@ -208,7 +228,7 @@ export async function startDefaultServe(_server?: ViteDevServer, port?: number):
       buildSucceed = true
     } catch (e) {
       log = (e as any).toString()
-      stripedLog += strip(log)
+      stripedLog.push(strip(log))
       buildSucceed = false
     }
   }
@@ -219,10 +239,10 @@ function setCheckerLoggerForTest(checker: typeof Checker, accumulate = true) {
     (...args: any[]) => {
       if (accumulate) {
         log += args[0].payload
-        stripedLog += strip(args[0].payload)
+        stripedLog.push(strip(args[0].payload))
       } else {
         log = args[0].payload
-        stripedLog = strip(args[0].payload)
+        stripedLog.push(strip(args[0].payload))
       }
     },
   ]
@@ -234,7 +254,7 @@ export function slash(p: string): string {
 
 export function resetReceivedLog() {
   log = ''
-  stripedLog = ''
+  stripedLog = []
 }
 
 export function resetDiagnostics() {

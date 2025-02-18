@@ -1,5 +1,9 @@
 import { ref } from 'vue'
-import { prepareListen, listenToCustomMessage, listenToReconnectMessage } from './ws'
+import {
+  listenToCustomMessage,
+  listenToReconnectMessage,
+  prepareListen,
+} from './ws'
 
 const checkerResults = ref<any[]>([])
 
@@ -8,7 +12,9 @@ function updateErrorOverlay(payloads: any) {
   const nextCheckerResults = [
     ...payloadArray,
     ...checkerResults.value.filter((existCheckerResult) => {
-      return !payloadArray.map((p) => p.checkerId).includes(existCheckerResult.checkerId)
+      return !payloadArray
+        .map((p) => p.checkerId)
+        .includes(existCheckerResult.checkerId)
     }),
   ]
 

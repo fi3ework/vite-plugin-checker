@@ -1,0 +1,48 @@
+name: Create issue when sync up Volar is required
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  check_file_changes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'volarjs/volar.js'
+          fetch-depth: 0
+
+      - name: Check if runTsc.ts changed in last 24 hours
+        id: check_changes
+        run: |
+          CHANGED=$(git log --name-only --since="24 hours ago" --pretty=format: | sort | uniq | grep -q "packages/typescript/lib/quickstart/runTsc.ts" && echo "true" || echo "false")
+          echo "file_changed=${CHANGED}"
+          echo "file_changed=${CHANGED}" >> $GITHUB_OUTPUT
+
+      - name: Create issue if runTsc.ts changed
+        if: steps.check_changes.outputs.file_changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+
+            const date = new Date();
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const formattedDate = date.toLocaleDateString('en-CA', options);
+
+            const issueTitle = `Volar Change Detected in Last 24 Hours (${formattedDate})`;
+            # write new line for each line in issueBody
+            const issueBody = "## ✨ Sync up needed\n\nThe file [`packages/typescript/lib/quickstart/runTsc.ts`](https://github.com/volarjs/volar.js/blob/master/packages/typescript/lib/quickstart/runTsc.ts) in Volar has changed in the last 24 hours.\n\nFile [`packages/vite-plugin-checker/src/checkers/vueTsc/prepareVueTsc.ts`](https://github.com/fi3ework/vite-plugin-checker/blob/main/packages/vite-plugin-checker/src/checkers/vueTsc/prepareVueTsc.ts) contains some code copied from there, please help to sync up the modification from Volar.\n\nRemember to close this issue when is sync up is finished.";
+
+            await github.rest.issues.create({
+              owner,
+              repo,
+              title: issueTitle,
+              body: issueBody,
+              labels: ['vue-tsc']
+            });
