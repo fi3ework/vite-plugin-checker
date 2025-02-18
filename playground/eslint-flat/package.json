@@ -1,13 +1,13 @@
 {
-  "name": "@playground/eslint-flat",
-  "version": "0.0.0",
   "private": true,
+  "name": "@playground/eslint-flat",
   "type": "module",
+  "version": "0.0.0",
   "scripts": {
-    "build": "vite build",
     "dev": "vite",
-    "lint": "eslint .",
-    "serve": "vite preview"
+    "build": "vite build",
+    "serve": "vite preview",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "eslint": "^8.57.1",

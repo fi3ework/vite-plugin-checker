@@ -1,13 +1,13 @@
 {
-  "name": "@playground/biome-default",
-  "version": "0.0.0",
   "private": true,
+  "name": "@playground/biome-default",
   "type": "module",
+  "version": "0.0.0",
   "scripts": {
-    "build": "vite build",
     "dev": "vite",
-    "lint": "biome lint",
-    "serve": "vite preview"
+    "build": "vite build",
+    "serve": "vite preview",
+    "lint": "biome lint"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
