@@ -7,7 +7,7 @@ export function createIgnore(_root: string, pattern: string | string[] = []) {
   const root = _root.replace(/\\/g, '/')
 
   const globs = paths.flatMap((f) => {
-    const resolvedPath = resolve(root, f).replace(/\\/g, '/')
+    const resolvedPath = resolve(root, f)
     const relativePath = relative(root, resolvedPath).replace(/\\/g, '/')
     try {
       const isDirectory =
@@ -22,11 +22,14 @@ export function createIgnore(_root: string, pattern: string | string[] = []) {
   const matcher = picomatch(globs, { cwd: root })
 
   return (path: string, _stats?: Stats) => {
+    if (path.includes('node_modules')) {
+      return true
+    }
+    const relativePath = relative(root, path).replace(/\\/g, '/')
     return (
-      path.includes('node_modules') ||
-      (path !== root &&
-        !matcher(relative(root, path).replace(/\\/g, '/')) &&
-        !(_stats ?? statSync(path)).isDirectory())
+      !!relativePath &&
+      !matcher(relativePath) &&
+      !(_stats ?? statSync(path)).isDirectory()
     )
   }
 }
