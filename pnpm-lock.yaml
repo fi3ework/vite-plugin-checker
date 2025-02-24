@@ -136,8 +136,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       '@vue/language-core':
-        specifier: ~2.2.2
-        version: 2.2.2(typescript@5.7.3)
+        specifier: ~2.2.4
+        version: 2.2.4(typescript@5.7.3)
       meow:
         specifier: ^13.2.0
         version: 13.2.0
@@ -2135,6 +2135,14 @@ packages:
 
   '@vue/language-core@2.2.2':
     resolution: {integrity: sha512-QotO41kurE5PLf3vrNgGTk3QswO2PdUFjBwNiOi7zMmGhwb25PSTh9hD1MCgKC06AVv+8sZQvlL3Do4TTVHSiQ==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@vue/language-core@2.2.4':
+    resolution: {integrity: sha512-eGGdw7eWUwdIn9Fy/irJ7uavCGfgemuHQABgJ/hU1UgZFnbTg9VWeXvHQdhY+2SPQZWJqWXvRWIg67t4iWEa+Q==}
     peerDependencies:
       typescript: '*'
     peerDependenciesMeta:
@@ -6607,6 +6615,19 @@ snapshots:
       - supports-color
 
   '@vue/language-core@2.2.2(typescript@5.7.3)':
+    dependencies:
+      '@volar/language-core': 2.4.11
+      '@vue/compiler-dom': 3.5.13
+      '@vue/compiler-vue2': 2.7.16
+      '@vue/shared': 3.5.13
+      alien-signals: 1.0.3
+      minimatch: 9.0.4
+      muggle-string: 0.4.1
+      path-browserify: 1.0.1
+    optionalDependencies:
+      typescript: 5.7.3
+
+  '@vue/language-core@2.2.4(typescript@5.7.3)':
     dependencies:
       '@volar/language-core': 2.4.11
       '@vue/compiler-dom': 3.5.13
