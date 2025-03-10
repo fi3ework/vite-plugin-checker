@@ -606,7 +606,7 @@ importers:
         version: 4.33.0(eslint@7.32.0)(typescript@4.9.5)
       '@vue/eslint-config-prettier':
         specifier: 6.0.0
-        version: 6.0.0(eslint-plugin-prettier@3.4.1(eslint@7.32.0)(prettier@3.5.1))(eslint@7.32.0)(prettier@3.5.1)
+        version: 6.0.0(eslint-plugin-prettier@3.4.1(eslint@7.32.0)(prettier@3.5.3))(eslint@7.32.0)(prettier@3.5.3)
       '@vue/eslint-config-typescript':
         specifier: ^7.0.0
         version: 7.0.0(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@4.9.5))(eslint@7.32.0)(typescript@4.9.5))(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@4.9.5))(eslint-plugin-vue@7.20.0(eslint@7.32.0))(eslint@7.32.0)(typescript@4.9.5)
@@ -615,13 +615,13 @@ importers:
         version: 7.32.0
       eslint-plugin-prettier:
         specifier: ^3.4.1
-        version: 3.4.1(eslint@7.32.0)(prettier@3.5.1)
+        version: 3.4.1(eslint@7.32.0)(prettier@3.5.3)
       eslint-plugin-vue:
         specifier: ^7.20.0
         version: 7.20.0(eslint@7.32.0)
       prettier:
-        specifier: 3.5.1
-        version: 3.5.1
+        specifier: 3.5.3
+        version: 3.5.3
       sass:
         specifier: ^1.85.0
         version: 1.85.0
@@ -4107,8 +4107,8 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  prettier@3.5.1:
-    resolution: {integrity: sha512-hPpFQvHwL3Qv5AdRvBFMhnKo4tYxp0ReXiPn2bxkiohEX6mBeBwEpBSQTkD458RaaDKQMYSp4hX4UtfUTA5wDw==}
+  prettier@3.5.3:
+    resolution: {integrity: sha512-QQtaxnoDJeAkDvDKWCLiwIXkTgRhwYDEQCghU9Z6q03iyek/rxRh/2lC3HB7P8sWT2xC/y5JDctPLBIGzHKbhw==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -6595,12 +6595,12 @@ snapshots:
     dependencies:
       rfdc: 1.4.1
 
-  '@vue/eslint-config-prettier@6.0.0(eslint-plugin-prettier@3.4.1(eslint@7.32.0)(prettier@3.5.1))(eslint@7.32.0)(prettier@3.5.1)':
+  '@vue/eslint-config-prettier@6.0.0(eslint-plugin-prettier@3.4.1(eslint@7.32.0)(prettier@3.5.3))(eslint@7.32.0)(prettier@3.5.3)':
     dependencies:
       eslint: 7.32.0
       eslint-config-prettier: 6.15.0(eslint@7.32.0)
-      eslint-plugin-prettier: 3.4.1(eslint@7.32.0)(prettier@3.5.1)
-      prettier: 3.5.1
+      eslint-plugin-prettier: 3.4.1(eslint@7.32.0)(prettier@3.5.3)
+      prettier: 3.5.3
 
   '@vue/eslint-config-typescript@7.0.0(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@4.9.5))(eslint@7.32.0)(typescript@4.9.5))(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@4.9.5))(eslint-plugin-vue@7.20.0(eslint@7.32.0))(eslint@7.32.0)(typescript@4.9.5)':
     dependencies:
@@ -7200,10 +7200,10 @@ snapshots:
       eslint: 7.32.0
       get-stdin: 6.0.0
 
-  eslint-plugin-prettier@3.4.1(eslint@7.32.0)(prettier@3.5.1):
+  eslint-plugin-prettier@3.4.1(eslint@7.32.0)(prettier@3.5.3):
     dependencies:
       eslint: 7.32.0
-      prettier: 3.5.1
+      prettier: 3.5.3
       prettier-linter-helpers: 1.0.0
 
   eslint-plugin-vue@7.20.0(eslint@7.32.0):
@@ -8303,7 +8303,7 @@ snapshots:
 
   prettier@2.8.8: {}
 
-  prettier@3.5.1: {}
+  prettier@3.5.3: {}
 
   pretty-ms@9.2.0:
     dependencies:
