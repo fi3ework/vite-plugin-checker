@@ -45,8 +45,8 @@ importers:
         specifier: ^1.50.1
         version: 1.50.1
       publint:
-        specifier: ^0.3.6
-        version: 0.3.6
+        specifier: ^0.3.9
+        version: 0.3.9
       rimraf:
         specifier: ^5.0.10
         version: 5.0.10
@@ -1620,8 +1620,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@publint/pack@0.1.1':
-    resolution: {integrity: sha512-TvCl79Y8v18ZhFGd5mjO1kYPovSBq3+4LVCi5Nfl1JI8fS8i8kXbgQFGwBJRXczim8GlW8c2LMBKTtExYXOy/A==}
+  '@publint/pack@0.1.2':
+    resolution: {integrity: sha512-S+9ANAvUmjutrshV4jZjaiG8XQyuJIZ8a4utWmN/vW1sgQ9IfBnPndwkmQYw53QmouOIytT874u65HEmu6H5jw==}
     engines: {node: '>=18'}
 
   '@rollup/pluginutils@4.2.1':
@@ -4130,8 +4130,8 @@ packages:
   pseudomap@1.0.2:
     resolution: {integrity: sha512-b/YwNhb8lk1Zz2+bXXpS/LK9OisiZZ1SNsSLxN1x2OXVEhW2Ckr/7mWE5vrC1ZTiJlD9g19jWszTmJsB+oEpFQ==}
 
-  publint@0.3.6:
-    resolution: {integrity: sha512-f6mQw/RsX8GiUaUliYWJsivveYuwIozFLe4wCWE3NGj3vBamr816pxQGN0ycVwFIoTnIeqIJb9wsN7XAS8wRCA==}
+  publint@0.3.9:
+    resolution: {integrity: sha512-irTwfRfYW38vomkxxoiZQtFtUOQKpz5m0p9Z60z4xpXrl1KmvSrX1OMARvnnolB5usOXeNfvLj6d/W3rwXKfBQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -5909,7 +5909,7 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@publint/pack@0.1.1': {}
+  '@publint/pack@0.1.2': {}
 
   '@rollup/pluginutils@4.2.1':
     dependencies:
@@ -8320,9 +8320,9 @@ snapshots:
 
   pseudomap@1.0.2: {}
 
-  publint@0.3.6:
+  publint@0.3.9:
     dependencies:
-      '@publint/pack': 0.1.1
+      '@publint/pack': 0.1.2
       package-manager-detector: 0.2.9
       picocolors: 1.1.1
       sade: 1.8.1
