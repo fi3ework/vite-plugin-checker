@@ -419,12 +419,13 @@ export function ensureCall(callback: CallableFunction) {
   })
 }
 
-export function consoleLog(value: string) {
+export function consoleLog(value: string, level: 'info' | 'warn' | 'error') {
   if (isMainThread) {
-    console.log(value)
+    console[level](value)
   } else {
     parentPort?.postMessage({
       type: ACTION_TYPES.console,
+      level: level,
       payload: value,
     })
   }

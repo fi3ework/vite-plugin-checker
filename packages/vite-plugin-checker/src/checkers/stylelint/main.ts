@@ -63,7 +63,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
 
         if (terminal) {
           for (const d of diagnostics) {
-            consoleLog(diagnosticToTerminalLog(d, 'Stylelint'))
+            consoleLog(diagnosticToTerminalLog(d, 'Stylelint'), 'info')
           }
 
           const errorCount = diagnostics.filter(
@@ -74,6 +74,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
           ).length
           consoleLog(
             composeCheckerSummary('Stylelint', errorCount, warningCount),
+            errorCount ? 'error' : warningCount ? 'warn' : 'info',
           )
         }
 

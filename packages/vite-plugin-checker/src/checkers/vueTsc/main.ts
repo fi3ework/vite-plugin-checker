@@ -122,7 +122,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
 
             // TODO: only macOS will report multiple times for same result
             prevLogChunk = logChunk
-            consoleLog(logChunk)
+            consoleLog(logChunk, errorCount ? 'error' : 'info')
           }
         })
       }

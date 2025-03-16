@@ -124,6 +124,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
                     diagnostic.messageText.toString(),
                   ),
               ),
+              errorCount ? 'error' : 'info',
             )
           }
         })
