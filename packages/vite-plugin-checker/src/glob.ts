@@ -26,10 +26,15 @@ export function createIgnore(_root: string, pattern: string | string[] = []) {
       return true
     }
     const relativePath = relative(root, path).replace(/\\/g, '/')
-    return (
-      !!relativePath &&
-      !matcher(relativePath) &&
-      !(_stats ?? statSync(path)).isDirectory()
-    )
+    try {
+      return (
+        !!relativePath &&
+        !matcher(relativePath) &&
+        !(_stats ?? statSync(path)).isDirectory()
+      )
+    } catch {
+      // do not ignore files that have been deleted as the watcher is iterating on them
+      return false
+    }
   }
 }
