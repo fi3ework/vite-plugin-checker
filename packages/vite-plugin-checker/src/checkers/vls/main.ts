@@ -38,7 +38,10 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
         (errorCount, warningCount) => {
           if (!terminal) return
 
-          consoleLog(composeCheckerSummary('VLS', errorCount, warningCount))
+          consoleLog(
+            composeCheckerSummary('VLS', errorCount, warningCount),
+            errorCount ? 'error' : warningCount ? 'warn' : 'info',
+          )
         }
 
       const onDispatchDiagnostics: DiagnosticOptions['onDispatchDiagnostics'] =
@@ -58,6 +61,7 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
               normalized
                 .map((d) => diagnosticToTerminalLog(d, 'VLS'))
                 .join(os.EOL),
+              'info',
             )
           }
         }

@@ -201,7 +201,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
               // for test injection and customize logger in the future
               Checker.log(action)
             } else {
-              logger!.error(action.payload)
+              logger![action.level](action.payload)
             }
           }
         })

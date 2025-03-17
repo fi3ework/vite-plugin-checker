@@ -91,7 +91,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
         if (terminal) {
           for (const d of diagnostics) {
-            consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
+            consoleLog(diagnosticToTerminalLog(d, 'ESLint'), 'info')
           }
 
           const errorCount = diagnostics.filter(
@@ -100,7 +100,10 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           const warningCount = diagnostics.filter(
             (d) => d.level === DiagnosticLevel.Warning,
           ).length
-          consoleLog(composeCheckerSummary('ESLint', errorCount, warningCount))
+          consoleLog(
+            composeCheckerSummary('ESLint', errorCount, warningCount),
+            errorCount ? 'error' : warningCount ? 'warn' : 'info',
+          )
         }
 
         if (overlay) {

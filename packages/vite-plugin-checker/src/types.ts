@@ -260,6 +260,7 @@ export interface ConfigureServerAction extends AbstractAction {
 
 export interface ConsoleAction extends AbstractAction {
   type: ACTION_TYPES.console
+  level: 'info' | 'warn' | 'error'
   payload: string
 }
 
