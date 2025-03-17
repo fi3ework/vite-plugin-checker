@@ -53,7 +53,9 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             }
 
       let configFile: string | undefined
-      const ts: typeof typescript = await import(finalConfig.typescriptPath)
+      const ts: typeof typescript = await import(
+        finalConfig.typescriptPath
+      ).then((r) => r.default || r)
       configFile = ts.findConfigFile(
         finalConfig.root,
         ts.sys.fileExists,
