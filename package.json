@@ -33,7 +33,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@tsconfig/esm": "^1.0.5",
-    "@tsconfig/node20": "^20.1.4",
+    "@tsconfig/node20": "^20.1.5",
     "@tsconfig/strictest": "^2.0.5",
     "@types/babel__code-frame": "^7.0.6",
     "@types/node": "^18.19.76",
