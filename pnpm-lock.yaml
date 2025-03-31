@@ -15,8 +15,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       '@tsconfig/node20':
-        specifier: ^20.1.4
-        version: 20.1.4
+        specifier: ^20.1.5
+        version: 20.1.5
       '@tsconfig/strictest':
         specifier: ^2.0.5
         version: 2.0.5
@@ -1875,8 +1875,8 @@ packages:
     resolution: {integrity: sha512-JzoZ0h299JRLPfV5VBsMq1TuMy+OmU9bdV/7NcjfRojL0eIcA1k5ESrtjWrDwJRJnk9B0QmgR0rq04LERbdfWw==}
     deprecated: this package has been deprecated
 
-  '@tsconfig/node20@20.1.4':
-    resolution: {integrity: sha512-sqgsT69YFeLWf5NtJ4Xq/xAF8p4ZQHlmGW74Nu2tD4+g5fAsposc4ZfaaPixVu4y01BEiDCWLRDCvDM5JOsRxg==}
+  '@tsconfig/node20@20.1.5':
+    resolution: {integrity: sha512-Vm8e3WxDTqMGPU4GATF9keQAIy1Drd7bPwlgzKJnZtoOsTm1tduUTbDjg0W5qERvGuxPI2h9RbMufH0YdfBylA==}
 
   '@tsconfig/strictest@2.0.5':
     resolution: {integrity: sha512-ec4tjL2Rr0pkZ5hww65c+EEPYwxOi4Ryv+0MtjeaSQRJyq322Q27eOQiFbuNgw2hpL4hB1/W/HBGk3VKS43osg==}
@@ -6227,7 +6227,7 @@ snapshots:
 
   '@tsconfig/esm@1.0.5': {}
 
-  '@tsconfig/node20@20.1.4': {}
+  '@tsconfig/node20@20.1.5': {}
 
   '@tsconfig/strictest@2.0.5': {}
 
