@@ -27,7 +27,7 @@
     "prettier": "3.5.3",
     "sass": "^1.85.1",
     "typescript": "~4.9.5",
-    "vite": "^6.1.4",
+    "vite": "^6.1.5",
     "vite-plugin-checker": "workspace:*",
     "vite-plugin-components": "^0.13.3",
     "vite-plugin-vue2": "^2.0.3",
