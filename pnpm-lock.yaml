@@ -45,8 +45,8 @@ importers:
         specifier: ^1.50.1
         version: 1.50.1
       publint:
-        specifier: ^0.3.10
-        version: 0.3.10
+        specifier: ^0.3.11
+        version: 0.3.11
       rimraf:
         specifier: ^5.0.10
         version: 5.0.10
@@ -4342,8 +4342,8 @@ packages:
   pseudomap@1.0.2:
     resolution: {integrity: sha512-b/YwNhb8lk1Zz2+bXXpS/LK9OisiZZ1SNsSLxN1x2OXVEhW2Ckr/7mWE5vrC1ZTiJlD9g19jWszTmJsB+oEpFQ==}
 
-  publint@0.3.10:
-    resolution: {integrity: sha512-xl9X9x0iyOURsAD7IPQJAQ5TgGpozs5K8KUtqzQBSxJqtKH74ReeCpjr2jw9MFOsY9q/EbXSJNkSFM2mgyu38g==}
+  publint@0.3.11:
+    resolution: {integrity: sha512-snArkBXO8Sl1Nlnqr3Y3DCT9CzNw8QxzlFXZ6nRkyEPEUGPRg25lM4IjNQyIyp3vRwpsZ24EEexmKSIZdVMizA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -8663,7 +8663,7 @@ snapshots:
 
   pseudomap@1.0.2: {}
 
-  publint@0.3.10:
+  publint@0.3.11:
     dependencies:
       '@publint/pack': 0.1.2
       package-manager-detector: 1.1.0
