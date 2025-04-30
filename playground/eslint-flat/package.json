@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "eslint": "^8.57.1",
-    "vite": "^6.1.5",
+    "vite": "^6.1.6",
     "vite-plugin-checker": "workspace:*"
   }
 }
