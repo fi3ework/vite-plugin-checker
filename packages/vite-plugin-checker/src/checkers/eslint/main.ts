@@ -88,10 +88,16 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
-
+        const levelMap = {
+          [DiagnosticLevel.Error]: 'error',
+          [DiagnosticLevel.Warning]: 'warn',
+          [DiagnosticLevel.Suggestion]: 'info',
+          [DiagnosticLevel.Message]: 'info',
+        }
         if (terminal) {
           for (const d of diagnostics) {
-            consoleLog(diagnosticToTerminalLog(d, 'ESLint'), 'info')
+            const levelLog = levelMap[d.level ?? DiagnosticLevel.Error]
+            consoleLog(diagnosticToTerminalLog(d, 'ESLint'), levelLog)
           }
 
           const errorCount = diagnostics.filter(

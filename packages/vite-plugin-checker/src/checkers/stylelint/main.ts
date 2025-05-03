@@ -62,8 +62,15 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
         if (terminal) {
+          const levelMap = {
+            [DiagnosticLevel.Error]: 'error',
+            [DiagnosticLevel.Warning]: 'warn',
+            [DiagnosticLevel.Suggestion]: 'info',
+            [DiagnosticLevel.Message]: 'info',
+          }
           for (const d of diagnostics) {
-            consoleLog(diagnosticToTerminalLog(d, 'Stylelint'), 'info')
+            const levelLog = levelMap[d.level ?? DiagnosticLevel.Error]
+            consoleLog(diagnosticToTerminalLog(d, 'Stylelint'), levelLog)
           }
 
           const errorCount = diagnostics.filter(

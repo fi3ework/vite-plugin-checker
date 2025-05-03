@@ -57,12 +57,16 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
           }
 
           if (terminal) {
-            consoleLog(
-              normalized
-                .map((d) => diagnosticToTerminalLog(d, 'VLS'))
-                .join(os.EOL),
-              'info',
-            )
+            const levelMap = {
+              [DiagnosticLevel.Error]: 'error',
+              [DiagnosticLevel.Warning]: 'warn',
+              [DiagnosticLevel.Suggestion]: 'info',
+              [DiagnosticLevel.Message]: 'info',
+            }
+            for (const d of normalized) {
+              const levelLog = levelMap[d.level ?? DiagnosticLevel.Error]
+              consoleLog(diagnosticToTerminalLog(d, 'VLS'), levelLog)
+            }
           }
         }
 

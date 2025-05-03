@@ -57,8 +57,15 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
         if (terminal) {
+          const levelMap = {
+            [DiagnosticLevel.Error]: 'error',
+            [DiagnosticLevel.Warning]: 'warn',
+            [DiagnosticLevel.Suggestion]: 'info',
+            [DiagnosticLevel.Message]: 'info',
+          }
           for (const d of diagnostics) {
-            consoleLog(diagnosticToTerminalLog(d, 'Biome'), 'info')
+            const levelLog = levelMap[d.level ?? DiagnosticLevel.Error]
+            consoleLog(diagnosticToTerminalLog(d, 'Biome'), levelLog)
           }
 
           const errorCount = diagnostics.filter(
