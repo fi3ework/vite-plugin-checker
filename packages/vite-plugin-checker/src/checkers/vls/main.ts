@@ -1,4 +1,3 @@
-import os from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
 
@@ -6,6 +5,7 @@ import { Checker } from '../../Checker.js'
 import {
   composeCheckerSummary,
   consoleLog,
+  diagnosticToConsoleLevel,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   toClientPayload,
@@ -58,15 +58,10 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
 
           if (terminal) {
             for (const d of normalized) {
-              const levelLog = [
-                DiagnosticLevel.Message,
-                DiagnosticLevel.Suggestion,
-              ].includes(d.level)
-                ? 'info'
-                : [DiagnosticLevel.Warning].includes(d.level)
-                  ? 'warn'
-                  : 'error'
-              consoleLog(diagnosticToTerminalLog(d, 'VLS'), levelLog)
+              consoleLog(
+                diagnosticToTerminalLog(d, 'VLS'),
+                diagnosticToConsoleLevel(d),
+              )
             }
           }
         }
