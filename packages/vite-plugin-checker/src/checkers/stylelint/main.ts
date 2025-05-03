@@ -62,14 +62,15 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
         if (terminal) {
-          const levelMap = {
-            [DiagnosticLevel.Error]: 'error',
-            [DiagnosticLevel.Warning]: 'warn',
-            [DiagnosticLevel.Suggestion]: 'info',
-            [DiagnosticLevel.Message]: 'info',
-          }
           for (const d of diagnostics) {
-            const levelLog = levelMap[d.level ?? DiagnosticLevel.Error]
+            const levelLog = [
+              DiagnosticLevel.Message,
+              DiagnosticLevel.Suggestion,
+            ].includes(d.level)
+              ? 'info'
+              : [DiagnosticLevel.Warning].includes(d.level)
+                ? 'warn'
+                : 'error'
             consoleLog(diagnosticToTerminalLog(d, 'Stylelint'), levelLog)
           }
 
