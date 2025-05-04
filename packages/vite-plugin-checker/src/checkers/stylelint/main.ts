@@ -11,6 +11,7 @@ import { createIgnore } from '../../glob.js'
 import {
   composeCheckerSummary,
   consoleLog,
+  diagnosticToConsoleLevel,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
@@ -63,7 +64,10 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
 
         if (terminal) {
           for (const d of diagnostics) {
-            consoleLog(diagnosticToTerminalLog(d, 'Stylelint'), 'info')
+            consoleLog(
+              diagnosticToTerminalLog(d, 'Stylelint'),
+              diagnosticToConsoleLevel(d),
+            )
           }
 
           const errorCount = diagnostics.filter(

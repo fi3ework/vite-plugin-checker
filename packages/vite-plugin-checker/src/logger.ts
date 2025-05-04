@@ -128,6 +128,14 @@ export function diagnosticToTerminalLog(
     .join(os.EOL)
 }
 
+export function diagnosticToConsoleLevel(d: NormalizedDiagnostic) {
+  if (!d) return 'error'
+  if (d.level === DiagnosticLevel.Message) return 'info'
+  if (d.level === DiagnosticLevel.Suggestion) return 'info'
+  if (d.level === DiagnosticLevel.Warning) return 'warn'
+  return 'error'
+}
+
 export function diagnosticToRuntimeError(
   d: NormalizedDiagnostic,
 ): DiagnosticToRuntime
