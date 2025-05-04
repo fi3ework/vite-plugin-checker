@@ -43,8 +43,8 @@
     "vscode-uri": "^3.1.0"
   },
   "devDependencies": {
-    "@types/eslint": "^7.29.0",
-    "@types/picomatch": "^3.0.2",
+    "@types/eslint": "^8.56.12",
+    "@types/picomatch": "^4.0.0",
     "@vue/language-core": "~2.2.10",
     "meow": "^13.2.0",
     "stylelint": "^16.19.1",
