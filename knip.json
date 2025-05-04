@@ -14,6 +14,7 @@
       "entry": [
         "tsup.config.ts",
         "src/**/*.ts",
+        "src/checkers/vueTsc/languagePlugins.cjs",
         "__tests__/fixtures/tsDiagnostic.ts"
       ],
       "ignoreDependencies": [
