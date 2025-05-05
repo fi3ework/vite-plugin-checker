@@ -72,7 +72,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vitest:
         specifier: ^3.1.2
@@ -90,7 +90,7 @@ importers:
         specifier: ^5.2.3
         version: 5.2.3(vite@6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vue:
         specifier: ^3.5.13
@@ -197,7 +197,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -209,7 +209,7 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -230,7 +230,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -251,7 +251,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -272,7 +272,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -293,7 +293,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -314,7 +314,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -335,7 +335,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -356,7 +356,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -377,7 +377,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -398,7 +398,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -419,7 +419,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -440,7 +440,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -461,7 +461,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -473,7 +473,7 @@ importers:
         specifier: ^9.26.0
         version: 9.26.0(jiti@2.4.2)
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -501,7 +501,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -522,7 +522,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -543,7 +543,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -571,7 +571,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -629,7 +629,7 @@ importers:
         specifier: ~4.9.5
         version: 4.9.5
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@18.19.87)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*
@@ -663,7 +663,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: ^6.1.6
+        specifier: ^6.3.4
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(sass@1.87.0)(yaml@2.7.1)
       vite-plugin-checker:
         specifier: workspace:*

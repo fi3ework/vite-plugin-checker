@@ -63,7 +63,7 @@
     "optionator": "^0.9.4",
     "stylelint": ">=16",
     "typescript": "*",
-    "vite": ">=6.1.5",
+    "vite": ">=6.3.4",
     "vls": "*",
     "vti": "*",
     "vue-tsc": "~2.2.10"
