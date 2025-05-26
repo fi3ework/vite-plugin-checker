@@ -41,7 +41,7 @@
     "fast-json-stable-stringify": "^2.1.0",
     "knip": "^5.53.0",
     "lint-staged": "^15.5.1",
-    "pkg-pr-new": "^0.0.43",
+    "pkg-pr-new": "^0.0.50",
     "playwright-chromium": "^1.52.0",
     "publint": "^0.3.12",
     "rimraf": "^5.0.10",
