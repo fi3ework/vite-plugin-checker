@@ -39,8 +39,8 @@ importers:
         specifier: ^15.5.1
         version: 15.5.1
       pkg-pr-new:
-        specifier: ^0.0.43
-        version: 0.0.43
+        specifier: ^0.0.50
+        version: 0.0.50
       playwright-chromium:
         specifier: ^1.52.0
         version: 1.52.0
@@ -4032,8 +4032,8 @@ packages:
     resolution: {integrity: sha512-ueGLflrrnvwB3xuo/uGob5pd5FN7l0MsLf0Z87o/UQmRtwjvfylfc9MurIxRAWywCYTgrvpXBcqjV4OfCYGCIQ==}
     engines: {node: '>=16.20.0'}
 
-  pkg-pr-new@0.0.43:
-    resolution: {integrity: sha512-BxadQyJbbt7BtInyg82I73ztPOftPmDF1ttpTiJ1FpCp4p3zt5sXvDLm3V1GA8ukxa8MSvsI1+BJmsR54FLBpg==}
+  pkg-pr-new@0.0.50:
+    resolution: {integrity: sha512-wwIE4s+M39AcAnls7N1xxJyw7uYw15pzF94i54byvfSL6OOQjhyo9MAsSCUfcZZXplNKpYy70qW7rDXtOW35zw==}
     hasBin: true
 
   pkg-types@1.3.1:
@@ -8256,7 +8256,7 @@ snapshots:
 
   pkce-challenge@5.0.0: {}
 
-  pkg-pr-new@0.0.43:
+  pkg-pr-new@0.0.50:
     dependencies:
       '@jsdevtools/ez-spawn': 3.0.4
       '@octokit/action': 6.1.0
