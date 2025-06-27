@@ -52,6 +52,10 @@ export type EslintConfig =
   | false
   | {
       /**
+       * Configure path to watch files
+       */
+      watchPath?: string
+      /**
        * lintCommand will be executed at build mode, and will also be used as
        * default config for dev mode when options.eslint.dev.eslint is nullable.
        */
@@ -72,6 +76,10 @@ export type EslintConfig =
 export type StylelintConfig =
   | false
   | {
+      /**
+       * Configure path to watch files
+       */
+      watchPath?: string
       /**
        * lintCommand will be executed at build mode, and will also be used as
        * default config for dev mode when options.stylelint.dev.stylelint is nullable.

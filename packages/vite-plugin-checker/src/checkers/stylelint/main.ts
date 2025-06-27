@@ -127,7 +127,11 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       dispatchDiagnostics()
 
       // watch lint
-      const watcher = chokidar.watch(root, {
+      const watchTarget = pluginConfig.stylelint.watchPath 
+        ? path.resolve(root, pluginConfig.stylelint.watchPath)
+        : root
+
+      const watcher = chokidar.watch(watchTarget, {
         cwd: root,
         ignored: createIgnore(root, translatedOptions.files),
       })

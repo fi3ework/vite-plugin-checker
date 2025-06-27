@@ -155,9 +155,13 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       dispatchDiagnostics()
 
       // watch lint
-      const watcher = chokidar.watch(root, {
+      const watchTarget = pluginConfig.eslint.watchPath 
+        ? path.resolve(root, pluginConfig.eslint.watchPath)
+        : root
+        
+      const watcher = chokidar.watch(watchTarget, {
         cwd: root,
-        ignored: createIgnore(root, files),
+        ignored: [createIgnore(root, files)],
       })
 
       watcher.on('change', async (filePath) => {
