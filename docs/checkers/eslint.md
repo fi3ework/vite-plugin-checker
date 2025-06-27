@@ -47,8 +47,11 @@ export default {
     checker({
       eslint: {
         lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-        // Only watch files in the src directory
+        // Single directory
         watchPath: './src',
+        
+        // Multiple directories
+        // watchPath: ['./src', './lib'],
       },
     }),
   ],
@@ -62,7 +65,7 @@ Advanced object configuration table of `options.eslint`
 | field              | Type                                                                                                       | Default value          | Description                                                                                                                                                                                                              |
 | :----------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | lintCommand        | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.eslint` is nullable.                                                                                 |
-| watchPath          | `string`                                                                                                   | `undefined`            | **(Only in dev mode)** Configure path to watch files for ESLint. If not specified, will watch the entire project root. Use this to improve performance and avoid `EMFILE: too many open files` errors.              |
+| watchPath          | `string \| string[]`                                                                                       | `undefined`            | **(Only in dev mode)** Configure path to watch files for ESLint. If not specified, will watch the entire project root. Use this to improve performance and avoid `EMFILE: too many open files` errors.              |
 | useFlatConfig      | `boolean`                                                                                                  | `false`                | If `true`, the plugin will use the new [flat config](https://eslint.org/docs/latest/use/configure/configuration-files-new) of ESLint.                                                                                    |
 | dev.overrideConfig | [`ESLint.Options`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) | `undefined`            | **(Only in dev mode)** You can override the options of the translated from `lintCommand`. Config priority: `const eslint = new ESLint({cwd: root, ...translatedOptions, ...pluginConfig.eslint.dev?.overrideConfig, })`. |
 | dev.logLevel       | `('error' \| 'warning')[]`                                                                                 | `['error', 'warning']` | **(Only in dev mode)** Which level of ESLint should be emitted to terminal and overlay in dev mode                                                                                                                       |

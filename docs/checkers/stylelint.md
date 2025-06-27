@@ -38,8 +38,11 @@ export default {
     checker({
       stylelint: {
         lintCommand: 'stylelint ./src/**/*.{css,vue}',
-        // Only watch files in the src directory
+        // Single directory
         watchPath: './src',
+        
+        // Multiple directories
+        // watchPath: ['./src', './components'],
       },
     }),
   ],
@@ -53,6 +56,6 @@ Advanced object configuration table of `options.stylelint`
 | field              | Type                                                                                                     | Default value          | Description                                                                                                                                                                                                       |
 | :----------------- | -------------------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | lintCommand        | `string`                                                                                                 | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `stylelint.dev.stylelint` is nullable.                                                                    |
-| watchPath          | `string`                                                                                                 | `undefined`            | **(Only in dev mode)** Configure path to watch files for Stylelint. If not specified, will watch the entire project root. Use this to improve performance and avoid `EMFILE: too many open files` errors.    |
+| watchPath          | `string \| string[]`                                                                                     | `undefined`            | **(Only in dev mode)** Configure path to watch files for Stylelint. If not specified, will watch the entire project root. Use this to improve performance and avoid `EMFILE: too many open files` errors.    |
 | dev.overrideConfig | [`Stylelint.LinterOptions`](https://github.com/stylelint/stylelint/blob/main/types/stylelint/index.d.ts) | `undefined`            | **(Only in dev mode)** You can override the options of the translated from `lintCommand`. Config priority: `stylelint.lint({ cwd: root, ...translatedOptions, ...pluginConfig.stylelint.dev?.overrideConfig, })`. |
 | dev.logLevel       | `('error' \| 'warning')[]`                                                                               | `['error', 'warning']` | **(Only in dev mode)** Which level of Stylelint should be emitted to terminal and overlay in dev mode                                                                                                             |

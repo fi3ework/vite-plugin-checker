@@ -79,7 +79,7 @@ export type StylelintConfig =
       /**
        * Configure path to watch files
        */
-      watchPath?: string
+      watchPath?: string | string[]
       /**
        * lintCommand will be executed at build mode, and will also be used as
        * default config for dev mode when options.stylelint.dev.stylelint is nullable.
