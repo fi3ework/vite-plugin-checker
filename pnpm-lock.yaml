@@ -96,7 +96,7 @@ importers:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
       vue-tsc:
-        specifier: ~2.2.10
+        specifier: ~3.0.0
         version: 2.2.10(typescript@5.8.3)
 
   packages/vite-plugin-checker:
@@ -136,7 +136,7 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       '@vue/language-core':
-        specifier: ~2.2.10
+        specifier: ~3.0.0
         version: 2.2.10(typescript@5.8.3)
       meow:
         specifier: ^13.2.0
@@ -163,7 +163,7 @@ importers:
         specifier: ^1.0.12
         version: 1.0.12
       vue-tsc:
-        specifier: ~2.2.10
+        specifier: ~3.0.0
         version: 2.2.10(typescript@5.8.3)
 
   playground/backend-integration:
@@ -669,7 +669,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
       vue-tsc:
-        specifier: ~2.2.10
+        specifier: ~3.0.0
         version: 2.2.10(typescript@5.8.3)
 
 packages:
