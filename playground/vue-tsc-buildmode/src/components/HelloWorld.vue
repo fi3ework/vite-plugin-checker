@@ -31,8 +31,10 @@
 
 <script lang="ts">
 import { ref, defineComponent } from 'vue'
+import { processData } from '../../packages/core/src'
+
 export default defineComponent({
-  name: 'HelloWorld',
+  name: processData('HelloWorld'),
   props: {
     msg: {
       type: String,
