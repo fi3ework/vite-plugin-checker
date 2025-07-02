@@ -23,8 +23,8 @@ describe('vue-tsc-build-mode', () => {
 
       console.log('-- edit file --')
       resetReceivedLog()
-      editFile('src/App.vue', (code) =>
-        code.replace('<HelloWorld msg1="Diana" />', '<HelloWorld msg2="Diana" />')
+      editFile('packages/utils/src/helpers.ts', (code) =>
+        code.replace('processData(input: number)', 'processData(input: boolean)')
       )
       await sleepForEdit(2)
       expect(stringify(diagnostics)).toMatchSnapshot()

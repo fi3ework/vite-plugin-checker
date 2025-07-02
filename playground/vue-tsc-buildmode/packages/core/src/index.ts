@@ -1,5 +1,6 @@
-import { formatMessage, capitalize } from '../../utils/src/helpers';
+import { formatMessage, capitalize, processData as utilsProcessData } from '../../utils/src/helpers';
 
 export function processData(data: string): string {
-  return formatMessage(capitalize(data));
+  const processed = utilsProcessData(data);
+  return formatMessage(capitalize(processed));
 }
