@@ -5,9 +5,11 @@ choose [VLS](/checkers/vls) checker.
 
 ## Installation
 
-::: info Since `0.7.0`, `vue-tsc` requires at least >= `2.0.0`, with
-typescript >= `5.0.0`. If you can't upgrade to the latest version, please use
-`0.6.x` or below version. :::
+::: info
+Since `0.7.0`, `vue-tsc` requires at least >= `2.0.0`, with typescript >=
+`5.0.0`. If you can't upgrade to the latest version, please use `0.6.x` or below
+version.
+:::
 
 1. Make sure [vue-tsc](https://www.npmjs.com/package/vue-tsc) &
    [typescript](https://www.npmjs.com/package/typescript) are installed as a
