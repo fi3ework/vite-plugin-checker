@@ -45,7 +45,7 @@
   "devDependencies": {
     "@types/eslint": "^8.56.12",
     "@types/picomatch": "^4.0.0",
-    "@vue/language-core": "~2.2.12",
+    "@vue/language-core": "~3.0.1",
     "meow": "^13.2.0",
     "stylelint": "^16.21.1",
     "tsup": "^8.5.0",
@@ -54,7 +54,7 @@
     "vscode-languageclient": "^9.0.1",
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.12",
-    "vue-tsc": "~2.2.12"
+    "vue-tsc": "~3.0.1"
   },
   "peerDependencies": {
     "@biomejs/biome": ">=1.7",
@@ -66,7 +66,7 @@
     "vite": ">=2.0.0",
     "vls": "*",
     "vti": "*",
-    "vue-tsc": "~2.2.10"
+    "vue-tsc": "~2.2.10 || ^3.0.0"
   },
   "peerDependenciesMeta": {
     "@biomejs/biome": {
