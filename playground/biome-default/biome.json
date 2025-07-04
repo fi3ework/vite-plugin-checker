@@ -1,14 +1,14 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-  "files": {
-    "include": ["./src/*.js"]
-  },
-  "linter": {
-    "rules": {
-      "recommended": true
-    }
-  },
-  "formatter": {
-    "enabled": false
-  }
+	"$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
+	"files": {
+		"includes": ["./src/*.js"]
+	},
+	"linter": {
+		"rules": {
+			"recommended": true
+		}
+	},
+	"formatter": {
+		"enabled": false
+	}
 }
