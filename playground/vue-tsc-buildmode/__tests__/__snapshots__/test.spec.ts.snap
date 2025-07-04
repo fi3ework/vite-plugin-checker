@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`vue-tsc-build-mode > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"vue-tsc","frame":"    2 |/n    3 | export function processData(data: string): string {/n  > 4 |   const processed = utilsProcessData(data);/n      |                                      ^^^^/n    5 |   return formatMessage(capitalize(processed));/n    6 | }","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts","level":1,"loc":{"column":38,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts","line":4},"message":"Argument of type 'string' is not assignable to parameter of type 'number'.","stack":""}]"`;
+
+exports[`vue-tsc-build-mode > serve > get initial error and subsequent error 2`] = `
+[
+  "
+ ERROR(vue-tsc)  Argument of type 'string' is not assignable to parameter of type 'number'.
+ FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts:4:38
+
+    2 |
+    3 | export function processData(data: string): string {
+  > 4 |   const processed = utilsProcessData(data);
+      |                                      ^^^^
+    5 |   return formatMessage(capitalize(processed));
+    6 | }
+
+[vue-tsc] Found 1 error. Watching for file changes.",
+]
+`;
+
+exports[`vue-tsc-build-mode > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"vue-tsc","frame":"    2 |/n    3 | export function processData(data: string): string {/n  > 4 |   const processed = utilsProcessData(data);/n      |                                      ^^^^/n    5 |   return formatMessage(capitalize(processed));/n    6 | }","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts","level":1,"loc":{"column":38,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts","line":4},"message":"Argument of type 'string' is not assignable to parameter of type 'number'.","stack":""},{"checkerId":"vue-tsc","frame":"    2 |/n    3 | export function processData(data: string): string {/n  > 4 |   const processed = utilsProcessData(data);/n      |                                      ^^^^/n    5 |   return formatMessage(capitalize(processed));/n    6 | }","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts","level":1,"loc":{"column":38,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts","line":4},"message":"Argument of type 'string' is not assignable to parameter of type 'boolean'.","stack":""}]"`;
+
+exports[`vue-tsc-build-mode > serve > get initial error and subsequent error 4`] = `
+[
+  "
+ ERROR(vue-tsc)  Argument of type 'string' is not assignable to parameter of type 'boolean'.
+ FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts:4:38
+
+    2 |
+    3 | export function processData(data: string): string {
+  > 4 |   const processed = utilsProcessData(data);
+      |                                      ^^^^
+    5 |   return formatMessage(capitalize(processed));
+    6 | }
+
+[vue-tsc] Found 1 error. Watching for file changes.",
+]
+`;
