@@ -104,7 +104,7 @@ async function overrideTscJs(tscJsPath: string) {
 					return [${extsText2}].some(ext => path.endsWith(ext))
 						? path + newExtension
 						: _changeExtension(path, newExtension)
-					}\n` + s.replace('changeExtension', '_changeExtension'),
+					}\n${s.replace('changeExtension', '_changeExtension')}`,
   )
 
   // proxy createProgram

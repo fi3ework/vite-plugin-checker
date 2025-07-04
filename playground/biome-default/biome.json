@@ -5,7 +5,10 @@
 	},
 	"linter": {
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"style": {
+				"noDefaultExport": "error"
+			}
 		}
 	},
 	"formatter": {
