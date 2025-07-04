@@ -1,9 +1,10 @@
 const path = require('node:path')
 
 const vueTscDir = path.dirname(require.resolve('vue-tsc/package.json'))
-const vue = /** @type {typeof import('@vue/language-core') & { resolveVueCompilerOptions?: any }} */ (
-  require(require.resolve('@vue/language-core', { paths: [vueTscDir] }))
-)
+const vue =
+  /** @type {typeof import('@vue/language-core') & { resolveVueCompilerOptions?: any }} */ (
+    require(require.resolve('@vue/language-core', { paths: [vueTscDir] }))
+  )
 const windowsPathReg = /\\/g
 
 const removeEmitGlobalTypesRegexp =
@@ -17,7 +18,8 @@ function removeEmitGlobalTypes(dts) {
   return dts.replace(removeEmitGlobalTypesRegexp, '')
 }
 
-const getDefaultCompilerOptions = vue.getDefaultCompilerOptions || (() => vue.resolveVueCompilerOptions({}))
+const getDefaultCompilerOptions =
+  vue.getDefaultCompilerOptions || (() => vue.resolveVueCompilerOptions({}))
 
 // #region copied from https://github.com/vuejs/language-tools/blob/0781998a29f176ad52c30d3139d5c78a5688bd5d/packages/tsc/index.ts
 /**

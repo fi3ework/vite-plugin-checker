@@ -16,13 +16,7 @@
         "src/checkers/vueTsc/languagePlugins.cjs",
         "__tests__/fixtures/tsDiagnostic.ts"
       ],
-      "ignoreDependencies": [
-        "eslint",
-        "meow",
-        "stylelint",
-        "vls",
-        "vue-tsc"
-      ]
+      "ignoreDependencies": ["eslint", "meow", "stylelint", "vls", "vue-tsc"]
     },
     "playground/backend-integration": {
       "entry": ["src/*.{js,ts,tsx}", "__test__/serve.js"]
