@@ -44,7 +44,6 @@
     "pkg-pr-new": "^0.0.54",
     "playwright-chromium": "^1.53.2",
     "publint": "^0.3.12",
-    "rimraf": "^5.0.10",
     "simple-git-hooks": "^2.13.0",
     "sort-deep-object-arrays": "^1.1.2",
     "sort-package-json": "^3.4.0",

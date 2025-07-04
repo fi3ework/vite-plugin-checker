@@ -28,7 +28,7 @@
   "scripts": {
     "build": "tsup",
     "build:test": "tsup --sourcemap inline",
-    "clean": "rimraf dist",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "dev": "tsup --watch"
   },
   "dependencies": {
