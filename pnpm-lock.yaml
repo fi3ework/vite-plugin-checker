@@ -33,8 +33,8 @@ importers:
         specifier: ^5.61.3
         version: 5.61.3(@types/node@20.19.4)(typescript@5.8.3)
       lint-staged:
-        specifier: ^15.5.2
-        version: 15.5.2
+        specifier: ^16.1.2
+        version: 16.1.2
       pkg-pr-new:
         specifier: ^0.0.54
         version: 0.0.54
@@ -67,10 +67,10 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 3.2.4(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
 
   docs:
     dependencies:
@@ -82,10 +82,10 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.0
-        version: 6.0.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))(vue@3.5.17(typescript@5.8.3))
+        version: 6.0.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vue:
         specifier: ^3.5.17
         version: 3.5.17(typescript@5.8.3)
@@ -140,7 +140,7 @@ importers:
         version: 16.21.1(typescript@5.8.3)
       tsup:
         specifier: ^8.5.0
-        version: 8.5.0(jiti@2.4.2)(postcss@8.5.6)(typescript@5.8.3)(yaml@2.7.1)
+        version: 8.5.0(jiti@2.4.2)(postcss@8.5.6)(typescript@5.8.3)(yaml@2.8.0)
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -180,7 +180,7 @@ importers:
         version: 19.1.6(@types/react@19.1.8)
       '@vitejs/plugin-react':
         specifier: ^4.6.0
-        version: 4.6.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))
+        version: 4.6.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))
       express:
         specifier: ^5.1.0
         version: 5.1.0
@@ -192,7 +192,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -204,7 +204,7 @@ importers:
         version: 1.9.4
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -225,7 +225,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -246,7 +246,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -267,7 +267,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -288,7 +288,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -309,7 +309,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -330,7 +330,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -351,7 +351,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -372,7 +372,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -393,7 +393,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -414,7 +414,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -435,7 +435,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -456,7 +456,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -468,7 +468,7 @@ importers:
         version: 9.30.1(jiti@2.4.2)
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -490,13 +490,13 @@ importers:
         version: 19.1.6(@types/react@19.1.8)
       '@vitejs/plugin-react':
         specifier: ^4.6.0
-        version: 4.6.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))
+        version: 4.6.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -517,7 +517,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -538,7 +538,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -560,13 +560,13 @@ importers:
         version: 19.1.6(@types/react@19.1.8)
       '@vitejs/plugin-react':
         specifier: ^4.6.0
-        version: 4.6.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))
+        version: 4.6.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -627,13 +627,13 @@ importers:
         version: 28.8.0(@babel/parser@7.28.0)(vue@2.7.16)
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
       vite-plugin-vue2:
         specifier: ^2.0.3
-        version: 2.0.3(lodash@4.17.21)(vite@7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))(vue-template-compiler@2.7.16)(vue@2.7.16)
+        version: 2.0.3(lodash@4.17.21)(vite@7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
       vls:
         specifier: ^0.8.5
         version: 0.8.5
@@ -652,13 +652,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.0
-        version: 6.0.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))(vue@3.5.17(typescript@5.8.3))
+        version: 6.0.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -674,13 +674,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.0
-        version: 6.0.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))(vue@3.5.17(typescript@5.8.3))
+        version: 6.0.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
         specifier: ^7.0.2
-        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+        version: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -2583,9 +2583,9 @@ packages:
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
 
-  commander@13.1.0:
-    resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
-    engines: {node: '>=18'}
+  commander@14.0.0:
+    resolution: {integrity: sha512-2uM9rYjPvyq39NwLRqaiLtWHyDC1FvryJDa2ATTVims5YAS4PupsEQsDvP14FqhFr0P49CYDugi59xaxJlTXRA==}
+    engines: {node: '>=20'}
 
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
@@ -3295,10 +3295,6 @@ packages:
   eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
 
-  execa@8.0.1:
-    resolution: {integrity: sha512-VyhnebXciFV2DESc+p6B+y0LjSm0krU4OgJN44qFAhBY0TJ+1V61tYD2+wHusZ6F9n5K+vl8k0sTy7PEfV4qpg==}
-    engines: {node: '>=16.17'}
-
   execa@9.6.0:
     resolution: {integrity: sha512-jpWzZ1ZhwUmeWRhS7Qv3mhpOhLfwI+uAX4e5fOcXqwMR7EcJ0pj2kV1CVzHVMX/LphnKWD3LObjZCoJ71lKpHw==}
     engines: {node: ^18.19.0 || >=20.5.0}
@@ -3466,10 +3462,6 @@ packages:
     resolution: {integrity: sha512-jp4tHawyV7+fkkSKyvjuLZswblUtz+SQKzSWnBbii16BuZksJlU1wuBYXY75r+duh/llF1ur6oNwi+2ZzjKZ7g==}
     engines: {node: '>=4'}
 
-  get-stream@8.0.1:
-    resolution: {integrity: sha512-VaUJspBffn/LMCJVoMvSAdmscJyS1auj5Zulnn5UoYcY531UWmdwhRWkcGKnGU93m5HSXP9LP2usOryrBtQowA==}
-    engines: {node: '>=16'}
-
   get-stream@9.0.1:
     resolution: {integrity: sha512-kVCxPF3vQM/N0B1PmoqVUqgHP+EeVjmZSQn+1oCRPxd2P21P2F19lIgbR3HBosbB1PUhOAoctJnfEn2GbN2eZA==}
     engines: {node: '>=18'}
@@ -3591,10 +3583,6 @@ packages:
     resolution: {integrity: sha512-7mz/721AbnJwIVbnaSv1Cz3Am0ZLT/UBwkC92VlxhXv/k/BBQfM2fXElQNC27BVGr0uwUpplYPQM9LnaBMR5NQ==}
     engines: {node: '>=8.0.0'}
 
-  human-signals@5.0.0:
-    resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
-    engines: {node: '>=16.17.0'}
-
   human-signals@8.0.1:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
@@ -3700,10 +3688,6 @@ packages:
     resolution: {integrity: sha512-MjYsKHO5O7mCsmRGxWcLWheFqN9DJ/2TmngvjKXihe6efViPqc274+Fx/4fYj/r03+ESvBdTXK0V6tA3rgez1g==}
     engines: {node: '>= 0.4'}
 
-  is-stream@3.0.0:
-    resolution: {integrity: sha512-LnQR4bZ9IADDRSkvpqMGvt/tEJWclzklNgSw48V5EAaAeDd6qGvN8ei6k5p0tvxSR171VmGyHuTiAOfxAbr8kA==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
   is-stream@4.0.1:
     resolution: {integrity: sha512-Dnz92NInDqYckGEUJv689RbRiTSEHCQ7wOVeALbkOz999YpqT46yMRIGtSNl2iCL1waAZSx40+h59NV/EwzV/A==}
     engines: {node: '>=18'}
@@ -3808,13 +3792,13 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  lint-staged@15.5.2:
-    resolution: {integrity: sha512-YUSOLq9VeRNAo/CTaVmhGDKG+LBtA8KF1X4K5+ykMSwWST1vDxJRB2kv2COgLb1fvpCo+A/y9A0G0znNVmdx4w==}
-    engines: {node: '>=18.12.0'}
+  lint-staged@16.1.2:
+    resolution: {integrity: sha512-sQKw2Si2g9KUZNY3XNvRuDq4UJqpHwF0/FQzZR2M7I5MvtpWvibikCjUVJzZdGE0ByurEl3KQNvsGetd1ty1/Q==}
+    engines: {node: '>=20.17'}
     hasBin: true
 
-  listr2@8.3.2:
-    resolution: {integrity: sha512-vsBzcU4oE+v0lj4FhVLzr9dBTv4/fHIa57l+GCwovP8MoFNZJTOhGU8PXd4v2VJCbECAaijBiHntiekFMLvo0g==}
+  listr2@8.3.3:
+    resolution: {integrity: sha512-LWzX2KsqcB1wqQ4AHgYb4RsDXauQiqhjLk+6hjbaeHG4zpjjVAB6wC/gz6X0l+Du1cN3pUB5ZlrvTbhGSNnUQQ==}
     engines: {node: '>=18.0.0'}
 
   load-tsconfig@0.2.5:
@@ -3898,9 +3882,6 @@ packages:
   merge-source-map@1.1.0:
     resolution: {integrity: sha512-Qkcp7P2ygktpMPh2mCQZaf3jhN6D3Z/qVZHSdWvQ+2Ef5HgRAPBO57A77+ENm0CPx2+1Ce/MYKi3ymqdfuqibw==}
 
-  merge-stream@2.0.0:
-    resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
-
   merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
@@ -3931,10 +3912,6 @@ packages:
   mime-types@3.0.1:
     resolution: {integrity: sha512-xRc4oEhT6eaBpU1XF7AjpOFD+xQmXNB5OVKwp4tqCuBpHLS/ZbBDrc07mYTDqVMg6PfxUjjNp85O6Cd2Z/5HWA==}
     engines: {node: '>= 0.6'}
-
-  mimic-fn@4.0.0:
-    resolution: {integrity: sha512-vqiC06CuhBTUdZH+RYl8sFrL096vA45Ok5ISO6sE/Mr1jRbGH4Csnhi8f3wKVl7x8mO4Au7Ir9D3Oyv1VYMFJw==}
-    engines: {node: '>=12'}
 
   mimic-function@5.0.1:
     resolution: {integrity: sha512-VP79XUPxV2CigYP3jWwAUFSku2aKqBH7uTAapFWCBqutsbmDo96KY5o8uh6U+/YSIn5OxJnXp73beVkpqMIGhA==}
@@ -3988,6 +3965,10 @@ packages:
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
 
+  nano-spawn@1.0.2:
+    resolution: {integrity: sha512-21t+ozMQDAL/UGgQVBbZ/xXvNO10++ZPuTmKRO8k9V3AClVRht49ahtDjfY8l1q6nSHOrE5ASfthzH3ol6R/hg==}
+    engines: {node: '>=20.17'}
+
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -4013,10 +3994,6 @@ packages:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
 
-  npm-run-path@5.3.0:
-    resolution: {integrity: sha512-ppwTtiJZq0O/ai0z7yfudtBpWIoxM8yE6nHi1X47eFR2EWORqfbu6CnPlNsjeN683eT0qG6H/Pyf9fCcvjnnnQ==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
   npm-run-path@6.0.0:
     resolution: {integrity: sha512-9qny7Z9DsQU8Ou39ERsPU4OZQlSTP47ShQzuKZ6PRXpYLtIFgl/DEBYEXKlvcEa+9tHVcK8CF81Y2V72qaZhWA==}
     engines: {node: '>=18'}
@@ -4038,10 +4015,6 @@ packages:
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
-
-  onetime@6.0.0:
-    resolution: {integrity: sha512-1FlR+gjXK7X+AsAHso35MnyN5KqGwJRi/31ft6x0M194ht7S+rWAvd7PHss9xSKMzE0asv1pyIHaJYq+BbacAQ==}
-    engines: {node: '>=12'}
 
   onetime@7.0.0:
     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
@@ -4577,10 +4550,6 @@ packages:
 
   strip-ansi@7.1.0:
     resolution: {integrity: sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ==}
-    engines: {node: '>=12'}
-
-  strip-final-newline@3.0.0:
-    resolution: {integrity: sha512-dOESqjYr96iWYylGObzd39EuNTa5VJxyvVAEm5Jnh7KGo75V43Hk1odPQkNDyXNmUR6k+gEiDVXnjB8HJ3crXw==}
     engines: {node: '>=12'}
 
   strip-final-newline@4.0.0:
@@ -5151,9 +5120,9 @@ packages:
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
 
-  yaml@2.7.1:
-    resolution: {integrity: sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ==}
-    engines: {node: '>= 14'}
+  yaml@2.8.0:
+    resolution: {integrity: sha512-4lLa/EcQCB0cJkyts+FpIRx5G/llPxfP6VQU5KByHEhLxY3IJCH0f0Hy1MHI8sClTvsIb8qwRJ6R/ZdlDJ/leQ==}
+    engines: {node: '>= 14.6'}
     hasBin: true
 
   yocto-queue@0.1.0:
@@ -6566,7 +6535,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@vitejs/plugin-react@4.6.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))':
+  '@vitejs/plugin-react@4.6.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))':
     dependencies:
       '@babel/core': 7.28.0
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.28.0)
@@ -6574,7 +6543,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.19
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6583,10 +6552,10 @@ snapshots:
       vite: 5.4.19(@types/node@20.19.4)(sass@1.89.2)
       vue: 3.5.17(typescript@5.8.3)
 
-  '@vitejs/plugin-vue@6.0.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))(vue@3.5.17(typescript@5.8.3))':
+  '@vitejs/plugin-vue@6.0.0(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.19
-      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vue: 3.5.17(typescript@5.8.3)
 
   '@vitest/expect@3.2.4':
@@ -6597,13 +6566,13 @@ snapshots:
       chai: 5.2.0
       tinyrainbow: 2.0.0
 
-  '@vitest/mocker@3.2.4(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))':
+  '@vitest/mocker@3.2.4(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))':
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
@@ -7178,7 +7147,7 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
-  commander@13.1.0: {}
+  commander@14.0.0: {}
 
   commander@2.20.3: {}
 
@@ -7647,18 +7616,6 @@ snapshots:
 
   eventemitter3@5.0.1: {}
 
-  execa@8.0.1:
-    dependencies:
-      cross-spawn: 7.0.6
-      get-stream: 8.0.1
-      human-signals: 5.0.0
-      is-stream: 3.0.0
-      merge-stream: 2.0.0
-      npm-run-path: 5.3.0
-      onetime: 6.0.0
-      signal-exit: 4.1.0
-      strip-final-newline: 3.0.0
-
   execa@9.6.0:
     dependencies:
       '@sindresorhus/merge-streams': 4.0.0
@@ -7865,8 +7822,6 @@ snapshots:
 
   get-stdin@6.0.0: {}
 
-  get-stream@8.0.1: {}
-
   get-stream@9.0.1:
     dependencies:
       '@sec-ant/readable-stream': 0.4.1
@@ -8008,8 +7963,6 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  human-signals@5.0.0: {}
-
   human-signals@8.0.1: {}
 
   iconv-lite@0.6.3:
@@ -8089,8 +8042,6 @@ snapshots:
       gopd: 1.2.0
       has-tostringtag: 1.0.2
       hasown: 2.0.2
-
-  is-stream@3.0.0: {}
 
   is-stream@4.0.1: {}
 
@@ -8184,22 +8135,22 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  lint-staged@15.5.2:
+  lint-staged@16.1.2:
     dependencies:
       chalk: 5.4.1
-      commander: 13.1.0
+      commander: 14.0.0
       debug: 4.4.1
-      execa: 8.0.1
       lilconfig: 3.1.3
-      listr2: 8.3.2
+      listr2: 8.3.3
       micromatch: 4.0.8
+      nano-spawn: 1.0.2
       pidtree: 0.6.0
       string-argv: 0.3.2
-      yaml: 2.7.1
+      yaml: 2.8.0
     transitivePeerDependencies:
       - supports-color
 
-  listr2@8.3.2:
+  listr2@8.3.3:
     dependencies:
       cli-truncate: 4.0.0
       colorette: 2.0.20
@@ -8289,8 +8240,6 @@ snapshots:
     dependencies:
       source-map: 0.6.1
 
-  merge-stream@2.0.0: {}
-
   merge2@1.4.1: {}
 
   micromark-util-character@2.1.1:
@@ -8320,8 +8269,6 @@ snapshots:
   mime-types@3.0.1:
     dependencies:
       mime-db: 1.54.0
-
-  mimic-fn@4.0.0: {}
 
   mimic-function@5.0.1: {}
 
@@ -8372,6 +8319,8 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
+  nano-spawn@1.0.2: {}
+
   nanoid@3.3.11: {}
 
   natural-compare-lite@1.4.0: {}
@@ -8386,10 +8335,6 @@ snapshots:
   node-releases@2.0.19: {}
 
   normalize-path@3.0.0: {}
-
-  npm-run-path@5.3.0:
-    dependencies:
-      path-key: 4.0.0
 
   npm-run-path@6.0.0:
     dependencies:
@@ -8411,10 +8356,6 @@ snapshots:
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
-
-  onetime@6.0.0:
-    dependencies:
-      mimic-fn: 4.0.0
 
   onetime@7.0.0:
     dependencies:
@@ -8545,13 +8486,13 @@ snapshots:
 
   playwright-core@1.53.2: {}
 
-  postcss-load-config@6.0.1(jiti@2.4.2)(postcss@8.5.6)(yaml@2.7.1):
+  postcss-load-config@6.0.1(jiti@2.4.2)(postcss@8.5.6)(yaml@2.8.0):
     dependencies:
       lilconfig: 3.1.3
     optionalDependencies:
       jiti: 2.4.2
       postcss: 8.5.6
-      yaml: 2.7.1
+      yaml: 2.8.0
 
   postcss-resolve-nested-selector@0.1.6: {}
 
@@ -8955,8 +8896,6 @@ snapshots:
     dependencies:
       ansi-regex: 6.1.0
 
-  strip-final-newline@3.0.0: {}
-
   strip-final-newline@4.0.0: {}
 
   strip-json-comments@3.1.1: {}
@@ -9126,7 +9065,7 @@ snapshots:
       tsutils: 2.29.0(typescript@4.9.5)
       typescript: 4.9.5
 
-  tsup@8.5.0(jiti@2.4.2)(postcss@8.5.6)(typescript@5.8.3)(yaml@2.7.1):
+  tsup@8.5.0(jiti@2.4.2)(postcss@8.5.6)(typescript@5.8.3)(yaml@2.8.0):
     dependencies:
       bundle-require: 5.1.0(esbuild@0.25.3)
       cac: 6.7.14
@@ -9137,7 +9076,7 @@ snapshots:
       fix-dts-default-cjs-exports: 1.0.1
       joycon: 3.1.1
       picocolors: 1.1.1
-      postcss-load-config: 6.0.1(jiti@2.4.2)(postcss@8.5.6)(yaml@2.7.1)
+      postcss-load-config: 6.0.1(jiti@2.4.2)(postcss@8.5.6)(yaml@2.8.0)
       resolve-from: 5.0.0
       rollup: 4.40.1
       source-map: 0.8.0-beta.0
@@ -9283,13 +9222,13 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-node@3.2.4(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1):
+  vite-node@3.2.4(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0):
     dependencies:
       cac: 6.7.14
       debug: 4.4.1
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -9304,7 +9243,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plugin-vue2@2.0.3(lodash@4.17.21)(vite@7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))(vue-template-compiler@2.7.16)(vue@2.7.16):
+  vite-plugin-vue2@2.0.3(lodash@4.17.21)(vite@7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))(vue-template-compiler@2.7.16)(vue@2.7.16):
     dependencies:
       '@babel/core': 7.28.0
       '@babel/parser': 7.28.0
@@ -9334,7 +9273,7 @@ snapshots:
       rollup: 2.79.2
       slash: 3.0.0
       source-map: 0.7.4
-      vite: 7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+      vite: 7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       vue-template-babel-compiler: 1.2.0(vue-template-compiler@2.7.16)
       vue-template-compiler: 2.7.16
     transitivePeerDependencies:
@@ -9404,7 +9343,7 @@ snapshots:
       fsevents: 2.3.3
       sass: 1.89.2
 
-  vite@7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1):
+  vite@7.0.2(@types/node@18.19.115)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0):
     dependencies:
       esbuild: 0.25.3
       fdir: 6.4.6(picomatch@4.0.2)
@@ -9417,9 +9356,9 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.4.2
       sass: 1.89.2
-      yaml: 2.7.1
+      yaml: 2.8.0
 
-  vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1):
+  vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0):
     dependencies:
       esbuild: 0.25.3
       fdir: 6.4.6(picomatch@4.0.2)
@@ -9432,7 +9371,7 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.4.2
       sass: 1.89.2
-      yaml: 2.7.1
+      yaml: 2.8.0
 
   vitepress@1.6.3(@algolia/client-search@5.24.0)(@types/node@20.19.4)(postcss@8.5.6)(sass@1.89.2)(typescript@5.8.3):
     dependencies:
@@ -9483,11 +9422,11 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitest@3.2.4(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1):
+  vitest@3.2.4(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
-      '@vitest/mocker': 3.2.4(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1))
+      '@vitest/mocker': 3.2.4(vite@7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0))
       '@vitest/pretty-format': 3.2.4
       '@vitest/runner': 3.2.4
       '@vitest/snapshot': 3.2.4
@@ -9505,8 +9444,8 @@ snapshots:
       tinyglobby: 0.2.14
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
-      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
-      vite-node: 3.2.4(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.7.1)
+      vite: 7.0.2(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
+      vite-node: 3.2.4(@types/node@20.19.4)(jiti@2.4.2)(sass@1.89.2)(yaml@2.8.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.19.4
@@ -9712,7 +9651,7 @@ snapshots:
 
   yallist@3.1.1: {}
 
-  yaml@2.7.1: {}
+  yaml@2.8.0: {}
 
   yocto-queue@0.1.0: {}
 
