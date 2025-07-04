@@ -12,13 +12,11 @@
     },
     "packages/vite-plugin-checker": {
       "entry": [
-        "tsup.config.ts",
         "src/**/*.ts",
         "src/checkers/vueTsc/languagePlugins.cjs",
         "__tests__/fixtures/tsDiagnostic.ts"
       ],
       "ignoreDependencies": [
-        "@vue/language-core",
         "eslint",
         "meow",
         "stylelint",
@@ -27,7 +25,7 @@
       ]
     },
     "playground/backend-integration": {
-      "entry": ["vite.config.js", "src/*.{js,ts,tsx}", "__test__/serve.js"]
+      "entry": ["src/*.{js,ts,tsx}", "__test__/serve.js"]
     },
     "playground/vls-vue2": {
       "entry": ["vetur.config.cjs", "src/**/*"],
