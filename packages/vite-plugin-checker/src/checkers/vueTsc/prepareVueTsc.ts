@@ -45,7 +45,7 @@ export async function prepareVueTsc() {
     ) {
       shouldBuildFixture = false
     }
-  } catch (e) {
+  } catch {
     // no matter what error, we should rebuild the fixture
     shouldBuildFixture = true
   }
@@ -77,7 +77,6 @@ async function overrideTscJs(tscJsPath: string) {
     tsc,
     /supportedTSExtensions = .*(?=;)/,
     (s) =>
-      // biome-ignore lint/style/useTemplate: <explanation>
       s +
       `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`,
   )
@@ -85,7 +84,6 @@ async function overrideTscJs(tscJsPath: string) {
     tsc,
     /supportedJSExtensions = .*(?=;)/,
     (s) =>
-      // biome-ignore lint/style/useTemplate: <explanation>
       s +
       `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`,
   )
@@ -93,7 +91,6 @@ async function overrideTscJs(tscJsPath: string) {
     tsc,
     /allSupportedExtensions = .*(?=;)/,
     (s) =>
-      // biome-ignore lint/style/useTemplate: <explanation>
       s +
       `.map((group, i) => i === 0 ? group.splice(0, 0, ${extsText}) && group : group)`,
   )
@@ -103,7 +100,6 @@ async function overrideTscJs(tscJsPath: string) {
     tsc,
     /function changeExtension\(/,
     (s) =>
-      // biome-ignore lint/style/useTemplate: <explanation>
       `function changeExtension(path, newExtension) {
 					return [${extsText2}].some(ext => path.endsWith(ext))
 						? path + newExtension

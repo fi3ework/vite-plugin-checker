@@ -84,8 +84,8 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
       const reportWatchStatusChanged: typescript.WatchStatusReporter = (
         diagnostic,
-        newLine,
-        options,
+        _newLine,
+        _options,
         errorCount,
         // eslint-disable-next-line max-params
       ) => {

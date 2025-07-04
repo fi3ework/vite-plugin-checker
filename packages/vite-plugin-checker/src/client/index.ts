@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import type { SharedConfig } from '../types'
+
 const _require = createRequire(import.meta.url)
 
 export const RUNTIME_CLIENT_RUNTIME_PATH = '/@vite-plugin-checker-runtime'

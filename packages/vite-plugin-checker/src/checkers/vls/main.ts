@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
-
+import type { ConfigEnv } from 'vite'
 import { Checker } from '../../Checker.js'
 import {
   composeCheckerSummary,
@@ -10,11 +10,9 @@ import {
   diagnosticToTerminalLog,
   toClientPayload,
 } from '../../logger.js'
+import type { CreateDiagnostic } from '../../types.js'
 import { ACTION_TYPES } from '../../types.js'
 import { type DiagnosticOptions, diagnostics } from './diagnostics.js'
-
-import type { ConfigEnv } from 'vite'
-import type { CreateDiagnostic } from '../../types.js'
 
 const __filename = fileURLToPath(import.meta.url)
 

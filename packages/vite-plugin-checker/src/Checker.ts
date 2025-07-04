@@ -1,14 +1,12 @@
 import invariant from 'tiny-invariant'
-import { isInVitestEntryThread, isMainThread } from './utils.js'
-
-import { type Script, createScript } from './worker.js'
-
 import type {
   BuildInCheckerNames,
   BuildInCheckers,
   CreateDiagnostic,
   ServeAndBuildChecker,
 } from './types.js'
+import { isInVitestEntryThread, isMainThread } from './utils.js'
+import { createScript, type Script } from './worker.js'
 
 if (!(isMainThread || isInVitestEntryThread)) {
   process.stdout.isTTY = true

@@ -6,8 +6,9 @@ import chokidar from 'chokidar'
 import colors from 'picocolors'
 import { globSync } from 'tinyglobby'
 import { VLS } from 'vls'
-import type { TextDocument } from 'vscode-languageserver-textdocument'
 import {
+  createConnection,
+  createProtocolConnection,
   type Diagnostic,
   DiagnosticSeverity,
   DidChangeTextDocumentNotification,
@@ -20,21 +21,18 @@ import {
   type ServerCapabilities,
   StreamMessageReader,
   StreamMessageWriter,
-  createConnection,
-  createProtocolConnection,
 } from 'vscode-languageserver/node.js'
+import type { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI } from 'vscode-uri'
-
+import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
-  type NormalizedDiagnostic,
   diagnosticToTerminalLog,
+  type NormalizedDiagnostic,
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
 } from '../../logger.js'
 import type { DeepPartial } from '../../types.js'
-import { type VlsOptions, getInitParams } from './initParams.js'
-
-import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
+import { getInitParams, type VlsOptions } from './initParams.js'
 
 enum DOC_VERSION {
   init = -1,
@@ -397,8 +395,9 @@ async function getDiagnostics(
   return null
 }
 
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-function isObject(item: any): item is {} {
+function isObject(
+  item: any,
+): item is Record<string | number | symbol, unknown> {
   return item && typeof item === 'object' && !Array.isArray(item)
 }
 

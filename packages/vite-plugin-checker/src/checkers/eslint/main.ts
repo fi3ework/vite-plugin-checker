@@ -30,6 +30,7 @@ const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types'
+
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
   let overlay = true
   let terminal = true

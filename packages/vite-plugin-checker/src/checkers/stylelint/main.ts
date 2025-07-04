@@ -3,8 +3,6 @@ import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
 import chokidar from 'chokidar'
 import stylelint from 'stylelint'
-import { translateOptions } from './options.js'
-
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import { createIgnore } from '../../glob.js'
@@ -19,6 +17,7 @@ import {
   toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { translateOptions } from './options.js'
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild: any

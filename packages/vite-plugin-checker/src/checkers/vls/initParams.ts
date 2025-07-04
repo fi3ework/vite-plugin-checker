@@ -1,6 +1,5 @@
-import type { URI } from 'vscode-uri'
-
 import type { InitializeParams } from 'vscode-languageserver/node'
+import type { URI } from 'vscode-uri'
 
 export type VlsOptions = ReturnType<typeof getDefaultVLSConfig>
 

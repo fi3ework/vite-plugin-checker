@@ -9,6 +9,7 @@ import * as _vscodeUri from 'vscode-uri'
 // see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
 // @ts-expect-error
 const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
+
 import { parentPort } from 'node:worker_threads'
 
 import type { SourceLocation } from '@babel/code-frame'
@@ -28,17 +29,17 @@ import {
 import { isMainThread } from './utils.js'
 
 const _require = createRequire(import.meta.url)
+
 import type { ESLint } from 'eslint'
 import type Stylelint from 'stylelint'
+import type {
+  flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
+  Diagnostic as TsDiagnostic,
+} from 'typescript'
 import type {
   Diagnostic as LspDiagnostic,
   PublishDiagnosticsParams,
 } from 'vscode-languageclient/node'
-
-import type {
-  Diagnostic as TsDiagnostic,
-  flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
-} from 'typescript'
 
 export interface NormalizedDiagnostic {
   /** error message */

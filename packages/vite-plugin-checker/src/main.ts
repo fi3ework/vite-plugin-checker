@@ -1,15 +1,15 @@
 import { spawn } from 'node:child_process'
-import { type ProcessEnv, npmRunPathEnv } from 'npm-run-path'
+import { npmRunPathEnv, type ProcessEnv } from 'npm-run-path'
 import colors from 'picocolors'
 
 import type { ConfigEnv, Logger, Plugin } from 'vite'
 import { Checker } from './Checker.js'
 import {
+  composePreambleCode,
   RUNTIME_CLIENT_ENTRY_PATH,
   RUNTIME_CLIENT_RUNTIME_PATH,
-  WS_CHECKER_RECONNECT_EVENT,
-  composePreambleCode,
   runtimeCode,
+  WS_CHECKER_RECONNECT_EVENT,
   wrapVirtualPrefix,
 } from './client/index.js'
 import {
@@ -74,7 +74,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     enforce: 'pre',
     // @ts-ignore
     __internal__checker: Checker,
-    config: async (config, env) => {
+    config: async (_config, env) => {
       // for dev mode (1/2)
       // Initialize checker with config
       viteMode = env.command
