@@ -1,29 +1,31 @@
-import { execa } from 'execa'
-import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
+import fs from 'node:fs/promises'
 import type * as http from 'node:http'
 import os from 'node:os'
 import path, { dirname, join, resolve } from 'node:path'
+import { execa } from 'execa'
+import type { Browser, Page } from 'playwright-chromium'
 import { chromium } from 'playwright-chromium'
 import strip from 'strip-ansi'
+import type { InlineConfig, ResolvedConfig, ViteDevServer } from 'vite'
 import { createServer, mergeConfig } from 'vite'
+import type { File } from 'vitest'
 import { beforeAll, expect } from 'vitest'
 import type { Checker } from '../packages/vite-plugin-checker/src/Checker'
-
 import { normalizeLogSerializer } from './serializers'
-
-import type { Browser, Page } from 'playwright-chromium'
-import type { InlineConfig, ResolvedConfig, ViteDevServer } from 'vite'
-import type { File } from 'vitest'
 
 expect.addSnapshotSerializer(normalizeLogSerializer)
 
 export const workspaceRoot = resolve(__dirname, '../')
 
-export const isBuild = !!process.env.VITE_TEST_BUILD
-export const isServe = !isBuild
+export const isBuild = process.env.PROJECT === 'build'
+export const isServe = process.env.PROJECT === 'serve'
+
 export const isWindows = process.platform === 'win32'
-export const viteBinPath = path.posix.join(workspaceRoot, 'packages/vite/bin/vite.js')
+export const viteBinPath = path.posix.join(
+  workspaceRoot,
+  'packages/vite/bin/vite.js',
+)
 
 let server: ViteDevServer | http.Server
 
@@ -58,7 +60,7 @@ export let stripedLog: string[] = []
 export let diagnostics: string[] = []
 export let buildSucceed: boolean
 
-export let resolvedConfig: ResolvedConfig = undefined!
+export const resolvedConfig: ResolvedConfig = undefined!
 
 export let page: Page = undefined!
 export let browser: Browser = undefined!
@@ -128,10 +130,15 @@ beforeAll(async (s) => {
         if (serve) {
           server = await serve()
           viteServer = mod.viteServer
-          startDefaultServe({ _server: (server as any).viteDevServer, port: (server as any).port })
+          startDefaultServe({
+            _server: (server as any).viteDevServer,
+            port: (server as any).port,
+          })
         }
       } else {
-        await startDefaultServe({ port: 5173 + Number(process.env.VITEST_POOL_ID) })
+        await startDefaultServe({
+          port: 5173 + Number(process.env.VITEST_POOL_ID),
+        })
       }
     }
   } catch (e) {
@@ -181,7 +188,7 @@ export async function startDefaultServe({
 
     const viteDevServer = _server || (await createServer(testConfig))
     const checker = viteDevServer.config.plugins.filter(
-      ({ name }) => name === 'vite-plugin-checker'
+      ({ name }) => name === 'vite-plugin-checker',
     )[0]
 
     // @ts-ignore
@@ -199,10 +206,15 @@ export async function startDefaultServe({
       const type = args?.[0]
       const payload = args?.[1]
 
-      if (type === 'vite-plugin-checker' && payload.event === 'vite-plugin-checker:error') {
+      if (
+        type === 'vite-plugin-checker' &&
+        payload.event === 'vite-plugin-checker:error'
+      ) {
         const existedCheckerIds = diagnostics.map((d) => d)
         const currentCheckerId = payload.data.diagnostics[0]?.checkerId
-        const checkerReported = existedCheckerIds.some((id) => id === currentCheckerId)
+        const checkerReported = existedCheckerIds.some(
+          (id) => id === currentCheckerId,
+        )
 
         if (checkerReported) {
           // update diagnostics for the same checker
