@@ -244,7 +244,10 @@ function spawnChecker(
     const finalBin: BuildCheckBinStr =
       typeof buildBin === 'function' ? buildBin(userConfig) : buildBin
 
-    const proc = spawn(...finalBin, {
+    const [command, args] = finalBin
+    const commandWithArgs = [command, ...args].join(' ')
+
+    const proc = spawn(commandWithArgs, {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: localEnv,
