@@ -41,7 +41,7 @@
     "knip": "^5.61.3",
     "lint-staged": "^16.1.2",
     "pkg-pr-new": "^0.0.54",
-    "playwright-chromium": "^1.53.2",
+    "playwright-chromium": "^1.54.1",
     "publint": "^0.3.12",
     "simple-git-hooks": "^2.13.0",
     "sort-deep-object-arrays": "^1.1.2",
