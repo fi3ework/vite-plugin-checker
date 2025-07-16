@@ -66,7 +66,7 @@ const errorSource = computed(() => {
 
 <template>
   <li class="message-item">
-    <pre class="message">
+    <pre class="message" :title="diagnostic.message">
     <!-- @vue-ignore -->
     <span class="plugin" :style="{ color: checkerColorMap[diagnostic.checkerId] }"
       >{{ `[${diagnostic.checkerId}]` }} </span
@@ -88,11 +88,14 @@ li {
 .message-item {
   border-bottom: 1px dotted #666;
   padding: 12px 0 0 0;
+  box-sizing: border-box;
+  height: 220px;
 }
 
 .message {
-  white-space: initial;
+  white-space: nowrap;
   font-weight: 600;
+  word-break: break-all;
 }
 
 pre {
@@ -110,6 +113,8 @@ pre {
   background: rgba(22, 24, 29, 0.85);
   margin-top: 8px;
   border-radius: 8px;
+  height: 140px;
+  overflow-y: auto;
 }
 
 .frame-code {
