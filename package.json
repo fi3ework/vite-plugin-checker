@@ -13,12 +13,8 @@
     "lint": "biome check . --diagnostic-level=warn",
     "publint": "pnpm build && pnpm -r --filter='vite-plugin-checker' exec publint",
     "sort-package-json": "npx sort-package-json \"packages/*/package.json\"",
-    "test": "pnpm test-unit && pnpm test-serve && pnpm test-build",
-    "test-build": "VITE_TEST_BUILD=1 vitest run -c vitest.config.e2e.ts",
+    "test": "pnpm vitest",
     "test-knip": "knip",
-    "test-serve": "vitest run -c vitest.config.e2e.ts",
-    "test-unit": "vitest run",
-    "test-unit:watch": "vitest",
     "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit"
   },
   "simple-git-hooks": {
