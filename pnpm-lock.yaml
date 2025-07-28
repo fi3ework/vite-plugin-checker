@@ -108,8 +108,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
       picomatch:
-        specifier: ^4.0.2
-        version: 4.0.2
+        specifier: ^4.0.3
+        version: 4.0.3
       strip-ansi:
         specifier: ^7.1.0
         version: 7.1.0
@@ -127,8 +127,8 @@ importers:
         specifier: ^8.56.12
         version: 8.56.12
       '@types/picomatch':
-        specifier: ^4.0.0
-        version: 4.0.0
+        specifier: ^4.0.1
+        version: 4.0.1
       '@vue/language-core':
         specifier: ~3.0.3
         version: 3.0.3(typescript@5.8.3)
@@ -1967,8 +1967,8 @@ packages:
   '@types/node@20.19.4':
     resolution: {integrity: sha512-OP+We5WV8Xnbuvw0zC2m4qfB/BJvjyCwtNjhHdJxV1639SGSKrLmJkc3fMnp2Qy8nJyHp8RO6umxELN/dS1/EA==}
 
-  '@types/picomatch@4.0.0':
-    resolution: {integrity: sha512-J1Bng+wlyEERWSgJQU1Pi0HObCLVcr994xT/M+1wcl/yNRTGBupsCxthgkdYG+GCOMaQH7iSVUY3LJVBBqG7MQ==}
+  '@types/picomatch@4.0.1':
+    resolution: {integrity: sha512-dLqxmi5VJRC9XTvc/oaTtk+bDb4RRqxLZPZ3jIpYBHEnDXX8lu02w2yWI6NsPPsELuVK298Z2iR8jgoWKRdUVQ==}
 
   '@types/qs@6.9.18':
     resolution: {integrity: sha512-kK7dgTYDyGqS+e2Q4aK9X3D7q234CIZ1Bv0q/7Z5IwRDoADNU81xXJK/YVyLbLTZCoIwUoDoffFeF+p/eIklAA==}
@@ -4130,6 +4130,10 @@ packages:
 
   picomatch@4.0.2:
     resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
+    engines: {node: '>=12'}
+
+  picomatch@4.0.3:
+    resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
 
   pidtree@0.6.0:
@@ -6364,7 +6368,7 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/picomatch@4.0.0': {}
+  '@types/picomatch@4.0.1': {}
 
   '@types/qs@6.9.18': {}
 
@@ -6872,7 +6876,7 @@ snapshots:
       alien-signals: 2.0.5
       muggle-string: 0.4.1
       path-browserify: 1.0.1
-      picomatch: 4.0.2
+      picomatch: 4.0.3
     optionalDependencies:
       typescript: 5.8.3
 
@@ -7732,6 +7736,10 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.2
 
+  fdir@6.4.6(picomatch@4.0.3):
+    optionalDependencies:
+      picomatch: 4.0.3
+
   figures@6.1.0:
     dependencies:
       is-unicode-supported: 2.1.0
@@ -8150,7 +8158,7 @@ snapshots:
       minimist: 1.2.8
       oxc-resolver: 11.4.0
       picocolors: 1.1.1
-      picomatch: 4.0.2
+      picomatch: 4.0.3
       smol-toml: 1.3.4
       strip-json-comments: 5.0.2
       typescript: 5.8.3
@@ -8486,6 +8494,8 @@ snapshots:
   picomatch@2.3.1: {}
 
   picomatch@4.0.2: {}
+
+  picomatch@4.0.3: {}
 
   pidtree@0.6.0: {}
 
@@ -9051,8 +9061,8 @@ snapshots:
 
   tinyglobby@0.2.14:
     dependencies:
-      fdir: 6.4.6(picomatch@4.0.2)
-      picomatch: 4.0.2
+      fdir: 6.4.6(picomatch@4.0.3)
+      picomatch: 4.0.3
 
   tinypool@1.1.1: {}
 
@@ -9201,7 +9211,7 @@ snapshots:
   unplugin-utils@0.2.4:
     dependencies:
       pathe: 2.0.3
-      picomatch: 4.0.2
+      picomatch: 4.0.3
 
   unplugin-vue-components@28.8.0(@babel/parser@7.28.0)(vue@2.7.16):
     dependencies:
@@ -9222,7 +9232,7 @@ snapshots:
   unplugin@2.3.5:
     dependencies:
       acorn: 8.15.0
-      picomatch: 4.0.2
+      picomatch: 4.0.3
       webpack-virtual-modules: 0.6.2
 
   update-browserslist-db@1.1.3(browserslist@4.24.5):
@@ -9470,7 +9480,7 @@ snapshots:
       expect-type: 1.2.1
       magic-string: 0.30.17
       pathe: 2.0.3
-      picomatch: 4.0.2
+      picomatch: 4.0.3
       std-env: 3.9.0
       tinybench: 2.9.0
       tinyexec: 0.3.2
