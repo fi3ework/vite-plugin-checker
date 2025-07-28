@@ -1,13 +1,14 @@
 {
   "extends": [
-    "@tsconfig/strictest/tsconfig",
-    "@tsconfig/node20/tsconfig",
-    "@tsconfig/esm/tsconfig"
+    "@tsconfig/strictest/tsconfig.json",
+    "@tsconfig/node20/tsconfig.json"
   ],
   "compilerOptions": {
     "allowJs": true,
     "isolatedModules": true,
     "noUnusedParameters": false,
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "exactOptionalPropertyTypes": false
   },
   "include": ["src", "__tests__"],

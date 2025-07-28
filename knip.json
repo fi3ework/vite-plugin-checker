@@ -1,0 +1,33 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "rules": {
+    "duplicates": "off"
+  },
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/*", "playground/*"]
+    },
+    "docs": {
+      "entry": [".vitepress/config.ts"]
+    },
+    "packages/vite-plugin-checker": {
+      "entry": [
+        "src/**/*.ts",
+        "src/checkers/vueTsc/languagePlugins.cjs",
+        "__tests__/fixtures/tsDiagnostic.ts"
+      ],
+      "ignoreDependencies": ["eslint", "meow", "stylelint", "vls", "vue-tsc"]
+    },
+    "playground/backend-integration": {
+      "entry": ["src/*.{js,ts,tsx}", "__test__/serve.js"]
+    },
+    "playground/vls-vue2": {
+      "entry": ["vetur.config.cjs", "src/**/*"],
+      "ignoreDependencies": [
+        "tslib",
+        "vue-class-component",
+        "vue-property-decorator"
+      ]
+    }
+  }
+}

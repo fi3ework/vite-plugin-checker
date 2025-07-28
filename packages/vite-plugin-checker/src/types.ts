@@ -12,6 +12,10 @@ interface TsConfigOptions {
    */
   tsconfigPath: string
   /**
+   * path to typescript package
+   */
+  typescriptPath: string
+  /**
    * root path of cwd
    */
   root: string
@@ -38,7 +42,7 @@ export type VueTscConfig =
    * - set to `true` to enable type checking with default configuration
    * - set to `false` to disable type checking, you can also remove `config.vueTsc` directly
    */
-  boolean | Partial<Omit<TsConfigOptions, 'buildMode'>>
+  boolean | Partial<TsConfigOptions>
 
 /** vls checker configuration */
 export type VlsConfig = boolean | DeepPartial<VlsOptions>
@@ -47,6 +51,10 @@ export type VlsConfig = boolean | DeepPartial<VlsOptions>
 export type EslintConfig =
   | false
   | {
+      /**
+       * Configure path to watch files
+       */
+      watchPath?: string | string[]
       /**
        * lintCommand will be executed at build mode, and will also be used as
        * default config for dev mode when options.eslint.dev.eslint is nullable.
@@ -68,6 +76,10 @@ export type EslintConfig =
 export type StylelintConfig =
   | false
   | {
+      /**
+       * Configure path to watch files
+       */
+      watchPath?: string | string[]
       /**
        * lintCommand will be executed at build mode, and will also be used as
        * default config for dev mode when options.stylelint.dev.stylelint is nullable.
@@ -256,6 +268,7 @@ export interface ConfigureServerAction extends AbstractAction {
 
 export interface ConsoleAction extends AbstractAction {
   type: ACTION_TYPES.console
+  level: 'info' | 'warn' | 'error'
   payload: string
 }
 

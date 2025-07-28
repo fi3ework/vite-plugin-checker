@@ -80,8 +80,8 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
 
       const reportWatchStatusChanged: ts.WatchStatusReporter = (
         diagnostic,
-        newLine,
-        options,
+        _newLine,
+        _options,
         errorCount,
         // eslint-disable-next-line max-params
       ) => {
@@ -122,25 +122,40 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
 
             // TODO: only macOS will report multiple times for same result
             prevLogChunk = logChunk
-            consoleLog(logChunk)
+            consoleLog(logChunk, errorCount ? 'error' : 'info')
           }
         })
       }
 
       // https://github.com/microsoft/TypeScript/issues/32385
       // https://github.com/microsoft/TypeScript/pull/33082/files
-      const createProgram = vueTs.createSemanticDiagnosticsBuilderProgram
+      const createProgram = vueTs.createEmitAndSemanticDiagnosticsBuilderProgram
 
-      const host = vueTs.createWatchCompilerHost(
-        configFile,
-        { noEmit: true },
-        vueTs.sys,
-        createProgram,
-        reportDiagnostic,
-        reportWatchStatusChanged,
-      )
+      if (
+        typeof pluginConfig.vueTsc === 'object' &&
+        pluginConfig.vueTsc.buildMode
+      ) {
+        const host = vueTs.createSolutionBuilderWithWatchHost(
+          vueTs.sys,
+          createProgram,
+          reportDiagnostic,
+          undefined,
+          reportWatchStatusChanged,
+        )
 
-      vueTs.createWatchProgram(host)
+        vueTs.createSolutionBuilderWithWatch(host, [configFile], {}).build()
+      } else {
+        const host = vueTs.createWatchCompilerHost(
+          configFile,
+          { noEmit: true },
+          vueTs.sys,
+          createProgram,
+          reportDiagnostic,
+          reportWatchStatusChanged,
+        )
+
+        vueTs.createWatchProgram(host)
+      }
     },
   }
 }
@@ -153,9 +168,10 @@ export class VueTscChecker extends Checker<'vueTsc'> {
       build: {
         buildBin: (config) => {
           if (typeof config.vueTsc === 'object') {
-            const { root = '', tsconfigPath = '' } = config.vueTsc
+            const { root = '', tsconfigPath = '', buildMode } = config.vueTsc
 
-            const args = ['--noEmit']
+            const args = [buildMode ? '-b' : '--noEmit']
+
             // Custom config path
             let projectPath = ''
             if (root || tsconfigPath) {
@@ -163,7 +179,12 @@ export class VueTscChecker extends Checker<'vueTsc'> {
             }
 
             if (projectPath) {
-              args.push('-p', projectPath)
+              // In build mode, the tsconfig path is an argument to -b, e.g. "vue-tsc -b [path]"
+              if (buildMode) {
+                args.push(projectPath)
+              } else {
+                args.push('-p', projectPath)
+              }
             }
 
             return ['vue-tsc', args]

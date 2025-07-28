@@ -15,6 +15,7 @@ function parseArgsStringToArgv(
   // `\3` and `\5` are a backreference to the quote style (' or ") captured
   const myRegexp =
     // @ts-expect-error Bypass typescript validation
+    // biome-ignore lint/complexity/noUselessEscapeInRegex: Bypass validation
     /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi
   const myString = value
   const myArray: string[] = []

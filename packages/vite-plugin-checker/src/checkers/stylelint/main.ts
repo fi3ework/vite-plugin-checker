@@ -3,13 +3,13 @@ import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
 import chokidar from 'chokidar'
 import stylelint from 'stylelint'
-import { translateOptions } from './options.js'
-
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
+import { createIgnore } from '../../glob.js'
 import {
   composeCheckerSummary,
   consoleLog,
+  diagnosticToConsoleLevel,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
@@ -17,6 +17,7 @@ import {
   toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { translateOptions } from './options.js'
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
@@ -62,7 +63,10 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
 
         if (terminal) {
           for (const d of diagnostics) {
-            consoleLog(diagnosticToTerminalLog(d, 'Stylelint'))
+            consoleLog(
+              diagnosticToTerminalLog(d, 'Stylelint'),
+              diagnosticToConsoleLevel(d),
+            )
           }
 
           const errorCount = diagnostics.filter(
@@ -73,6 +77,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
           ).length
           consoleLog(
             composeCheckerSummary('Stylelint', errorCount, warningCount),
+            errorCount ? 'error' : warningCount ? 'warn' : 'info',
           )
         }
 
@@ -121,11 +126,22 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       dispatchDiagnostics()
 
       // watch lint
-      const watcher = chokidar.watch([], {
+      let watchTarget: string | string[] = root
+      if (pluginConfig.stylelint.watchPath) {
+        if (Array.isArray(pluginConfig.stylelint.watchPath)) {
+          watchTarget = pluginConfig.stylelint.watchPath.map((p) =>
+            path.resolve(root, p),
+          )
+        } else {
+          watchTarget = path.resolve(root, pluginConfig.stylelint.watchPath)
+        }
+      }
+
+      const watcher = chokidar.watch(watchTarget, {
         cwd: root,
-        ignored: (path: string) => path.includes('node_modules'),
+        ignored: createIgnore(root, translatedOptions.files),
       })
-      watcher.add(translatedOptions.files as string)
+
       watcher.on('change', async (filePath) => {
         handleFileChange(filePath, 'change')
       })

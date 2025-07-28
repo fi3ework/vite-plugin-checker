@@ -26,13 +26,14 @@ If you need to customize "--flags" in build mode, please use "config.biome.build
 }
 
 export function runBiome(command: string, cwd: string) {
-  return new Promise<NormalizedDiagnostic[]>((resolve, reject) => {
+  return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
     exec(
       command,
       {
         cwd,
+        maxBuffer: Number.POSITIVE_INFINITY,
       },
-      (error, stdout, stderr) => {
+      (_error, stdout, _stderr) => {
         resolve([...parseBiomeOutput(stdout)])
       },
     )
@@ -43,7 +44,7 @@ function parseBiomeOutput(output: string) {
   let parsed: BiomeOutput
   try {
     parsed = JSON.parse(output)
-  } catch (e) {
+  } catch {
     return []
   }
 

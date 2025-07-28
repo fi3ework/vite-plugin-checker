@@ -1,8 +1,7 @@
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import express from 'express'
-import { promisify } from 'util'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import { createServer as createViteServer } from 'vite'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -14,7 +13,7 @@ export async function createServer() {
   const app = express()
   const viteDevServer = await createViteServer({ root: rootDir })
 
-  let html = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8')
+  let html = await fs.promises.readFile(path.resolve(__dirname, 'index.html'), 'utf-8')
 
   app.get('/', async (req, res) => {
     html = html.replace(
@@ -35,7 +34,7 @@ export async function createServer() {
 
     `
     )
-    res.status(200).set({ 'Content-Type': 'text/html' }).end(html)
+    res.status(200).set({ 'Content-Type': 'text/html' }).send(html)
   })
 
   app.use('/', createProxyMiddleware({ target: 'http://127.0.0.1:5173', changeOrigin: true }))

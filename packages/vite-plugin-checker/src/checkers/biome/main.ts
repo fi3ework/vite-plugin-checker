@@ -7,6 +7,7 @@ import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
   composeCheckerSummary,
   consoleLog,
+  diagnosticToConsoleLevel,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
@@ -58,7 +59,10 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
 
         if (terminal) {
           for (const d of diagnostics) {
-            consoleLog(diagnosticToTerminalLog(d, 'Biome'))
+            consoleLog(
+              diagnosticToTerminalLog(d, 'Biome'),
+              diagnosticToConsoleLevel(d),
+            )
           }
 
           const errorCount = diagnostics.filter(
@@ -67,7 +71,10 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
           const warningCount = diagnostics.filter(
             (d) => d.level === DiagnosticLevel.Warning,
           ).length
-          consoleLog(composeCheckerSummary('Biome', errorCount, warningCount))
+          consoleLog(
+            composeCheckerSummary('Biome', errorCount, warningCount),
+            errorCount ? 'error' : warningCount ? 'warn' : 'info',
+          )
         }
 
         if (overlay) {

@@ -1,15 +1,6 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-  "organizeImports": {
-    "include": [
-      "./**/*.js",
-      "./**/*.jsx",
-      "./**/*.ts",
-      "./**/*.tsx",
-      "./**/*.mjs",
-      "./**/*.cjs"
-    ]
-  },
+  "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "vcs": {
     "enabled": true,
     "defaultBranch": "main",
@@ -17,12 +8,13 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": [
-      "*.vue",
-      "playground",
-      "packages/vite-plugin-checker/src/checkers/eslint/options.ts",
-      "packages/vite-plugin-checker/src/checkers/stylelint/options.ts",
-      "playground/*/src/**/*.*"
+    "includes": [
+      "**",
+      "!**/*.vue",
+      "!**/playground",
+      "!**/packages/vite-plugin-checker/src/checkers/eslint/options.ts",
+      "!**/packages/vite-plugin-checker/src/checkers/stylelint/options.ts",
+      "!**/playground/**/*/src/**/*.*"
     ],
     "ignoreUnknown": true
   },
@@ -46,7 +38,17 @@
           "options": {
             "filenameCases": ["camelCase", "PascalCase", "export"]
           }
-        }
+        },
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "suspicious": {
         "noExplicitAny": "off",
@@ -59,7 +61,7 @@
   },
   "overrides": [
     {
-      "include": ["packages/runtime/src/vite-env.d.ts"],
+      "includes": ["packages/runtime/src/vite-env.d.ts"],
       "linter": {
         "rules": {
           "style": {

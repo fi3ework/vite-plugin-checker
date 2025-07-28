@@ -1,17 +1,17 @@
 {
-  "private": true,
   "name": "@playground/biome-default",
-  "type": "module",
   "version": "0.0.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview",
-    "lint": "biome lint"
+    "dev": "vite",
+    "lint": "biome lint",
+    "serve": "vite preview"
   },
   "devDependencies": {
-    "vite": "^5.3.2",
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^2.1.2",
+    "vite": "^7.0.6",
     "vite-plugin-checker": "workspace:*"
   }
 }

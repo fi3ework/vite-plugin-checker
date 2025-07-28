@@ -1,8 +1,5 @@
-import { Worker, parentPort, workerData } from 'node:worker_threads'
+import { parentPort, Worker, workerData } from 'node:worker_threads'
 import type { ConfigEnv } from 'vite'
-
-import { ACTION_TYPES } from './types.js'
-
 import type {
   BuildCheckBin,
   BuildInCheckers,
@@ -15,6 +12,7 @@ import type {
   SharedConfig,
   UnrefAction,
 } from './types.js'
+import { ACTION_TYPES } from './types.js'
 
 interface WorkerScriptOptions {
   absFilename: string

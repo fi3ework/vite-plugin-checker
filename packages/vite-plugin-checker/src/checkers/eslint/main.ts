@@ -8,9 +8,11 @@ import invariant from 'tiny-invariant'
 
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
+import { createIgnore } from '../../glob.js'
 import {
   composeCheckerSummary,
   consoleLog,
+  diagnosticToConsoleLevel,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
@@ -28,6 +30,7 @@ const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types'
+
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
   let overlay = true
   let terminal = true
@@ -87,10 +90,12 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
-
         if (terminal) {
           for (const d of diagnostics) {
-            consoleLog(diagnosticToTerminalLog(d, 'ESLint'))
+            consoleLog(
+              diagnosticToTerminalLog(d, 'ESLint'),
+              diagnosticToConsoleLevel(d),
+            )
           }
 
           const errorCount = diagnostics.filter(
@@ -99,7 +104,10 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           const warningCount = diagnostics.filter(
             (d) => d.level === DiagnosticLevel.Warning,
           ).length
-          consoleLog(composeCheckerSummary('ESLint', errorCount, warningCount))
+          consoleLog(
+            composeCheckerSummary('ESLint', errorCount, warningCount),
+            errorCount ? 'error' : warningCount ? 'warn' : 'info',
+          )
         }
 
         if (overlay) {
@@ -141,18 +149,29 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       }
 
       // initial lint
-      const files = options._.slice(1)
+      const files = options._.slice(1) as string[]
       const diagnostics = await eslint.lintFiles(files)
 
       manager.initWith(diagnostics.flatMap((p) => normalizeEslintDiagnostic(p)))
       dispatchDiagnostics()
 
       // watch lint
-      const watcher = chokidar.watch([], {
+      let watchTarget: string | string[] = root
+      if (pluginConfig.eslint.watchPath) {
+        if (Array.isArray(pluginConfig.eslint.watchPath)) {
+          watchTarget = pluginConfig.eslint.watchPath.map((p) =>
+            path.resolve(root, p),
+          )
+        } else {
+          watchTarget = path.resolve(root, pluginConfig.eslint.watchPath)
+        }
+      }
+
+      const watcher = chokidar.watch(watchTarget, {
         cwd: root,
-        ignored: (path: string) => path.includes('node_modules'),
+        ignored: createIgnore(root, files),
       })
-      watcher.add(files)
+
       watcher.on('change', async (filePath) => {
         handleFileChange(filePath, 'change')
       })

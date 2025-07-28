@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import os from 'node:os'
-import chalk from 'chalk'
+import colors from 'picocolors'
 import strip from 'strip-ansi'
 import * as _vscodeUri from 'vscode-uri'
 
@@ -9,6 +9,7 @@ import * as _vscodeUri from 'vscode-uri'
 // see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
 // @ts-expect-error
 const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
+
 import { parentPort } from 'node:worker_threads'
 
 import type { SourceLocation } from '@babel/code-frame'
@@ -28,17 +29,17 @@ import {
 import { isMainThread } from './utils.js'
 
 const _require = createRequire(import.meta.url)
+
 import type { ESLint } from 'eslint'
 import type Stylelint from 'stylelint'
+import type {
+  flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
+  Diagnostic as TsDiagnostic,
+} from 'typescript'
 import type {
   Diagnostic as LspDiagnostic,
   PublishDiagnosticsParams,
 } from 'vscode-languageclient/node'
-
-import type {
-  Diagnostic as TsDiagnostic,
-  flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
-} from 'typescript'
 
 export interface NormalizedDiagnostic {
   /** error message */
@@ -95,25 +96,27 @@ export function diagnosticToTerminalLog(
   name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint' | 'Stylelint' | 'Biome',
 ): string {
   const nameInLabel = name ? `(${name})` : ''
-  const boldBlack = chalk.bold.rgb(0, 0, 0)
+  const boldBlack = (str: string) => colors.bold(colors.black(str))
 
   const labelMap: Record<DiagnosticLevel, string> = {
-    [DiagnosticLevel.Error]: boldBlack.bgRedBright(` ERROR${nameInLabel} `),
-    [DiagnosticLevel.Warning]: boldBlack.bgYellowBright(
-      ` WARNING${nameInLabel} `,
+    [DiagnosticLevel.Error]: boldBlack(
+      colors.bgRedBright(` ERROR${nameInLabel} `),
     ),
-    [DiagnosticLevel.Suggestion]: boldBlack.bgBlueBright(
-      ` SUGGESTION${nameInLabel} `,
+    [DiagnosticLevel.Warning]: boldBlack(
+      colors.bgYellowBright(` WARNING${nameInLabel} `),
     ),
-    [DiagnosticLevel.Message]: boldBlack.bgCyanBright(
-      ` MESSAGE${nameInLabel} `,
+    [DiagnosticLevel.Suggestion]: boldBlack(
+      colors.bgBlueBright(` SUGGESTION${nameInLabel} `),
+    ),
+    [DiagnosticLevel.Message]: boldBlack(
+      colors.bgCyanBright(` MESSAGE${nameInLabel} `),
     ),
   }
 
   const levelLabel = labelMap[d.level ?? DiagnosticLevel.Error]
-  const fileLabel = `${boldBlack.bgCyanBright(' FILE ')} `
+  const fileLabel = `${boldBlack(colors.bgCyanBright(' FILE '))} `
   const position = d.loc
-    ? `${chalk.yellow(d.loc.start.line)}:${chalk.yellow(d.loc.start.column)}`
+    ? `${colors.yellow(d.loc.start.line)}:${colors.yellow(d.loc.start.column || '')}`
     : ''
 
   return [
@@ -124,6 +127,14 @@ export function diagnosticToTerminalLog(
   ]
     .filter(Boolean)
     .join(os.EOL)
+}
+
+export function diagnosticToConsoleLevel(d: NormalizedDiagnostic) {
+  if (!d) return 'error'
+  if (d.level === DiagnosticLevel.Message) return 'info'
+  if (d.level === DiagnosticLevel.Suggestion) return 'info'
+  if (d.level === DiagnosticLevel.Warning) return 'warn'
+  return 'error'
 }
 
 export function diagnosticToRuntimeError(
@@ -200,7 +211,7 @@ export function composeCheckerSummary(
   const hasError = errorCount > 0
   const hasWarning = warningCount > 0
   const color = hasError ? 'red' : hasWarning ? 'yellow' : 'green'
-  return chalk[color](wrapCheckerSummary(checkerName, message))
+  return colors[color](wrapCheckerSummary(checkerName, message))
 }
 
 /* ------------------------------- TypeScript ------------------------------- */
@@ -417,12 +428,13 @@ export function ensureCall(callback: CallableFunction) {
   })
 }
 
-export function consoleLog(value: string) {
+export function consoleLog(value: string, level: 'info' | 'warn' | 'error') {
   if (isMainThread) {
-    console.log(value)
+    console[level](value)
   } else {
     parentPort?.postMessage({
       type: ACTION_TYPES.console,
+      level: level,
       payload: value,
     })
   }

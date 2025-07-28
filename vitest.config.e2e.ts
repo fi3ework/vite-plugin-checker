@@ -1,4 +1,3 @@
-import { resolve } from 'node:path'
 import { defineConfig } from 'vitest/config'
 
 const timeout = process.env.CI ? 80000 : 40000

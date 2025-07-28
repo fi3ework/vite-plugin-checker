@@ -1,20 +1,18 @@
-import os from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
-
+import type { ConfigEnv } from 'vite'
 import { Checker } from '../../Checker.js'
 import {
   composeCheckerSummary,
   consoleLog,
+  diagnosticToConsoleLevel,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   toClientPayload,
 } from '../../logger.js'
+import type { CreateDiagnostic } from '../../types.js'
 import { ACTION_TYPES } from '../../types.js'
 import { type DiagnosticOptions, diagnostics } from './diagnostics.js'
-
-import type { ConfigEnv } from 'vite'
-import type { CreateDiagnostic } from '../../types.js'
 
 const __filename = fileURLToPath(import.meta.url)
 
@@ -38,7 +36,10 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
         (errorCount, warningCount) => {
           if (!terminal) return
 
-          consoleLog(composeCheckerSummary('VLS', errorCount, warningCount))
+          consoleLog(
+            composeCheckerSummary('VLS', errorCount, warningCount),
+            errorCount ? 'error' : warningCount ? 'warn' : 'info',
+          )
         }
 
       const onDispatchDiagnostics: DiagnosticOptions['onDispatchDiagnostics'] =
@@ -54,11 +55,12 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
           }
 
           if (terminal) {
-            consoleLog(
-              normalized
-                .map((d) => diagnosticToTerminalLog(d, 'VLS'))
-                .join(os.EOL),
-            )
+            for (const d of normalized) {
+              consoleLog(
+                diagnosticToTerminalLog(d, 'VLS'),
+                diagnosticToConsoleLevel(d),
+              )
+            }
           }
         }
 

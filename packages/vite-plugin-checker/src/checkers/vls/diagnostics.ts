@@ -2,12 +2,13 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { Duplex } from 'node:stream'
-import chalk from 'chalk'
 import chokidar from 'chokidar'
-import glob from 'fast-glob'
+import colors from 'picocolors'
+import { globSync } from 'tinyglobby'
 import { VLS } from 'vls'
-import type { TextDocument } from 'vscode-languageserver-textdocument'
 import {
+  createConnection,
+  createProtocolConnection,
   type Diagnostic,
   DiagnosticSeverity,
   DidChangeTextDocumentNotification,
@@ -20,27 +21,24 @@ import {
   type ServerCapabilities,
   StreamMessageReader,
   StreamMessageWriter,
-  createConnection,
-  createProtocolConnection,
 } from 'vscode-languageserver/node.js'
+import type { TextDocument } from 'vscode-languageserver-textdocument'
 import { URI } from 'vscode-uri'
-
+import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
-  type NormalizedDiagnostic,
   diagnosticToTerminalLog,
+  type NormalizedDiagnostic,
   normalizeLspDiagnostic,
   normalizePublishDiagnosticParams,
 } from '../../logger.js'
 import type { DeepPartial } from '../../types.js'
-import { type VlsOptions, getInitParams } from './initParams.js'
-
-import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
+import { getInitParams, type VlsOptions } from './initParams.js'
 
 enum DOC_VERSION {
   init = -1,
 }
 
-export type LogLevel = (typeof logLevels)[number]
+type LogLevel = (typeof logLevels)[number]
 export const logLevels = ['ERROR', 'WARN', 'INFO', 'HINT'] as const
 
 let disposeSuppressConsole: ReturnType<typeof suppressConsole>
@@ -79,11 +77,11 @@ export async function diagnostics(
 
   if (workspace) {
     const absPath = path.resolve(process.cwd(), workspace)
-    console.log(`Loading Vetur in workspace path: ${chalk.green(absPath)}`)
+    console.log(`Loading Vetur in workspace path: ${colors.green(absPath)}`)
     workspaceUri = URI.file(absPath)
   } else {
     console.log(
-      `Loading Vetur in current directory: ${chalk.green(process.cwd())}`,
+      `Loading Vetur in current directory: ${colors.green(process.cwd())}`,
     )
     workspaceUri = URI.file(process.cwd())
   }
@@ -254,7 +252,7 @@ async function getDiagnostics(
     options,
   )
 
-  const files = glob.sync([...watchedDidChangeContentGlob], {
+  const files = globSync([...watchedDidChangeContentGlob], {
     cwd: workspaceUri.fsPath,
     ignore: ['node_modules/**'],
   })
@@ -397,8 +395,9 @@ async function getDiagnostics(
   return null
 }
 
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
-function isObject(item: any): item is {} {
+function isObject(
+  item: any,
+): item is Record<string | number | symbol, unknown> {
   return item && typeof item === 'object' && !Array.isArray(item)
 }
 

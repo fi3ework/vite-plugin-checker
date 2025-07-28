@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import type { SharedConfig } from '../types'
+
 const _require = createRequire(import.meta.url)
 
 export const RUNTIME_CLIENT_RUNTIME_PATH = '/@vite-plugin-checker-runtime'
@@ -28,8 +29,5 @@ export const WS_CHECKER_ERROR_EVENT = 'vite-plugin-checker:error'
 export const WS_CHECKER_RECONNECT_EVENT = 'vite-plugin-checker:reconnect'
 // #endregion
 
-export const runtimeSourceFilePath = import.meta.url.endsWith('.ts')
-  ? // for development only, maybe should use NODE_ENV to distinguish
-    _require.resolve('../@runtime/main.js')
-  : _require.resolve('../../@runtime/main.js')
+export const runtimeSourceFilePath = _require.resolve('../@runtime/main.js')
 export const runtimeCode = `${fs.readFileSync(runtimeSourceFilePath, 'utf-8')};`
