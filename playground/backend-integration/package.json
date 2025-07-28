@@ -16,11 +16,11 @@
     "@types/express": "^5.0.3",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.6.0",
+    "@vitejs/plugin-react": "^4.7.0",
     "express": "^5.1.0",
     "http-proxy-middleware": "^3.0.5",
     "typescript": "^5.8.3",
-    "vite": "^7.0.2",
+    "vite": "^7.0.6",
     "vite-plugin-checker": "workspace:*"
   }
 }
