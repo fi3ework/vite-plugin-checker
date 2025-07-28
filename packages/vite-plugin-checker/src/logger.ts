@@ -401,11 +401,7 @@ export function normalizeStylelintDiagnostic(
 
       const loc = lineColLocToBabelLoc(d)
 
-      const codeFrame = createFrame(
-        // @ts-ignore
-        diagnostic._postcssResult.css ?? '',
-        loc,
-      )
+      const codeFrame = createFrame(diagnostic._postcssResult?.css ?? '', loc)
 
       return {
         message: `${d.text} (${d.rule})`,
