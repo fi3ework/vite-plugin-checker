@@ -1,26 +1,20 @@
 {
-  "private": true,
   "name": "@playground/config-initial-is-open-false",
-  "type": "module",
   "version": "0.0.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview",
-    "lint": "eslint --ext .js,.ts ./src/**"
-  },
-  "dependencies": {
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "dev": "vite",
+    "lint": "eslint --ext .js,.ts ./src/**",
+    "serve": "vite preview"
   },
   "devDependencies": {
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.0",
-    "@typescript-eslint/parser": "^5.59.0",
-    "eslint": "^8.11.0",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.57.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.6",
     "vite-plugin-checker": "workspace:*"
   }
 }

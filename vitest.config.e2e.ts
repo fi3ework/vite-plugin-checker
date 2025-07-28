@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import { defineConfig } from 'vitest/config'
 
 const timeout = process.env.CI ? 80000 : 40000
@@ -6,7 +5,12 @@ const timeout = process.env.CI ? 80000 : 40000
 export default defineConfig({
   test: {
     cache: false,
-    threads: false,
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        // singleFork: true,
+      },
+    },
     include: ['./playground/**/*.spec.[tj]s'],
     setupFiles: ['./playground/vitestSetup.ts'],
     globalSetup: ['./playground/vitestGlobalSetup.ts'],
@@ -14,9 +18,9 @@ export default defineConfig({
     hookTimeout: timeout,
     globals: true,
     reporters: 'dot',
-    outputTruncateLength: Infinity,
     onConsoleLog(log) {
-      if (log.match(/experimental|jit engine|emitted file|tailwind/i)) return false
+      if (log.match(/experimental|jit engine|emitted file|tailwind/i))
+        return false
     },
   },
   esbuild: {

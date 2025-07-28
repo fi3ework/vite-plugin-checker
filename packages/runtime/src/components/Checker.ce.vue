@@ -5,11 +5,19 @@ defineProps<{
   diagnostics?: any[]
   base: string
 }>()
+
+const key = (diagnostic: any): string => {
+  if (diagnostic.loc) {
+    return `${diagnostic.loc.file}-${diagnostic.loc.line}-${diagnostic.loc.column}`;
+  } else {
+    return diagnostic.id;
+  }
+}
 </script>
 
 <template>
   <ul>
-    <Diagnostic v-for="d in diagnostics" :diagnostic="d" :base="base" />
+    <Diagnostic v-for="d in diagnostics" :diagnostic="d" :base="base" :key="key(d)" />
   </ul>
 </template>
 

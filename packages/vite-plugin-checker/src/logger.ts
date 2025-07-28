@@ -1,7 +1,7 @@
-import chalk from 'chalk'
-import fs from 'fs'
-import { createRequire } from 'module'
-import os from 'os'
+import fs from 'node:fs'
+import { createRequire } from 'node:module'
+import os from 'node:os'
+import colors from 'picocolors'
 import strip from 'strip-ansi'
 import * as _vscodeUri from 'vscode-uri'
 
@@ -9,33 +9,37 @@ import * as _vscodeUri from 'vscode-uri'
 // see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
 // @ts-expect-error
 const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
-import { parentPort } from 'worker_threads'
 
-import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
+import { parentPort } from 'node:worker_threads'
+
+import type { SourceLocation } from '@babel/code-frame'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
 import {
+  createFrame,
+  lineColLocToBabelLoc,
+  tsLikeLocToBabelLoc,
+} from './codeFrame.js'
+import {
   ACTION_TYPES,
+  type ClientDiagnosticPayload,
   DiagnosticLevel,
   type DiagnosticToRuntime,
-  type ClientDiagnosticPayload,
 } from './types.js'
 import { isMainThread } from './utils.js'
 
 const _require = createRequire(import.meta.url)
-import type { Range } from 'vscode-languageclient'
+
 import type { ESLint } from 'eslint'
 import type Stylelint from 'stylelint'
+import type {
+  flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
+  Diagnostic as TsDiagnostic,
+} from 'typescript'
 import type {
   Diagnostic as LspDiagnostic,
   PublishDiagnosticsParams,
 } from 'vscode-languageclient/node'
-
-import type {
-  Diagnostic as TsDiagnostic,
-  flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
-  LineAndCharacter,
-} from 'typescript'
 
 export interface NormalizedDiagnostic {
   /** error message */
@@ -67,50 +71,57 @@ const defaultLogLevel = [
 
 export function filterLogLevel(
   diagnostics: NormalizedDiagnostic,
-  level?: DiagnosticLevel[]
+  level?: DiagnosticLevel[],
 ): NormalizedDiagnostic | null
 export function filterLogLevel(
   diagnostics: NormalizedDiagnostic[],
-  level?: DiagnosticLevel[]
+  level?: DiagnosticLevel[],
 ): NormalizedDiagnostic[]
 export function filterLogLevel(
   diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[],
-  level: DiagnosticLevel[] = defaultLogLevel
+  level: DiagnosticLevel[] = defaultLogLevel,
 ): NormalizedDiagnostic | null | NormalizedDiagnostic[] {
   if (Array.isArray(diagnostics)) {
     return diagnostics.filter((d) => {
       if (typeof d.level !== 'number') return false
       return level.includes(d.level)
     })
-  } else {
-    if (!diagnostics.level) return null
-    return level.includes(diagnostics.level) ? diagnostics : null
   }
+  if (!diagnostics.level) return null
+  return level.includes(diagnostics.level) ? diagnostics : null
 }
 
 export function diagnosticToTerminalLog(
   d: NormalizedDiagnostic,
-  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint' | 'Stylelint'
+  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint' | 'Stylelint' | 'Biome',
 ): string {
   const nameInLabel = name ? `(${name})` : ''
-  const boldBlack = chalk.bold.rgb(0, 0, 0)
+  const boldBlack = (str: string) => colors.bold(colors.black(str))
 
   const labelMap: Record<DiagnosticLevel, string> = {
-    [DiagnosticLevel.Error]: boldBlack.bgRedBright(` ERROR${nameInLabel} `),
-    [DiagnosticLevel.Warning]: boldBlack.bgYellowBright(` WARNING${nameInLabel} `),
-    [DiagnosticLevel.Suggestion]: boldBlack.bgBlueBright(` SUGGESTION${nameInLabel} `),
-    [DiagnosticLevel.Message]: boldBlack.bgCyanBright(` MESSAGE${nameInLabel} `),
+    [DiagnosticLevel.Error]: boldBlack(
+      colors.bgRedBright(` ERROR${nameInLabel} `),
+    ),
+    [DiagnosticLevel.Warning]: boldBlack(
+      colors.bgYellowBright(` WARNING${nameInLabel} `),
+    ),
+    [DiagnosticLevel.Suggestion]: boldBlack(
+      colors.bgBlueBright(` SUGGESTION${nameInLabel} `),
+    ),
+    [DiagnosticLevel.Message]: boldBlack(
+      colors.bgCyanBright(` MESSAGE${nameInLabel} `),
+    ),
   }
 
   const levelLabel = labelMap[d.level ?? DiagnosticLevel.Error]
-  const fileLabel = boldBlack.bgCyanBright(' FILE ') + ' '
+  const fileLabel = `${boldBlack(colors.bgCyanBright(' FILE '))} `
   const position = d.loc
-    ? chalk.yellow(d.loc.start.line) + ':' + chalk.yellow(d.loc.start.column)
+    ? `${colors.yellow(d.loc.start.line)}:${colors.yellow(d.loc.start.column || '')}`
     : ''
 
   return [
-    levelLabel + ' ' + d.message,
-    fileLabel + d.id + ':' + position + os.EOL,
+    `${levelLabel} ${d.message}`,
+    `${fileLabel + d.id}:${position}${os.EOL}`,
     d.codeFrame + os.EOL,
     d.conclusion,
   ]
@@ -118,12 +129,26 @@ export function diagnosticToTerminalLog(
     .join(os.EOL)
 }
 
-export function diagnosticToRuntimeError(d: NormalizedDiagnostic): DiagnosticToRuntime
-export function diagnosticToRuntimeError(d: NormalizedDiagnostic[]): DiagnosticToRuntime[]
+export function diagnosticToConsoleLevel(d: NormalizedDiagnostic) {
+  if (!d) return 'error'
+  if (d.level === DiagnosticLevel.Message) return 'info'
+  if (d.level === DiagnosticLevel.Suggestion) return 'info'
+  if (d.level === DiagnosticLevel.Warning) return 'warn'
+  return 'error'
+}
+
 export function diagnosticToRuntimeError(
-  diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[]
+  d: NormalizedDiagnostic,
+): DiagnosticToRuntime
+export function diagnosticToRuntimeError(
+  d: NormalizedDiagnostic[],
+): DiagnosticToRuntime[]
+export function diagnosticToRuntimeError(
+  diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[],
 ): DiagnosticToRuntime | DiagnosticToRuntime[] {
-  const diagnosticsArray = Array.isArray(diagnostics) ? diagnostics : [diagnostics]
+  const diagnosticsArray = Array.isArray(diagnostics)
+    ? diagnostics
+    : [diagnostics]
 
   const results: DiagnosticToRuntime[] = diagnosticsArray.map((d) => {
     let loc: DiagnosticToRuntime['loc']
@@ -138,7 +163,11 @@ export function diagnosticToRuntimeError(
     return {
       message: d.message ?? '',
       stack:
-        typeof d.stack === 'string' ? d.stack : Array.isArray(d.stack) ? d.stack.join(os.EOL) : '',
+        typeof d.stack === 'string'
+          ? d.stack
+          : Array.isArray(d.stack)
+            ? d.stack.join(os.EOL)
+            : '',
       id: d.id,
       frame: d.stripedCodeFrame,
       checkerId: d.checker,
@@ -152,7 +181,7 @@ export function diagnosticToRuntimeError(
 
 export function toClientPayload(
   id: string,
-  diagnostics: DiagnosticToRuntime[]
+  diagnostics: DiagnosticToRuntime[],
 ): ClientDiagnosticPayload {
   return {
     event: WS_CHECKER_ERROR_EVENT,
@@ -163,42 +192,17 @@ export function toClientPayload(
   }
 }
 
-export function createFrame({
-  source,
-  location,
-}: {
-  /** file source code */
-  source: string
-  location: SourceLocation
-}) {
-  const frame = codeFrameColumns(source, location, {
-    // worker tty did not fork parent process stdout, let's make a workaround
-    forceColor: true,
-  })
-    .split('\n')
-    .map((line) => '  ' + line)
-    .join(os.EOL)
-
-  return frame
-}
-
-export function tsLocationToBabelLocation(
-  tsLoc: Record<'start' | 'end', LineAndCharacter /** 0-based */>
-): SourceLocation {
-  return {
-    start: { line: tsLoc.start.line + 1, column: tsLoc.start.character + 1 },
-    end: { line: tsLoc.end.line + 1, column: tsLoc.end.character + 1 },
-  }
-}
-
-export function wrapCheckerSummary(checkerName: string, rawSummary: string): string {
+export function wrapCheckerSummary(
+  checkerName: string,
+  rawSummary: string,
+): string {
   return `[${checkerName}] ${rawSummary}`
 }
 
 export function composeCheckerSummary(
   checkerName: string,
   errorCount: number,
-  warningCount: number
+  warningCount: number,
 ): string {
   const message = `Found ${errorCount} error${
     errorCount > 1 ? 's' : ''
@@ -207,7 +211,7 @@ export function composeCheckerSummary(
   const hasError = errorCount > 0
   const hasWarning = warningCount > 0
   const color = hasError ? 'red' : hasWarning ? 'yellow' : 'green'
-  return chalk[color](wrapCheckerSummary(checkerName, message))
+  return colors[color](wrapCheckerSummary(checkerName, message))
 }
 
 /* ------------------------------- TypeScript ------------------------------- */
@@ -223,20 +227,25 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
   const message = flattenDiagnosticMessageText(d.messageText, os.EOL)
 
   let loc: SourceLocation | undefined
-  const pos = d.start === undefined ? null : d.file?.getLineAndCharacterOfPosition?.(d.start)
-  if (pos && d.file && typeof d.start === 'number' && typeof d.length === 'number') {
-    loc = tsLocationToBabelLocation({
-      start: d.file?.getLineAndCharacterOfPosition(d.start),
-      end: d.file?.getLineAndCharacterOfPosition(d.start + d.length),
+  const pos =
+    d.start === undefined
+      ? null
+      : d.file?.getLineAndCharacterOfPosition?.(d.start)
+  if (
+    pos &&
+    d.file &&
+    typeof d.start === 'number' &&
+    typeof d.length === 'number'
+  ) {
+    loc = tsLikeLocToBabelLoc({
+      start: pos,
+      end: d.file.getLineAndCharacterOfPosition(d.start + d.length),
     })
   }
 
   let codeFrame: string | undefined
   if (loc) {
-    codeFrame = createFrame({
-      source: d.file!.text,
-      location: loc,
-    })
+    codeFrame = createFrame(d.file!.text, loc)
   }
 
   return {
@@ -263,8 +272,8 @@ export function normalizeLspDiagnostic({
   fileText: string
 }): NormalizedDiagnostic {
   let level = DiagnosticLevel.Error
-  const loc = lspRange2Location(diagnostic.range)
-  const codeFrame = codeFrameColumns(fileText, loc)
+  const loc = tsLikeLocToBabelLoc(diagnostic.range)
+  const codeFrame = createFrame(fileText, loc)
 
   switch (diagnostic.severity) {
     case 1: // Error
@@ -294,7 +303,7 @@ export function normalizeLspDiagnostic({
 }
 
 export async function normalizePublishDiagnosticParams(
-  publishDiagnostics: PublishDiagnosticsParams
+  publishDiagnostics: PublishDiagnosticsParams,
 ): Promise<NormalizedDiagnostic[]> {
   const diagnostics = publishDiagnostics.diagnostics
   const absFilePath = uriToAbsPath(publishDiagnostics.uri)
@@ -316,22 +325,11 @@ export function uriToAbsPath(documentUri: string): string {
   return URI.parse(documentUri).fsPath
 }
 
-export function lspRange2Location(range: Range): SourceLocation {
-  return {
-    start: {
-      line: range.start.line + 1,
-      column: range.start.character + 1,
-    },
-    end: {
-      line: range.end.line + 1,
-      column: range.end.character + 1,
-    },
-  }
-}
-
 /* --------------------------------- vue-tsc -------------------------------- */
 
-export function normalizeVueTscDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
+export function normalizeVueTscDiagnostic(
+  d: TsDiagnostic,
+): NormalizedDiagnostic {
   const diagnostic = normalizeTsDiagnostic(d)
   diagnostic.checker = 'vue-tsc'
   return diagnostic
@@ -340,12 +338,14 @@ export function normalizeVueTscDiagnostic(d: TsDiagnostic): NormalizedDiagnostic
 /* --------------------------------- ESLint --------------------------------- */
 
 const isNormalizedDiagnostic = (
-  d: NormalizedDiagnostic | null | undefined
+  d: NormalizedDiagnostic | null | undefined,
 ): d is NormalizedDiagnostic => {
   return Boolean(d)
 }
 
-export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): NormalizedDiagnostic[] {
+export function normalizeEslintDiagnostic(
+  diagnostic: ESLint.LintResult,
+): NormalizedDiagnostic[] {
   return diagnostic.messages
     .map((d) => {
       let level = DiagnosticLevel.Error
@@ -361,21 +361,9 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
           break
       }
 
-      const loc: SourceLocation = {
-        start: {
-          line: d.line,
-          column: d.column,
-        },
-        end: {
-          line: d.endLine || 0,
-          column: d.endColumn,
-        },
-      }
+      const loc = lineColLocToBabelLoc(d)
 
-      const codeFrame = createFrame({
-        source: diagnostic.source ?? '',
-        location: loc,
-      })
+      const codeFrame = createFrame(diagnostic.source ?? '', loc)
 
       return {
         message: `${d.message} (${d.ruleId})`,
@@ -394,7 +382,7 @@ export function normalizeEslintDiagnostic(diagnostic: ESLint.LintResult): Normal
 /* --------------------------------- Stylelint --------------------------------- */
 
 export function normalizeStylelintDiagnostic(
-  diagnostic: Stylelint.LintResult
+  diagnostic: Stylelint.LintResult,
 ): NormalizedDiagnostic[] {
   return diagnostic.warnings
     .map((d) => {
@@ -411,24 +399,9 @@ export function normalizeStylelintDiagnostic(
           return null
       }
 
-      const loc: SourceLocation = {
-        start: {
-          line: d.line,
-          column: d.column,
-        },
-        end: {
-          line: d.endLine || 0,
-          column: d.endColumn,
-        },
-      }
-      let cssSource = ''
-      if (diagnostic._postcssResult && 'css' in diagnostic._postcssResult) {
-        cssSource = diagnostic._postcssResult.css
-      }
-      const codeFrame = createFrame({
-        source: cssSource,
-        location: loc,
-      })
+      const loc = lineColLocToBabelLoc(d)
+
+      const codeFrame = createFrame(diagnostic._postcssResult?.css ?? '', loc)
 
       return {
         message: `${d.text} (${d.rule})`,
@@ -451,12 +424,13 @@ export function ensureCall(callback: CallableFunction) {
   })
 }
 
-export function consoleLog(value: string) {
+export function consoleLog(value: string, level: 'info' | 'warn' | 'error') {
   if (isMainThread) {
-    console.log(value)
+    console[level](value)
   } else {
     parentPort?.postMessage({
       type: ACTION_TYPES.console,
+      level: level,
       payload: value,
     })
   }

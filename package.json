@@ -1,107 +1,57 @@
 {
-  "private": true,
   "version": "0.0.0",
-  "engines": {
-    "pnpm": "^7.0.0",
-    "yarn": "forbidden, use pnpm",
-    "npm": "forbidden, use pnpm"
-  },
-  "pnpm": {
-    "packageExtensions": {
-      "@baiwusanyu/utils-log": {
-        "dependencies": {
-          "ansi-colors": "^4.1.3"
-        }
-      },
-      "@baiwusanyu/utils-task": {
-        "dependencies": {
-          "@baiwusanyu/utils-log": "*"
-        }
-      },
-      "@baiwusanyu/utils-com": {
-        "dependencies": {
-          "hash-sum": "*"
-        }
-      }
-    }
-  },
-  "packageManager": "pnpm@7.5.0",
+  "private": true,
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "dev": "pnpm -r --filter=./packages/** --parallel run dev",
-    "build": "pnpm -r --filter=./packages/** run build",
-    "build:test": "pnpm -r --filter=./packages/** run build:test",
-    "clean": "pnpm -r --filter=./packages/** run clean",
-    "format": "prettier --check \"packages/*/src/**/*.{ts,js,vue}\"",
-    "lint": "eslint \"packages/*/src/**/*.{ts,js}\"",
-    "publint": "pnpm -r --filter='vite-plugin-checker' exec publint",
-    "test": "run-s test-unit test-serve test-build",
-    "test-unit": "vitest run",
+    "build": "pnpm -r --filter='./packages/**' run build",
+    "build:test": "pnpm -r --filter='./packages/**' run build:test",
+    "clean": "pnpm -r --filter='./packages/**' run clean",
+    "dev": "pnpm -r --filter='./packages/**' --parallel run dev",
+    "docs:build": "pnpm --filter docs run build",
+    "docs:dev": "pnpm --filter docs run dev",
+    "format": "biome format . --write",
+    "postinstall": "simple-git-hooks install",
+    "lint": "biome check . --diagnostic-level=warn",
+    "publint": "pnpm build && pnpm -r --filter='vite-plugin-checker' exec publint",
+    "sort-package-json": "npx sort-package-json \"packages/*/package.json\"",
+    "test": "pnpm test-unit && pnpm test-serve && pnpm test-build",
+    "test-build": "VITE_TEST_BUILD=1 vitest run -c vitest.config.e2e.ts",
+    "test-knip": "knip",
     "test-serve": "vitest run -c vitest.config.e2e.ts",
-    "test-build": "cross-env-shell VITE_TEST_BUILD=1 vitest run -c vitest.config.e2e.ts",
-    "test-serve-cjs": "cross-env VITEST_TEST_CJS=1 pnpm run test-serve",
-    "test-build-cjs": "cross-env VITEST_TEST_CJS=1 pnpm run test-build",
+    "test-unit": "vitest run",
     "test-unit:watch": "vitest",
-    "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit",
-    "docs:dev": "pnpm --filter docs exec vitepress dev .",
-    "docs:build": "pnpm --filter docs exec vitepress build .",
-    "docs:serve": "pnpm --filter docs exec vitepress serve .",
-    "release": "cp README.md packages/vite-plugin-checker/README.md && changeset publish && git push --follow-tags"
+    "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm exec lint-staged"
+    "pre-commit": "npx lint-staged"
   },
   "lint-staged": {
+    "package.json": "sort-package-json",
     "packages/**/*.{js,ts}": [
-      "eslint --fix",
-      "prettier --write",
-      "git add"
+      "biome check --write"
     ]
   },
   "devDependencies": {
-    "@changesets/cli": "^2.26.1",
-    "@tsconfig/esm": "^1.0.2",
-    "@tsconfig/node18": "^1.0.1",
-    "@tsconfig/strictest": "^2.0.0",
-    "@types/babel__code-frame": "^7.0.2",
-    "@types/debug": "^4.1.5",
-    "@types/fs-extra": "^11.0.1",
-    "@types/klaw": "^3.0.3",
-    "@types/minimist": "^1.2.2",
-    "@types/node": "^16.0.0",
-    "@types/prompts": "^2.0.13",
-    "@types/rimraf": "^3.0.0",
-    "@types/semver": "^7.3.6",
-    "@types/ws": "^8.5.3",
-    "@typescript-eslint/eslint-plugin": "^5.59.0",
-    "@typescript-eslint/parser": "^5.59.0",
-    "chalk": "^4.1.1",
-    "cross-env": "^7.0.3",
-    "eslint": "^8.11.0",
-    "eslint-config-alloy": "^4.5.1",
-    "execa": "^5.1.1",
-    "fast-glob": "^3.2.7",
+    "@biomejs/biome": "^2.1.2",
+    "@tsconfig/node20": "^20.1.6",
+    "@tsconfig/strictest": "^2.0.5",
+    "@types/babel__code-frame": "^7.0.6",
+    "@types/node": "^20.19.9",
+    "execa": "^9.6.0",
     "fast-json-stable-stringify": "^2.1.0",
-    "fs-extra": "^11.1.0",
-    "jest-serializer-path": "^0.1.15",
-    "klaw": "^4.0.1",
-    "lint-staged": "^11.0.0",
-    "minimist": "^1.2.5",
-    "npm-run-all": "^4.1.5",
-    "playwright-chromium": "^1.24.0",
-    "prettier": "^2.3.2",
-    "prompts": "^2.4.1",
-    "publint": "^0.1.9",
-    "rimraf": "^3.0.2",
-    "semver": "^7.5.0",
-    "simple-git-hooks": "^2.8.0",
+    "knip": "^5.62.0",
+    "lint-staged": "^16.1.2",
+    "pkg-pr-new": "^0.0.54",
+    "playwright-chromium": "^1.54.1",
+    "publint": "^0.3.12",
+    "simple-git-hooks": "^2.13.0",
     "sort-deep-object-arrays": "^1.1.2",
-    "strip-ansi": "^7.0.0",
-    "tiny-invariant": "^1.1.0",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.0",
-    "vite-plugin-checker": "workspace:*",
-    "vitest": "^0.30.1",
-    "ws": "^8.5.0"
-  }
+    "sort-package-json": "^3.4.0",
+    "strip-ansi": "^7.1.0",
+    "tiny-invariant": "^1.3.3",
+    "tinyglobby": "^0.2.14",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.6",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@9.15.9"
 }

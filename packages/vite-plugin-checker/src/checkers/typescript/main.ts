@@ -1,9 +1,10 @@
-import os from 'os'
-import path from 'path'
+import os from 'node:os'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
+import colors from 'picocolors'
 import invariant from 'tiny-invariant'
-import ts from 'typescript'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
+import type * as typescript from 'typescript'
 
 import { Checker } from '../../Checker.js'
 import {
@@ -15,10 +16,14 @@ import {
   toClientPayload,
   wrapCheckerSummary,
 } from '../../logger.js'
-import { ACTION_TYPES, type CreateDiagnostic, type DiagnosticToRuntime } from '../../types.js'
+import {
+  ACTION_TYPES,
+  type CreateDiagnostic,
+  type DiagnosticToRuntime,
+} from '../../types.js'
 
 const __filename = fileURLToPath(import.meta.url)
-let createServeAndBuild
+let createServeAndBuild: any
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
   let overlay = true
@@ -30,44 +35,58 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       overlay = enableOverlay
       terminal = enableTerminal
     },
-    configureServer({ root }) {
+    async configureServer({ root }) {
       invariant(pluginConfig.typescript, 'config.typescript should be `false`')
       const finalConfig =
         pluginConfig.typescript === true
-          ? { root, tsconfigPath: 'tsconfig.json' }
+          ? {
+              root,
+              tsconfigPath: 'tsconfig.json',
+              typescriptPath: 'typescript',
+            }
           : {
               root: pluginConfig.typescript.root ?? root,
-              tsconfigPath: pluginConfig.typescript.tsconfigPath ?? 'tsconfig.json',
+              tsconfigPath:
+                pluginConfig.typescript.tsconfigPath ?? 'tsconfig.json',
+              typescriptPath:
+                pluginConfig.typescript.typescriptPath ?? 'typescript',
             }
 
       let configFile: string | undefined
-
-      configFile = ts.findConfigFile(finalConfig.root, ts.sys.fileExists, finalConfig.tsconfigPath)
+      const ts: typeof typescript = await import(
+        finalConfig.typescriptPath
+      ).then((r) => r.default || r)
+      configFile = ts.findConfigFile(
+        finalConfig.root,
+        ts.sys.fileExists,
+        finalConfig.tsconfigPath,
+      )
 
       if (configFile === undefined) {
         throw Error(
-          `Failed to find a valid tsconfig.json: ${finalConfig.tsconfigPath} at ${finalConfig.root} is not a valid tsconfig`
+          `Failed to find a valid tsconfig.json: ${finalConfig.tsconfigPath} at ${finalConfig.root} is not a valid tsconfig`,
         )
       }
 
       let logChunk = ''
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
-      const reportDiagnostic = (diagnostic: ts.Diagnostic) => {
+      const reportDiagnostic = (diagnostic: typescript.Diagnostic) => {
         const normalizedDiagnostic = normalizeTsDiagnostic(diagnostic)
         if (normalizedDiagnostic === null) {
           return
         }
 
         currDiagnostics.push(diagnosticToRuntimeError(normalizedDiagnostic))
-        logChunk += os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'TypeScript')
+        logChunk +=
+          os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'TypeScript')
       }
 
-      const reportWatchStatusChanged: ts.WatchStatusReporter = (
+      const reportWatchStatusChanged: typescript.WatchStatusReporter = (
         diagnostic,
-        newLine,
-        options,
-        errorCount
+        _newLine,
+        _options,
+        errorCount,
         // eslint-disable-next-line max-params
       ) => {
         if (diagnostic.code === 6031) return
@@ -97,10 +116,17 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           }
 
           if (terminal) {
+            const color = errorCount && errorCount > 0 ? 'red' : 'green'
             consoleLog(
-              logChunk +
-                os.EOL +
-                wrapCheckerSummary('TypeScript', diagnostic.messageText.toString())
+              colors[color](
+                logChunk +
+                  os.EOL +
+                  wrapCheckerSummary(
+                    'TypeScript',
+                    diagnostic.messageText.toString(),
+                  ),
+              ),
+              errorCount ? 'error' : 'info',
             )
           }
         })
@@ -110,13 +136,16 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       // https://github.com/microsoft/TypeScript/pull/33082/files
       const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram
 
-      if (typeof pluginConfig.typescript === 'object' && pluginConfig.typescript.buildMode) {
+      if (
+        typeof pluginConfig.typescript === 'object' &&
+        pluginConfig.typescript.buildMode
+      ) {
         const host = ts.createSolutionBuilderWithWatchHost(
           ts.sys,
           createProgram,
           reportDiagnostic,
           undefined,
-          reportWatchStatusChanged
+          reportWatchStatusChanged,
         )
 
         ts.createSolutionBuilderWithWatch(host, [configFile], {}).build()
@@ -127,7 +156,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           ts.sys,
           createProgram,
           reportDiagnostic,
-          reportWatchStatusChanged
+          reportWatchStatusChanged,
         )
 
         ts.createWatchProgram(host)
@@ -144,7 +173,11 @@ export class TscChecker extends Checker<'typescript'> {
       build: {
         buildBin: (config) => {
           if (typeof config.typescript === 'object') {
-            const { root = '', tsconfigPath = '', buildMode } = config.typescript
+            const {
+              root = '',
+              tsconfigPath = '',
+              buildMode,
+            } = config.typescript
 
             // Compiler option '--noEmit' may not be used with '--build'
             const args = [buildMode ? '-b' : '--noEmit']

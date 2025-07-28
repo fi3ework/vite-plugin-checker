@@ -1,5 +1,5 @@
-import type { NormalizedDiagnostic } from './../../src/logger'
 import type { ESLint } from 'eslint'
+import type { NormalizedDiagnostic } from './../../src/logger'
 
 export const error1: NormalizedDiagnostic = {
   message: 'Unexpected var, use let or const instead.',
@@ -18,6 +18,7 @@ export const warning1: NormalizedDiagnostic = { ...error1, level: 0 }
 
 export const eslintResult1: ESLint.LintResult = {
   filePath: '/Users/vite-plugin-checker/playground/eslint/src/main.ts',
+  suppressedMessages: [],
   messages: [
     {
       ruleId: 'no-var',

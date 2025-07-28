@@ -1,24 +1,22 @@
-import os from 'os'
-import { fileURLToPath } from 'url'
-import { parentPort } from 'worker_threads'
-
+import { fileURLToPath } from 'node:url'
+import { parentPort } from 'node:worker_threads'
+import type { ConfigEnv } from 'vite'
 import { Checker } from '../../Checker.js'
 import {
   composeCheckerSummary,
   consoleLog,
+  diagnosticToConsoleLevel,
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   toClientPayload,
 } from '../../logger.js'
+import type { CreateDiagnostic } from '../../types.js'
 import { ACTION_TYPES } from '../../types.js'
 import { type DiagnosticOptions, diagnostics } from './diagnostics.js'
 
-import type { ConfigEnv } from 'vite'
-import type { CreateDiagnostic } from '../../types.js'
-
 const __filename = fileURLToPath(import.meta.url)
 
-let createServeAndBuild
+let createServeAndBuild: any
 
 export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
   let overlay = true
@@ -34,27 +32,37 @@ export const createDiagnostic: CreateDiagnostic<'vls'> = (pluginConfig) => {
     async configureServer({ root }) {
       const workDir: string = root
 
-      const onDispatchDiagnosticsSummary: DiagnosticOptions['onDispatchDiagnosticsSummary'] = (
-        errorCount,
-        warningCount
-      ) => {
-        if (!terminal) return
+      const onDispatchDiagnosticsSummary: DiagnosticOptions['onDispatchDiagnosticsSummary'] =
+        (errorCount, warningCount) => {
+          if (!terminal) return
 
-        consoleLog(composeCheckerSummary('VLS', errorCount, warningCount))
-      }
-
-      const onDispatchDiagnostics: DiagnosticOptions['onDispatchDiagnostics'] = (normalized) => {
-        if (overlay && command === 'serve') {
-          parentPort?.postMessage({
-            type: ACTION_TYPES.overlayError,
-            payload: toClientPayload('vls', diagnosticToRuntimeError(normalized)),
-          })
+          consoleLog(
+            composeCheckerSummary('VLS', errorCount, warningCount),
+            errorCount ? 'error' : warningCount ? 'warn' : 'info',
+          )
         }
 
-        if (terminal) {
-          consoleLog(normalized.map((d) => diagnosticToTerminalLog(d, 'VLS')).join(os.EOL))
+      const onDispatchDiagnostics: DiagnosticOptions['onDispatchDiagnostics'] =
+        (normalized) => {
+          if (overlay && command === 'serve') {
+            parentPort?.postMessage({
+              type: ACTION_TYPES.overlayError,
+              payload: toClientPayload(
+                'vls',
+                diagnosticToRuntimeError(normalized),
+              ),
+            })
+          }
+
+          if (terminal) {
+            for (const d of normalized) {
+              consoleLog(
+                diagnosticToTerminalLog(d, 'VLS'),
+                diagnosticToConsoleLevel(d),
+              )
+            }
+          }
         }
-      }
 
       const vlsConfig = pluginConfig?.vls
       await diagnostics(workDir, 'WARN', {
@@ -81,7 +89,7 @@ export class VlsChecker extends Checker<'vls'> {
               [
                 'diagnostics',
                 // Escape quotes so that the system shell doesn't strip them out:
-                '"' + JSON.stringify(config.vls).replace(/[\\"]/g, '\\$&') + '"',
+                `"${JSON.stringify(config.vls).replace(/[\\"]/g, '\\$&')}"`,
               ],
             ]
           }

@@ -8,6 +8,9 @@ hero:
   name: vite-plugin-checker
   text: Add Checks to Your Vite Project
   tagline: Vite plugin that provide checks of TypeScript, ESLint, vue-tsc, and more.
+  image:
+    src: /logo.png
+    alt: vite-plugin-checker
   actions:
     - theme: brand
       text: Get Started

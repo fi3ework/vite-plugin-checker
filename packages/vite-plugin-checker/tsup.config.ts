@@ -1,7 +1,16 @@
-import { defineConfig, Options } from 'tsup'
+import { copyFile } from 'node:fs/promises'
+import { defineConfig } from 'tsup'
 
-const shared: Options = {
-  entry: ['src'],
+export default defineConfig({
+  format: ['esm'],
+  outDir: 'dist',
+  async onSuccess() {
+    await copyFile(
+      'src/checkers/vueTsc/languagePlugins.cjs',
+      'dist/checkers/vueTsc/languagePlugins.cjs',
+    )
+  },
+  entry: ['src', '!src/checkers/vueTsc/languagePlugins.cjs'],
   splitting: false,
   bundle: false,
   sourcemap: true,
@@ -9,23 +18,4 @@ const shared: Options = {
   target: 'node14',
   platform: 'node',
   dts: true,
-}
-
-export default defineConfig([
-  {
-    format: ['esm'],
-    outDir: 'dist/esm',
-    ...shared,
-  },
-  {
-    format: ['cjs'],
-    outDir: 'dist/cjs',
-    shims: true,
-    outExtension({ format }) {
-      return {
-        js: `.js`,
-      }
-    },
-    ...shared,
-  },
-])
+})
