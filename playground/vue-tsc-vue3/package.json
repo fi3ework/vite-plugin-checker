@@ -16,6 +16,6 @@
     "typescript": "^5.8.3",
     "vite": "^7.0.6",
     "vite-plugin-checker": "workspace:*",
-    "vue-tsc": "~3.0.1"
+    "vue-tsc": "~3.0.4"
   }
 }
