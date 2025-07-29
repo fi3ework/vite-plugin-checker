@@ -2,10 +2,24 @@ const path = require('node:path')
 
 const vueTscDir = path.dirname(require.resolve('vue-tsc/package.json'))
 const vue =
-  /** @type {typeof import('@vue/language-core')} */ (
+  /** @type {typeof import('@vue/language-core') & { resolveVueCompilerOptions?: any }} */ (
     require(require.resolve('@vue/language-core', { paths: [vueTscDir] }))
   )
 const windowsPathReg = /\\/g
+
+const removeEmitGlobalTypesRegexp =
+  /^[^\n]*__VLS_globalTypesStart[\w\W]*__VLS_globalTypesEnd[^\n]*\n?$/gm
+
+/**
+ * @param dts {string}
+ * @returns {string}
+ */
+function removeEmitGlobalTypes(dts) {
+  return dts.replace(removeEmitGlobalTypesRegexp, '')
+}
+
+const getDefaultCompilerOptions =
+  vue.getDefaultCompilerOptions || (() => vue.resolveVueCompilerOptions({}))
 
 // #region copied from https://github.com/vuejs/language-tools/blob/0781998a29f176ad52c30d3139d5c78a5688bd5d/packages/tsc/index.ts
 /**
@@ -21,8 +35,17 @@ exports.getLanguagePlugins = (ts, options) => {
           ts.sys,
           configFilePath.replace(windowsPathReg, '/'),
         ).vueOptions
-      : vue.getDefaultCompilerOptions()
-  vue.writeGlobalTypes(vueOptions, ts.sys.writeFile)
+      : getDefaultCompilerOptions()
+  
+  if (vue.writeGlobalTypes) {
+    vue.writeGlobalTypes(vueOptions, ts.sys.writeFile)
+  } else {
+    const host = /** @type {import('typescript').CompilerHost} */ (options.host)
+    const writeFile = host.writeFile.bind(host)
+    host.writeFile = (fileName, contents, ...args) => {
+      return writeFile(fileName, removeEmitGlobalTypes(contents), ...args)
+    }
+  }
   const vueLanguagePlugin = vue.createVueLanguagePlugin(
     ts,
     options.options,
