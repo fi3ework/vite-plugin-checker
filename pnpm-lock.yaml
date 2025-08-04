@@ -127,8 +127,8 @@ importers:
         specifier: ^8.56.12
         version: 8.56.12
       '@types/picomatch':
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^4.0.2
+        version: 4.0.2
       '@vue/language-core':
         specifier: ~3.0.4
         version: 3.0.4(typescript@5.8.3)
@@ -1994,8 +1994,8 @@ packages:
   '@types/node@20.19.9':
     resolution: {integrity: sha512-cuVNgarYWZqxRJDQHEB58GEONhOK79QVR/qYx4S7kcUObQvUwvFnYxJuuHUKm2aieN9X3yZB4LZsuYNU1Qphsw==}
 
-  '@types/picomatch@4.0.1':
-    resolution: {integrity: sha512-dLqxmi5VJRC9XTvc/oaTtk+bDb4RRqxLZPZ3jIpYBHEnDXX8lu02w2yWI6NsPPsELuVK298Z2iR8jgoWKRdUVQ==}
+  '@types/picomatch@4.0.2':
+    resolution: {integrity: sha512-qHHxQ+P9PysNEGbALT8f8YOSHW0KJu6l2xU8DYY0fu/EmGxXdVnuTLvFUvBgPJMSqXq29SYHveejeAha+4AYgA==}
 
   '@types/qs@6.14.0':
     resolution: {integrity: sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==}
@@ -4515,6 +4515,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -6387,7 +6388,7 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/picomatch@4.0.1': {}
+  '@types/picomatch@4.0.2': {}
 
   '@types/qs@6.14.0': {}
 
