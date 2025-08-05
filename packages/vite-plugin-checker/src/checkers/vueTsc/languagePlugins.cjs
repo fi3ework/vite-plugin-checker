@@ -36,7 +36,7 @@ exports.getLanguagePlugins = (ts, options) => {
           configFilePath.replace(windowsPathReg, '/'),
         ).vueOptions
       : getDefaultCompilerOptions()
-  
+
   if (vue.writeGlobalTypes) {
     vue.writeGlobalTypes(vueOptions, ts.sys.writeFile)
   } else {
