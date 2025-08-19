@@ -15,6 +15,8 @@ export function inject({
   base: string
   overlayConfig: Record<string, any>
 }) {
+  if (document.querySelector('vite-plugin-checker-error-overlay')) return
+
   const overlayEle = new ShadowElement({
     base,
     overlayConfig,
