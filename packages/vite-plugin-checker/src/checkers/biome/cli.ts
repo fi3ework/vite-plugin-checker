@@ -34,13 +34,13 @@ export function runBiome(command: string, cwd: string) {
         maxBuffer: Number.POSITIVE_INFINITY,
       },
       (_error, stdout, _stderr) => {
-        resolve([...parseBiomeOutput(stdout)])
+        resolve([...parseBiomeOutput(stdout, cwd)])
       },
     )
   })
 }
 
-function parseBiomeOutput(output: string) {
+function parseBiomeOutput(output: string, cwd: string) {
   let parsed: BiomeOutput
   try {
     parsed = JSON.parse(output)
@@ -50,7 +50,11 @@ function parseBiomeOutput(output: string) {
 
   const diagnostics: NormalizedDiagnostic[] = parsed.diagnostics.map((d) => {
     let file = d.location.path?.file
-    if (file) file = path.normalize(file)
+    if (file) {
+      // Convert relative path to absolute path
+      file = path.isAbsolute(file) ? file : path.resolve(cwd, file)
+      file = path.normalize(file)
+    }
 
     const loc = {
       file: file || '',
