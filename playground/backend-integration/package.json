@@ -20,7 +20,7 @@
     "express": "^5.1.0",
     "http-proxy-middleware": "^3.0.5",
     "typescript": "^5.8.3",
-    "vite": "^7.0.6",
+    "vite": "^7.0.7",
     "vite-plugin-checker": "workspace:*"
   }
 }
