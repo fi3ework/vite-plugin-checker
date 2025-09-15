@@ -40,6 +40,7 @@
     "fast-json-stable-stringify": "^2.1.0",
     "knip": "^5.62.0",
     "lint-staged": "^16.1.5",
+    "oxlint": "^1.15.0",
     "pkg-pr-new": "^0.0.57",
     "playwright-chromium": "^1.54.2",
     "publint": "^0.3.12",

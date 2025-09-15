@@ -1,0 +1,17 @@
+{
+  "name": "@playground/oxlint-default",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "oxlint",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "oxlint": "^1.15.0",
+    "vite": "^7.0.6",
+    "vite-plugin-checker": "workspace:*"
+  }
+}

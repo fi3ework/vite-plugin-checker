@@ -1,0 +1,150 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`oxlint-default > serve > should display initial errors 1`] = `"[{"checkerId":"oxlint","frame":"    3 | console.log('This is a test');/n    4 |/n  > 5 | debugger;/n      | ^^^^^^^^^/n    6 |/n    7 | const unusedVariable2 = 100;/n    8 |","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":5},"message":"eslint(no-debugger): \`debugger\` statement is not allowed","stack":""},{"checkerId":"oxlint","frame":"    11 | }/n    12 |/n  > 13 | console.log('yes'); debugger;/n       |                     ^^^^^^^^^/n    14 |/n    15 | console.log('no');/n    16 |","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":1,"loc":{"column":21,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":13},"message":"eslint(no-debugger): \`debugger\` statement is not allowed","stack":""},{"checkerId":"oxlint","frame":"  > 1 | const unusedVariable1 = 42;/n      |       ^^^^^^^^^^^^^^^/n    2 |/n    3 | console.log('This is a test');/n    4 |","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":1},"message":"eslint(no-unused-vars): Variable 'unusedVariable1' is declared but never used. Unused variables should start with a '_'.","stack":""},{"checkerId":"oxlint","frame":"     5 | debugger;/n     6 |/n  >  7 | const unusedVariable2 = 100;/n       |       ^^^^^^^^^^^^^^^/n     8 |/n     9 | function testFunction() {/n    10 |     console.log('Inside test function');","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":7},"message":"eslint(no-unused-vars): Variable 'unusedVariable2' is declared but never used. Unused variables should start with a '_'.","stack":""}]"`;
+
+exports[`oxlint-default > serve > should display initial errors 2`] = `
+[
+  " ERROR(oxlint)  eslint(no-debugger): \`debugger\` statement is not allowed
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:5:1
+
+    3 | console.log('This is a test');
+    4 |
+  > 5 | debugger;
+      | ^^^^^^^^^
+    6 |
+    7 | const unusedVariable2 = 100;
+    8 |
+",
+  " ERROR(oxlint)  eslint(no-debugger): \`debugger\` statement is not allowed
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:13:21
+
+    11 | }
+    12 |
+  > 13 | console.log('yes'); debugger;
+       |                     ^^^^^^^^^
+    14 |
+    15 | console.log('no');
+    16 |
+",
+  " ERROR(oxlint)  eslint(no-unused-vars): Variable 'unusedVariable1' is declared but never used. Unused variables should start with a '_'.
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:1:7
+
+  > 1 | const unusedVariable1 = 42;
+      |       ^^^^^^^^^^^^^^^
+    2 |
+    3 | console.log('This is a test');
+    4 |
+",
+  " ERROR(oxlint)  eslint(no-unused-vars): Variable 'unusedVariable2' is declared but never used. Unused variables should start with a '_'.
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:7:7
+
+     5 | debugger;
+     6 |
+  >  7 | const unusedVariable2 = 100;
+       |       ^^^^^^^^^^^^^^^
+     8 |
+     9 | function testFunction() {
+    10 |     console.log('Inside test function');
+",
+  "[oxlint] Found 4 errors and 0 warning",
+]
+`;
+
+exports[`oxlint-default > serve > should react to oxlint config file change 1`] = `"[]"`;
+
+exports[`oxlint-default > serve > should react to oxlint config file change 2`] = `[]`;
+
+exports[`oxlint-default > serve > should react to oxlint config file change 3`] = `"[{"checkerId":"oxlint","frame":"    3 | console.log('This is a test');/n    4 |/n  > 5 | debugger;/n      | ^^^^^^^^^/n    6 |/n    7 | const unusedVariable2 = 100;/n    8 |","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":0,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":5},"message":"eslint(no-debugger): \`debugger\` statement is not allowed","stack":""},{"checkerId":"oxlint","frame":"    11 | }/n    12 |/n  > 13 | console.log('yes'); debugger;/n       |                     ^^^^^^^^^/n    14 |/n    15 | console.log('no');/n    16 |","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":0,"loc":{"column":21,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":13},"message":"eslint(no-debugger): \`debugger\` statement is not allowed","stack":""},{"checkerId":"oxlint","frame":"     5 | debugger;/n     6 |/n  >  7 | const unusedVariable2 = 100;/n       |       ^^^^^^^^^^^^^^^/n     8 |/n     9 | function testFunction() {/n    10 |     console.log('Inside test function');","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":0,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":7},"message":"eslint(no-unused-vars): Variable 'unusedVariable2' is declared but never used. Unused variables should start with a '_'.","stack":""}]"`;
+
+exports[`oxlint-default > serve > should react to oxlint config file change 4`] = `
+[
+  " WARNING(oxlint)  eslint(no-debugger): \`debugger\` statement is not allowed
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:5:1
+
+    3 | console.log('This is a test');
+    4 |
+  > 5 | debugger;
+      | ^^^^^^^^^
+    6 |
+    7 | const unusedVariable2 = 100;
+    8 |
+",
+  " WARNING(oxlint)  eslint(no-debugger): \`debugger\` statement is not allowed
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:13:21
+
+    11 | }
+    12 |
+  > 13 | console.log('yes'); debugger;
+       |                     ^^^^^^^^^
+    14 |
+    15 | console.log('no');
+    16 |
+",
+  " WARNING(oxlint)  eslint(no-unused-vars): Variable 'unusedVariable2' is declared but never used. Unused variables should start with a '_'.
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:7:7
+
+     5 | debugger;
+     6 |
+  >  7 | const unusedVariable2 = 100;
+       |       ^^^^^^^^^^^^^^^
+     8 |
+     9 | function testFunction() {
+    10 |     console.log('Inside test function');
+",
+  "[oxlint] Found 0 error and 3 warnings",
+]
+`;
+
+exports[`oxlint-default > serve > should react to project file change 1`] = `"[{"checkerId":"oxlint","frame":"    3 | console.log('This is a test');/n    4 |/n  > 5 | debugger;/n      | ^^^^^^^^^/n    6 |/n    7 | const unusedVariable2 = 100;/n    8 |","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":1,"loc":{"column":1,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":5},"message":"eslint(no-debugger): \`debugger\` statement is not allowed","stack":""},{"checkerId":"oxlint","frame":"    11 | }/n    12 |/n  > 13 | console.log('yes'); debugger;/n       |                     ^^^^^^^^^/n    14 |/n    15 | console.log('no');/n    16 |","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":1,"loc":{"column":21,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":13},"message":"eslint(no-debugger): \`debugger\` statement is not allowed","stack":""},{"checkerId":"oxlint","frame":"  > 1 | const unusedVariable1 = 42;/n      |       ^^^^^^^^^^^^^^^/n    2 |/n    3 | console.log('This is a test');/n    4 |","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":1},"message":"eslint(no-unused-vars): Variable 'unusedVariable1' is declared but never used. Unused variables should start with a '_'.","stack":""},{"checkerId":"oxlint","frame":"     5 | debugger;/n     6 |/n  >  7 | const unusedVariable2 = 100;/n       |       ^^^^^^^^^^^^^^^/n     8 |/n     9 | function testFunction() {/n    10 |     console.log('Inside test function');","id":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts","line":7},"message":"eslint(no-unused-vars): Variable 'unusedVariable2' is declared but never used. Unused variables should start with a '_'.","stack":""}]"`;
+
+exports[`oxlint-default > serve > should react to project file change 2`] = `
+[
+  " ERROR(oxlint)  eslint(no-debugger): \`debugger\` statement is not allowed
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:5:1
+
+    3 | console.log('This is a test');
+    4 |
+  > 5 | debugger;
+      | ^^^^^^^^^
+    6 |
+    7 | const unusedVariable2 = 100;
+    8 |
+",
+  " ERROR(oxlint)  eslint(no-debugger): \`debugger\` statement is not allowed
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:13:21
+
+    11 | }
+    12 |
+  > 13 | console.log('yes'); debugger;
+       |                     ^^^^^^^^^
+    14 |
+    15 | console.log('no');
+    16 |
+",
+  " ERROR(oxlint)  eslint(no-unused-vars): Variable 'unusedVariable1' is declared but never used. Unused variables should start with a '_'.
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:1:7
+
+  > 1 | const unusedVariable1 = 42;
+      |       ^^^^^^^^^^^^^^^
+    2 |
+    3 | console.log('This is a test');
+    4 |
+",
+  " ERROR(oxlint)  eslint(no-unused-vars): Variable 'unusedVariable2' is declared but never used. Unused variables should start with a '_'.
+ FILE  <PROJECT_ROOT>/playground-temp/oxlint-default/src/main.ts:7:7
+
+     5 | debugger;
+     6 |
+  >  7 | const unusedVariable2 = 100;
+       |       ^^^^^^^^^^^^^^^
+     8 |
+     9 | function testFunction() {
+    10 |     console.log('Inside test function');
+",
+  "[oxlint] Found 4 errors and 0 warning",
+]
+`;
+
+exports[`oxlint-default > serve > should react to project file change 3`] = `"[]"`;
+
+exports[`oxlint-default > serve > should react to project file change 4`] = `[]`;
