@@ -62,7 +62,10 @@ describe('oxlint-default', () => {
 
   describe.runIf(isBuild)('build', () => {
     it('should fail', async () => {
-      expectStderrContains(log, "Variable 'count' is declared but never used.")
+      expectStderrContains(
+        log,
+        "Variable 'unusedVariable1' is declared but never used.",
+      )
     })
   })
 })
