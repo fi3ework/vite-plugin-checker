@@ -128,16 +128,15 @@ export type OxlintConfig =
   | boolean
   | {
       /**
+       * `lintCommand` will be executed at build mode.
+       */
+      lintCommand: string
+      /**
        * Configure path to watch files
        */
       watchPath?: string | string[]
-      /**
-       * lintCommand will be executed at build mode, and will also be used as
-       * default config for dev mode when options.eslint.dev.eslint is nullable.
-       */
-      lintCommand: string
       dev?: Partial<{
-        /** which level of the diagnostic will be emitted from plugin */
+        /** Specifies which level of the diagnostic will be emitted from the plugin */
         logLevel: ('error' | 'warning')[]
       }>
     }
