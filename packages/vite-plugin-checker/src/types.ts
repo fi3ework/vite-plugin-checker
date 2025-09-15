@@ -124,6 +124,23 @@ export type BiomeConfig =
       }>
     }
 
+export type OxlintConfig =
+  | boolean
+  | {
+      /**
+       * `lintCommand` will be executed at build mode.
+       */
+      lintCommand: string
+      /**
+       * Configure path to watch files
+       */
+      watchPath?: string | string[]
+      dev?: Partial<{
+        /** Specifies which level of the diagnostic will be emitted from the plugin */
+        logLevel: ('error' | 'warning')[]
+      }>
+    }
+
 export enum DiagnosticLevel {
   Warning = 0,
   Error = 1,
@@ -221,6 +238,7 @@ export interface BuildInCheckers {
   eslint: EslintConfig
   stylelint: StylelintConfig
   biome: BiomeConfig
+  oxlint: OxlintConfig
 }
 
 export type BuildInCheckerNames = keyof BuildInCheckers

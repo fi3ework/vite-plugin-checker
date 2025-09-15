@@ -5,7 +5,8 @@
   },
   "workspaces": {
     ".": {
-      "entry": ["scripts/*", "playground/*"]
+      "entry": ["scripts/*", "playground/*"],
+      "ignoreDependencies": ["oxlint"]
     },
     "docs": {
       "entry": [".vitepress/config.ts"]

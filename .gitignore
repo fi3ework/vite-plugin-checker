@@ -103,6 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
+# JetBrains IDEs
+.idea
+
 #
 lib/
 playground-temp/

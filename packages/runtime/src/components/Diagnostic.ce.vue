@@ -41,6 +41,7 @@ const checkerColorMap: Record<string, string> = {
   VLS: '#64b587',
   'vue-tsc': '#64b587',
   Stylelint: '#ffffff',
+  'oxlint': '#a8b1ff'
 } as const
 
 const fileRE = /(?:[a-zA-Z]:\\|\/).*(:\d+:\d+)?/g
