@@ -531,8 +531,8 @@ importers:
         specifier: ^1.15.0
         version: 1.15.0
       vite:
-        specifier: ^7.0.6
-        version: 7.0.6(@types/node@20.19.9)(jiti@2.5.1)(sass@1.89.2)(yaml@2.8.1)
+        specifier: ^7.0.7
+        version: 7.0.7(@types/node@20.19.9)(jiti@2.5.1)(sass@1.89.2)(yaml@2.8.1)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
