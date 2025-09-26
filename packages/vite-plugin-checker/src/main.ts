@@ -149,8 +149,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       return [
         {
           tag: 'script',
-          attrs: { type: 'module' },
-          children: composePreambleCode({ baseWithOrigin, overlayConfig }),
+          attrs: { type: 'module', src: RUNTIME_CLIENT_ENTRY_PATH },
         },
       ]
     },
