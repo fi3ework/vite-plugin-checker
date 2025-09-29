@@ -2,6 +2,7 @@ name: Release
 
 permissions:
   contents: write
+  id-token: write
 
 on: workflow_dispatch
 
@@ -19,13 +20,8 @@ jobs:
       - name: Set node
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: current
           cache: pnpm
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Setup npmrc
-        # https://github.com/changesets/action/issues/98#issuecomment-917292485
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
 
       - name: Install dependencies
         run: pnpm i
