@@ -40,3 +40,47 @@ export function lineColLocToBabelLoc(d: {
     end: { line: d.endLine || 0, column: d.endColumn },
   }
 }
+
+/**
+ * Convert a [startOffset, length] range into a Babel-compatible SourceLocation.
+ * - Lines/columns are 1-based.
+ * - Offsets and length are clamped to source bounds.
+ * - Single-pass up to the end offset, minimal allocations.
+ */
+export function offsetRangeToBabelLocation(
+  source: string,
+  offset: number,
+  length: number,
+): SourceLocation {
+  const defaultPos = { line: 1, column: 1 }
+
+  if (!source || source.length === 0) {
+    return { start: { ...defaultPos }, end: { ...defaultPos } }
+  }
+
+  const startIndex = offset
+  const endIndex = offset + length
+
+  let line = 1
+  let column = 1
+
+  let start: { line: number; column: number } | null = null
+
+  for (let i = 0; i < endIndex; i++) {
+    if (i === startIndex) {
+      start = { line, column }
+    }
+    // '\n' charCode is 10
+    if (source[i] === '\n') {
+      line++
+      column = 1
+    } else {
+      column++
+    }
+  }
+
+  start ??= { line, column }
+  const end = { line, column }
+
+  return { start, end }
+}

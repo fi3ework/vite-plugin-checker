@@ -93,7 +93,14 @@ export function filterLogLevel(
 
 export function diagnosticToTerminalLog(
   d: NormalizedDiagnostic,
-  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint' | 'Stylelint' | 'Biome',
+  name?:
+    | 'TypeScript'
+    | 'vue-tsc'
+    | 'VLS'
+    | 'ESLint'
+    | 'Stylelint'
+    | 'Biome'
+    | 'oxlint',
 ): string {
   const nameInLabel = name ? `(${name})` : ''
   const boldBlack = (str: string) => colors.bold(colors.black(str))

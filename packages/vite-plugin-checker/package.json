@@ -61,6 +61,7 @@
     "eslint": ">=7",
     "meow": "^13.2.0",
     "optionator": "^0.9.4",
+    "oxlint": ">=1",
     "stylelint": ">=16",
     "typescript": "*",
     "vite": ">=5.4.20",
@@ -79,6 +80,9 @@
       "optional": true
     },
     "optionator": {
+      "optional": true
+    },
+    "oxlint": {
       "optional": true
     },
     "stylelint": {
