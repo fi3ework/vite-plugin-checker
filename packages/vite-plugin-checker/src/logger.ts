@@ -1,8 +1,8 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import os from 'node:os'
+import { stripVTControlCharacters as strip } from 'node:util'
 import colors from 'picocolors'
-import strip from 'strip-ansi'
 import * as _vscodeUri from 'vscode-uri'
 
 // hack to compatible with Jiti

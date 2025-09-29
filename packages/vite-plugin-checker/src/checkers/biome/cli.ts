@@ -1,6 +1,6 @@
 import { exec } from 'node:child_process'
 import path from 'node:path'
-import strip from 'strip-ansi'
+import { stripVTControlCharacters as strip } from 'node:util'
 import { createFrame } from '../../codeFrame.js'
 import type { NormalizedDiagnostic } from '../../logger.js'
 import { DiagnosticLevel } from '../../types.js'

@@ -1,4 +1,4 @@
-import strip from 'strip-ansi'
+import { stripVTControlCharacters as strip } from 'node:util'
 import { describe, expect, it } from 'vitest'
 
 import {
