@@ -108,6 +108,10 @@ export type BiomeConfig =
        * or `build.command` is set their mode.
        * */
       flags?: string
+      /**
+       * Configure path to watch files
+       */
+      watchPath?: string | string[]
       dev?: Partial<{
         /** Command will be used in dev mode */
         command: BiomeCommand
