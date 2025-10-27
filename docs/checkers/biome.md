@@ -31,6 +31,7 @@ Advanced object configuration table of `options.biome`
 | :------------ | --------------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
 | command       | `'check' \| 'lint' \| 'format' \| 'ci'` | `'lint'` in dev, `'check'` in build. | The command to execute biome with.                                                                             |
 | flags         | `string`                                | `''`                                 | CLI flags to pass to the command.                                                                              |
+| watchPath     | `string \| string[]`                    | `undefined`                          | **(Only in dev mode)** Configure path to watch files for Biome. If not specified, will watch the entire project root. |
 | dev.logLevel  | `('error' \| 'warning')[]`              | `['error', 'warning']`               | **(Only in dev mode)** Which level of Biome diagnostics should be emitted to terminal and overlay in dev mode. |
 | dev.command   | `'check' \| 'lint' \| 'format' \| 'ci'` | `''`                                 | Command to run in dev mode, it will override `command` config in dev mode.                                     |
 | dev.flags     | `string`                                | `''`                                 | Flags to run in dev mode, it will override `flags` config in dev mode.                                         |
