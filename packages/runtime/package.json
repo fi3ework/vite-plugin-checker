@@ -13,6 +13,9 @@
     "build:test": "pnpm run build",
     "dev": "vite build --watch"
   },
+  "dependencies": {
+    "@tanstack/vue-virtual": "^3.13.12"
+  },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
     "vite": "^7.0.8",
