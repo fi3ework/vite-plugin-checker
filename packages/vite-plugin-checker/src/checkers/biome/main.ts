@@ -121,7 +121,16 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
       dispatchDiagnostics()
 
       // watch lint
-      const watcher = chokidar.watch([], {
+      let watchTarget: string | string[] = root
+      if (typeof biomeConfig === 'object' && biomeConfig.watchPath) {
+        if (Array.isArray(biomeConfig.watchPath)) {
+          watchTarget = biomeConfig.watchPath.map((p) => path.resolve(root, p))
+        } else {
+          watchTarget = path.resolve(root, biomeConfig.watchPath)
+        }
+      }
+
+      const watcher = chokidar.watch(watchTarget, {
         cwd: root,
         ignored: (path: string) => path.includes('node_modules'),
       })
@@ -131,7 +140,6 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
       watcher.on('unlink', async (filePath) => {
         handleFileChange(filePath, 'unlink')
       })
-      watcher.add('.')
     },
   }
 }
