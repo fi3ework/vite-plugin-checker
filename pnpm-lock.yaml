@@ -12,7 +12,7 @@ importers:
         specifier: ^2.1.2
         version: 2.1.2
       '@tsconfig/node22':
-        specifier: ^22.0.0
+        specifier: ^22.0.5
         version: 22.0.5
       '@tsconfig/strictest':
         specifier: ^2.0.8
