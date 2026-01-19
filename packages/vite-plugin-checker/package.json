@@ -47,7 +47,7 @@
     "@vue/language-core": "~3.2.2",
     "meow": "^13.2.0",
     "stylelint": "^16.22.0",
-    "tsup": "^8.5.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.8.3",
     "vls": "^0.8.5",
     "vscode-languageclient": "^9.0.1",
