@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.2",
-    "@tsconfig/node22": "^22.0.5",
+    "@tsconfig/node24": "^24.0.0",
     "@tsconfig/strictest": "^2.0.8",
     "@types/babel__code-frame": "^7.27.0",
     "@types/node": "^20.19.9",
