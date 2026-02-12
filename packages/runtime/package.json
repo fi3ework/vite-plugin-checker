@@ -14,7 +14,7 @@
     "dev": "vite build --watch"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.3",
+    "@vitejs/plugin-vue": "^6.0.4",
     "vite": "^7.1.11",
     "vue": "^3.5.27",
     "vue-tsc": "~3.0.4"
