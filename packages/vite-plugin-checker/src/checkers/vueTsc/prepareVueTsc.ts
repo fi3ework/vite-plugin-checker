@@ -2,6 +2,7 @@ import { access, cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import lockfile from 'proper-lockfile'
 
 const _require = createRequire(import.meta.url)
 
@@ -17,8 +18,30 @@ const proxyApiPath = _require.resolve(
 )
 const extraSupportedExtensions = ['.vue']
 
+const LOCK_TIMEOUT_MS = 60000 // Max wait time
+const STALE_TIMEOUT_MS = 30000 // Auto-release stale locks
+
+async function isFixtureValid(
+  targetTsDir: string,
+  vueTscFlagFile: string,
+  currTsVersion: string,
+) {
+  try {
+    await access(targetTsDir)
+    const targetTsVersion = _require(
+      path.resolve(targetTsDir, 'package.json'),
+    ).version
+    await access(vueTscFlagFile)
+    const fixtureFlagContent = await readFile(vueTscFlagFile, 'utf8')
+    return (
+      targetTsVersion === currTsVersion && fixtureFlagContent === proxyApiPath
+    )
+  } catch {
+    return false
+  }
+}
+
 export async function prepareVueTsc() {
-  // 1. copy typescript to folder
   const targetTsDir = path.resolve(_dirname, 'typescript-vue-tsc')
   const vueTscFlagFile = path.resolve(targetTsDir, 'vue-tsc-resolve-path')
   const currTsVersion = _require('typescript/package.json').version
@@ -30,37 +53,40 @@ export async function prepareVueTsc() {
     )
   }
 
-  let shouldBuildFixture = true
-  try {
-    await access(targetTsDir)
-    const targetTsVersion = _require(
-      path.resolve(targetTsDir, 'package.json'),
-    ).version
-    // check fixture versions before re-use
-    await access(vueTscFlagFile)
-    const fixtureFlagContent = await readFile(vueTscFlagFile, 'utf8')
-    if (
-      targetTsVersion === currTsVersion &&
-      fixtureFlagContent === proxyApiPath
-    ) {
-      shouldBuildFixture = false
-    }
-  } catch {
-    // no matter what error, we should rebuild the fixture
-    shouldBuildFixture = true
+  if (await isFixtureValid(targetTsDir, vueTscFlagFile, currTsVersion)) {
+    return { targetTsDir }
   }
 
-  if (shouldBuildFixture) {
+  const release = await lockfile.lock(_dirname, {
+    lockfilePath: path.resolve(_dirname, '.vue-tsc-fixture.lock'),
+    stale: STALE_TIMEOUT_MS,
+    retries: {
+      retries: Math.ceil(LOCK_TIMEOUT_MS / 1000),
+      factor: 1,
+      minTimeout: 1000,
+      maxTimeout: 2000,
+      randomize: true,
+    },
+  })
+
+  try {
+    // Double-check that the fixture is valid, another process may have built while trying to acquire the lock
+    if (await isFixtureValid(targetTsDir, vueTscFlagFile, currTsVersion)) {
+      return { targetTsDir }
+    }
+
     await rm(targetTsDir, { force: true, recursive: true })
     await mkdir(targetTsDir, { recursive: true })
     const sourceTsDir = path.resolve(_require.resolve('typescript'), '../..')
     await cp(sourceTsDir, targetTsDir, { recursive: true })
     await writeFile(vueTscFlagFile, proxyApiPath)
 
-    // 2. sync modification of lib/tsc.js with vue-tsc
+    // sync modification of lib/tsc.js with vue-tsc
     await overrideTscJs(
       _require.resolve(path.resolve(targetTsDir, 'lib/typescript.js')),
     )
+  } finally {
+    await release()
   }
 
   return { targetTsDir }
