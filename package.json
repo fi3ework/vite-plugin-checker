@@ -41,7 +41,7 @@
     "knip": "^5.83.1",
     "lint-staged": "^16.1.6",
     "oxlint": "^1.18.0",
-    "pkg-pr-new": "^0.0.63",
+    "pkg-pr-new": "^0.0.65",
     "playwright-chromium": "^1.54.2",
     "publint": "^0.3.18",
     "simple-git-hooks": "^2.13.1",
