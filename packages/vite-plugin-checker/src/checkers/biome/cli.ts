@@ -1,6 +1,7 @@
 import { exec } from 'node:child_process'
+import fs from 'node:fs/promises'
 import path from 'node:path'
-import { stripVTControlCharacters as strip } from 'node:util'
+import { stripVTControlCharacters as strip } from 'util'
 import { createFrame } from '../../codeFrame.js'
 import type { NormalizedDiagnostic } from '../../logger.js'
 import { DiagnosticLevel } from '../../types.js'
@@ -34,13 +35,101 @@ export function runBiome(command: string, cwd: string) {
         maxBuffer: Number.POSITIVE_INFINITY,
       },
       (_error, stdout, _stderr) => {
-        resolve([...parseBiomeOutput(stdout, cwd)])
+        parseBiomeOutput(stdout, cwd)
+          .then(resolve)
+          .catch(() => resolve([]))
       },
     )
   })
 }
 
-function parseBiomeOutput(output: string, cwd: string) {
+type Entry = {
+  file: string
+  message: string
+  category: string
+  severity: string
+  start: { line: number; column: number }
+  end: { line: number; column: number }
+}
+
+function getEntries(parsed: BiomeOutput, cwd: string): Entry[] {
+  return parsed.diagnostics.map((d) => ({
+    file: normalizePath(d.location.path, cwd),
+    message: d.message,
+    category: d.category ?? '',
+    severity: d.severity,
+    start: d.location.start ?? { line: 0, column: 0 },
+    end: d.location.end ?? { line: 0, column: 0 },
+  }))
+}
+
+function getUniqueFiles(entries: Entry[]) {
+  return [...new Set(entries.map((e) => e.file))]
+}
+
+function normalizePath(p: string, cwd: string) {
+  let filename = p
+  if (filename) {
+    filename = path.isAbsolute(filename)
+      ? filename
+      : path.resolve(cwd, filename)
+    filename = path.normalize(filename)
+  }
+
+  return filename
+}
+
+async function readSources(files: string[]) {
+  const cache = new Map<string, string>()
+  await Promise.all(
+    files.map(async (file) => {
+      try {
+        const source = await fs.readFile(file, 'utf8')
+        cache.set(file, source)
+      } catch {
+        // Ignore unreadable files; related diagnostics will be skipped.
+      }
+    }),
+  )
+  return cache
+}
+
+function buildDiagnostics(
+  entries: Entry[],
+  sources: Map<string, string>,
+): NormalizedDiagnostic[] {
+  return entries.flatMap((entry) => {
+    const source = sources.get(entry.file)
+    if (!source) return []
+
+    const loc = {
+      file: entry.file,
+      start: entry.start,
+      end: entry.end,
+    }
+
+    const codeFrame = createFrame(source, loc)
+
+    return [
+      {
+        message: `[${entry.category}] ${entry.message}`,
+        level:
+          severityMap[entry.severity as keyof typeof severityMap] ??
+          DiagnosticLevel.Error,
+        checker: 'Biome',
+        id: entry.file,
+        codeFrame,
+        stripedCodeFrame: codeFrame && strip(codeFrame),
+        loc,
+      },
+    ]
+  })
+}
+
+async function parseBiomeOutput(
+  output: string,
+  cwd: string,
+): Promise<NormalizedDiagnostic[]> {
   let parsed: BiomeOutput
   try {
     parsed = JSON.parse(output)
@@ -48,53 +137,9 @@ function parseBiomeOutput(output: string, cwd: string) {
     return []
   }
 
-  const diagnostics: NormalizedDiagnostic[] = parsed.diagnostics.map((d) => {
-    let file = d.location.path?.file
-    if (file) {
-      // Convert relative path to absolute path
-      file = path.isAbsolute(file) ? file : path.resolve(cwd, file)
-      file = path.normalize(file)
-    }
+  const entries = getEntries(parsed, cwd)
+  const files = getUniqueFiles(entries)
+  const sourceCache = await readSources(files)
 
-    const loc = {
-      file: file || '',
-      start: getLineAndColumn(d.location.sourceCode, d.location.span?.[0]),
-      end: getLineAndColumn(d.location.sourceCode, d.location.span?.[1]),
-    }
-
-    const codeFrame = createFrame(d.location.sourceCode || '', loc)
-
-    return {
-      message: `[${d.category}] ${d.description}`,
-      conclusion: '',
-      level:
-        severityMap[d.severity as keyof typeof severityMap] ??
-        DiagnosticLevel.Error,
-      checker: 'Biome',
-      id: file,
-      codeFrame,
-      stripedCodeFrame: codeFrame && strip(codeFrame),
-      loc,
-    }
-  })
-
-  return diagnostics
-}
-
-function getLineAndColumn(text?: string, offset?: number) {
-  if (!text || !offset) return { line: 0, column: 0 }
-
-  let line = 1
-  let column = 1
-
-  for (let i = 0; i < offset; i++) {
-    if (text[i] === '\n') {
-      line++
-      column = 1
-    } else {
-      column++
-    }
-  }
-
-  return { line, column }
+  return buildDiagnostics(entries, sourceCache)
 }
