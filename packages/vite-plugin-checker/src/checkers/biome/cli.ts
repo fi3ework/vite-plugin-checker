@@ -1,9 +1,8 @@
 import { exec } from 'node:child_process'
-import fs from 'node:fs/promises'
-import path from 'node:path'
 import { stripVTControlCharacters as strip } from 'util'
 import { createFrame } from '../../codeFrame.js'
 import type { NormalizedDiagnostic } from '../../logger.js'
+import { normalizePath, readSources } from '../../sources.js'
 import { DiagnosticLevel } from '../../types.js'
 import type { BiomeOutput } from './types.js'
 
@@ -65,33 +64,6 @@ function getEntries(parsed: BiomeOutput, cwd: string): Entry[] {
 
 function getUniqueFiles(entries: Entry[]) {
   return [...new Set(entries.map((e) => e.file))]
-}
-
-function normalizePath(p: string, cwd: string) {
-  let filename = p
-  if (filename) {
-    filename = path.isAbsolute(filename)
-      ? filename
-      : path.resolve(cwd, filename)
-    filename = path.normalize(filename)
-  }
-
-  return filename
-}
-
-async function readSources(files: string[]) {
-  const cache = new Map<string, string>()
-  await Promise.all(
-    files.map(async (file) => {
-      try {
-        const source = await fs.readFile(file, 'utf8')
-        cache.set(file, source)
-      } catch {
-        // Ignore unreadable files; related diagnostics will be skipped.
-      }
-    }),
-  )
-  return cache
 }
 
 function buildDiagnostics(
