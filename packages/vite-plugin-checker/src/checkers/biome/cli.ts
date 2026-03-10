@@ -52,14 +52,19 @@ type Entry = {
 }
 
 function getEntries(parsed: BiomeOutput, cwd: string): Entry[] {
-  return parsed.diagnostics.map((d) => ({
-    file: normalizePath(d.location.path, cwd),
-    message: d.message,
-    category: d.category ?? '',
-    severity: d.severity,
-    start: d.location.start ?? { line: 0, column: 0 },
-    end: d.location.end ?? { line: 0, column: 0 },
-  }))
+  return parsed.diagnostics.flatMap((d) => {
+    if (!d.location) return []
+    return [
+      {
+        file: normalizePath(d.location.path, cwd),
+        message: d.message,
+        category: d.category ?? '',
+        severity: d.severity,
+        start: d.location.start,
+        end: d.location.end,
+      },
+    ]
+  })
 }
 
 function getUniqueFiles(entries: Entry[]) {

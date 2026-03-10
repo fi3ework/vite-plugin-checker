@@ -2,13 +2,13 @@ export interface BiomeOutput {
   diagnostics: Diagnostic[]
 }
 
-type Severity = 'hint' | 'information' | 'warning' | 'error' | 'fatal'
+type Severity = 'hint' | 'info' | 'warning' | 'error' | 'fatal'
 
 export interface Diagnostic {
   severity: Severity
   message: string
   category?: string
-  location: Location
+  location?: Location
   advices: Advice[]
 }
 
@@ -24,7 +24,7 @@ interface Location {
 }
 
 interface Advice {
-  start?: Position
-  end?: Position
-  text?: string
+  start: Position
+  end: Position
+  text: string
 }
