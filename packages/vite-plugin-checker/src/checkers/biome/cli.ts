@@ -33,10 +33,16 @@ export function runBiome(command: string, cwd: string) {
         cwd,
         maxBuffer: Number.POSITIVE_INFINITY,
       },
-      (_error, stdout, _stderr) => {
+      (error, stdout, _stderr) => {
+        if (error && !stdout) {
+          console.error('[biome] command failed:', error.message)
+        }
         parseBiomeOutput(stdout, cwd)
           .then(resolve)
-          .catch(() => resolve([]))
+          .catch((e) => {
+            console.error('[biome] parse failed:', e)
+            resolve([])
+          })
       },
     )
   })
