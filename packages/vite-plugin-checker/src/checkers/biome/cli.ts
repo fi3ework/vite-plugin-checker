@@ -117,7 +117,7 @@ async function parseBiomeOutput(
   try {
     parsed = JSON.parse(output)
   } catch {
-    console.error('[biome] JSON.parse failed, stdout length:', output?.length)
+    console.error('[biome] JSON.parse failed, stdout:', output)
     return []
   }
 
