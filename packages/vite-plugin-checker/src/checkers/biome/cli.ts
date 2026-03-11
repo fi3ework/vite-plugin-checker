@@ -33,16 +33,10 @@ export function runBiome(command: string, cwd: string) {
         cwd,
         maxBuffer: Number.POSITIVE_INFINITY,
       },
-      (error, stdout, _stderr) => {
-        if (error && !stdout) {
-          console.error('[biome] command failed:', error.message)
-        }
+      (_error, stdout, _stderr) => {
         parseBiomeOutput(stdout, cwd)
           .then(resolve)
-          .catch((e) => {
-            console.error('[biome] parse failed:', e)
-            resolve([])
-          })
+          .catch(() => resolve([]))
       },
     )
   })
@@ -109,24 +103,25 @@ function buildDiagnostics(
   })
 }
 
+function sanitizeBiomeOutput(output: string) {
+  // Biome on Windows emits unescaped backslashes in JSON path values
+  return output.replace(/\\(?!["\\/bfnrtu])/g, '\\\\')
+}
+
 async function parseBiomeOutput(
   output: string,
   cwd: string,
 ): Promise<NormalizedDiagnostic[]> {
   let parsed: BiomeOutput
   try {
-    parsed = JSON.parse(output)
+    parsed = JSON.parse(sanitizeBiomeOutput(output))
   } catch {
-    console.error('[biome] JSON.parse failed, stdout:', output)
     return []
   }
 
   const entries = getEntries(parsed, cwd)
   const files = getUniqueFiles(entries)
   const sourceCache = await readSources(files)
-  console.error(
-    `[biome] entries: ${entries.length}, files: ${files.length}, cached: ${sourceCache.size}`,
-  )
 
   return buildDiagnostics(entries, sourceCache)
 }
