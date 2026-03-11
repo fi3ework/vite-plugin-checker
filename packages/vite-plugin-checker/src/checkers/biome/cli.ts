@@ -117,12 +117,16 @@ async function parseBiomeOutput(
   try {
     parsed = JSON.parse(output)
   } catch {
+    console.error('[biome] JSON.parse failed, stdout length:', output?.length)
     return []
   }
 
   const entries = getEntries(parsed, cwd)
   const files = getUniqueFiles(entries)
   const sourceCache = await readSources(files)
+  console.error(
+    `[biome] entries: ${entries.length}, files: ${files.length}, cached: ${sourceCache.size}`,
+  )
 
   return buildDiagnostics(entries, sourceCache)
 }
