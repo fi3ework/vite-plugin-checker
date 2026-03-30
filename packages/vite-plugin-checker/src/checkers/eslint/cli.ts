@@ -24,24 +24,18 @@ export function translateOptions({
   config,
   env,
   errorOnUnmatchedPattern,
-  eslintrc,
-  ext,
   fix,
   fixDryRun,
   fixType,
   global,
   ignore,
-  ignorePath,
   ignorePattern,
   inlineConfig,
   parser,
   parserOptions,
   plugin,
   quiet,
-  reportUnusedDisableDirectives,
-  resolvePluginsRelativeTo,
   rule,
-  rulesdir,
 }: any) {
   return {
     allowInlineConfig: inlineConfig,
@@ -49,11 +43,9 @@ export function translateOptions({
     cacheLocation: cacheLocation || cacheFile,
     cacheStrategy,
     errorOnUnmatchedPattern,
-    extensions: ext,
     fix: (fix || fixDryRun) && (quiet ? quietFixPredicate : true),
     fixTypes: fixType,
     ignore,
-    ignorePath,
     overrideConfig: {
       env:
         // @ts-expect-error
@@ -77,11 +69,7 @@ export function translateOptions({
       rules: rule,
     },
     overrideConfigFile: config,
-    reportUnusedDisableDirectives: reportUnusedDisableDirectives
-      ? 'error'
-      : void 0,
-    resolvePluginsRelativeTo,
-    rulePaths: rulesdir,
-    useEslintrc: eslintrc,
   }
 }
+
+//extensions

@@ -1,4 +1,3 @@
-import Module from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
@@ -24,7 +23,6 @@ import { translateOptions } from './cli.js'
 import { options as optionator } from './options.js'
 
 const __filename = fileURLToPath(import.meta.url)
-const require = Module.createRequire(import.meta.url)
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
@@ -69,25 +67,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ...pluginConfig.eslint.dev?.overrideConfig,
       }
 
-      let eslint: ESLint
-      if (pluginConfig.eslint.useFlatConfig) {
-        const {
-          FlatESLint,
-          shouldUseFlatConfig,
-        } = require('eslint/use-at-your-own-risk')
-        if (shouldUseFlatConfig?.()) {
-          eslint = new FlatESLint({
-            cwd: root,
-          })
-        } else {
-          throw Error(
-            'Please upgrade your eslint to latest version to use `useFlatConfig` option.',
-          )
-        }
-      } else {
-        eslint = new ESLint(eslintOptions)
-      }
-
+      const eslint = new ESLint(eslintOptions)
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
         if (terminal) {
