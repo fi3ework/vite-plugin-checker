@@ -11,8 +11,7 @@
  * will be only respected in ESLint CLI.
  */
 
-// @ts-expect-error
-function quietFixPredicate(message) {
+function quietFixPredicate(message: { severity: number }) {
   return message.severity === 2
 }
 
@@ -22,7 +21,6 @@ export function translateOptions({
   cacheLocation,
   cacheStrategy,
   config,
-  env,
   errorOnUnmatchedPattern,
   fix,
   fixDryRun,
@@ -37,6 +35,27 @@ export function translateOptions({
   quiet,
   rule,
 }: any) {
+  const languageOptions: any = {
+    globals:
+      global?.reduce((obj: Record<string, string>, name: string) => {
+        if (name.endsWith(':true')) {
+          obj[name.slice(0, -5)] = 'writable'
+        } else {
+          obj[name] = 'readonly'
+        }
+        return obj
+      }, {}) || {},
+  }
+  if (parser) languageOptions.parser = parser
+  if (parserOptions) languageOptions.parserOptions = parserOptions
+
+  const overrideConfig: any = {
+    languageOptions,
+    ignores: ignorePattern || [],
+    rules: rule || {},
+  }
+  if (plugin) overrideConfig.plugins = plugin
+
   return {
     allowInlineConfig: inlineConfig,
     cache,
@@ -46,27 +65,7 @@ export function translateOptions({
     fix: (fix || fixDryRun) && (quiet ? quietFixPredicate : true),
     fixTypes: fixType,
     ignore,
-    overrideConfig: {
-      languageOptions: {
-        globals:
-          // @ts-expect-error
-          global?.reduce((obj, name) => {
-            if (name.endsWith(':true')) {
-              obj[name.slice(0, -5)] = 'writable'
-            } else {
-              obj[name] = 'readonly'
-            }
-            return obj
-          }, {}) || {},
-        parser,
-        parserOptions,
-      },
-      ignores: ignorePattern || [],
-      plugins: plugin || {},
-      rules: rule || {},
-    },
+    overrideConfig,
     overrideConfigFile: config,
   }
 }
-
-//extensions

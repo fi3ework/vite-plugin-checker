@@ -105,12 +105,6 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         filePath: string,
         type: 'change' | 'unlink',
       ) => {
-        // See: https://github.com/eslint/eslint/pull/4465
-        const extension = path.extname(filePath)
-        const { extensions } = eslintOptions
-        const hasExtensionsConfig = Array.isArray(extensions)
-        if (hasExtensionsConfig && !extensions.includes(extension)) return
-
         const isChangedFileIgnored = await eslint.isPathIgnored(filePath)
         if (isChangedFileIgnored) return
 

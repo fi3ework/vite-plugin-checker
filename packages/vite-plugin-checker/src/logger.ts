@@ -356,7 +356,7 @@ export function normalizeEslintDiagnostic(
   return diagnostic.messages
     .map((d) => {
       let level = DiagnosticLevel.Error
-      switch (d.severity) {
+      switch (d.severity as number) {
         case 0: // off, ignore this
           level = DiagnosticLevel.Error
           return null

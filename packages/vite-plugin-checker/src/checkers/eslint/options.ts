@@ -11,17 +11,12 @@
 
 import { createRequire } from 'node:module'
 const _require = createRequire(import.meta.url)
-import { dirname } from 'node:path'
 
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-const eslintDir = dirname(_require.resolve('eslint/package.json'))
-const optionatorPath = _require.resolve('optionator', {
-  paths: [eslintDir],
-})
-const optionator = _require(optionatorPath)
+const optionator = _require('optionator')
 
 //------------------------------------------------------------------------------
 // Typedefs
