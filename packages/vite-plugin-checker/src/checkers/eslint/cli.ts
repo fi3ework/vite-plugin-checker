@@ -48,8 +48,8 @@ export function translateOptions({
     ignore,
     overrideConfig: {
       languageOptions: {
-        // @ts-expect-error
         globals:
+          // @ts-expect-error
           global?.reduce((obj, name) => {
             if (name.endsWith(':true')) {
               obj[name.slice(0, -5)] = 'writable'
