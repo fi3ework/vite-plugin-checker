@@ -47,26 +47,23 @@ export function translateOptions({
     fixTypes: fixType,
     ignore,
     overrideConfig: {
-      env:
+      languageOptions: {
         // @ts-expect-error
-        env?.reduce((obj, name) => {
-          obj[name] = true
-          return obj
-        }, {}),
-      // @ts-expect-error
-      globals: global?.reduce((obj, name) => {
-        if (name.endsWith(':true')) {
-          obj[name.slice(0, -5)] = 'writable'
-        } else {
-          obj[name] = 'readonly'
-        }
-        return obj
-      }, {}),
-      ignorePatterns: ignorePattern,
-      parser,
-      parserOptions,
-      plugins: plugin,
-      rules: rule,
+        globals:
+          global?.reduce((obj, name) => {
+            if (name.endsWith(':true')) {
+              obj[name.slice(0, -5)] = 'writable'
+            } else {
+              obj[name] = 'readonly'
+            }
+            return obj
+          }, {}) || {},
+        parser,
+        parserOptions,
+      },
+      ignores: ignorePattern || [],
+      plugins: plugin || {},
+      rules: rule || {},
     },
     overrideConfigFile: config,
   }
