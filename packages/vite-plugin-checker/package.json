@@ -46,7 +46,7 @@
     "@types/eslint": "^8.56.12",
     "@types/picomatch": "^4.0.2",
     "@types/proper-lockfile": "^4.1.4",
-    "@vue/language-core": "~3.2.5",
+    "@vue/language-core": "~3.2.6",
     "meow": "^13.2.0",
     "stylelint": "^16.22.0",
     "tsup": "^8.5.1",
