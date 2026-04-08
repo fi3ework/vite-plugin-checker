@@ -21,7 +21,7 @@ export function createIgnore(_root: string, pattern: string | string[] = []) {
     })
     .filter(Boolean)
 
-  const matcher = picomatch(globs, { cwd: root })
+  const matcher = picomatch(globs)
 
   return (path: string, _stats?: Stats) => {
     if (path.includes('node_modules')) {
