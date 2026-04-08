@@ -108,7 +108,7 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
       picomatch:
-        specifier: ^4.0.3
+        specifier: ^4.0.4
         version: 4.0.4
       proper-lockfile:
         specifier: ^4.1.2
@@ -127,8 +127,8 @@ importers:
         specifier: ^8.56.12
         version: 8.56.12
       '@types/picomatch':
-        specifier: ^4.0.2
-        version: 4.0.2
+        specifier: ^4.0.3
+        version: 4.0.3
       '@types/proper-lockfile':
         specifier: ^4.1.4
         version: 4.1.4
@@ -2513,8 +2513,8 @@ packages:
   '@types/node@20.19.9':
     resolution: {integrity: sha512-cuVNgarYWZqxRJDQHEB58GEONhOK79QVR/qYx4S7kcUObQvUwvFnYxJuuHUKm2aieN9X3yZB4LZsuYNU1Qphsw==}
 
-  '@types/picomatch@4.0.2':
-    resolution: {integrity: sha512-qHHxQ+P9PysNEGbALT8f8YOSHW0KJu6l2xU8DYY0fu/EmGxXdVnuTLvFUvBgPJMSqXq29SYHveejeAha+4AYgA==}
+  '@types/picomatch@4.0.3':
+    resolution: {integrity: sha512-iG0T6+nYJ9FAPmx9SsUlnwcq1ZVRuCXcVEvWnntoPlrOpwtSTKNDC9uVAxTsC3PUvJ+99n4RpAcNgBbHX3JSnQ==}
 
   '@types/proper-lockfile@4.1.4':
     resolution: {integrity: sha512-uo2ABllncSqg9F1D4nugVl9v93RmjxF6LJzQLMLDdPaXCUIDPeOJ21Gbqi43xNKzBi/WQ0Q0dICqufzQbMjipQ==}
@@ -7469,7 +7469,7 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/picomatch@4.0.2': {}
+  '@types/picomatch@4.0.3': {}
 
   '@types/proper-lockfile@4.1.4':
     dependencies:
