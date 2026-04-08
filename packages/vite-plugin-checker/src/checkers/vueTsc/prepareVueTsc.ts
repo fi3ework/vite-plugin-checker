@@ -28,8 +28,8 @@ async function isFixtureValid(
 ) {
   try {
     await access(targetTsDir)
-    const targetTsVersion = _require(
-      path.resolve(targetTsDir, 'package.json'),
+    const targetTsVersion = JSON.parse(
+      await readFile(path.resolve(targetTsDir, 'package.json'), 'utf8'),
     ).version
     await access(vueTscFlagFile)
     const fixtureFlagContent = await readFile(vueTscFlagFile, 'utf8')
@@ -57,17 +57,26 @@ export async function prepareVueTsc() {
     return { targetTsDir }
   }
 
-  const release = await lockfile.lock(_dirname, {
-    lockfilePath: path.resolve(_dirname, '.vue-tsc-fixture.lock'),
-    stale: STALE_TIMEOUT_MS,
-    retries: {
-      retries: Math.ceil(LOCK_TIMEOUT_MS / 1000),
-      factor: 1,
-      minTimeout: 1000,
-      maxTimeout: 2000,
-      randomize: true,
-    },
-  })
+  let release: Awaited<ReturnType<typeof lockfile.lock>>
+  try {
+    release = await lockfile.lock(_dirname, {
+      lockfilePath: path.resolve(_dirname, '.vue-tsc-fixture.lock'),
+      stale: STALE_TIMEOUT_MS,
+      retries: {
+        retries: Math.ceil(LOCK_TIMEOUT_MS / 1000),
+        factor: 1,
+        minTimeout: 1000,
+        maxTimeout: 2000,
+        randomize: true,
+      },
+    })
+  } catch (err) {
+    throw new Error(
+      '[vite-plugin-checker] Failed to acquire lock for vue-tsc fixture preparation. ' +
+        'Another process may be holding the lock.\n' +
+        String(err),
+    )
+  }
 
   try {
     // Double-check that the fixture is valid, another process may have built while trying to acquire the lock

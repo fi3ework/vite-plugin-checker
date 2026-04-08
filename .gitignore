@@ -111,3 +111,6 @@ lib/
 playground-temp/
 packages/runtime/public/build/bundle.js
 docs/.vitepress/cache
+
+# vue-tsc fixture lock
+.vue-tsc-fixture.lock
