@@ -59,8 +59,6 @@ type Entry = {
   sourceCode?: string
 }
 
-// ── Schema detection ────────────────────────────────────────────────
-
 function isModernDiagnostic(d: Diagnostic): d is ModernDiagnostic {
   return d.location !== undefined && typeof d.location.path === 'string'
 }
@@ -73,8 +71,6 @@ function isLegacyDiagnostic(d: Diagnostic): d is LegacyDiagnostic {
     'file' in d.location.path
   )
 }
-
-// ── Entry extraction ────────────────────────────────────────────────
 
 function getEntries(parsed: BiomeOutput, cwd: string): Entry[] {
   return parsed.diagnostics.flatMap((d): Entry[] => {
