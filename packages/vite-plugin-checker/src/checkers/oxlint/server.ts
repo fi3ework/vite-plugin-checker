@@ -40,8 +40,6 @@ export async function setupDevServer(
       displayTargets,
     )
   })
-
-  watcher.add('.')
 }
 
 function handleFileUnlink(
