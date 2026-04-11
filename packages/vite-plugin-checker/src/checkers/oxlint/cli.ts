@@ -1,10 +1,9 @@
 import { exec } from 'node:child_process'
-import fs from 'node:fs/promises'
-import path from 'node:path'
 import { stripVTControlCharacters as strip } from 'node:util'
 import colors from 'picocolors'
 import { createFrame, offsetRangeToBabelLocation } from '../../codeFrame.js'
 import { consoleLog, type NormalizedDiagnostic } from '../../logger.js'
+import { normalizePath, readSources } from '../../sources.js'
 import { DiagnosticLevel } from '../../types.js'
 import { parseArgsStringToArgv } from '../stylelint/argv.js'
 
@@ -113,21 +112,6 @@ function getUniqueFiles(entries: Entry[]) {
   return [...new Set(entries.map((e) => e.file))]
 }
 
-async function readSources(files: string[]) {
-  const cache = new Map<string, string>()
-  await Promise.all(
-    files.map(async (file) => {
-      try {
-        const source = await fs.readFile(file, 'utf8')
-        cache.set(file, source)
-      } catch {
-        // Ignore unreadable files; related diagnostics will be skipped.
-      }
-    }),
-  )
-  return cache
-}
-
 function buildDiagnostics(entries: Entry[], sources: Map<string, string>) {
   return entries.flatMap((entry) => {
     const source = sources.get(entry.file)
@@ -153,18 +137,6 @@ function buildDiagnostics(entries: Entry[], sources: Map<string, string>) {
       },
     ] as NormalizedDiagnostic[]
   })
-}
-
-function normalizePath(p: string, cwd: string) {
-  let filename = p
-  if (filename) {
-    filename = path.isAbsolute(filename)
-      ? filename
-      : path.resolve(cwd, filename)
-    filename = path.normalize(filename)
-  }
-
-  return filename
 }
 
 type OxlintOutput = {
