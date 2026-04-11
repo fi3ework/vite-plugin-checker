@@ -10,8 +10,8 @@
     "serve": "vite preview"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.1.2",
-    "vite": "^7.1.11",
+    "@biomejs/biome": "^2.4.0",
+    "vite": "^8.0.5",
     "vite-plugin-checker": "workspace:*"
   }
 }
