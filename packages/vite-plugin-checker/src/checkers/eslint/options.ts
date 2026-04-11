@@ -10,13 +10,23 @@
 'use strict'
 
 import { createRequire } from 'node:module'
+import { dirname } from 'node:path'
 const _require = createRequire(import.meta.url)
 
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-const optionator = _require('optionator')
+// Try to resolve optionator from ESLint's own dependencies first (ESLint v9
+// bundles it), then fall back to a locally installed copy.
+let optionator: any
+try {
+  const eslintDir = dirname(_require.resolve('eslint/package.json'))
+  const optionatorPath = _require.resolve('optionator', { paths: [eslintDir] })
+  optionator = _require(optionatorPath)
+} catch {
+  optionator = _require('optionator')
+}
 
 //------------------------------------------------------------------------------
 // Typedefs

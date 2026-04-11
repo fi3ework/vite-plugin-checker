@@ -1,3 +1,4 @@
+import Module from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
@@ -23,11 +24,62 @@ import { translateOptions } from './cli.js'
 import { options as optionator } from './options.js'
 
 const __filename = fileURLToPath(import.meta.url)
+const _require = Module.createRequire(import.meta.url)
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types'
+
+/**
+ * Detect the installed ESLint major version.
+ */
+function getEslintMajorVersion(): number {
+  try {
+    const eslintPkg = _require('eslint/package.json')
+    return Number.parseInt(eslintPkg.version.split('.')[0], 10)
+  } catch {
+    return 10 // assume latest if we can't detect
+  }
+}
+
+/**
+ * Resolve the correct ESLint class based on version and config mode.
+ *
+ * - ESLint v10+: Only flat config is supported, use `ESLint` directly.
+ * - ESLint v9 with flat config (default): Use `ESLint` directly (it's the flat config class in v9).
+ * - ESLint v9 with legacy eslintrc: Use `LegacyESLint` from `eslint/use-at-your-own-risk`.
+ */
+function resolveEslintClass(
+  useFlatConfig: boolean,
+  majorVersion: number,
+): typeof ESLint {
+  if (majorVersion >= 10) {
+    // v10+ only supports flat config
+    return ESLint
+  }
+
+  if (useFlatConfig) {
+    // v9 with flat config — the default `ESLint` export is already the flat config class
+    return ESLint
+  }
+
+  // v9 with legacy eslintrc — need to load LegacyESLint
+  try {
+    const { LegacyESLint } = _require('eslint/use-at-your-own-risk')
+    if (LegacyESLint) {
+      return LegacyESLint
+    }
+  } catch {
+    // fall through
+  }
+
+  throw new Error(
+    'Legacy eslintrc mode (useFlatConfig: false) requires ESLint v9. ' +
+      'ESLint v10+ only supports flat config. Please upgrade your config to flat config ' +
+      'or set useFlatConfig to true.',
+  )
+}
 
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
   let overlay = true
@@ -41,13 +93,28 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
     async configureServer({ root }) {
       if (!pluginConfig.eslint) return
 
+      const majorVersion = getEslintMajorVersion()
+      const useFlatConfig = pluginConfig.eslint.useFlatConfig ?? true
+
+      if (!useFlatConfig && majorVersion >= 10) {
+        console.warn(
+          '[vite-plugin-checker] useFlatConfig: false is not supported with ESLint v10+. ' +
+            'Falling back to flat config mode.',
+        )
+      }
+
+      const effectiveUseFlatConfig = majorVersion >= 10 ? true : useFlatConfig
+
       const options = optionator.parse(pluginConfig.eslint.lintCommand)
       invariant(
         !options.fix,
         'Using `--fix` in `config.eslint.lintCommand` is not allowed in vite-plugin-checker, you could using `--fix` with editor.',
       )
 
-      const translatedOptions = translateOptions(options) as ESLint.Options
+      const translatedOptions = translateOptions(
+        options,
+        effectiveUseFlatConfig,
+      ) as ESLint.Options
 
       const logLevel = (() => {
         if (typeof pluginConfig.eslint !== 'object') return undefined
@@ -67,7 +134,12 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ...pluginConfig.eslint.dev?.overrideConfig,
       }
 
-      const eslint = new ESLint(eslintOptions)
+      const EslintClass = resolveEslintClass(
+        effectiveUseFlatConfig,
+        majorVersion,
+      )
+      const eslint = new EslintClass(eslintOptions)
+
       const dispatchDiagnostics = () => {
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
         if (terminal) {
@@ -105,6 +177,14 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         filePath: string,
         type: 'change' | 'unlink',
       ) => {
+        // In legacy mode, filter by file extension if --ext was provided
+        if (!effectiveUseFlatConfig) {
+          const extension = path.extname(filePath)
+          const { extensions } = eslintOptions as any
+          const hasExtensionsConfig = Array.isArray(extensions)
+          if (hasExtensionsConfig && !extensions.includes(extension)) return
+        }
+
         const isChangedFileIgnored = await eslint.isPathIgnored(filePath)
         if (isChangedFileIgnored) return
 
