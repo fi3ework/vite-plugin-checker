@@ -139,7 +139,7 @@ importers:
         specifier: ^13.2.0
         version: 13.2.0
       stylelint:
-        specifier: ^16.22.0
+        specifier: ^16.26.1
         version: 16.26.1(typescript@5.9.3)
       tsup:
         specifier: ^8.5.1
@@ -543,7 +543,7 @@ importers:
         specifier: ^13.2.0
         version: 13.2.0
       stylelint:
-        specifier: ^16.22.0
+        specifier: ^16.26.1
         version: 16.26.1(typescript@5.8.3)
       stylelint-config-standard:
         specifier: ^38.0.0
