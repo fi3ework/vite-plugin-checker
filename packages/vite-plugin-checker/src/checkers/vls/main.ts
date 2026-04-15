@@ -109,6 +109,7 @@ export class VlsChecker extends Checker<'vls'> {
 }
 
 export { createServeAndBuild }
+
 const vlsChecker = new VlsChecker()
 vlsChecker.prepare()
 vlsChecker.init()

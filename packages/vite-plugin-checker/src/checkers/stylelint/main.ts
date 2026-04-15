@@ -178,6 +178,7 @@ export class StylelintChecker extends Checker<'stylelint'> {
 }
 
 export { createServeAndBuild }
+
 const stylelintChecker = new StylelintChecker()
 stylelintChecker.prepare()
 stylelintChecker.init()
