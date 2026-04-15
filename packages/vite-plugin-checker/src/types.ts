@@ -61,7 +61,14 @@ export type EslintConfig =
        */
       lintCommand: string
       /**
-       * @default false
+       * Use flat config mode. Only relevant for ESLint v9 which supports both
+       * flat config and legacy eslintrc modes. ESLint v10+ always uses flat config.
+       *
+       * - `true`: Use flat config (default for ESLint v9 and v10+)
+       * - `false`: Use legacy eslintrc config (ESLint v9 only)
+       *
+       * When not specified, defaults to `true` (flat config).
+       * @default true
        */
       useFlatConfig?: boolean
       dev?: Partial<{
