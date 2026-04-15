@@ -16,9 +16,84 @@ function quietFixPredicate(message: { severity: number }) {
 }
 
 /**
+ * Translate parsed CLI options to ESLint legacy (eslintrc) API options.
+ * This is the original translateOptions from ESLint's CLI, used for
+ * ESLint v9 in legacy eslintrc mode.
+ */
+function translateOptionsLegacy({
+  cache,
+  cacheFile,
+  cacheLocation,
+  cacheStrategy,
+  config,
+  env,
+  errorOnUnmatchedPattern,
+  eslintrc,
+  ext,
+  fix,
+  fixDryRun,
+  fixType,
+  global,
+  ignore,
+  ignorePath,
+  ignorePattern,
+  inlineConfig,
+  parser,
+  parserOptions,
+  plugin,
+  quiet,
+  reportUnusedDisableDirectives,
+  resolvePluginsRelativeTo,
+  rule,
+  rulesdir,
+}: any) {
+  return {
+    allowInlineConfig: inlineConfig,
+    cache,
+    cacheLocation: cacheLocation || cacheFile,
+    cacheStrategy,
+    errorOnUnmatchedPattern,
+    extensions: ext,
+    fix: (fix || fixDryRun) && (quiet ? quietFixPredicate : true),
+    fixTypes: fixType,
+    ignore,
+    ignorePath,
+    overrideConfig: {
+      env:
+        // @ts-expect-error
+        env?.reduce((obj, name) => {
+          obj[name] = true
+          return obj
+        }, {}),
+      // @ts-expect-error
+      globals: global?.reduce((obj, name) => {
+        if (name.endsWith(':true')) {
+          obj[name.slice(0, -5)] = 'writable'
+        } else {
+          obj[name] = 'readonly'
+        }
+        return obj
+      }, {}),
+      ignorePatterns: ignorePattern,
+      parser,
+      parserOptions,
+      plugins: plugin,
+      rules: rule,
+    },
+    overrideConfigFile: config,
+    reportUnusedDisableDirectives: reportUnusedDisableDirectives
+      ? 'error'
+      : void 0,
+    resolvePluginsRelativeTo,
+    rulePaths: rulesdir,
+    useEslintrc: eslintrc,
+  }
+}
+
+/**
  * Translate parsed CLI options to ESLint flat config API options (v9 flat / v10+).
  */
-export function translateOptionsFlatConfig({
+function translateOptionsFlatConfig({
   cache,
   cacheFile,
   cacheLocation,
@@ -70,76 +145,6 @@ export function translateOptionsFlatConfig({
     ignore,
     overrideConfig,
     overrideConfigFile: config,
-  }
-}
-
-/**
- * Translate parsed CLI options to ESLint legacy (eslintrc) API options (v9 legacy mode).
- */
-export function translateOptionsLegacy({
-  cache,
-  cacheFile,
-  cacheLocation,
-  cacheStrategy,
-  config,
-  env,
-  errorOnUnmatchedPattern,
-  eslintrc,
-  ext,
-  fix,
-  fixDryRun,
-  fixType,
-  global,
-  ignore,
-  ignorePath,
-  ignorePattern,
-  inlineConfig,
-  parser,
-  parserOptions,
-  plugin,
-  quiet,
-  reportUnusedDisableDirectives,
-  resolvePluginsRelativeTo,
-  rule,
-  rulesdir,
-}: any) {
-  return {
-    allowInlineConfig: inlineConfig,
-    cache,
-    cacheLocation: cacheLocation || cacheFile,
-    cacheStrategy,
-    errorOnUnmatchedPattern,
-    extensions: ext,
-    fix: (fix || fixDryRun) && (quiet ? quietFixPredicate : true),
-    fixTypes: fixType,
-    ignore,
-    ignorePath,
-    overrideConfig: {
-      env: env?.reduce((obj: Record<string, boolean>, name: string) => {
-        obj[name] = true
-        return obj
-      }, {}),
-      globals: global?.reduce((obj: Record<string, string>, name: string) => {
-        if (name.endsWith(':true')) {
-          obj[name.slice(0, -5)] = 'writable'
-        } else {
-          obj[name] = 'readonly'
-        }
-        return obj
-      }, {}),
-      ignorePatterns: ignorePattern,
-      parser,
-      parserOptions,
-      plugins: plugin,
-      rules: rule,
-    },
-    overrideConfigFile: config,
-    reportUnusedDisableDirectives: reportUnusedDisableDirectives
-      ? 'error'
-      : void 0,
-    resolvePluginsRelativeTo,
-    rulePaths: rulesdir,
-    useEslintrc: eslintrc,
   }
 }
 
