@@ -208,6 +208,7 @@ export class EslintChecker extends Checker<'eslint'> {
 }
 
 export { createServeAndBuild }
+
 const eslintChecker = new EslintChecker()
 eslintChecker.prepare()
 eslintChecker.init()

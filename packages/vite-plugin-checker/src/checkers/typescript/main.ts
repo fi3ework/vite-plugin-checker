@@ -215,6 +215,7 @@ export class TscChecker extends Checker<'typescript'> {
 }
 
 export { createServeAndBuild }
+
 const tscChecker = new TscChecker()
 tscChecker.prepare()
 tscChecker.init()

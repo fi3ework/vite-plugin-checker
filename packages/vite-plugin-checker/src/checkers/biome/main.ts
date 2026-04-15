@@ -170,6 +170,7 @@ export class BiomeChecker extends Checker<'biome'> {
 }
 
 export { createServeAndBuild }
+
 const biomeChecker = new BiomeChecker()
 biomeChecker.prepare()
 biomeChecker.init()

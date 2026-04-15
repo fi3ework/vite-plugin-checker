@@ -205,6 +205,7 @@ export class VueTscChecker extends Checker<'vueTsc'> {
 }
 
 export { createServeAndBuild }
+
 const tscChecker = new VueTscChecker()
 tscChecker.prepare()
 tscChecker.init()
