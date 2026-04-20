@@ -45,6 +45,10 @@ export function runOxlint(argv: string[], cwd: string) {
       {
         cwd,
         maxBuffer: Number.POSITIVE_INFINITY,
+        // Required on Windows so execFile can resolve .cmd/.bat shims in
+        // node_modules/.bin. Node >=18.20/20.12/22 auto-quotes argv under
+        // shell:true, preserving the no-splitting guarantee.
+        shell: process.platform === 'win32',
       },
       (_error, stdout, _stderr) => {
         parseOxlintOutput(stdout, cwd)
