@@ -10,7 +10,7 @@
     "serve": "vite preview"
   },
   "devDependencies": {
-    "eslint": "^10.0.0",
+    "eslint": "^10.2.1",
     "vite": "^8.0.9",
     "vite-plugin-checker": "workspace:*"
   }
