@@ -18,7 +18,7 @@
     "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^10.0.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.0.0",
+    "typescript-eslint": "^8.58.2",
     "vite": "^8.0.8",
     "vite-plugin-checker": "workspace:*"
   }
