@@ -17,7 +17,11 @@ import {
   toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
+import { createLintScheduler } from '../_shared/lintScheduler.js'
 import { translateOptions } from './options.js'
+
+const DEBOUNCE_MS = 300
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
@@ -92,27 +96,20 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         }
       }
 
-      const handleFileChange = async (
-        filePath: string,
-        type: 'change' | 'unlink',
-      ) => {
-        const absPath = path.resolve(root, filePath)
-
-        if (type === 'unlink') {
-          manager.updateByFileId(absPath, [])
-        } else if (type === 'change') {
-          const { results: diagnosticsOfChangedFile } = await stylelint.lint({
+      const scheduler = createLintScheduler({
+        debounceMs: DEBOUNCE_MS,
+        onBatch: async (files) => {
+          const { results } = await stylelint.lint({
             ...baseConfig,
-            files: filePath,
+            files,
           })
-          const newDiagnostics = diagnosticsOfChangedFile.flatMap((d) =>
+          const newDiagnostics = results.flatMap((d) =>
             normalizeStylelintDiagnostic(d),
           )
-          manager.updateByFileId(absPath, newDiagnostics)
-        }
-
-        dispatchDiagnostics()
-      }
+          applyBatchedDiagnostics(manager, files, newDiagnostics, root)
+          dispatchDiagnostics()
+        },
+      })
 
       // initial lint
       const { results: diagnostics } = await stylelint.lint({
@@ -142,11 +139,13 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         ignored: createIgnore(root, translatedOptions.files),
       })
 
-      watcher.on('change', async (filePath) => {
-        handleFileChange(filePath, 'change')
+      watcher.on('change', (filePath) => {
+        scheduler.schedule(path.resolve(root, filePath))
       })
-      watcher.on('unlink', async (filePath) => {
-        handleFileChange(filePath, 'unlink')
+      watcher.on('unlink', (filePath) => {
+        const absPath = path.resolve(root, filePath)
+        manager.updateByFileId(absPath, [])
+        dispatchDiagnostics()
       })
     },
   }
