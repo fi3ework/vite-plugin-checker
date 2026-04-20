@@ -183,6 +183,30 @@ describe('createLintScheduler', () => {
     expect(onBatch).toHaveBeenNthCalledWith(2, ['/r/b'])
   })
 
+  it('dispose() does not reject even if in-flight onBatch rejects', async () => {
+    const err = new Error('boom')
+    let rejectBatch: (e: Error) => void = () => {}
+    const onBatch = vi.fn().mockImplementation(
+      () =>
+        new Promise<void>((_, r) => {
+          rejectBatch = r
+        }),
+    )
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    s.schedule('/r/a')
+    vi.advanceTimersByTime(DEBOUNCE)
+    await tick()
+
+    const disposed = s.dispose()
+    rejectBatch(err)
+
+    // dispose() must resolve (not reject) despite the in-flight batch rejecting.
+    await expect(disposed).resolves.toBeUndefined()
+    expect(errorSpy).toHaveBeenCalled()
+  })
+
   it('dispose() awaits a never-resolving onBatch (observable contract)', async () => {
     const onBatch = vi
       .fn()

@@ -46,7 +46,7 @@ export function createLintScheduler(opts: LintSchedulerOptions): LintScheduler {
         console.error('[vite-plugin-checker] lint batch failed:', err)
       })
       .then(() => {
-        if (inFlight === raw) inFlight = null
+        inFlight = null
         drain()
       })
   }
@@ -66,7 +66,7 @@ export function createLintScheduler(opts: LintSchedulerOptions): LintScheduler {
       disposed = true
       clearTimer()
       pending.clear()
-      return inFlight ?? Promise.resolve()
+      return (inFlight ?? Promise.resolve()).catch(() => {})
     },
   }
 }
