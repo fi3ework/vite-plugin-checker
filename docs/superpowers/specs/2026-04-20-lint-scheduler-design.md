@@ -78,16 +78,19 @@ export function applyBatchedDiagnostics(
 
 Behavior:
 
-- Bucket `diagnostics` by `diagnostic.id` into `Map<string, NormalizedDiagnostic[]>`. For all four checkers, `NormalizedDiagnostic.id` is the absolute file path (verified: `oxlint/cli.ts:133`, `biome/cli.ts:139`, `logger.ts:380` for eslint, `logger.ts:418` for stylelint).
+- Bucket `diagnostics` by `diagnostic.id` into `Map<string, NormalizedDiagnostic[]>`. For all four checkers, `NormalizedDiagnostic.id` is the absolute file path (verified: `src/checkers/oxlint/cli.ts:133`, `src/checkers/biome/cli.ts:139`, `src/logger.ts:380` for eslint, `src/logger.ts:418` for stylelint).
+- Diagnostics whose `id` is `undefined` or empty string (stylelint can produce these for stdin-sourced input) are dropped during bucketing — they cannot be matched to a file in the batch and have nowhere to go. This is a log-and-skip, not an error.
 - For each `file` in `batch`, call `manager.updateByFileId(file, byFile.get(file) ?? [])`.
 - Files in the batch that produced no diagnostics get their stale diagnostics cleared to `[]`.
 - Files not in the batch are left untouched.
 
-**Path normalization.** The batch paths arrive from `path.resolve(root, watcherFilePath)`; the diagnostic `id`s come from the linter's output through `normalizePath` in `sources.ts`. Both sides must use the same normalization before keying or a file can "miss" its bucket and be incorrectly cleared. The helper applies `normalizePath(p, root)` to both sides before bucketing.
+**Path normalization.** The batch paths are absolute (see the path contract above). The linter's diagnostic `id`s are absolute after each checker's own normalization. To harden against a checker whose normalizer produces a path that differs from `path.resolve(root, relPath)` in casing, separators, or symlink resolution, `applyBatchedDiagnostics` calls `sources.ts`'s `normalizePath(p, root)` on both the batch paths and each diagnostic's `id` before keying.
 
 ### Per-checker wiring
 
-Each checker's existing `watcher.on('change', handleFileChange)` shrinks to `watcher.on('change', scheduler.schedule)`. The body of `handleFileChange` moves into the `onBatch` callback, promoted from per-file to batched.
+Each checker's existing `watcher.on('change', handleFileChange)` shrinks to a small async handler that (a) resolves the chokidar-relative path to absolute via `path.resolve(root, filePath)`, (b) applies any per-file pre-filter (see eslint below), and (c) calls `scheduler.schedule(absPath)`. The body of `handleFileChange` moves into the `onBatch` callback, promoted from per-file to batched.
+
+**Path contract.** `scheduler.schedule()` is always called with an absolute path. `pending` holds absolute paths. The `files: string[]` handed to `onBatch` is absolute. This matches the existing per-file behavior (each checker resolves to `absPath` before calling its linter) and makes path matching against `NormalizedDiagnostic.id` (also absolute, after the linter's own normalization) consistent without additional resolution inside `onBatch`.
 
 The `unlink` handler is unchanged in shape: it calls `manager.updateByFileId(absPath, [])` directly and does not involve the scheduler. Unlinks are cheap and do not spawn lint runs.
 
@@ -116,10 +119,10 @@ onBatch: async (files) => {
 
 **Per-checker quirks to preserve:**
 
-- **eslint** performs two per-file checks before running its linter today: an extension filter (legacy `--ext` mode only) and `eslint.isPathIgnored(filePath)`. In the batched world, these filters must run before entering the scheduler, so that `scheduler.schedule(filePath)` is only called for files that will actually be linted. The batch handed to `eslint.lintFiles(files)` is already filtered.
-- **biome** passes a single path via `getBiomeCommand(command, flags, absPath)`; the batched call passes the joined path list `files.join(' ')`. Biome CLI accepts multiple path arguments.
-- **oxlint** today passes a single path as the last argument; batched call joins all paths. The CLI accepts multiple.
-- **stylelint** accepts an array for `files`; batched call passes `files` directly instead of a single path.
+- **eslint** performs two per-file checks before running its linter today: an extension filter (legacy `--ext` mode only) and `eslint.isPathIgnored(filePath)` (async). In the batched world, these filters must run in the `watcher.on('change')` handler before `scheduler.schedule()`, so the batch handed to `eslint.lintFiles(files)` is already filtered. The handler becomes `async` and `await`s `isPathIgnored`; a burst of 10 events starts 10 concurrent `isPathIgnored` calls, which is cheap (pure path-match against config) and unrelated to the lint-subprocess concern this PR addresses.
+- **biome** today calls `getBiomeCommand(command, flags, absPath)` (`src/checkers/biome/cli.ts:21` — third arg is typed `string`, a single path). In the batched world, no signature change: pass `files.join(' ')` to the same third parameter. The Biome CLI accepts multiple path arguments appended after flags, so the joined string works as-is.
+- **oxlint** today passes a single path as the last argument of the command string (`server.ts:67`: `${command} ${absPath}`). Batched call joins all paths: `${command} ${files.join(' ')}`. The CLI accepts multiple.
+- **stylelint** today passes `files: filePath` to `stylelint.lint()` (`main.ts:106`). In the batched world, pass `files: files` (the absolute-path array from the scheduler). `stylelint.lint`'s `files` option accepts an array.
 
 ### Disposal wiring
 
@@ -150,7 +153,8 @@ Small, pure, table-driven.
 2. Batch `['a']`, diagnostics include one entry with `id: 'a'` → manager updated with that diagnostic for `'a'`.
 3. Batch `['a', 'b']`, diagnostics only for `'a'` → manager called twice: `updateByFileId('a', [...])` and `updateByFileId('b', [])`. Explicit: a file in the batch that the linter returned nothing for is a clean file and its stale diagnostics are cleared.
 4. Batch `['a']`, diagnostics include entries for `'a'` and `'c'` → manager only called for `'a'`. Files not in the batch (`'c'`) are not touched, even if the linter returned data about them.
-5. Path normalization: batch contains a path fed in as relative (`'src/file.ts'`) while the linter returns `id` as absolute (`'/root/src/file.ts'`) — after both pass through `normalizePath(p, root)`, the bucket still matches. Guards against a future checker whose normalizer differs from `sources.ts`.
+5. Path normalization: a diagnostic whose `id` arrives through the linter with a trailing separator, mixed casing, or unresolved `.` segment still buckets correctly after `normalizePath(p, root)`. Guards against a future checker whose normalizer differs from `sources.ts`.
+6. `undefined` / empty-string `id`: diagnostics with no `id` are dropped during bucketing and do not crash. Relevant for stylelint's stdin case.
 
 ### End-to-end coverage
 
