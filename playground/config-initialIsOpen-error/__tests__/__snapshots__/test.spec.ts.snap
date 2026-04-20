@@ -14,4 +14,12 @@ exports[`config-initialIsOpen-error > serve > -- should find overlay with error 
     6 | rootDom.innerHTML = hello + text"
 `;
 
-exports[`config-initialIsOpen-error > serve > -- should find overlay with error -- 4`] = `""`;
+exports[`config-initialIsOpen-error > serve > -- should find overlay with error -- 4`] = `
+"    3 | const hello = 'Hello'
+    4 |
+  > 5 | const rootDom = document.querySelector('#root')! as HTMLElement
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    6 | rootDom.innerHTML = hello + text
+    7 |
+    8 | export {}"
+`;
