@@ -81,6 +81,21 @@ describe('applyBatchedDiagnostics', () => {
     ])
   })
 
+  it('clears stale diagnostics when the batch path contains an un-normalized segment', () => {
+    const manager = new FileDiagnosticManager()
+    const unnormalized = '/repo/src/./a.ts'
+    applyBatchedDiagnostics(
+      manager,
+      [unnormalized],
+      [diag(fileA, 'first')],
+      ROOT,
+    )
+    expect(manager.getDiagnostics(fileA)).toHaveLength(1)
+    // Same un-normalized batch path, no new diagnostics → should clear
+    applyBatchedDiagnostics(manager, [unnormalized], [], ROOT)
+    expect(manager.getDiagnostics(fileA)).toEqual([])
+  })
+
   it('drops diagnostics with undefined or empty id without crashing', () => {
     const manager = new FileDiagnosticManager()
     manager.initWith([])

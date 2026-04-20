@@ -34,6 +34,6 @@ export function applyBatchedDiagnostics(
 
   for (const file of batch) {
     const key = normalizePath(file, root)
-    manager.updateByFileId(file, byFile.get(key) ?? [])
+    manager.updateByFileId(key, byFile.get(key) ?? [])
   }
 }
