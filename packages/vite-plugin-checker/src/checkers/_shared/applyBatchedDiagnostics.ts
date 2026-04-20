@@ -4,8 +4,8 @@ import { normalizePath } from '../../sources.js'
 
 /**
  * Bucket a flat diagnostic list by file and write per-file diagnostics
- * to the manager. Every file in `batch` is written (empty list clears
- * stale diagnostics). Files not in `batch` are untouched.
+ * to the manager. Every file in `scannedFiles` is written (empty list
+ * clears stale diagnostics). Files not in `scannedFiles` are untouched.
  *
  * Paths are normalized via `sources.ts#normalizePath(root)` on both sides
  * before keying to defend against checker normalizers that differ in
@@ -13,7 +13,7 @@ import { normalizePath } from '../../sources.js'
  */
 export function applyBatchedDiagnostics(
   manager: FileDiagnosticManager,
-  batch: string[],
+  scannedFiles: string[],
   diagnostics: NormalizedDiagnostic[],
   root: string,
 ): void {
@@ -21,9 +21,7 @@ export function applyBatchedDiagnostics(
   for (const d of diagnostics) {
     if (!d.id) continue // stylelint stdin or malformed entries
     const key = normalizePath(d.id, root)
-    // Normalize the id on the diagnostic itself so downstream consumers
-    // (FileDiagnosticManager.getDiagnostics) can match by exact path.
-    const normalized = key === d.id ? d : { ...d, id: key }
+    const normalized = { ...d, id: key }
     const bucket = byFile.get(key)
     if (bucket) {
       bucket.push(normalized)
@@ -32,7 +30,7 @@ export function applyBatchedDiagnostics(
     }
   }
 
-  for (const file of batch) {
+  for (const file of scannedFiles) {
     const key = normalizePath(file, root)
     manager.updateByFileId(key, byFile.get(key) ?? [])
   }

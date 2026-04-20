@@ -18,10 +18,11 @@ import {
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
-import { createLintScheduler } from '../_shared/lintScheduler.js'
+import {
+  createLintScheduler,
+  DEFAULT_DEBOUNCE_MS,
+} from '../_shared/lintScheduler.js'
 import { translateOptions } from './options.js'
-
-const DEBOUNCE_MS = 300
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
@@ -97,7 +98,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       }
 
       const scheduler = createLintScheduler({
-        debounceMs: DEBOUNCE_MS,
+        debounceMs: DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
           const { results } = await stylelint.lint({
             ...baseConfig,

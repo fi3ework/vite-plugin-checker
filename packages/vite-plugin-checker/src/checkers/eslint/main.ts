@@ -21,7 +21,10 @@ import {
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
-import { createLintScheduler } from '../_shared/lintScheduler.js'
+import {
+  createLintScheduler,
+  DEFAULT_DEBOUNCE_MS,
+} from '../_shared/lintScheduler.js'
 import { translateOptions } from './cli.js'
 import { options as optionator } from './options.js'
 
@@ -30,7 +33,6 @@ const _require = Module.createRequire(import.meta.url)
 
 const manager = new FileDiagnosticManager()
 
-const DEBOUNCE_MS = 300
 let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types'
@@ -178,7 +180,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       }
 
       const scheduler = createLintScheduler({
-        debounceMs: DEBOUNCE_MS,
+        debounceMs: DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
           const diagnosticsOfChangedFiles = await eslint.lintFiles(files)
           const newDiagnostics = diagnosticsOfChangedFiles.flatMap((d) =>

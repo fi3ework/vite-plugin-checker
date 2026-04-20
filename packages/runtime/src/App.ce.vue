@@ -30,18 +30,13 @@ const initialCollapsed = ref<boolean>(
   props?.overlayConfig?.initialIsOpen === false || props?.overlayConfig?.initialIsOpen === 'error'
 )
 
-// if initialIsOpen is 'error': watch for results and open if there are errors
+// if initialIsOpen is 'error': watch for results and open if there are errors.
+// The watcher stays live for the session: lint may arrive late (debounced scheduler)
+// after the page-reload reconnect has already fired with stale state.
 if (props?.overlayConfig?.initialIsOpen === 'error') {
-  // checker result is always initially empty, so need to watch for changes.
-  // We do NOT unwatch after the first result because lint may arrive late (e.g. after a
-  // debounced scheduler), after the page-reload reconnect has already fired with stale state.
-  // Instead we keep watching continuously but respect user intent: once the user has explicitly
-  // toggled the overlay (userCollapsed is set), we stop auto-opening.
   watch(checkerResults, () => {
     if (!checkerResults.value.length) return
-    // If the user has manually interacted with the overlay, let them stay in control.
-    if (userCollapsed.value !== undefined) return
-    // non-zero results length means the badge will appear. decide whether to open the overlay.
+    if (userInteracted.value) return
     if (checkerResults.value.some((p) => p.diagnostics.some((d: any) => d.level === 1))) {
       initialCollapsed.value = false
     }
@@ -49,8 +44,10 @@ if (props?.overlayConfig?.initialIsOpen === 'error') {
 }
 
 const userCollapsed = ref<boolean | undefined>(undefined)
+const userInteracted = ref(false)
 
 const toggle = () => {
+  userInteracted.value = true
   userCollapsed.value = !(userCollapsed.value ?? initialCollapsed.value)
 }
 

@@ -19,15 +19,16 @@ import {
   DiagnosticLevel,
 } from '../../types.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
-import { createLintScheduler } from '../_shared/lintScheduler.js'
+import {
+  createLintScheduler,
+  DEFAULT_DEBOUNCE_MS,
+} from '../_shared/lintScheduler.js'
 import { getBiomeCommand, runBiome, severityMap } from './cli.js'
 
 const __filename = fileURLToPath(import.meta.url)
 
 const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
-
-const DEBOUNCE_MS = 300
 
 const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
   const biomeConfig = pluginConfig.biome
@@ -93,18 +94,22 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
       }
 
       const scheduler = createLintScheduler({
-        debounceMs: DEBOUNCE_MS,
+        debounceMs: DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
           const hasConfigChange = files.some(
             (f) => path.basename(f) === 'biome.json',
           )
           if (hasConfigChange) {
-            const runCommand = getBiomeCommand(command, flags, root)
-            const diagnostics = await runBiome(runCommand, root)
+            const diagnostics = await runBiome(
+              getBiomeCommand(command, flags, [root]),
+              root,
+            )
             manager.initWith(diagnostics)
           } else {
-            const runCommand = getBiomeCommand(command, flags, files.join(' '))
-            const diagnostics = await runBiome(runCommand, root)
+            const diagnostics = await runBiome(
+              getBiomeCommand(command, flags, files),
+              root,
+            )
             applyBatchedDiagnostics(manager, files, diagnostics, root)
           }
           dispatchDiagnostics()
@@ -112,8 +117,10 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
       })
 
       // initial check
-      const runCommand = getBiomeCommand(command, flags, root)
-      const diagnostics = await runBiome(runCommand, root)
+      const diagnostics = await runBiome(
+        getBiomeCommand(command, flags, [root]),
+        root,
+      )
 
       manager.initWith(diagnostics)
       dispatchDiagnostics()

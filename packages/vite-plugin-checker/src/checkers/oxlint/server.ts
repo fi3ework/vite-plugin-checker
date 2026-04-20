@@ -3,13 +3,14 @@ import chokidar from 'chokidar'
 import type { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import { filterLogLevel } from '../../logger.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
-import { createLintScheduler } from '../_shared/lintScheduler.js'
+import {
+  createLintScheduler,
+  DEFAULT_DEBOUNCE_MS,
+} from '../_shared/lintScheduler.js'
 import { runOxlint } from './cli.js'
 import { dispatchDiagnostics } from './diagnostics.js'
 import type { ResolvedOptions } from './options.js'
 import type { DisplayTarget } from './types'
-
-const DEBOUNCE_MS = 300
 
 export async function setupDevServer(
   root: string,
@@ -31,17 +32,17 @@ export async function setupDevServer(
     )
 
   const scheduler = createLintScheduler({
-    debounceMs: DEBOUNCE_MS,
+    debounceMs: DEFAULT_DEBOUNCE_MS,
     onBatch: async (files) => {
       const hasConfigChange = files.some(
         (f) => path.basename(f) === '.oxlintrc.json',
       )
       if (hasConfigChange) {
-        const diagnostics = await runOxlint(`${options.command} ${root}`, root)
+        const diagnostics = await runOxlint([...options.command, root], root)
         manager.initWith(diagnostics)
       } else {
         const diagnostics = await runOxlint(
-          `${options.command} ${files.join(' ')}`,
+          [...options.command, ...files],
           root,
         )
         applyBatchedDiagnostics(manager, files, diagnostics, root)

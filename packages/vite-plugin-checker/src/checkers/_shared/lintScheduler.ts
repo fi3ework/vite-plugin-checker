@@ -1,3 +1,5 @@
+export const DEFAULT_DEBOUNCE_MS = 300
+
 export interface LintScheduler {
   /** Enqueue an absolute file path for the next batch. No-op after dispose. */
   schedule(filePath: string): void
@@ -20,7 +22,6 @@ export function createLintScheduler(opts: LintSchedulerOptions): LintScheduler {
 
   const pending = new Set<string>()
   let timer: NodeJS.Timeout | null = null
-  // Tracks the raw onBatch promise so dispose() waits on it with minimal indirection.
   let inFlight: Promise<void> | null = null
   let disposed = false
 

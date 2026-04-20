@@ -1,4 +1,4 @@
-import { exec } from 'node:child_process'
+import { execFile } from 'node:child_process'
 import { stripVTControlCharacters as strip } from 'node:util'
 import colors from 'picocolors'
 import { createFrame, offsetRangeToBabelLocation } from '../../codeFrame.js'
@@ -37,10 +37,11 @@ export function getOxlintCommand(command: string) {
   return parsed
 }
 
-export function runOxlint(command: string, cwd: string) {
+export function runOxlint(argv: string[], cwd: string) {
   return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
-    exec(
-      command,
+    execFile(
+      argv[0]!,
+      argv.slice(1),
       {
         cwd,
         maxBuffer: Number.POSITIVE_INFINITY,
