@@ -32,7 +32,7 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@babel/code-frame": "^7.27.1",
+    "@babel/code-frame": "^7.29.0",
     "chokidar": "^4.0.3",
     "npm-run-path": "^6.0.0",
     "picocolors": "^1.1.1",
