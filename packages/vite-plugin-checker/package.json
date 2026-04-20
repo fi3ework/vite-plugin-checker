@@ -45,7 +45,7 @@
   "devDependencies": {
     "@types/picomatch": "^4.0.3",
     "@types/proper-lockfile": "^4.1.4",
-    "@vue/language-core": "~3.2.6",
+    "@vue/language-core": "~3.2.7",
     "meow": "^13.2.0",
     "stylelint": "^16.26.1",
     "tsup": "^8.5.1",
