@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@babel/code-frame": "^7.29.0",
-    "chokidar": "^4.0.3",
+    "chokidar": "^5.0.0",
     "npm-run-path": "^6.0.0",
     "picocolors": "^1.1.1",
     "picomatch": "^4.0.4",
