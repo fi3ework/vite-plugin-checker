@@ -39,7 +39,7 @@
     "execa": "^9.6.1",
     "fast-json-stable-stringify": "^2.1.0",
     "knip": "^6.5.0",
-    "lint-staged": "^16.1.6",
+    "lint-staged": "^16.4.0",
     "oxlint": "^1.18.0",
     "pkg-pr-new": "^0.0.66",
     "playwright-chromium": "^1.54.2",
