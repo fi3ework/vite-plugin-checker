@@ -20,6 +20,8 @@ import {
   toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
+import { createLintScheduler } from '../_shared/lintScheduler.js'
 import { translateOptions } from './cli.js'
 import { options as optionator } from './options.js'
 
@@ -27,6 +29,8 @@ const __filename = fileURLToPath(import.meta.url)
 const _require = Module.createRequire(import.meta.url)
 
 const manager = new FileDiagnosticManager()
+
+const DEBOUNCE_MS = 300
 let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types'
@@ -173,33 +177,31 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         }
       }
 
-      const handleFileChange = async (
-        filePath: string,
-        type: 'change' | 'unlink',
-      ) => {
-        // In legacy mode, filter by file extension if --ext was provided
+      const scheduler = createLintScheduler({
+        debounceMs: DEBOUNCE_MS,
+        onBatch: async (files) => {
+          const diagnosticsOfChangedFiles = await eslint.lintFiles(files)
+          const newDiagnostics = diagnosticsOfChangedFiles.flatMap((d) =>
+            normalizeEslintDiagnostic(d),
+          )
+          applyBatchedDiagnostics(manager, files, newDiagnostics, root)
+          dispatchDiagnostics()
+        },
+      })
+
+      const shouldLintPath = async (filePath: string): Promise<boolean> => {
+        // Legacy-mode extension filter (only meaningful if --ext was provided).
         if (!effectiveUseFlatConfig) {
           const extension = path.extname(filePath)
           const { extensions } = eslintOptions as any
           const hasExtensionsConfig = Array.isArray(extensions)
-          if (hasExtensionsConfig && !extensions.includes(extension)) return
+          if (hasExtensionsConfig && !extensions.includes(extension)) {
+            return false
+          }
         }
-
-        const isChangedFileIgnored = await eslint.isPathIgnored(filePath)
-        if (isChangedFileIgnored) return
-
-        const absPath = path.resolve(root, filePath)
-        if (type === 'unlink') {
-          manager.updateByFileId(absPath, [])
-        } else if (type === 'change') {
-          const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
-          const newDiagnostics = diagnosticsOfChangedFile.flatMap((d) =>
-            normalizeEslintDiagnostic(d),
-          )
-          manager.updateByFileId(absPath, newDiagnostics)
-        }
-
-        dispatchDiagnostics()
+        // Honor .eslintignore / ignorePatterns.
+        const isIgnored = await eslint.isPathIgnored(filePath)
+        return !isIgnored
       }
 
       // initial lint
@@ -227,10 +229,13 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       })
 
       watcher.on('change', async (filePath) => {
-        handleFileChange(filePath, 'change')
+        if (!(await shouldLintPath(filePath))) return
+        scheduler.schedule(path.resolve(root, filePath))
       })
-      watcher.on('unlink', async (filePath) => {
-        handleFileChange(filePath, 'unlink')
+      watcher.on('unlink', (filePath) => {
+        const absPath = path.resolve(root, filePath)
+        manager.updateByFileId(absPath, [])
+        dispatchDiagnostics()
       })
     },
   }
