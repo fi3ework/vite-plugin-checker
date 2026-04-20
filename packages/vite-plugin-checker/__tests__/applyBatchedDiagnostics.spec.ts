@@ -1,13 +1,14 @@
+import path from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 
 import { applyBatchedDiagnostics } from '../src/checkers/_shared/applyBatchedDiagnostics'
 import { FileDiagnosticManager } from '../src/FileDiagnosticManager'
 import type { NormalizedDiagnostic } from '../src/logger'
 
-const ROOT = '/repo'
-const fileA = '/repo/src/a.ts'
-const fileB = '/repo/src/b.ts'
-const fileC = '/repo/src/c.ts'
+const ROOT = path.resolve('/repo')
+const fileA = path.join(ROOT, 'src', 'a.ts')
+const fileB = path.join(ROOT, 'src', 'b.ts')
+const fileC = path.join(ROOT, 'src', 'c.ts')
 
 function diag(id: string, message: string): NormalizedDiagnostic {
   return {
@@ -73,7 +74,7 @@ describe('applyBatchedDiagnostics', () => {
     applyBatchedDiagnostics(
       manager,
       [fileA],
-      [diag('/repo/src/./a.ts', 'normed')],
+      [diag(path.join(ROOT, 'src', '.', 'a.ts'), 'normed')],
       ROOT,
     )
     expect(manager.getDiagnostics(fileA).map((d) => d.message)).toEqual([
@@ -83,7 +84,7 @@ describe('applyBatchedDiagnostics', () => {
 
   it('clears stale diagnostics when the batch path contains an un-normalized segment', () => {
     const manager = new FileDiagnosticManager()
-    const unnormalized = '/repo/src/./a.ts'
+    const unnormalized = path.join(ROOT, 'src', '.', 'a.ts')
     applyBatchedDiagnostics(
       manager,
       [unnormalized],
