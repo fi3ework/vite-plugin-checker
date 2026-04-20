@@ -42,7 +42,7 @@
     "lint-staged": "^16.4.0",
     "oxlint": "^1.18.0",
     "pkg-pr-new": "^0.0.66",
-    "playwright-chromium": "^1.54.2",
+    "playwright-chromium": "^1.59.1",
     "publint": "^0.3.18",
     "simple-git-hooks": "^2.13.1",
     "sort-deep-object-arrays": "^1.1.2",
