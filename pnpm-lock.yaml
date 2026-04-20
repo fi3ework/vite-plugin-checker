@@ -67,25 +67,25 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3)
+        version: 3.2.4(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3)
 
   docs:
     dependencies:
       vitepress:
         specifier: ^1.6.4
-        version: 1.6.4(@algolia/client-search@5.34.1)(@types/node@20.19.9)(lightningcss@1.32.0)(postcss@8.5.9)(sass@1.89.2)(typescript@5.9.3)
+        version: 1.6.4(@algolia/client-search@5.34.1)(@types/node@20.19.9)(lightningcss@1.32.0)(postcss@8.5.9)(sass@1.99.0)(typescript@5.9.3)
 
   packages/runtime:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.6
-        version: 6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))(vue@3.5.29(typescript@5.9.3))
+        version: 6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))(vue@3.5.29(typescript@5.9.3))
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vue:
         specifier: ^3.5.29
         version: 3.5.29(typescript@5.9.3)
@@ -180,7 +180,7 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: ^4.7.0
-        version: 4.7.0(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))
+        version: 4.7.0(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))
       express:
         specifier: ^5.2.1
         version: 5.2.1
@@ -192,7 +192,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -204,7 +204,7 @@ importers:
         version: 2.4.12
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -222,7 +222,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -240,7 +240,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -258,7 +258,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -276,7 +276,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -294,7 +294,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -312,7 +312,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -330,7 +330,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -348,7 +348,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -366,7 +366,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -384,7 +384,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -402,7 +402,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -420,7 +420,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -432,7 +432,7 @@ importers:
         version: 10.2.0(jiti@2.6.1)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -454,7 +454,7 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: ^4.7.0
-        version: 4.7.0(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))
+        version: 4.7.0(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))
       eslint:
         specifier: ^10.0.0
         version: 10.2.0(jiti@2.6.1)
@@ -466,7 +466,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -484,7 +484,7 @@ importers:
         version: 8.58.1(eslint@10.2.0(jiti@2.6.1))(typescript@5.8.3)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -496,7 +496,7 @@ importers:
         version: 1.18.0
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -517,7 +517,7 @@ importers:
         version: 5.8.3
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -539,13 +539,13 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: ^4.7.0
-        version: 4.7.0(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))
+        version: 4.7.0(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -596,8 +596,8 @@ importers:
         specifier: 3.6.2
         version: 3.6.2
       sass:
-        specifier: ^1.89.2
-        version: 1.89.2
+        specifier: ^1.99.0
+        version: 1.99.0
       typescript:
         specifier: ~4.9.5
         version: 4.9.5
@@ -606,13 +606,13 @@ importers:
         version: 28.8.0(@babel/parser@7.29.0)(vue@2.7.16)
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
       vite-plugin-vue2:
         specifier: ^2.0.3
-        version: 2.0.3(lodash@4.17.21)(vite@8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))(vue-template-compiler@2.7.16)(vue@2.7.16)
+        version: 2.0.3(lodash@4.17.21)(vite@8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))(vue-template-compiler@2.7.16)(vue@2.7.16)
       vls:
         specifier: ^0.8.5
         version: 0.8.5
@@ -631,13 +631,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.6
-        version: 6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))(vue@3.5.29(typescript@5.8.3))
+        version: 6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))(vue@3.5.29(typescript@5.8.3))
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -653,13 +653,13 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.6
-        version: 6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))(vue@3.5.29(typescript@5.8.3))
+        version: 6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))(vue@3.5.29(typescript@5.8.3))
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
         specifier: ^8.0.8
-        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+        version: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vite-plugin-checker:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
@@ -3970,8 +3970,8 @@ packages:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
 
-  immutable@5.1.3:
-    resolution: {integrity: sha512-+chQdDfvscSF1SJqv2gn4SRO2ZyS3xL3r7IW/wWEEzrzLisnOlKiQu5ytC/BVNcS15C39WT2Hg/bjKjDMcu+zg==}
+  immutable@5.1.5:
+    resolution: {integrity: sha512-t7xcm2siw+hlUM68I+UEOK+z84RzmN59as9DZ7P1l0994DKUWV7UXBMQZVxaoMSRQ+PBZbHCOoBt7a2wxOMt+A==}
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -4833,8 +4833,8 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sass@1.89.2:
-    resolution: {integrity: sha512-xCmtksBKd/jdJ9Bt9p7nPKiuqrlBMBuuGkQlkhZjjQk3Ty48lv93k5Dq6OPkKt4XwxDJ7tvlfrTa1MPA9bf+QA==}
+  sass@1.99.0:
+    resolution: {integrity: sha512-kgW13M54DUB7IsIRM5LvJkNlpH+WhMpooUcaWGFARkF1Tc82v9mIWkCbCYf+MBvpIUBSeSOTilpZjEPr2VYE6Q==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -7276,7 +7276,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@vitejs/plugin-react@4.7.0(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))':
+  '@vitejs/plugin-react@4.7.0(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))':
     dependencies:
       '@babel/core': 7.28.0
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.28.0)
@@ -7284,25 +7284,25 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.27
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+      vite: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@5.2.4(vite@5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.89.2))(vue@3.5.29(typescript@5.9.3))':
+  '@vitejs/plugin-vue@5.2.4(vite@5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.99.0))(vue@3.5.29(typescript@5.9.3))':
     dependencies:
-      vite: 5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.89.2)
+      vite: 5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.99.0)
       vue: 3.5.29(typescript@5.9.3)
 
-  '@vitejs/plugin-vue@6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))(vue@3.5.29(typescript@5.8.3))':
+  '@vitejs/plugin-vue@6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))(vue@3.5.29(typescript@5.8.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.13
-      vite: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+      vite: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vue: 3.5.29(typescript@5.8.3)
 
-  '@vitejs/plugin-vue@6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))(vue@3.5.29(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.6(vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))(vue@3.5.29(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.13
-      vite: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+      vite: 8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vue: 3.5.29(typescript@5.9.3)
 
   '@vitest/expect@3.2.4':
@@ -7313,13 +7313,13 @@ snapshots:
       chai: 5.2.1
       tinyrainbow: 2.0.0
 
-  '@vitest/mocker@3.2.4(vite@7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3))':
+  '@vitest/mocker@3.2.4(vite@7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3))':
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3)
+      vite: 7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3)
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
@@ -8785,7 +8785,7 @@ snapshots:
 
   ignore@7.0.5: {}
 
-  immutable@5.1.3: {}
+  immutable@5.1.5: {}
 
   import-fresh@3.3.1:
     dependencies:
@@ -9650,10 +9650,10 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sass@1.89.2:
+  sass@1.99.0:
     dependencies:
       chokidar: 4.0.3
-      immutable: 5.1.3
+      immutable: 5.1.5
       source-map-js: 1.2.1
     optionalDependencies:
       '@parcel/watcher': 2.5.1
@@ -10221,13 +10221,13 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-node@3.2.4(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3):
+  vite-node@3.2.4(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3):
     dependencies:
       cac: 6.7.14
       debug: 4.4.3
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3)
+      vite: 7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -10242,7 +10242,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plugin-vue2@2.0.3(lodash@4.17.21)(vite@8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3))(vue-template-compiler@2.7.16)(vue@2.7.16):
+  vite-plugin-vue2@2.0.3(lodash@4.17.21)(vite@8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3))(vue-template-compiler@2.7.16)(vue@2.7.16):
     dependencies:
       '@babel/core': 7.28.0
       '@babel/parser': 7.29.0
@@ -10272,7 +10272,7 @@ snapshots:
       rollup: 2.79.2
       slash: 3.0.0
       source-map: 0.7.6
-      vite: 8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3)
+      vite: 8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3)
       vue-template-babel-compiler: 1.2.0(vue-template-compiler@2.7.16)
       vue-template-compiler: 2.7.16
     transitivePeerDependencies:
@@ -10332,7 +10332,7 @@ snapshots:
       - walrus
       - whiskers
 
-  vite@5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.89.2):
+  vite@5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.99.0):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.9
@@ -10341,9 +10341,9 @@ snapshots:
       '@types/node': 20.19.9
       fsevents: 2.3.3
       lightningcss: 1.32.0
-      sass: 1.89.2
+      sass: 1.99.0
 
-  vite@7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3):
+  vite@7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3):
     dependencies:
       esbuild: 0.27.7
       fdir: 6.5.0(picomatch@4.0.4)
@@ -10356,10 +10356,10 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.6.1
       lightningcss: 1.32.0
-      sass: 1.89.2
+      sass: 1.99.0
       yaml: 2.8.3
 
-  vite@8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3):
+  vite@8.0.8(@types/node@18.19.120)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3):
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
@@ -10371,10 +10371,10 @@ snapshots:
       esbuild: 0.27.7
       fsevents: 2.3.3
       jiti: 2.6.1
-      sass: 1.89.2
+      sass: 1.99.0
       yaml: 2.8.3
 
-  vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.89.2)(yaml@2.8.3):
+  vite@8.0.8(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.99.0)(yaml@2.8.3):
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
@@ -10386,10 +10386,10 @@ snapshots:
       esbuild: 0.27.7
       fsevents: 2.3.3
       jiti: 2.6.1
-      sass: 1.89.2
+      sass: 1.99.0
       yaml: 2.8.3
 
-  vitepress@1.6.4(@algolia/client-search@5.34.1)(@types/node@20.19.9)(lightningcss@1.32.0)(postcss@8.5.9)(sass@1.89.2)(typescript@5.9.3):
+  vitepress@1.6.4(@algolia/client-search@5.34.1)(@types/node@20.19.9)(lightningcss@1.32.0)(postcss@8.5.9)(sass@1.99.0)(typescript@5.9.3):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.34.1)
@@ -10398,7 +10398,7 @@ snapshots:
       '@shikijs/transformers': 2.5.0
       '@shikijs/types': 2.5.0
       '@types/markdown-it': 14.1.2
-      '@vitejs/plugin-vue': 5.2.4(vite@5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.89.2))(vue@3.5.29(typescript@5.9.3))
+      '@vitejs/plugin-vue': 5.2.4(vite@5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.99.0))(vue@3.5.29(typescript@5.9.3))
       '@vue/devtools-api': 7.7.7
       '@vue/shared': 3.5.29
       '@vueuse/core': 12.8.2(typescript@5.9.3)
@@ -10407,7 +10407,7 @@ snapshots:
       mark.js: 8.11.1
       minisearch: 7.1.2
       shiki: 2.5.0
-      vite: 5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.89.2)
+      vite: 5.4.19(@types/node@20.19.9)(lightningcss@1.32.0)(sass@1.99.0)
       vue: 3.5.29(typescript@5.9.3)
     optionalDependencies:
       postcss: 8.5.9
@@ -10438,11 +10438,11 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitest@3.2.4(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3):
+  vitest@3.2.4(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
-      '@vitest/mocker': 3.2.4(vite@7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3))
+      '@vitest/mocker': 3.2.4(vite@7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3))
       '@vitest/pretty-format': 3.2.4
       '@vitest/runner': 3.2.4
       '@vitest/snapshot': 3.2.4
@@ -10460,8 +10460,8 @@ snapshots:
       tinyglobby: 0.2.16
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
-      vite: 7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3)
-      vite-node: 3.2.4(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.89.2)(yaml@2.8.3)
+      vite: 7.3.2(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3)
+      vite-node: 3.2.4(@types/node@20.19.9)(jiti@2.6.1)(lightningcss@1.32.0)(sass@1.99.0)(yaml@2.8.3)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.19.9
