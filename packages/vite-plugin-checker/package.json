@@ -54,7 +54,7 @@
     "vscode-languageclient": "^9.0.1",
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.12",
-    "vue-tsc": "~3.0.4"
+    "vue-tsc": "~3.2.7"
   },
   "peerDependencies": {
     "@biomejs/biome": ">=2.4.12",
