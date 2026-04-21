@@ -61,7 +61,7 @@
     "eslint": ">=9.39.4",
     "meow": "^13.2.0 || ^14.0.0",
     "optionator": "^0.9.4",
-    "oxlint": ">=1.61.0",
+    "oxlint": ">=1",
     "stylelint": ">=16.26.1",
     "typescript": "*",
     "vite": ">=5.4.21",
