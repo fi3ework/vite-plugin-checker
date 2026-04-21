@@ -127,8 +127,8 @@ importers:
         specifier: ~3.2.7
         version: 3.2.7
       meow:
-        specifier: ^13.2.0
-        version: 13.2.0
+        specifier: ^14.0.0
+        version: 14.1.0
       stylelint:
         specifier: ^16.26.1
         version: 16.26.1(typescript@5.9.3)
@@ -486,8 +486,8 @@ importers:
   playground/stylelint-default:
     devDependencies:
       meow:
-        specifier: ^13.2.0
-        version: 13.2.0
+        specifier: ^14.0.0
+        version: 14.1.0
       stylelint:
         specifier: ^16.26.1
         version: 16.26.1(typescript@5.8.3)
@@ -3155,6 +3155,10 @@ packages:
   meow@13.2.0:
     resolution: {integrity: sha512-pxQJQzB6djGPXh08dacEloMFopsOqGVRKFPYvPOt9XDZ1HasbgDZA74CJGreSU4G3Ak7EFJGoiH2auq+yXISgA==}
     engines: {node: '>=18'}
+
+  meow@14.1.0:
+    resolution: {integrity: sha512-EDYo6VlmtnumlcBCbh1gLJ//9jvM/ndXHfVXIFrZVr6fGcwTUyCTFNTLCKuY3ffbK8L/+3Mzqnd58RojiZqHVw==}
+    engines: {node: '>=20'}
 
   merge-descriptors@2.0.0:
     resolution: {integrity: sha512-Snk314V5ayFLhp3fkUREub6WtjBfPdCPY1Ln8/8munuLuiYhsABgBVWsozAG+MWMbVEvcdcpbi9R7ww22l9Q3g==}
@@ -6595,6 +6599,8 @@ snapshots:
   media-typer@1.1.0: {}
 
   meow@13.2.0: {}
+
+  meow@14.1.0: {}
 
   merge-descriptors@2.0.0: {}
 
