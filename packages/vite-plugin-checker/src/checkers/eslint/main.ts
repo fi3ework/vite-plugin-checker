@@ -3,7 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
 import chokidar from 'chokidar'
-import { ESLint } from 'eslint'
+import type { ESLint } from 'eslint'
 import invariant from 'tiny-invariant'
 
 import { Checker } from '../../Checker.js'
@@ -50,10 +50,11 @@ function getEslintMajorVersion(): number {
  * - ESLint v9 with flat config (default): Use `ESLint` directly (it's the flat config class in v9).
  * - ESLint v9 with legacy eslintrc: Use `LegacyESLint` from `eslint/use-at-your-own-risk`.
  */
-function resolveEslintClass(
+async function resolveEslintClass(
   useFlatConfig: boolean,
   majorVersion: number,
-): typeof ESLint {
+): Promise<typeof ESLint> {
+  const { ESLint } = await import('eslint')
   if (majorVersion >= 10) {
     // v10+ only supports flat config
     return ESLint
@@ -134,7 +135,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ...pluginConfig.eslint.dev?.overrideConfig,
       }
 
-      const EslintClass = resolveEslintClass(
+      const EslintClass = await resolveEslintClass(
         effectiveUseFlatConfig,
         majorVersion,
       )
