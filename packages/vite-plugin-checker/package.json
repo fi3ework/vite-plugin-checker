@@ -39,8 +39,7 @@
     "picomatch": "^4.0.4",
     "proper-lockfile": "^4.1.2",
     "tiny-invariant": "^1.3.3",
-    "tinyglobby": "^0.2.16",
-    "vscode-uri": "^3.1.0"
+    "tinyglobby": "^0.2.16"
   },
   "devDependencies": {
     "@types/picomatch": "^4.0.3",
@@ -50,10 +49,6 @@
     "stylelint": "^16.26.1",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vls": "^0.8.5",
-    "vscode-languageclient": "^9.0.1",
-    "vscode-languageserver": "^9.0.1",
-    "vscode-languageserver-textdocument": "^1.0.12",
     "vue-tsc": "~3.2.7"
   },
   "peerDependencies": {
@@ -65,8 +60,6 @@
     "stylelint": ">=16.26.1",
     "typescript": "*",
     "vite": ">=5.4.21",
-    "vls": "*",
-    "vti": "*",
     "vue-tsc": "~2.2.10 || ^3.0.0"
   },
   "peerDependenciesMeta": {
@@ -89,12 +82,6 @@
       "optional": true
     },
     "typescript": {
-      "optional": true
-    },
-    "vls": {
-      "optional": true
-    },
-    "vti": {
       "optional": true
     },
     "vue-tsc": {

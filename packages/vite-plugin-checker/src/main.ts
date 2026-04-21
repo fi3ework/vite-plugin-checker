@@ -27,7 +27,6 @@ import {
 const buildInCheckerKeys: BuildInCheckerNames[] = [
   'typescript',
   'vueTsc',
-  'vls',
   'eslint',
   'stylelint',
   'biome',

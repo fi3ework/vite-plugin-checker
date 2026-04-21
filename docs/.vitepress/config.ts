@@ -53,7 +53,6 @@ function sidebar() {
         { text: 'ESLint', link: '/checkers/eslint' },
         { text: 'Biome', link: '/checkers/biome' },
         { text: 'Stylelint', link: '/checkers/stylelint' },
-        { text: 'VLS', link: '/checkers/vls' },
         { text: 'oxlint', link: '/checkers/oxlint' },
       ],
     },
