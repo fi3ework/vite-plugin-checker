@@ -30,7 +30,7 @@ describe('stylelint', () => {
   })
 
   describe.runIf(isBuild)('build', () => {
-    const expectedMsg = ['Unexpected empty block', 'Expected modern color-function notation']
+    const expectedMsg = ['Empty block', 'Expected modern color-function notation']
 
     it('should fail', async () => {
       expectStderrContains(log, expectedMsg)
