@@ -3,7 +3,7 @@
   extends: ['config:recommended', 'schedule:weekly'],
   ignorePaths: ['**/tests/**', '**/node_modules/**'],
   labels: ['dependencies'],
-  rangeStrategy: 'bump',
+  rangeStrategy: 'widen',
   ignoreDeps: [
     // manually update some packages
     'pnpm',
