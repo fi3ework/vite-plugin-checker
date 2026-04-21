@@ -1,9 +1,8 @@
 {
   $schema: 'https://docs.renovatebot.com/renovate-schema.json',
-  extends: ['config:recommended', 'schedule:weekly'],
+  extends: ['config:recommended', 'schedule:weekly', ':widenPeerDependencies'],
   ignorePaths: ['**/tests/**', '**/node_modules/**'],
   labels: ['dependencies'],
-  rangeStrategy: 'widen',
   ignoreDeps: [
     // manually update some packages
     'pnpm',
