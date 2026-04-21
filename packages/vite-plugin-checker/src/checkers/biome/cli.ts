@@ -1,9 +1,10 @@
-import { exec } from 'node:child_process'
+import { execFile } from 'node:child_process'
 import { stripVTControlCharacters as strip } from 'node:util'
 import { createFrame } from '../../codeFrame.js'
 import type { NormalizedDiagnostic } from '../../logger.js'
 import { normalizePath, readSources } from '../../sources.js'
 import { DiagnosticLevel } from '../../types.js'
+import { parseArgsStringToArgv } from '../stylelint/argv.js'
 import type {
   BiomeOutput,
   Diagnostic,
@@ -18,26 +19,39 @@ export const severityMap = {
   information: DiagnosticLevel.Suggestion,
 } as const
 
-export function getBiomeCommand(command: string, flags: string, files: string) {
-  const defaultFlags = '--reporter json'
+export function getBiomeCommand(
+  command: string,
+  flags: string,
+  files: string[],
+): string[] {
   if (flags.includes('--flags')) {
     throw Error(
       `vite-plugin-checker will force append "--reporter json" to the flags in dev mode, please don't use "--flags" in "config.biome.flags".
 If you need to customize "--flags" in build mode, please use "config.biome.build.flags" instead.`,
     )
   }
-  return ['biome', command, flags, defaultFlags, files]
-    .filter(Boolean)
-    .join(' ')
+  return [
+    'biome',
+    command,
+    ...(flags ? parseArgsStringToArgv(flags) : []),
+    '--reporter',
+    'json',
+    ...files,
+  ]
 }
 
-export function runBiome(command: string, cwd: string) {
+export function runBiome(argv: string[], cwd: string) {
   return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
-    exec(
-      command,
+    execFile(
+      argv[0]!,
+      argv.slice(1),
       {
         cwd,
         maxBuffer: Number.POSITIVE_INFINITY,
+        // Required on Windows so execFile can resolve .cmd/.bat shims in
+        // node_modules/.bin. Node >=18.20/20.12/22 auto-quotes argv under
+        // shell:true, preserving the no-splitting guarantee.
+        shell: process.platform === 'win32',
       },
       (_error, stdout, _stderr) => {
         parseBiomeOutput(stdout, cwd)

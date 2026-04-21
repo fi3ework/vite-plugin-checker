@@ -5,7 +5,7 @@ import { getOxlintCommand, mapSeverity } from './cli.js'
 export interface ResolvedOptions {
   watchTarget: string | string[]
   logLevel?: DiagnosticLevel[]
-  command: string
+  command: string[]
 }
 
 export function resolveOptions(
@@ -19,7 +19,7 @@ export function resolveOptions(
       DiagnosticLevel.Warning,
       DiagnosticLevel.Error,
     ],
-    command: getOxlintCommand(options.lintCommand ?? 'oxlint').join(' '),
+    command: getOxlintCommand(options.lintCommand ?? 'oxlint'),
   }
 }
 

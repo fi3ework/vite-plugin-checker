@@ -18,6 +18,11 @@ import {
   type CreateDiagnostic,
   DiagnosticLevel,
 } from '../../types.js'
+import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
+import {
+  createLintScheduler,
+  DEFAULT_DEBOUNCE_MS,
+} from '../_shared/lintScheduler.js'
 import { getBiomeCommand, runBiome, severityMap } from './cli.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -88,34 +93,34 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
         }
       }
 
-      const handleFileChange = async (
-        filePath: string,
-        type: 'change' | 'unlink',
-      ) => {
-        const absPath = path.resolve(root, filePath)
-
-        if (type === 'unlink') {
-          manager.updateByFileId(absPath, [])
-        } else if (type === 'change') {
-          const isConfigFile = path.basename(absPath) === 'biome.json'
-
-          if (isConfigFile) {
-            const runCommand = getBiomeCommand(command, flags, root)
-            const diagnostics = await runBiome(runCommand, root)
+      const scheduler = createLintScheduler({
+        debounceMs: DEFAULT_DEBOUNCE_MS,
+        onBatch: async (files) => {
+          const hasConfigChange = files.some(
+            (f) => path.basename(f) === 'biome.json',
+          )
+          if (hasConfigChange) {
+            const diagnostics = await runBiome(
+              getBiomeCommand(command, flags, [root]),
+              root,
+            )
             manager.initWith(diagnostics)
           } else {
-            const runCommand = getBiomeCommand(command, flags, absPath)
-            const diagnosticsOfChangedFile = await runBiome(runCommand, root)
-            manager.updateByFileId(absPath, diagnosticsOfChangedFile)
+            const diagnostics = await runBiome(
+              getBiomeCommand(command, flags, files),
+              root,
+            )
+            applyBatchedDiagnostics(manager, files, diagnostics, root)
           }
-        }
-
-        dispatchDiagnostics()
-      }
+          dispatchDiagnostics()
+        },
+      })
 
       // initial check
-      const runCommand = getBiomeCommand(command, flags, root)
-      const diagnostics = await runBiome(runCommand, root)
+      const diagnostics = await runBiome(
+        getBiomeCommand(command, flags, [root]),
+        root,
+      )
 
       manager.initWith(diagnostics)
       dispatchDiagnostics()
@@ -132,13 +137,15 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
 
       const watcher = chokidar.watch(watchTarget, {
         cwd: root,
-        ignored: (path: string) => path.includes('node_modules'),
+        ignored: (p: string) => p.includes('node_modules'),
       })
-      watcher.on('change', async (filePath) => {
-        handleFileChange(filePath, 'change')
+      watcher.on('change', (filePath) => {
+        scheduler.schedule(path.resolve(root, filePath))
       })
-      watcher.on('unlink', async (filePath) => {
-        handleFileChange(filePath, 'unlink')
+      watcher.on('unlink', (filePath) => {
+        const absPath = path.resolve(root, filePath)
+        manager.updateByFileId(absPath, [])
+        dispatchDiagnostics()
       })
     },
   }
