@@ -10,7 +10,7 @@
     "serve": "vite preview"
   },
   "devDependencies": {
-    "meow": "^13.2.0",
+    "meow": "^14.0.0",
     "stylelint": "^16.26.1",
     "stylelint-config-standard": "^38.0.0",
     "typescript": "^5.8.3",
