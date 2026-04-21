@@ -8,27 +8,16 @@
       "entry": ["scripts/*", "playground/*"],
       "ignoreDependencies": ["oxlint"]
     },
-    "docs": {
-      "entry": [".vitepress/config.ts"]
-    },
     "packages/vite-plugin-checker": {
       "entry": [
         "src/**/*.ts",
         "src/checkers/vueTsc/languagePlugins.cjs",
         "__tests__/fixtures/tsDiagnostic.ts"
       ],
-      "ignoreDependencies": ["eslint", "meow", "optionator", "stylelint", "vls", "vue-tsc"]
+      "ignoreDependencies": ["eslint"]
     },
     "playground/backend-integration": {
       "entry": ["src/*.{js,ts,tsx}", "__test__/serve.js"]
-    },
-    "playground/vls-vue2": {
-      "entry": ["vetur.config.cjs", "src/**/*"],
-      "ignoreDependencies": [
-        "tslib",
-        "vue-class-component",
-        "vue-property-decorator"
-      ]
     }
   }
 }
