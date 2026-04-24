@@ -3,6 +3,10 @@ import path from 'node:path'
 
 export function normalizePath(p: string, cwd: string) {
   let filename = p
+  // Strip file:// URL scheme (oxlint outputs file:// URLs in JSON format)
+  if (filename && filename.startsWith("file://")) {
+    filename = filename.slice(7);
+  }
   if (filename) {
     filename = path.isAbsolute(filename)
       ? filename
