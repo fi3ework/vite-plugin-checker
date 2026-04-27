@@ -5,6 +5,7 @@ import {
   getHmrOverlay,
   getHmrOverlayText,
   isServe,
+  page,
   pollingUntil,
   sleep,
   sleepForEdit,
@@ -19,6 +20,50 @@ describe('config-overlay-changes', () => {
       expect(message1).toMatchSnapshot()
       expect(file1).toMatchSnapshot()
       expect(frame1).toMatchSnapshot()
+
+      console.log('-- copy diagnostics to clipboard --')
+      const overlay = page.locator('vite-plugin-checker-error-overlay')
+      const actionButton = overlay.locator('.action-button')
+      await actionButton.waitFor({ state: 'visible' })
+
+      // Expand overlay if collapsed
+      const isCollapsed = await actionButton.evaluate(
+        (el) => (el as HTMLElement).querySelector('.summary') !== null
+      )
+      if (isCollapsed) {
+        await actionButton.click()
+        await sleep(500) // Wait for expansion
+      }
+
+      const copyButton = overlay.locator('.copy-button')
+      await copyButton.waitFor({ state: 'visible' })
+
+      // Mock clipboard API
+      await page.evaluate(() => {
+        ;(window as any).__lastCopiedText = ''
+        Object.defineProperty(window.Navigator.prototype, 'clipboard', {
+          get: () => ({
+            writeText: (text: string) => {
+              ;(window as any).__lastCopiedText = text
+              return Promise.resolve()
+            },
+          }),
+          configurable: true,
+        })
+      })
+
+      await copyButton.click()
+
+      // Check visual feedback
+      await pollingUntil(
+        async () => await copyButton.innerText(),
+        (text) => text === 'Copied!'
+      )
+
+      // Check "clipboard" content
+      const copiedText = await page.evaluate(() => (window as any).__lastCopiedText)
+      expect(copiedText).toContain('[eslint]')
+      expect(copiedText).toContain('var hello')
 
       console.log('-- overlay update after edit --')
       editFile('src/main.ts', (code) => code.replace('Hello', 'Hello1'))
@@ -37,3 +82,5 @@ describe('config-overlay-changes', () => {
     })
   })
 })
+
+
