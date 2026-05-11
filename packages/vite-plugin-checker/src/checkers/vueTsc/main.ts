@@ -21,6 +21,7 @@ import {
   type CreateDiagnostic,
   type DiagnosticToRuntime,
 } from '../../types.js'
+import { forceNoEmitOnSolutionBuilderHost } from '../tscUtils.js'
 import { prepareVueTsc } from './prepareVueTsc.js'
 
 const _require = createRequire(import.meta.url)
@@ -135,12 +136,15 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
         typeof pluginConfig.vueTsc === 'object' &&
         pluginConfig.vueTsc.buildMode
       ) {
-        const host = vueTs.createSolutionBuilderWithWatchHost(
-          vueTs.sys,
-          createProgram,
-          reportDiagnostic,
-          undefined,
-          reportWatchStatusChanged,
+        const host = forceNoEmitOnSolutionBuilderHost(
+          vueTs,
+          vueTs.createSolutionBuilderWithWatchHost(
+            vueTs.sys,
+            createProgram,
+            reportDiagnostic,
+            undefined,
+            reportWatchStatusChanged,
+          ),
         )
 
         vueTs.createSolutionBuilderWithWatch(host, [configFile], {}).build()
