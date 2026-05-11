@@ -30,7 +30,7 @@ describe('forceNoEmitOnSolutionBuilderHost', () => {
   }
 
   it('leaves a well-formed referenced project untouched', () => {
-    const refPath = path.join(tmp, 'tsconfig.app.json')
+    const refPath = path.posix.join(tmp, 'tsconfig.app.json')
     fs.writeFileSync(
       refPath,
       JSON.stringify({
@@ -38,7 +38,7 @@ describe('forceNoEmitOnSolutionBuilderHost', () => {
         include: ['main.ts'],
       }),
     )
-    fs.writeFileSync(path.join(tmp, 'main.ts'), 'export const x = 1\n')
+    fs.writeFileSync(path.posix.join(tmp, 'main.ts'), 'export const x = 1\n')
 
     const host = forceNoEmitOnSolutionBuilderHost(ts, makeHost())
     const parsed = host.getParsedCommandLine!(refPath)
@@ -53,12 +53,12 @@ describe('forceNoEmitOnSolutionBuilderHost', () => {
   it('returns undefined for a missing referenced project', () => {
     const host = forceNoEmitOnSolutionBuilderHost(ts, makeHost())
     expect(
-      host.getParsedCommandLine!(path.join(tmp, 'does-not-exist.json')),
+      host.getParsedCommandLine!(path.posix.join(tmp, 'does-not-exist.json')),
     ).toBeUndefined()
   })
 
   it('forces noEmit even when the referenced project is empty', () => {
-    const refPath = path.join(tmp, 'tsconfig.app.json')
+    const refPath = path.posix.join(tmp, 'tsconfig.app.json')
     fs.writeFileSync(refPath, '')
 
     const host = forceNoEmitOnSolutionBuilderHost(ts, makeHost())
@@ -69,7 +69,7 @@ describe('forceNoEmitOnSolutionBuilderHost', () => {
   })
 
   it('forces noEmit even when the referenced project is partial JSON', () => {
-    const refPath = path.join(tmp, 'tsconfig.app.json')
+    const refPath = path.posix.join(tmp, 'tsconfig.app.json')
     fs.writeFileSync(refPath, '{\n  "compilerOptions": {')
 
     const host = forceNoEmitOnSolutionBuilderHost(ts, makeHost())
