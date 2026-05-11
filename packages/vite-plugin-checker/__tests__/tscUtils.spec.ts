@@ -10,7 +10,12 @@ describe('forceNoEmitOnSolutionBuilderHost', () => {
   let tmp: string
 
   beforeEach(() => {
-    tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'vpc-tscutils-'))
+    // forward slashes match what TS's canonical file names look like; using a
+    // mixed-slash path on Windows trips an internal TS Debug.assert when it
+    // attaches diagnostics to a failed parse.
+    tmp = fs
+      .mkdtempSync(path.join(os.tmpdir(), 'vpc-tscutils-'))
+      .replace(/\\/g, '/')
   })
 
   afterEach(() => {
@@ -24,7 +29,7 @@ describe('forceNoEmitOnSolutionBuilderHost', () => {
     )
   }
 
-  it('forces noEmit on a well-formed referenced project', () => {
+  it('leaves a well-formed referenced project untouched', () => {
     const refPath = path.join(tmp, 'tsconfig.app.json')
     fs.writeFileSync(
       refPath,
@@ -39,7 +44,10 @@ describe('forceNoEmitOnSolutionBuilderHost', () => {
     const parsed = host.getParsedCommandLine!(refPath)
 
     expect(parsed).toBeDefined()
-    expect(parsed!.options.noEmit).toBe(true)
+    expect(parsed!.errors).toHaveLength(0)
+    // a valid composite referenced project must be allowed to emit; forcing
+    // noEmit here would break `tsc --build` invariants.
+    expect(parsed!.options.noEmit).toBe(false)
   })
 
   it('returns undefined for a missing referenced project', () => {
