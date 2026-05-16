@@ -12,4 +12,8 @@ autoInstallPeers: false
 
 hoist: false
 
+publicHoistPattern:
+  - '*eslint*'
+  - '*prettier*'
+
 shellEmulator: true
