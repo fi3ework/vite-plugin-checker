@@ -2,3 +2,14 @@ packages:
   - 'playground/**'
   - 'packages/*'
   - 'docs'
+
+allowBuilds:
+  esbuild: false
+  playwright-chromium: false
+  simple-git-hooks: false
+
+autoInstallPeers: false
+
+hoist: false
+
+shellEmulator: true
