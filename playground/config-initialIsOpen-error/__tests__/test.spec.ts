@@ -23,6 +23,7 @@ describe('config-initialIsOpen-error', () => {
       console.log('-- overlay remains after fix error --')
       editFile('src/main.ts', (code) => code.replace('var hello', `const hello`))
       await sleepForEdit()
+      await sleep(6000)
       await pollingUntil(getHmrOverlay, (dom) => !!dom)
       const [, , frame2] = await getHmrOverlayText()
       expect(frame2).toMatchSnapshot()
