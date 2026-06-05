@@ -1,0 +1,17 @@
+{
+  "name": "@playground/config-overlay-ssr",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "node serve.js",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "express": "^5.2.1",
+    "typescript": "^5.8.3",
+    "vite": "^8.0.9",
+    "vite-plugin-checker": "workspace:*"
+  }
+}

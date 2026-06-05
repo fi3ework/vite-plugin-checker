@@ -353,6 +353,21 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
 
+  playground/config-overlay-ssr:
+    devDependencies:
+      express:
+        specifier: ^5.2.1
+        version: 5.2.1
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.0.9
+        version: 8.0.9(@types/node@20.19.9)(esbuild@0.27.7)(jiti@2.6.1)(yaml@2.8.3)
+      vite-plugin-checker:
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-checker
+
   playground/config-terminal-false:
     devDependencies:
       eslint:

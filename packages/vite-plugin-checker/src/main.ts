@@ -142,7 +142,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       return
     },
     transformIndexHtml() {
-      if (initialized) return
       if (isProduction) return
 
       return [
