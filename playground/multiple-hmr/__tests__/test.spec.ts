@@ -29,7 +29,7 @@ describe('multiple-hmr', () => {
       editFile('src/value.ts', (code) =>
         code.replace('export var value: string = 1', 'export var value: string = 2')
       )
-      await waitForDiagnostics({ checkers: 2 })
+      await waitForDiagnostics()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
       // don't know why striped log in disorder on Linux, while correct on mac and Windows
       // comment out for now to pass test cases stably and striped log is duplicated with diagnostics somehow.
@@ -42,14 +42,14 @@ describe('multiple-hmr', () => {
       editFile('src/value.ts', (code) =>
         code.replace('export var value: string = 2', `export var value = 2`)
       )
-      await waitForDiagnostics({ checkers: 2 })
+      await waitForDiagnostics()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
 
       console.log('-- fix eslint error --')
       resetDiagnostics()
       resetReceivedLog()
       editFile('src/value.ts', (code) => code.replace('var', 'const'))
-      await waitForDiagnostics({ checkers: 2 })
+      await waitForDiagnostics()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
     })
   })
