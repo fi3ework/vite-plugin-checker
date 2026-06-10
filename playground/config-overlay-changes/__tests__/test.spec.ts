@@ -6,9 +6,9 @@ import {
   getHmrOverlayText,
   isServe,
   pollingUntil,
-  sleep,
   sleepForEdit,
   sleepForServerReady,
+  waitForNoOverlay,
 } from '../../testUtils'
 
 describe('config-overlay-changes', () => {
@@ -30,10 +30,7 @@ describe('config-overlay-changes', () => {
       console.log('-- overlay dismiss after fix error --')
       editFile('src/main.ts', (code) => code.replace('var hello', `const hello`))
       editFile('src/main.ts', (code) => code.replace('! as', ` as`))
-      await sleep(6000)
-      await expect(getHmrOverlayText()).rejects.toThrow(
-        'Invariant failed: .message-body is expected in shadow root'
-      )
+      await waitForNoOverlay()
     })
   })
 })

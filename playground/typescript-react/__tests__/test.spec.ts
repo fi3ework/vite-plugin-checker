@@ -9,9 +9,9 @@ import {
   isServe,
   log,
   resetReceivedLog,
-  sleepForEdit,
   sleepForServerReady,
   stripedLog,
+  waitForDiagnostics,
 } from '../../testUtils'
 
 describe('typescript-react', () => {
@@ -24,7 +24,7 @@ describe('typescript-react', () => {
       console.log('-- edit file --')
       resetReceivedLog()
       editFile('src/App.tsx', (code) => code.replace('useState<string>(1)', 'useState<string>(2)'))
-      await sleepForEdit()
+      await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
