@@ -9,9 +9,9 @@ import {
   isServe,
   log,
   resetReceivedLog,
-  sleepForEdit,
   sleepForServerReady,
   stripedLog,
+  waitForDiagnostics,
 } from '../../testUtils'
 
 describe('vue-tsc-build-mode', () => {
@@ -26,7 +26,7 @@ describe('vue-tsc-build-mode', () => {
       editFile('packages/utils/src/helpers.ts', (code) =>
         code.replace('processData(input: number)', 'processData(input: boolean)')
       )
-      await sleepForEdit(2)
+      await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
