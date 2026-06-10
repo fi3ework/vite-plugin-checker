@@ -3,7 +3,7 @@ import path from 'path'
 import invariant from 'tiny-invariant'
 import { expect } from 'vitest'
 
-import { page, testDir } from './vitestSetup'
+import { getDiagnosticsEmitCount, page, testDir } from './vitestSetup'
 
 import type { ElementHandle } from 'playwright-chromium'
 
@@ -106,4 +106,104 @@ export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T)
       }
     }
   }
+}
+
+export interface WaitForDiagnosticsOptions {
+  /** Stop waiting after this many ms even if no new emit was observed. Default 30s on CI, 10s locally. */
+  timeout?: number
+  /**
+   * After the most recent emit (or the call, if there have been no emits
+   * yet), wait this long without another emit before resolving. Default 2s.
+   *
+   * Sized to absorb the gap between two checkers reporting after the same
+   * edit (e.g. ESLint quickly, TypeScript a moment later in `multiple-hmr`)
+   * on slow CI runners.
+   */
+  quietMs?: number
+}
+
+/**
+ * Wait for the diagnostics ws stream to settle after an `editFile` call.
+ *
+ * Replaces the `await sleepForEdit()` pattern that was racing against slow
+ * lint round-trips on CI. We poll the emit counter exposed by
+ * `vitestSetup.ts` instead of sleeping for a fixed time, so the wait scales
+ * with how long the checker actually takes.
+ *
+ * The baseline is captured at call time, so tests do not need to
+ * `resetDiagnostics()` before `editFile()`; we resolve once `quietMs` have
+ * passed without another emit since the call (or since the most recent emit
+ * after the call, whichever is later).
+ */
+export async function waitForDiagnostics(options: WaitForDiagnosticsOptions = {}): Promise<void> {
+  const { timeout = process.env.CI ? 30_000 : 10_000, quietMs = 2_000 } = options
+
+  const start = Date.now()
+  let lastEmitCount = getDiagnosticsEmitCount()
+  let lastChangeAt = Date.now()
+
+  while (Date.now() - start < timeout) {
+    await sleep(50)
+    const current = getDiagnosticsEmitCount()
+    if (current !== lastEmitCount) {
+      lastEmitCount = current
+      lastChangeAt = Date.now()
+      continue
+    }
+    if (Date.now() - lastChangeAt >= quietMs) {
+      return
+    }
+  }
+
+  console.log(`waitForDiagnostics timed out after ${timeout}ms`)
+}
+
+export interface WaitForNoOverlayOptions {
+  /** Stop waiting after this many ms even if the overlay still shows a message. Default 20s on CI, 8s locally. */
+  timeout?: number
+  /** Once the overlay clears, require it to stay clear this long before resolving. Default 500ms. */
+  quietMs?: number
+}
+
+/**
+ * Wait until `<vite-plugin-checker-error-overlay>` reports no diagnostics and
+ * stays empty for `quietMs`. Replaces the `await sleep(6000)` +
+ * `rejects.toThrow(...)` pattern, which was racing two back-to-back edits
+ * whose lint cycles hadn't both completed within the fixed sleep.
+ *
+ * The overlay custom element stays in the DOM for the lifetime of the page
+ * (see `packages/runtime/src/main.ts`); when there are no diagnostics, its
+ * inner `<template v-if="shouldRender">` is not rendered, so we detect a
+ * dismissed overlay by the absence of `.message-body` inside its shadow root.
+ */
+export async function waitForNoOverlay(options: WaitForNoOverlayOptions = {}): Promise<void> {
+  const { timeout = process.env.CI ? 20_000 : 8_000, quietMs = 500 } = options
+
+  const start = Date.now()
+  let goneSince: number | null = null
+
+  while (Date.now() - start < timeout) {
+    let messageBody: Awaited<ReturnType<(typeof page)['$']>> = null
+    try {
+      const dom = await page.$('vite-plugin-checker-error-overlay')
+      messageBody = dom ? await dom.$('.message-body') : null
+    } catch {
+      // Page is mid-reload (vite triggers a full reload after each edit in
+      // playgrounds without HMR). Playwright throws
+      // "Unable to adopt element handle from a different document" on the
+      // navigation boundary; treat as transient and re-poll.
+    }
+    if (messageBody) {
+      goneSince = null
+    } else if (goneSince === null) {
+      goneSince = Date.now()
+    } else if (Date.now() - goneSince >= quietMs) {
+      return
+    }
+    await sleep(50)
+  }
+
+  throw new Error(
+    `waitForNoOverlay timed out after ${timeout}ms; overlay still reporting diagnostics`
+  )
 }

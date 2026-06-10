@@ -8,9 +8,9 @@ import {
   isServe,
   log,
   resetReceivedLog,
-  sleepForEdit,
   sleepForServerReady,
   stripedLog,
+  waitForDiagnostics,
 } from '../../testUtils'
 
 describe('stylelint', () => {
@@ -23,7 +23,7 @@ describe('stylelint', () => {
       console.log('-- edit error file --')
       resetReceivedLog()
       editFile('src/style.css', (code) => code.replace(`color: rgb(0, 0, 0);`, `color: #fff;`))
-      await sleepForEdit()
+      await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
