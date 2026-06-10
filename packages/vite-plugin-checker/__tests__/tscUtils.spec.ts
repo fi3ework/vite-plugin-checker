@@ -78,4 +78,30 @@ describe('forceNoEmitOnSolutionBuilderHost', () => {
     expect(parsed).toBeDefined()
     expect(parsed!.options.noEmit).toBe(true)
   })
+
+  it('builds a referenced project whose include resolves to only `.d.ts` files', () => {
+    const leafDir = path.posix.join(tmp, 'leaf')
+    fs.mkdirSync(leafDir, { recursive: true })
+    fs.writeFileSync(path.posix.join(leafDir, 'types.d.ts'), 'export {}\n')
+    fs.writeFileSync(
+      path.posix.join(leafDir, 'tsconfig.json'),
+      JSON.stringify({
+        compilerOptions: { noEmit: true, composite: false },
+        include: ['./types.d.ts'],
+      }),
+    )
+
+    const rootPath = path.posix.join(tmp, 'tsconfig.json')
+    fs.writeFileSync(
+      rootPath,
+      JSON.stringify({
+        files: [],
+        references: [{ path: './leaf/tsconfig.json' }],
+      }),
+    )
+
+    const host = forceNoEmitOnSolutionBuilderHost(ts, makeHost())
+    const builder = ts.createSolutionBuilderWithWatch(host, [rootPath], {})
+    expect(() => builder.build()).not.toThrow()
+  })
 })
