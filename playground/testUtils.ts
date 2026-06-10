@@ -109,12 +109,23 @@ export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T)
 }
 
 export interface WaitForDiagnosticsOptions {
-  /** Stop waiting after this many ms even if no new emit was observed. Default 30s on CI, 10s locally. */
+  /**
+   * Number of independent checkers the playground configures (e.g. `typescript: true` + ESLint = 2).
+   * The wait resolves once that many new emits have been observed since the call.
+   * Each checker emits exactly once per file change (see `dispatchDiagnostics` in
+   * the ESLint/TypeScript checker sources), including when its result set is empty.
+   * Default 1.
+   */
+  checkers?: number
+  /** Stop waiting after this many ms even if the expected emits haven't arrived. Default 30s on CI, 10s locally. */
   timeout?: number
-  /** Once at least one new emit has been observed, wait this long without another emit before resolving. Default 500ms. */
+  /**
+   * After the expected emits have arrived, wait this long without another
+   * emit before resolving. Guards against a checker emitting twice in quick
+   * succession (the second emit would change the diagnostics array under us).
+   * Default 500ms.
+   */
   quietMs?: number
-  /** Require this many emits beyond the count at call time. Default 1. */
-  minNewEmits?: number
 }
 
 /**
@@ -126,12 +137,11 @@ export interface WaitForDiagnosticsOptions {
  * with how long the checker actually takes.
  *
  * The baseline is captured at call time, so tests do not have to
- * `resetDiagnostics()` before `editFile()`; we just need at least
- * `minNewEmits` new emits relative to the baseline, followed by `quietMs` of
- * silence.
+ * `resetDiagnostics()` before `editFile()`; we just need `checkers` new emits
+ * relative to the baseline, followed by `quietMs` of silence.
  */
 export async function waitForDiagnostics(options: WaitForDiagnosticsOptions = {}): Promise<void> {
-  const { timeout = process.env.CI ? 30_000 : 10_000, quietMs = 500, minNewEmits = 1 } = options
+  const { timeout = process.env.CI ? 30_000 : 10_000, quietMs = 500, checkers = 1 } = options
 
   const baseline = getDiagnosticsEmitCount()
   const start = Date.now()
@@ -146,28 +156,33 @@ export async function waitForDiagnostics(options: WaitForDiagnosticsOptions = {}
       lastChangeAt = Date.now()
       continue
     }
-    if (current - baseline >= minNewEmits && Date.now() - lastChangeAt >= quietMs) {
+    if (current - baseline >= checkers && Date.now() - lastChangeAt >= quietMs) {
       return
     }
   }
 
   console.log(
-    `waitForDiagnostics timed out after ${timeout}ms with ${getDiagnosticsEmitCount() - baseline} new emit(s)`
+    `waitForDiagnostics timed out after ${timeout}ms; expected ${checkers} new emit(s), got ${getDiagnosticsEmitCount() - baseline}`
   )
 }
 
 export interface WaitForNoOverlayOptions {
-  /** Stop waiting after this many ms even if the overlay is still present. Default 20s on CI, 8s locally. */
+  /** Stop waiting after this many ms even if the overlay still shows a message. Default 20s on CI, 8s locally. */
   timeout?: number
-  /** Once the overlay disappears, require it to stay gone this long before resolving. Default 500ms. */
+  /** Once the overlay clears, require it to stay clear this long before resolving. Default 500ms. */
   quietMs?: number
 }
 
 /**
- * Wait until `<vite-plugin-checker-error-overlay>` is absent and stays absent
- * for `quietMs`. Replaces the `await sleep(6000)` + `rejects.toThrow(...)`
- * pattern, which was racing two back-to-back edits whose lint cycles hadn't
- * both completed within the fixed sleep.
+ * Wait until `<vite-plugin-checker-error-overlay>` reports no diagnostics and
+ * stays empty for `quietMs`. Replaces the `await sleep(6000)` +
+ * `rejects.toThrow(...)` pattern, which was racing two back-to-back edits
+ * whose lint cycles hadn't both completed within the fixed sleep.
+ *
+ * The overlay custom element stays in the DOM for the lifetime of the page
+ * (see `packages/runtime/src/main.ts`); when there are no diagnostics, its
+ * inner `<template v-if="shouldRender">` is not rendered, so we detect a
+ * dismissed overlay by the absence of `.message-body` inside its shadow root.
  */
 export async function waitForNoOverlay(options: WaitForNoOverlayOptions = {}): Promise<void> {
   const { timeout = process.env.CI ? 20_000 : 8_000, quietMs = 500 } = options
@@ -177,7 +192,8 @@ export async function waitForNoOverlay(options: WaitForNoOverlayOptions = {}): P
 
   while (Date.now() - start < timeout) {
     const dom = await page.$('vite-plugin-checker-error-overlay')
-    if (dom) {
+    const messageBody = dom ? await dom.$('.message-body') : null
+    if (messageBody) {
       goneSince = null
     } else if (goneSince === null) {
       goneSince = Date.now()
@@ -187,5 +203,7 @@ export async function waitForNoOverlay(options: WaitForNoOverlayOptions = {}): P
     await sleep(50)
   }
 
-  throw new Error(`waitForNoOverlay timed out after ${timeout}ms; overlay still present`)
+  throw new Error(
+    `waitForNoOverlay timed out after ${timeout}ms; overlay still reporting diagnostics`
+  )
 }
