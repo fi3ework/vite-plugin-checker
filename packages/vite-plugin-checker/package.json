@@ -29,7 +29,8 @@
     "build": "tsup",
     "build:test": "tsup --sourcemap inline",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "prepack": "node -e \"require('fs').copyFileSync('../../README.md', 'README.md')\" && pnpm run build"
   },
   "dependencies": {
     "@babel/code-frame": "^7.29.0",

@@ -8,9 +8,9 @@ import {
   isServe,
   resetDiagnostics,
   resetReceivedLog,
-  sleepForEdit,
   sleepForServerReady,
   stripedLog,
+  waitForDiagnostics,
 } from '../../testUtils'
 
 describe('biome', () => {
@@ -26,7 +26,7 @@ describe('biome', () => {
       editFile('src/index.js', (code) =>
         code.replace(`var b = 'world'`, `const b = 'world'`),
       )
-      await sleepForEdit()
+      await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })

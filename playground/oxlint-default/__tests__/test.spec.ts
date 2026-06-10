@@ -9,9 +9,9 @@ import {
   log,
   resetDiagnostics,
   resetReceivedLog,
-  sleepForEdit,
   sleepForServerReady,
   stripedLog,
+  waitForDiagnostics,
 } from '../../testUtils'
 
 describe('oxlint-default', () => {
@@ -32,7 +32,7 @@ describe('oxlint-default', () => {
       editFile('src/main.ts', (code) =>
         code.replace('const unusedVariable1 = 42;', ''),
       )
-      await sleepForEdit()
+      await waitForDiagnostics()
 
       resetReceivedLog()
       resetDiagnostics()
@@ -53,7 +53,7 @@ describe('oxlint-default', () => {
       editFile('.oxlintrc.json', (code) =>
         code.replace('"correctness": "error"', '"correctness": "warn"'),
       )
-      await sleepForEdit()
+      await waitForDiagnostics()
 
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()

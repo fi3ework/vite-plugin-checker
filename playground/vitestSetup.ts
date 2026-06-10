@@ -58,6 +58,18 @@ export let stripedLog: string[] = []
 export let diagnostics: string[] = []
 export let buildSucceed: boolean
 
+let diagnosticsEmitCount = 0
+
+/**
+ * Number of `vite-plugin-checker:error` ws messages received from the dev
+ * server since the last `resetDiagnostics()`. Empty-diagnostics emissions
+ * still count: tests use this to know a checker has finished a re-lint cycle,
+ * even when the final result is `[]`.
+ */
+export function getDiagnosticsEmitCount(): number {
+  return diagnosticsEmitCount
+}
+
 export let resolvedConfig: ResolvedConfig = undefined!
 
 export let page: Page = undefined!
@@ -210,6 +222,7 @@ export async function startDefaultServe({
         }
 
         diagnostics = diagnostics.concat(payload.data.diagnostics)
+        diagnosticsEmitCount++
       }
 
       // @ts-ignore
@@ -259,4 +272,5 @@ export function resetReceivedLog() {
 
 export function resetDiagnostics() {
   diagnostics = []
+  diagnosticsEmitCount = 0
 }
