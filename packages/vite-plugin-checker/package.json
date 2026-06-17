@@ -26,10 +26,11 @@
     "!dist/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
-    "build": "tsup",
-    "build:test": "tsup --sourcemap inline",
+    "build": "tsdown && pnpm run build:runtime",
+    "build:runtime": "pnpm --filter @vite-plugin-checker/runtime run build",
+    "build:test": "tsdown --config tsdown.test.config.ts && pnpm run build:runtime",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
-    "dev": "tsup --watch",
+    "dev": "tsdown --watch",
     "prepack": "node -e \"require('fs').copyFileSync('../../README.md', 'README.md')\" && pnpm run build"
   },
   "dependencies": {
@@ -46,8 +47,9 @@
     "@types/proper-lockfile": "^4.1.4",
     "@vue/language-core": "~3.3.0",
     "meow": "^14.0.0",
+    "modern-tar": "^0.7.6",
     "stylelint": "^17.0.0",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.22.3",
     "typescript": "^5.9.3",
     "vue-tsc": "~3.3.0"
   },
