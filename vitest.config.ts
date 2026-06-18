@@ -19,9 +19,6 @@ const playgroundProject = {
 export default defineConfig({
   test: {
     cache: false,
-    // The serve and build projects now share one worker pool, so each spawns
-    // its own dev server plus checker subprocesses. Capping concurrency keeps
-    // those checkers from starving each other and emitting diagnostics late.
     maxWorkers: 4,
     minWorkers: 1,
     onConsoleLog(log) {
