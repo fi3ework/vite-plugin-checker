@@ -41,7 +41,7 @@ export function forceNoEmitOnSolutionBuilderHost<
           // referenced project's parsed options. Without it `canEmitTsBuildInfo`
           // returns false, so a `noEmit: true` referenced project whose
           // `include` resolves to only `.d.ts` files has no output path at all
-          // and `getFirstProjectOutput` crashes. 
+          // and `getFirstProjectOutput` crashes.
           { tscBuild: true } as ts.CompilerOptions,
           parseConfigHost,
         )

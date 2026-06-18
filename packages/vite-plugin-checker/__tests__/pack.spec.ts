@@ -17,7 +17,7 @@ describe('npm pack', () => {
     dest = fs.mkdtempSync(path.join(os.tmpdir(), 'vpc-pack-'))
     const { stdout } = await execa(
       'pnpm',
-      ['pack', '--pack-destination', dest],
+      ['pack', '--config.ignore-scripts=true', '--pack-destination', dest],
       {
         cwd: packageRoot,
       },

@@ -1,20 +1,19 @@
-import { execa } from 'execa'
-import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
+import fs from 'node:fs/promises'
 import type * as http from 'node:http'
 import os from 'node:os'
 import path, { dirname, join, resolve } from 'node:path'
+import { execa } from 'execa'
+import type { Browser, Page } from 'playwright-chromium'
 import { chromium } from 'playwright-chromium'
 import { stripVTControlCharacters as strip } from 'node:util'
+import type { InlineConfig, ResolvedConfig, ViteDevServer } from 'vite'
 import { createServer, mergeConfig } from 'vite'
+import type { RunnerTestFile } from 'vitest'
 import { beforeAll, expect } from 'vitest'
 import type { Checker } from '../packages/vite-plugin-checker/src/Checker'
-
+import type { DiagnosticToRuntime } from '../packages/vite-plugin-checker/src/types'
 import { normalizeLogSerializer } from './serializers'
-
-import type { Browser, Page } from 'playwright-chromium'
-import type { InlineConfig, ResolvedConfig, ViteDevServer } from 'vite'
-import type { File } from 'vitest'
 
 expect.addSnapshotSerializer(normalizeLogSerializer)
 
@@ -22,8 +21,12 @@ export const workspaceRoot = resolve(__dirname, '../')
 
 export const isBuild = !!process.env.VITE_TEST_BUILD
 export const isServe = !isBuild
+
 export const isWindows = process.platform === 'win32'
-export const viteBinPath = path.posix.join(workspaceRoot, 'packages/vite/bin/vite.js')
+export const viteBinPath = path.posix.join(
+  workspaceRoot,
+  'packages/vite/bin/vite.js',
+)
 
 let server: ViteDevServer | http.Server
 
@@ -55,7 +58,7 @@ export let viteConfig: InlineConfig | undefined
 
 export let log = ''
 export let stripedLog: string[] = []
-export let diagnostics: string[] = []
+export let diagnostics: DiagnosticToRuntime[] = []
 export let buildSucceed: boolean
 
 let diagnosticsEmitCount = 0
@@ -94,8 +97,8 @@ export function setViteUrl(url: string): void {
 
 const DIR = join(os.tmpdir(), 'vitest_playwright_global_setup')
 
-beforeAll(async (s) => {
-  const suite = s as File
+beforeAll(async ({}, s) => {
+  const suite = s as RunnerTestFile
   // skip browser setup for non-playground tests
   if (!suite.filepath.includes('playground')) {
     return
@@ -140,10 +143,15 @@ beforeAll(async (s) => {
         if (serve) {
           server = await serve()
           viteServer = mod.viteServer
-          startDefaultServe({ _server: (server as any).viteDevServer, port: (server as any).port })
+          startDefaultServe({
+            _server: (server as any).viteDevServer,
+            port: (server as any).port,
+          })
         }
       } else {
-        await startDefaultServe({ port: 5173 + Number(process.env.VITEST_POOL_ID) })
+        await startDefaultServe({
+          port: 5173 + Number(process.env.VITEST_POOL_ID),
+        })
       }
     }
   } catch (e) {
@@ -193,7 +201,7 @@ export async function startDefaultServe({
 
     const viteDevServer = _server || (await createServer(testConfig))
     const checker = viteDevServer.config.plugins.filter(
-      ({ name }) => name === 'vite-plugin-checker'
+      ({ name }) => name === 'vite-plugin-checker',
     )[0]
 
     // @ts-ignore
@@ -211,14 +219,22 @@ export async function startDefaultServe({
       const type = args?.[0]
       const payload = args?.[1]
 
-      if (type === 'vite-plugin-checker' && payload.event === 'vite-plugin-checker:error') {
-        const existedCheckerIds = diagnostics.map((d) => d)
+      if (
+        type === 'vite-plugin-checker' &&
+        payload.event === 'vite-plugin-checker:error'
+      ) {
         const currentCheckerId = payload.data.diagnostics[0]?.checkerId
-        const checkerReported = existedCheckerIds.some((id) => id === currentCheckerId)
+        const checkerReported = diagnostics.some(
+          (d) => d.checkerId === currentCheckerId,
+        )
 
         if (checkerReported) {
-          // update diagnostics for the same checker
-          diagnostics = diagnostics.filter((d) => d !== currentCheckerId)
+          // replace the previous batch from the same checker so the accumulated
+          // array reflects the latest lint result instead of every intermediate
+          // emission seen while polling
+          diagnostics = diagnostics.filter(
+            (d) => d.checkerId !== currentCheckerId,
+          )
         }
 
         diagnostics = diagnostics.concat(payload.data.diagnostics)

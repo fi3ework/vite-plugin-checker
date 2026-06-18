@@ -120,6 +120,12 @@ export interface WaitForDiagnosticsOptions {
    * on slow CI runners.
    */
   quietMs?: number
+  /**
+   * Require at least this many emits after the call before the quiet window
+   * can resolve. Default 1, so a slow checker that has not yet re-linted the
+   * edit cannot let the quiet window elapse on stale diagnostics.
+   */
+  minEmits?: number
 }
 
 /**
@@ -131,15 +137,21 @@ export interface WaitForDiagnosticsOptions {
  * with how long the checker actually takes.
  *
  * The baseline is captured at call time, so tests do not need to
- * `resetDiagnostics()` before `editFile()`; we resolve once `quietMs` have
- * passed without another emit since the call (or since the most recent emit
- * after the call, whichever is later).
+ * `resetDiagnostics()` before `editFile()`; we resolve once at least
+ * `minEmits` emits have arrived since the call and `quietMs` have passed
+ * without another emit. Requiring an emit stops a slow checker, which has not
+ * yet re-linted the edit, from settling on the pre-edit diagnostics.
  */
 export async function waitForDiagnostics(options: WaitForDiagnosticsOptions = {}): Promise<void> {
-  const { timeout = process.env.CI ? 30_000 : 10_000, quietMs = 2_000 } = options
+  const {
+    timeout = process.env.CI ? 30_000 : 10_000,
+    quietMs = 2_000,
+    minEmits = 1,
+  } = options
 
   const start = Date.now()
-  let lastEmitCount = getDiagnosticsEmitCount()
+  const baseline = getDiagnosticsEmitCount()
+  let lastEmitCount = baseline
   let lastChangeAt = Date.now()
 
   while (Date.now() - start < timeout) {
@@ -150,7 +162,7 @@ export async function waitForDiagnostics(options: WaitForDiagnosticsOptions = {}
       lastChangeAt = Date.now()
       continue
     }
-    if (Date.now() - lastChangeAt >= quietMs) {
+    if (current - baseline >= minEmits && Date.now() - lastChangeAt >= quietMs) {
       return
     }
   }
