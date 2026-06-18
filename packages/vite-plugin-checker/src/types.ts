@@ -2,7 +2,6 @@ import type { Worker } from 'node:worker_threads'
 import type { ESLint } from 'eslint'
 import type * as Stylelint from 'stylelint'
 import type { ConfigEnv, ErrorPayload } from 'vite'
-import type { VlsOptions } from './checkers/vls/initParams.js'
 
 /* ----------------------------- userland plugin options ----------------------------- */
 
@@ -44,9 +43,6 @@ export type VueTscConfig =
    */
   boolean | Partial<TsConfigOptions>
 
-/** vls checker configuration */
-export type VlsConfig = boolean | DeepPartial<VlsOptions>
-
 /** ESLint checker configuration */
 export type EslintConfig =
   | false
@@ -61,7 +57,14 @@ export type EslintConfig =
        */
       lintCommand: string
       /**
-       * @default false
+       * Use flat config mode. Only relevant for ESLint v9 which supports both
+       * flat config and legacy eslintrc modes. ESLint v10+ always uses flat config.
+       *
+       * - `true`: Use flat config (default for ESLint v9 and v10+)
+       * - `false`: Use legacy eslintrc config (ESLint v9 only)
+       *
+       * When not specified, defaults to `true` (flat config).
+       * @default true
        */
       useFlatConfig?: boolean
       dev?: Partial<{
@@ -108,6 +111,10 @@ export type BiomeConfig =
        * or `build.command` is set their mode.
        * */
       flags?: string
+      /**
+       * Configure path to watch files
+       */
+      watchPath?: string | string[]
       dev?: Partial<{
         /** Command will be used in dev mode */
         command: BiomeCommand
@@ -121,6 +128,23 @@ export type BiomeConfig =
         command: BiomeCommand
         /** Flags of the command */
         flags?: string
+      }>
+    }
+
+export type OxlintConfig =
+  | boolean
+  | {
+      /**
+       * `lintCommand` will be executed at build mode.
+       */
+      lintCommand: string
+      /**
+       * Configure path to watch files
+       */
+      watchPath?: string | string[]
+      dev?: Partial<{
+        /** Specifies which level of the diagnostic will be emitted from the plugin */
+        logLevel: ('error' | 'warning')[]
       }>
     }
 
@@ -217,10 +241,10 @@ export interface SharedConfig {
 export interface BuildInCheckers {
   typescript: TscConfig
   vueTsc: VueTscConfig
-  vls: VlsConfig
   eslint: EslintConfig
   stylelint: StylelintConfig
   biome: BiomeConfig
+  oxlint: OxlintConfig
 }
 
 export type BuildInCheckerNames = keyof BuildInCheckers
@@ -326,9 +350,3 @@ export interface CheckerDiagnostic {
 export type CreateDiagnostic<T extends BuildInCheckerNames = any> = (
   config: Pick<BuildInCheckers, T> & SharedConfig,
 ) => CheckerDiagnostic
-
-/* ----------------------------- generic utility types ----------------------------- */
-
-export type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>
-}

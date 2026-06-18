@@ -1,6 +1,6 @@
 # vue-tsc (Vue Language Tools)
 
-You can use vue-tsc checker for your Vue 3 project. If you're still using Vue2, choose [VLS](/checkers/vls) checker.
+You can use vue-tsc checker for your Vue 3 project.
 
 ## Installation
 
@@ -31,5 +31,3 @@ Advanced object configuration table of `options.vueTsc`
 | root         | `string`  | [Vite config](https://vitejs.dev/config/#root) `root` | Root path to find tsconfig file                                                                                                                                                                                                     |
 | tsconfigPath | `string`  | `"tsconfig.json"`                                     | Relative tsconfig path to `root`                                                                                                                                                                                                    |
 | buildMode    | `boolean` | `false`                                               | Add [`--build`](https://www.typescriptlang.org/docs/handbook/project-references.html) to `vue-tsc` flag, note that `noEmit` does NOT work if `buildMode` is `true` ([#36917](https://github.com/microsoft/TypeScript/issues/36917)) |
-
-3. **(optional for Vue2 project only)** The type check is powered by `vue-tsc` so it supports Vue2. According to the [documentation](https://github.com/vuejs/language-tools/blob/master/packages/vscode-vue/README.md#usage), you need to install `@vue/runtime-dom` for Vue version <= `2.6.14`.

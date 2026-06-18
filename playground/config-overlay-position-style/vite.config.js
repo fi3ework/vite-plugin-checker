@@ -10,7 +10,7 @@ export default defineConfig({
         panelStyle: 'background-color: #A4C1FF;',
       },
       eslint: {
-        lintCommand: 'eslint ./src --ext .ts',
+        lintCommand: 'eslint "./src/**/*.ts"',
       },
     }),
   ],

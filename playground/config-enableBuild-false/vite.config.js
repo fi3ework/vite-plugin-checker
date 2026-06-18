@@ -8,7 +8,7 @@ export default defineConfig({
     checker({
       enableBuild: false,
       eslint: {
-        lintCommand: 'eslint ./src --ext .ts',
+        lintCommand: 'eslint "./src/**/*.ts"',
       },
       // checker-edit-slot
     }),

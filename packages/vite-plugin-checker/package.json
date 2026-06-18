@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-checker",
-  "version": "0.9.3",
+  "version": "0.14.4",
   "description": "Vite plugin that runs TypeScript type checker on a separate process.",
   "keywords": [
     "vite",
@@ -26,46 +26,42 @@
     "!dist/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
-    "build": "tsup",
-    "build:test": "tsup --sourcemap inline",
+    "build": "tsdown && pnpm run build:runtime",
+    "build:runtime": "pnpm --filter @vite-plugin-checker/runtime run build",
+    "build:test": "tsdown --config tsdown.test.config.ts && pnpm run build:runtime",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
-    "dev": "tsup --watch"
+    "dev": "tsdown --watch",
+    "prepack": "node -e \"require('fs').copyFileSync('../../README.md', 'README.md')\" && pnpm run build"
   },
   "dependencies": {
-    "@babel/code-frame": "^7.27.1",
-    "chokidar": "^4.0.3",
+    "@babel/code-frame": "^7.29.0",
+    "chokidar": "^5.0.0",
     "npm-run-path": "^6.0.0",
     "picocolors": "^1.1.1",
-    "picomatch": "^4.0.2",
-    "strip-ansi": "^7.1.0",
-    "tiny-invariant": "^1.3.3",
-    "tinyglobby": "^0.2.14",
-    "vscode-uri": "^3.1.0"
+    "picomatch": "^4.0.4",
+    "proper-lockfile": "^4.1.2",
+    "tiny-invariant": "^1.3.3"
   },
   "devDependencies": {
-    "@types/eslint": "^8.56.12",
-    "@types/picomatch": "^4.0.0",
-    "@vue/language-core": "~3.0.1",
-    "meow": "^13.2.0",
-    "stylelint": "^16.21.1",
-    "tsup": "^8.5.0",
-    "typescript": "^5.8.3",
-    "vls": "^0.8.5",
-    "vscode-languageclient": "^9.0.1",
-    "vscode-languageserver": "^9.0.1",
-    "vscode-languageserver-textdocument": "^1.0.12",
-    "vue-tsc": "~3.0.1"
+    "@types/picomatch": "^4.0.3",
+    "@types/proper-lockfile": "^4.1.4",
+    "@vue/language-core": "~3.3.0",
+    "meow": "^14.0.0",
+    "modern-tar": "^0.7.6",
+    "stylelint": "^17.0.0",
+    "tsdown": "^0.22.3",
+    "typescript": "^5.9.3",
+    "vue-tsc": "~3.3.0"
   },
   "peerDependencies": {
-    "@biomejs/biome": ">=1.7",
-    "eslint": ">=7",
-    "meow": "^13.2.0",
+    "@biomejs/biome": ">=2.4.12",
+    "eslint": ">=9.39.4",
+    "meow": "^13.2.0 || ^14.0.0",
     "optionator": "^0.9.4",
-    "stylelint": ">=16",
+    "oxlint": ">=1",
+    "stylelint": ">=16.26.1",
     "typescript": "*",
-    "vite": ">=2.0.0",
-    "vls": "*",
-    "vti": "*",
+    "vite": ">=5.4.21",
     "vue-tsc": "~2.2.10 || ^3.0.0"
   },
   "peerDependenciesMeta": {
@@ -81,16 +77,13 @@
     "optionator": {
       "optional": true
     },
+    "oxlint": {
+      "optional": true
+    },
     "stylelint": {
       "optional": true
     },
     "typescript": {
-      "optional": true
-    },
-    "vls": {
-      "optional": true
-    },
-    "vti": {
       "optional": true
     },
     "vue-tsc": {
@@ -98,6 +91,6 @@
     }
   },
   "engines": {
-    "node": ">=14.16"
+    "node": ">=20.19.0"
   }
 }

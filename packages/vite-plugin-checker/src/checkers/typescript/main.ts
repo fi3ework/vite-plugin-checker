@@ -21,6 +21,7 @@ import {
   type CreateDiagnostic,
   type DiagnosticToRuntime,
 } from '../../types.js'
+import { forceNoEmitOnSolutionBuilderHost } from '../tscUtils.js'
 
 const __filename = fileURLToPath(import.meta.url)
 let createServeAndBuild: any
@@ -140,12 +141,15 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
         typeof pluginConfig.typescript === 'object' &&
         pluginConfig.typescript.buildMode
       ) {
-        const host = ts.createSolutionBuilderWithWatchHost(
-          ts.sys,
-          createProgram,
-          reportDiagnostic,
-          undefined,
-          reportWatchStatusChanged,
+        const host = forceNoEmitOnSolutionBuilderHost(
+          ts,
+          ts.createSolutionBuilderWithWatchHost(
+            ts.sys,
+            createProgram,
+            reportDiagnostic,
+            undefined,
+            reportWatchStatusChanged,
+          ),
         )
 
         ts.createSolutionBuilderWithWatch(host, [configFile], {}).build()
@@ -215,6 +219,7 @@ export class TscChecker extends Checker<'typescript'> {
 }
 
 export { createServeAndBuild }
+
 const tscChecker = new TscChecker()
 tscChecker.prepare()
 tscChecker.init()

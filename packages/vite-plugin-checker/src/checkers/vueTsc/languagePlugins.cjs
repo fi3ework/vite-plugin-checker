@@ -36,10 +36,15 @@ exports.getLanguagePlugins = (ts, options) => {
           configFilePath.replace(windowsPathReg, '/'),
         ).vueOptions
       : getDefaultCompilerOptions()
-  const host = /** @type {import('typescript').CompilerHost} */ (options.host)
-  const writeFile = host.writeFile.bind(host)
-  host.writeFile = (fileName, contents, ...args) => {
-    return writeFile(fileName, removeEmitGlobalTypes(contents), ...args)
+
+  if (vue.writeGlobalTypes) {
+    vue.writeGlobalTypes(vueOptions, ts.sys.writeFile)
+  } else {
+    const host = /** @type {import('typescript').CompilerHost} */ (options.host)
+    const writeFile = host.writeFile.bind(host)
+    host.writeFile = (fileName, contents, ...args) => {
+      return writeFile(fileName, removeEmitGlobalTypes(contents), ...args)
+    }
   }
   const vueLanguagePlugin = vue.createVueLanguagePlugin(
     ts,

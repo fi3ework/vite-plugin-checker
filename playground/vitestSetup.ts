@@ -6,20 +6,21 @@ import path, { dirname, join, resolve } from 'node:path'
 import { execa } from 'execa'
 import type { Browser, Page } from 'playwright-chromium'
 import { chromium } from 'playwright-chromium'
-import strip from 'strip-ansi'
+import { stripVTControlCharacters as strip } from 'node:util'
 import type { InlineConfig, ResolvedConfig, ViteDevServer } from 'vite'
 import { createServer, mergeConfig } from 'vite'
-import type { File } from 'vitest'
+import type { RunnerTestFile } from 'vitest'
 import { beforeAll, expect } from 'vitest'
 import type { Checker } from '../packages/vite-plugin-checker/src/Checker'
+import type { DiagnosticToRuntime } from '../packages/vite-plugin-checker/src/types'
 import { normalizeLogSerializer } from './serializers'
 
 expect.addSnapshotSerializer(normalizeLogSerializer)
 
 export const workspaceRoot = resolve(__dirname, '../')
 
-export const isBuild = process.env.PROJECT === 'build'
-export const isServe = process.env.PROJECT === 'serve'
+export const isBuild = !!process.env.VITE_TEST_BUILD
+export const isServe = !isBuild
 
 export const isWindows = process.platform === 'win32'
 export const viteBinPath = path.posix.join(
@@ -57,10 +58,22 @@ export let viteConfig: InlineConfig | undefined
 
 export let log = ''
 export let stripedLog: string[] = []
-export let diagnostics: string[] = []
+export let diagnostics: DiagnosticToRuntime[] = []
 export let buildSucceed: boolean
 
-export const resolvedConfig: ResolvedConfig = undefined!
+let diagnosticsEmitCount = 0
+
+/**
+ * Number of `vite-plugin-checker:error` ws messages received from the dev
+ * server since the last `resetDiagnostics()`. Empty-diagnostics emissions
+ * still count: tests use this to know a checker has finished a re-lint cycle,
+ * even when the final result is `[]`.
+ */
+export function getDiagnosticsEmitCount(): number {
+  return diagnosticsEmitCount
+}
+
+export let resolvedConfig: ResolvedConfig = undefined!
 
 export let page: Page = undefined!
 export let browser: Browser = undefined!
@@ -84,8 +97,8 @@ export function setViteUrl(url: string): void {
 
 const DIR = join(os.tmpdir(), 'vitest_playwright_global_setup')
 
-beforeAll(async (s) => {
-  const suite = s as File
+beforeAll(async ({}, s) => {
+  const suite = s as RunnerTestFile
   // skip browser setup for non-playground tests
   if (!suite.filepath.includes('playground')) {
     return
@@ -210,18 +223,22 @@ export async function startDefaultServe({
         type === 'vite-plugin-checker' &&
         payload.event === 'vite-plugin-checker:error'
       ) {
-        const existedCheckerIds = diagnostics.map((d) => d)
         const currentCheckerId = payload.data.diagnostics[0]?.checkerId
-        const checkerReported = existedCheckerIds.some(
-          (id) => id === currentCheckerId,
+        const checkerReported = diagnostics.some(
+          (d) => d.checkerId === currentCheckerId,
         )
 
         if (checkerReported) {
-          // update diagnostics for the same checker
-          diagnostics = diagnostics.filter((d) => d !== currentCheckerId)
+          // replace the previous batch from the same checker so the accumulated
+          // array reflects the latest lint result instead of every intermediate
+          // emission seen while polling
+          diagnostics = diagnostics.filter(
+            (d) => d.checkerId !== currentCheckerId,
+          )
         }
 
         diagnostics = diagnostics.concat(payload.data.diagnostics)
+        diagnosticsEmitCount++
       }
 
       // @ts-ignore
@@ -271,4 +288,5 @@ export function resetReceivedLog() {
 
 export function resetDiagnostics() {
   diagnostics = []
+  diagnosticsEmitCount = 0
 }

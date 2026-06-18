@@ -1,18 +1,9 @@
-import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import os from 'node:os'
-import colors from 'picocolors'
-import strip from 'strip-ansi'
-import * as _vscodeUri from 'vscode-uri'
-
-// hack to compatible with Jiti
-// see details: https://github.com/fi3ework/vite-plugin-checker/issues/197
-// @ts-expect-error
-const URI = _vscodeUri?.default?.URI ?? _vscodeUri.URI
-
+import { stripVTControlCharacters as strip } from 'node:util'
 import { parentPort } from 'node:worker_threads'
-
 import type { SourceLocation } from '@babel/code-frame'
+import colors from 'picocolors'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
 import {
@@ -36,10 +27,6 @@ import type {
   flattenDiagnosticMessageText as flattenDiagnosticMessageTextType,
   Diagnostic as TsDiagnostic,
 } from 'typescript'
-import type {
-  Diagnostic as LspDiagnostic,
-  PublishDiagnosticsParams,
-} from 'vscode-languageclient/node'
 
 export interface NormalizedDiagnostic {
   /** error message */
@@ -93,7 +80,7 @@ export function filterLogLevel(
 
 export function diagnosticToTerminalLog(
   d: NormalizedDiagnostic,
-  name?: 'TypeScript' | 'vue-tsc' | 'VLS' | 'ESLint' | 'Stylelint' | 'Biome',
+  name?: 'TypeScript' | 'vue-tsc' | 'ESLint' | 'Stylelint' | 'Biome' | 'oxlint',
 ): string {
   const nameInLabel = name ? `(${name})` : ''
   const boldBlack = (str: string) => colors.bold(colors.black(str))
@@ -260,71 +247,6 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
   }
 }
 
-/* ----------------------------------- LSP ---------------------------------- */
-
-export function normalizeLspDiagnostic({
-  diagnostic,
-  absFilePath,
-  fileText,
-}: {
-  diagnostic: LspDiagnostic
-  absFilePath: string
-  fileText: string
-}): NormalizedDiagnostic {
-  let level = DiagnosticLevel.Error
-  const loc = tsLikeLocToBabelLoc(diagnostic.range)
-  const codeFrame = createFrame(fileText, loc)
-
-  switch (diagnostic.severity) {
-    case 1: // Error
-      level = DiagnosticLevel.Error
-      break
-    case 2: // Warning
-      level = DiagnosticLevel.Warning
-      break
-    case 3: // Information
-      level = DiagnosticLevel.Message
-      break
-    case 4: // Hint
-      level = DiagnosticLevel.Suggestion
-      break
-  }
-
-  return {
-    message: diagnostic.message.trim(),
-    conclusion: '',
-    codeFrame,
-    stripedCodeFrame: codeFrame && strip(codeFrame),
-    id: absFilePath,
-    checker: 'VLS',
-    loc,
-    level,
-  }
-}
-
-export async function normalizePublishDiagnosticParams(
-  publishDiagnostics: PublishDiagnosticsParams,
-): Promise<NormalizedDiagnostic[]> {
-  const diagnostics = publishDiagnostics.diagnostics
-  const absFilePath = uriToAbsPath(publishDiagnostics.uri)
-  const { readFile } = fs.promises
-  const fileText = await readFile(absFilePath, 'utf-8')
-
-  const res = diagnostics.map((d) => {
-    return normalizeLspDiagnostic({
-      diagnostic: d,
-      absFilePath,
-      fileText,
-    })
-  })
-
-  return res
-}
-
-export function uriToAbsPath(documentUri: string): string {
-  return URI.parse(documentUri).fsPath
-}
-
 /* --------------------------------- vue-tsc -------------------------------- */
 
 export function normalizeVueTscDiagnostic(
@@ -349,7 +271,7 @@ export function normalizeEslintDiagnostic(
   return diagnostic.messages
     .map((d) => {
       let level = DiagnosticLevel.Error
-      switch (d.severity) {
+      switch (d.severity as number) {
         case 0: // off, ignore this
           level = DiagnosticLevel.Error
           return null
@@ -401,11 +323,7 @@ export function normalizeStylelintDiagnostic(
 
       const loc = lineColLocToBabelLoc(d)
 
-      const codeFrame = createFrame(
-        // @ts-ignore
-        diagnostic._postcssResult.css ?? '',
-        loc,
-      )
+      const codeFrame = createFrame(diagnostic._postcssResult?.css ?? '', loc)
 
       return {
         message: `${d.text} (${d.rule})`,

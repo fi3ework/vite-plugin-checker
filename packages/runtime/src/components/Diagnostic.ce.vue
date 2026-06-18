@@ -13,6 +13,7 @@ interface Link {
 function calcLink(text: string) {
   let curIndex = 0
   let match
+  fileRE.lastIndex = 0
   const links: Link[] = []
   while ((match = fileRE.exec(text))) {
     const { 0: file, index } = match
@@ -37,16 +38,16 @@ const checkerColorMap: Record<string, string> = {
   TypeScript: '#3178c6',
   ESLint: '#7b7fe3',
   Biome: '#60a5fa',
-  VLS: '#64b587',
   'vue-tsc': '#64b587',
   Stylelint: '#ffffff',
+  'oxlint': '#a8b1ff'
 } as const
 
 const fileRE = /(?:[a-zA-Z]:\\|\/).*(:\d+:\d+)?/g
 const codeFrameRE = /^(?:>?\s+\d+\s+\|.*|\s+\|\s*\^.*)\r?\n/gm
-codeFrameRE.lastIndex = 0
 
 const hasFrame = computed(() => {
+  codeFrameRE.lastIndex = 0
   return diagnostic.frame && codeFrameRE.test(diagnostic.frame)
 })
 

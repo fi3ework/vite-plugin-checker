@@ -27,10 +27,10 @@ import {
 const buildInCheckerKeys: BuildInCheckerNames[] = [
   'typescript',
   'vueTsc',
-  'vls',
   'eslint',
   'stylelint',
   'biome',
+  'oxlint',
 ]
 
 async function createCheckers(
@@ -72,7 +72,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   return {
     name: 'vite-plugin-checker',
     enforce: 'pre',
-    // @ts-ignore
+    // @ts-expect-error
     __internal__checker: Checker,
     config: async (_config, env) => {
       // for dev mode (1/2)
@@ -244,7 +244,10 @@ function spawnChecker(
     const finalBin: BuildCheckBinStr =
       typeof buildBin === 'function' ? buildBin(userConfig) : buildBin
 
-    const proc = spawn(...finalBin, {
+    const [command, args] = finalBin
+    const commandWithArgs = [command, ...args].join(' ')
+
+    const proc = spawn(commandWithArgs, {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: localEnv,

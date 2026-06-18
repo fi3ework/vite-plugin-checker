@@ -11,12 +11,16 @@
  * will be only respected in ESLint CLI.
  */
 
-// @ts-expect-error
-function quietFixPredicate(message) {
+function quietFixPredicate(message: { severity: number }) {
   return message.severity === 2
 }
 
-export function translateOptions({
+/**
+ * Translate parsed CLI options to ESLint legacy (eslintrc) API options.
+ * This is the original translateOptions from ESLint's CLI, used for
+ * ESLint v9 in legacy eslintrc mode.
+ */
+function translateOptionsLegacy({
   cache,
   cacheFile,
   cacheLocation,
@@ -84,4 +88,73 @@ export function translateOptions({
     rulePaths: rulesdir,
     useEslintrc: eslintrc,
   }
+}
+
+/**
+ * Translate parsed CLI options to ESLint flat config API options (v9 flat / v10+).
+ */
+function translateOptionsFlatConfig({
+  cache,
+  cacheFile,
+  cacheLocation,
+  cacheStrategy,
+  config,
+  errorOnUnmatchedPattern,
+  fix,
+  fixDryRun,
+  fixType,
+  global,
+  ignore,
+  ignorePattern,
+  inlineConfig,
+  parser,
+  parserOptions,
+  plugin,
+  quiet,
+  rule,
+}: any) {
+  const languageOptions: any = {
+    globals:
+      global?.reduce((obj: Record<string, string>, name: string) => {
+        if (name.endsWith(':true')) {
+          obj[name.slice(0, -5)] = 'writable'
+        } else {
+          obj[name] = 'readonly'
+        }
+        return obj
+      }, {}) || {},
+  }
+  if (parser) languageOptions.parser = parser
+  if (parserOptions) languageOptions.parserOptions = parserOptions
+
+  const overrideConfig: any = {
+    languageOptions,
+    ignores: ignorePattern || [],
+    rules: rule || {},
+  }
+  if (plugin) overrideConfig.plugins = plugin
+
+  return {
+    allowInlineConfig: inlineConfig,
+    cache,
+    cacheLocation: cacheLocation || cacheFile,
+    cacheStrategy,
+    errorOnUnmatchedPattern,
+    fix: (fix || fixDryRun) && (quiet ? quietFixPredicate : true),
+    fixTypes: fixType,
+    ignore,
+    overrideConfig,
+    overrideConfigFile: config,
+  }
+}
+
+/**
+ * Translate parsed CLI options, choosing the appropriate format based on
+ * whether flat config mode is being used.
+ */
+export function translateOptions(options: any, useFlatConfig = true) {
+  if (useFlatConfig) {
+    return translateOptionsFlatConfig(options)
+  }
+  return translateOptionsLegacy(options)
 }
