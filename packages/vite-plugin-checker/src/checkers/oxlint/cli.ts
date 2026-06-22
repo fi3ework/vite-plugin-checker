@@ -39,18 +39,23 @@ export function getOxlintCommand(command: string) {
 
 export function runOxlint(command: string, cwd: string) {
   return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
-    exec(
-      command,
-      {
-        cwd,
-        maxBuffer: Number.POSITIVE_INFINITY,
-      },
-      (_error, stdout, _stderr) => {
-        parseOxlintOutput(stdout, cwd)
-          .then(resolve)
-          .catch(() => resolve([]))
-      },
-    )
+    try {
+      const child = exec(
+        command,
+        {
+          cwd,
+          maxBuffer: Number.POSITIVE_INFINITY,
+        },
+        (_error, stdout, _stderr) => {
+          parseOxlintOutput(stdout, cwd)
+            .then(resolve)
+            .catch(() => resolve([]))
+        },
+      )
+      child.on('error', () => resolve([]))
+    } catch {
+      resolve([])
+    }
   })
 }
 
