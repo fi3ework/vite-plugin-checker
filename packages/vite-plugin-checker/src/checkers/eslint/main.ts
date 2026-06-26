@@ -228,13 +228,10 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ignored: createIgnore(root, files),
       })
 
-      // `handleFileChange` reads the changed file, which may be removed or
-      // mid-replace by the time it runs (e.g. atomic editor saves). Ignore the
-      // resulting transient FS errors so a single racing event can't crash the
-      // dev server — the next stable write fires a fresh event.
       watcher.on('change', (filePath) => {
         handleFileChange(filePath, 'change').catch(ignoreTransientFsError)
       })
+
       watcher.on('unlink', (filePath) => {
         handleFileChange(filePath, 'unlink').catch(ignoreTransientFsError)
       })
