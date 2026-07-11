@@ -12,6 +12,7 @@ import {
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   ensureCall,
+  type NormalizedDiagnostic,
   normalizeTsDiagnostic,
   toClientPayload,
   wrapCheckerSummary,
@@ -19,6 +20,7 @@ import {
 import {
   ACTION_TYPES,
   type CreateDiagnostic,
+  DiagnosticLevel,
   type DiagnosticToRuntime,
 } from '../../types.js'
 import { forceNoEmitOnSolutionBuilderHost } from '../tscUtils.js'
@@ -57,6 +59,117 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       const ts: typeof typescript = await import(
         finalConfig.typescriptPath
       ).then((r) => r.default || r)
+
+      // TS v7 (Corsa) removed the entire ts namespace from the root import.
+      // `ts.sys`, `ts.findConfigFile()`, `ts.createWatchCompilerHost()`, etc.
+      // are gone. Fall back to spawning `tsc --noEmit --watch` as a child
+      // process and parse its stdout for diagnostics.
+      const isTsV7 = !ts.sys
+
+      if (isTsV7) {
+        const { spawn } = await import('node:child_process')
+        const { existsSync } = await import('node:fs')
+
+        const tsconfigPath = path.resolve(
+          finalConfig.root,
+          finalConfig.tsconfigPath,
+        )
+        if (!existsSync(tsconfigPath)) {
+          throw new Error(`Failed to find tsconfig.json: ${tsconfigPath}`)
+        }
+
+        const isBuildMode =
+          typeof pluginConfig.typescript === 'object' &&
+          pluginConfig.typescript.buildMode
+        const args = [
+          ...(isBuildMode ? ['-b'] : ['--noEmit']),
+          '--watch',
+          '--pretty',
+          'false',
+        ]
+        args.push('-p', tsconfigPath)
+
+        const tscProcess = spawn('tsc', args, { cwd: finalConfig.root })
+
+        let logChunk = ''
+
+        tscProcess.stdout.on('data', (chunk: Buffer) => {
+          const lines = chunk.toString().split('\n')
+          for (const line of lines) {
+            // Parse: "<file>:<line>:<col> - error TS<code>: <message>"
+            const diagMatch = line.match(
+              /^(.+?):(\d+):(\d+) - (error|warning) TS(\d+): (.+)$/,
+            )
+            if (diagMatch) {
+              const [, file, lineStr, colStr, severity, , message] = diagMatch
+              const normalized: NormalizedDiagnostic = {
+                message: message!,
+                conclusion: '',
+                id: file,
+                checker: 'TypeScript',
+                loc: {
+                  start: { line: +lineStr!, column: +colStr! },
+                },
+                level:
+                  severity === 'warning'
+                    ? DiagnosticLevel.Warning
+                    : DiagnosticLevel.Error,
+              }
+              currDiagnostics.push(diagnosticToRuntimeError(normalized))
+              logChunk +=
+                os.EOL + diagnosticToTerminalLog(normalized, 'TypeScript')
+            }
+
+            // Parse: "Found X errors."
+            const summaryMatch = line.match(/Found (\d+) errors?\./)
+            if (summaryMatch) {
+              const errorCount = +summaryMatch[1]!
+              if (overlay) {
+                parentPort?.postMessage({
+                  type: ACTION_TYPES.overlayError,
+                  payload: toClientPayload('typescript', currDiagnostics),
+                })
+              }
+              ensureCall(() => {
+                if (errorCount === 0) logChunk = ''
+                if (terminal) {
+                  const color = errorCount > 0 ? 'red' : 'green'
+                  consoleLog(
+                    colors[color](
+                      logChunk +
+                        os.EOL +
+                        wrapCheckerSummary(
+                          'TypeScript',
+                          errorCount > 0
+                            ? `Found ${errorCount} error(s)`
+                            : 'No errors',
+                        ),
+                    ),
+                    errorCount > 0 ? 'error' : 'info',
+                  )
+                }
+              })
+              logChunk = ''
+              currDiagnostics = []
+            }
+          }
+        })
+
+        tscProcess.on('error', (err: Error) => {
+          consoleLog(
+            colors.red(`TypeScript checker failed: ${err.message}`),
+            'error',
+          )
+        })
+
+        // Cleanup on worker exit
+        parentPort?.on('close', () => {
+          tscProcess.kill()
+        })
+
+        return
+      }
+
       configFile = ts.findConfigFile(
         finalConfig.root,
         ts.sys.fileExists,
