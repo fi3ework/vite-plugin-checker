@@ -7,6 +7,7 @@ import invariant from 'tiny-invariant'
 import type * as typescript from 'typescript'
 
 import { Checker } from '../../Checker.js'
+import { createFrame } from '../../codeFrame.js'
 import {
   consoleLog,
   diagnosticToRuntimeError,
@@ -68,7 +69,8 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
       if (isTsV7) {
         const { spawn } = await import('node:child_process')
-        const { existsSync } = await import('node:fs')
+        const { existsSync, readFileSync } = await import('node:fs')
+        const { stripVTControlCharacters: strip } = await import('node:util')
 
         const tsconfigPath = path.resolve(
           finalConfig.root,
@@ -95,20 +97,49 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
         tscProcess.stdout.on('data', (chunk: Buffer) => {
           const lines = chunk.toString().split('\n')
-          for (const line of lines) {
-            // Parse: "<file>:<line>:<col> - error TS<code>: <message>"
+          for (const rawLine of lines) {
+            // Strip \r and timestamp prefix that tsc --watch prepends to each line
+            const line = rawLine
+              .replace(/\r$/, '')
+              .replace(/^\d{1,2}:\d{2}:\d{2}\s+[AP]M\s+-\s+/, '')
+
+            // Parse: "<file>(<line>,<col>): error TS<code>: <message>"
+            // This is the --pretty false format; the pretty format uses
+            // "<file>:<line>:<col> - error TS<code>: <message>" instead.
             const diagMatch = line.match(
-              /^(.+?):(\d+):(\d+) - (error|warning) TS(\d+): (.+)$/,
+              /^(.+?)\((\d+),(\d+)\): (error|warning) TS(\d+): (.+)$/,
             )
             if (diagMatch) {
-              const [, file, lineStr, colStr, severity, , message] = diagMatch
+              const [, file, lineStr, colStr, severity, tsCode, message] =
+                diagMatch
+              const lineNum = +lineStr!
+              const colNum = +colStr!
+
+              // tsc outputs paths relative to its cwd (finalConfig.root);
+              // resolve to absolute so readFileSync works in the worker thread
+              const absFile = path.resolve(finalConfig.root, file!)
+
+              let codeFrame: string | undefined
+              let stripedCodeFrame: string | undefined
+              if (existsSync(absFile)) {
+                try {
+                  const source = readFileSync(absFile, 'utf-8')
+                  codeFrame = createFrame(source, {
+                    start: { line: lineNum, column: colNum },
+                  })
+                  stripedCodeFrame = strip(codeFrame)
+                } catch {}
+              }
+
               const normalized: NormalizedDiagnostic = {
-                message: message!,
+                message: `TS${tsCode}: ${message}`,
                 conclusion: '',
-                id: file,
+                id: absFile,
                 checker: 'TypeScript',
+                codeFrame,
+                stripedCodeFrame,
                 loc: {
-                  start: { line: +lineStr!, column: +colStr! },
+                  start: { line: lineNum, column: colNum },
                 },
                 level:
                   severity === 'warning'
@@ -120,7 +151,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
                 os.EOL + diagnosticToTerminalLog(normalized, 'TypeScript')
             }
 
-            // Parse: "Found X errors."
+            // Parse: "Found X errors." or "Found X errors. Watching for file changes."
             const summaryMatch = line.match(/Found (\d+) errors?\./)
             if (summaryMatch) {
               const errorCount = +summaryMatch[1]!
@@ -130,13 +161,14 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
                   payload: toClientPayload('typescript', currDiagnostics),
                 })
               }
+              // Capture logChunk before resetting — ensureCall defers via setTimeout
+              const capturedLogChunk = logChunk
               ensureCall(() => {
-                if (errorCount === 0) logChunk = ''
                 if (terminal) {
                   const color = errorCount > 0 ? 'red' : 'green'
                   consoleLog(
                     colors[color](
-                      logChunk +
+                      (errorCount > 0 ? capturedLogChunk : '') +
                         os.EOL +
                         wrapCheckerSummary(
                           'TypeScript',
