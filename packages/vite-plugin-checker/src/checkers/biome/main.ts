@@ -18,6 +18,7 @@ import {
   type CreateDiagnostic,
   DiagnosticLevel,
 } from '../../types.js'
+import { ignoreTransientFsError } from '../../utils.js'
 import { getBiomeCommand, runBiome, severityMap } from './cli.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -134,11 +135,13 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
         cwd: root,
         ignored: (path: string) => path.includes('node_modules'),
       })
-      watcher.on('change', async (filePath) => {
-        handleFileChange(filePath, 'change')
+
+      watcher.on('change', (filePath) => {
+        handleFileChange(filePath, 'change').catch(ignoreTransientFsError)
       })
-      watcher.on('unlink', async (filePath) => {
-        handleFileChange(filePath, 'unlink')
+
+      watcher.on('unlink', (filePath) => {
+        handleFileChange(filePath, 'unlink').catch(ignoreTransientFsError)
       })
     },
   }

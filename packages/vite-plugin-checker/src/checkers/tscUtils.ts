@@ -37,7 +37,12 @@ export function forceNoEmitOnSolutionBuilderHost<
       ? original(fileName)
       : ts.getParsedCommandLineOfConfigFile(
           fileName,
-          undefined,
+          // `tscBuild` is the internal flag the solution builder sets on every
+          // referenced project's parsed options. Without it `canEmitTsBuildInfo`
+          // returns false, so a `noEmit: true` referenced project whose
+          // `include` resolves to only `.d.ts` files has no output path at all
+          // and `getFirstProjectOutput` crashes.
+          { tscBuild: true } as ts.CompilerOptions,
           parseConfigHost,
         )
     if (parsed && parsed.errors.length > 0) {
