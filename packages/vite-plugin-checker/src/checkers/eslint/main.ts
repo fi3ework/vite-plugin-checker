@@ -182,7 +182,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       }
 
       const scheduler = createLintScheduler({
-        debounceMs: DEFAULT_DEBOUNCE_MS,
+        debounceMs: pluginConfig.eslint.dev?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
           const diagnosticsOfChangedFiles = await eslint.lintFiles(files)
           const newDiagnostics = diagnosticsOfChangedFiles.flatMap((d) =>

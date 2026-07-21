@@ -94,7 +94,10 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
       }
 
       const scheduler = createLintScheduler({
-        debounceMs: DEFAULT_DEBOUNCE_MS,
+        debounceMs:
+          (typeof biomeConfig === 'object'
+            ? biomeConfig.dev?.debounceMs
+            : undefined) ?? DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
           const hasConfigChange = files.some(
             (f) => path.basename(f) === 'biome.json',

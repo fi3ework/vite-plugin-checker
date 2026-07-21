@@ -23,7 +23,11 @@ async function tick() {
 describe('createLintScheduler', () => {
   it('debounces a single scheduled file into one onBatch call', async () => {
     const onBatch = vi.fn().mockResolvedValue(undefined)
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     s.schedule('/r/a')
     expect(onBatch).not.toHaveBeenCalled()
     vi.advanceTimersByTime(DEBOUNCE)
@@ -34,7 +38,11 @@ describe('createLintScheduler', () => {
 
   it('coalesces multiple files within the debounce window', async () => {
     const onBatch = vi.fn().mockResolvedValue(undefined)
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     s.schedule('/r/a')
     s.schedule('/r/b')
     s.schedule('/r/c')
@@ -46,7 +54,11 @@ describe('createLintScheduler', () => {
 
   it('dedupes repeated schedules of the same file', async () => {
     const onBatch = vi.fn().mockResolvedValue(undefined)
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     s.schedule('/r/a')
     s.schedule('/r/a')
     s.schedule('/r/a')
@@ -66,7 +78,11 @@ describe('createLintScheduler', () => {
       .mockImplementationOnce(() => firstPromise)
       .mockResolvedValueOnce(undefined)
 
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     s.schedule('/r/a')
     vi.advanceTimersByTime(DEBOUNCE)
     await tick()
@@ -96,7 +112,11 @@ describe('createLintScheduler', () => {
       inFlight--
     })
 
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     for (let i = 0; i < 10; i++) {
       s.schedule(`/r/${i}`)
       vi.advanceTimersByTime(DEBOUNCE / 2)
@@ -117,7 +137,11 @@ describe('createLintScheduler', () => {
         }),
     )
 
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     s.schedule('/r/a')
     vi.advanceTimersByTime(DEBOUNCE)
     await tick()
@@ -138,7 +162,11 @@ describe('createLintScheduler', () => {
 
   it('dispose() with pending timer but no in-flight resolves immediately and discards pending', async () => {
     const onBatch = vi.fn().mockResolvedValue(undefined)
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     s.schedule('/r/a')
 
     await s.dispose()
@@ -151,7 +179,11 @@ describe('createLintScheduler', () => {
 
   it('schedule() after dispose() is a safe no-op', async () => {
     const onBatch = vi.fn().mockResolvedValue(undefined)
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     await s.dispose()
 
     expect(() => s.schedule('/r/a')).not.toThrow()
@@ -168,7 +200,11 @@ describe('createLintScheduler', () => {
       .mockResolvedValueOnce(undefined)
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     s.schedule('/r/a')
     vi.advanceTimersByTime(DEBOUNCE)
     await tick()
@@ -194,7 +230,11 @@ describe('createLintScheduler', () => {
     )
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     s.schedule('/r/a')
     vi.advanceTimersByTime(DEBOUNCE)
     await tick()
@@ -211,7 +251,11 @@ describe('createLintScheduler', () => {
     const onBatch = vi
       .fn()
       .mockImplementation(() => new Promise<void>(() => {}))
-    const s = createLintScheduler({ debounceMs: DEBOUNCE, onBatch })
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => true,
+    })
     s.schedule('/r/a')
     vi.advanceTimersByTime(DEBOUNCE)
     await tick()
@@ -225,5 +269,33 @@ describe('createLintScheduler', () => {
     for (let i = 0; i < 5; i++) await tick()
     expect(resolved).toBe(false)
     // No assertion that it ever resolves — contract is: callers must resolve onBatch.
+  })
+
+  it('drops files that no longer exist at drain time', async () => {
+    const onBatch = vi.fn().mockResolvedValue(undefined)
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: (f) => f !== '/r/deleted',
+    })
+    s.schedule('/r/a')
+    s.schedule('/r/deleted')
+    vi.advanceTimersByTime(DEBOUNCE)
+    await tick()
+    expect(onBatch).toHaveBeenCalledTimes(1)
+    expect(onBatch).toHaveBeenCalledWith(['/r/a'])
+  })
+
+  it('skips the batch entirely when every pending file was deleted', async () => {
+    const onBatch = vi.fn().mockResolvedValue(undefined)
+    const s = createLintScheduler({
+      debounceMs: DEBOUNCE,
+      onBatch,
+      fileExists: () => false,
+    })
+    s.schedule('/r/deleted')
+    vi.advanceTimersByTime(DEBOUNCE)
+    await tick()
+    expect(onBatch).not.toHaveBeenCalled()
   })
 })

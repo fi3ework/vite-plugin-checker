@@ -32,7 +32,7 @@ export async function setupDevServer(
     )
 
   const scheduler = createLintScheduler({
-    debounceMs: DEFAULT_DEBOUNCE_MS,
+    debounceMs: options.debounceMs ?? DEFAULT_DEBOUNCE_MS,
     onBatch: async (files) => {
       const hasConfigChange = files.some(
         (f) => path.basename(f) === '.oxlintrc.json',

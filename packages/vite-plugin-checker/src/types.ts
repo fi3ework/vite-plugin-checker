@@ -72,6 +72,12 @@ export type EslintConfig =
         overrideConfig: ESLint.Options
         /** which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning')[]
+        /**
+         * How long to wait (in ms) after a file change before linting,
+         * coalescing changes within the window into a single run.
+         * @default 300
+         */
+        debounceMs: number
       }>
     }
 
@@ -93,6 +99,12 @@ export type StylelintConfig =
         overrideConfig: Stylelint.LinterOptions
         /** which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning')[]
+        /**
+         * How long to wait (in ms) after a file change before linting,
+         * coalescing changes within the window into a single run.
+         * @default 300
+         */
+        debounceMs: number
       }>
     }
 
@@ -122,6 +134,12 @@ export type BiomeConfig =
         flags?: string
         /** Which level of the diagnostic will be emitted from plugin */
         logLevel: ('error' | 'warning' | 'info')[]
+        /**
+         * How long to wait (in ms) after a file change before linting,
+         * coalescing changes within the window into a single run.
+         * @default 300
+         */
+        debounceMs: number
       }>
       build?: Partial<{
         /** Command will be used in build mode */
@@ -145,6 +163,12 @@ export type OxlintConfig =
       dev?: Partial<{
         /** Specifies which level of the diagnostic will be emitted from the plugin */
         logLevel: ('error' | 'warning')[]
+        /**
+         * How long to wait (in ms) after a file change before linting,
+         * coalescing changes within the window into a single run.
+         * @default 300
+         */
+        debounceMs: number
       }>
     }
 

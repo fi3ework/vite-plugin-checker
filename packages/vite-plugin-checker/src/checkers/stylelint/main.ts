@@ -98,7 +98,8 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       }
 
       const scheduler = createLintScheduler({
-        debounceMs: DEFAULT_DEBOUNCE_MS,
+        debounceMs:
+          pluginConfig.stylelint.dev?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
           const { results } = await stylelint.lint({
             ...baseConfig,

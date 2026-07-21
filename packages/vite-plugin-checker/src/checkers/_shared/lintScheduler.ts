@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs'
+
 export const DEFAULT_DEBOUNCE_MS = 300
 
 export interface LintScheduler {
@@ -15,10 +17,12 @@ export interface LintScheduler {
 export interface LintSchedulerOptions {
   debounceMs: number
   onBatch: (files: string[]) => Promise<void>
+  /** Existence probe, overridable for tests. Defaults to `fs.existsSync`. */
+  fileExists?: (filePath: string) => boolean
 }
 
 export function createLintScheduler(opts: LintSchedulerOptions): LintScheduler {
-  const { debounceMs, onBatch } = opts
+  const { debounceMs, onBatch, fileExists = existsSync } = opts
 
   const pending = new Set<string>()
   let timer: NodeJS.Timeout | null = null
@@ -35,8 +39,11 @@ export function createLintScheduler(opts: LintSchedulerOptions): LintScheduler {
   function drain(): void {
     if (disposed || inFlight || pending.size === 0) return
     clearTimer()
-    const snapshot = [...pending]
+    // Drop files deleted inside the debounce window; linting them would fail
+    // the whole batch. The watcher's `unlink` handler clears their diagnostics.
+    const snapshot = [...pending].filter((f) => fileExists(f))
     pending.clear()
+    if (snapshot.length === 0) return
 
     const raw = onBatch(snapshot)
     inFlight = raw

@@ -6,6 +6,7 @@ export interface ResolvedOptions {
   watchTarget: string | string[]
   logLevel?: DiagnosticLevel[]
   command: string[]
+  debounceMs?: number
 }
 
 export function resolveOptions(
@@ -20,6 +21,7 @@ export function resolveOptions(
       DiagnosticLevel.Error,
     ],
     command: getOxlintCommand(options.lintCommand ?? 'oxlint'),
+    debounceMs: options.dev?.debounceMs,
   }
 }
 
