@@ -2,6 +2,7 @@ import path from 'node:path'
 import chokidar from 'chokidar'
 import type { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import { filterLogLevel } from '../../logger.js'
+import { ignoreTransientFsError } from '../../utils.js'
 import { runOxlint } from './cli.js'
 import { dispatchDiagnostics } from './diagnostics.js'
 import type { ResolvedOptions } from './options.js'
@@ -25,12 +26,15 @@ export async function setupDevServer(
     ignored: (path: string) => path.includes('node_modules'),
   })
 
-  watcher.on('change', async (filePath) => {
-    await handleFileChange(root, options.command, filePath, manager)
-    dispatchDiagnostics(
-      filterLogLevel(manager.getDiagnostics(), options.logLevel),
-      displayTargets,
-    )
+  watcher.on('change', (filePath) => {
+    handleFileChange(root, options.command, filePath, manager)
+      .then(() => {
+        dispatchDiagnostics(
+          filterLogLevel(manager.getDiagnostics(), options.logLevel),
+          displayTargets,
+        )
+      })
+      .catch(ignoreTransientFsError)
   })
 
   watcher.on('unlink', (filePath) => {
