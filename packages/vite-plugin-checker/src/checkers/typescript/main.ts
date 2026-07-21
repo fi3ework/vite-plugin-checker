@@ -104,18 +104,33 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           const requireFromRoot = createRequire(
             path.join(finalConfig.root, 'noop.js'),
           )
-          const tsPkgJson = requireFromRoot.resolve(
-            `${finalConfig.typescriptPath}/package.json`,
-          )
-          tscBin = path.join(path.dirname(tsPkgJson), 'bin', 'tsc')
+          // `typescriptPath` may be a bare specifier ('typescript') or an
+          // absolute path to the module entry, so resolve the entry first and
+          // walk up to the nearest package.json to locate `bin/tsc`.
+          const tsEntry = requireFromRoot.resolve(finalConfig.typescriptPath)
+          let dir = path.dirname(tsEntry)
+          while (dir !== path.dirname(dir)) {
+            if (existsSync(path.join(dir, 'package.json'))) break
+            dir = path.dirname(dir)
+          }
+          tscBin = path.join(dir, 'bin', 'tsc')
           runWithNode = existsSync(tscBin)
         } catch {}
 
+        // Silence the child's own Node warnings (e.g. experimental-feature
+        // notices) so they don't get surfaced as checker diagnostics; tsc
+        // reports through stdout, stderr is reserved for real failures.
+        const tscEnv = { ...process.env, NODE_NO_WARNINGS: '1' }
         const tscProcess = runWithNode
           ? spawn(process.execPath, [tscBin, ...args], {
               cwd: finalConfig.root,
+              env: tscEnv,
             })
-          : spawn(tscBin, args, { cwd: finalConfig.root, shell: true })
+          : spawn(tscBin, args, {
+              cwd: finalConfig.root,
+              env: tscEnv,
+              shell: true,
+            })
 
         let logChunk = ''
 
