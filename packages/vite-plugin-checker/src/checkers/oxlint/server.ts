@@ -2,7 +2,11 @@ import path from 'node:path'
 import chokidar from 'chokidar'
 import type { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import { filterLogLevel } from '../../logger.js'
-import { ignoreTransientFsError } from '../../utils.js'
+import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
+import {
+  createLintScheduler,
+  DEFAULT_DEBOUNCE_MS,
+} from '../_shared/lintScheduler.js'
 import { runOxlint } from './cli.js'
 import { dispatchDiagnostics } from './diagnostics.js'
 import type { ResolvedOptions } from './options.js'
@@ -21,54 +25,44 @@ export async function setupDevServer(
     displayTargets,
   )
 
-  const watcher = chokidar.watch(options.watchTarget, {
-    cwd: root,
-    ignored: (path: string) => path.includes('node_modules'),
-  })
-
-  watcher.on('change', (filePath) => {
-    handleFileChange(root, options.command, filePath, manager)
-      .then(() => {
-        dispatchDiagnostics(
-          filterLogLevel(manager.getDiagnostics(), options.logLevel),
-          displayTargets,
-        )
-      })
-      .catch(ignoreTransientFsError)
-  })
-
-  watcher.on('unlink', (filePath) => {
-    handleFileUnlink(root, filePath, manager)
+  const dispatch = () =>
     dispatchDiagnostics(
       filterLogLevel(manager.getDiagnostics(), options.logLevel),
       displayTargets,
     )
+
+  const scheduler = createLintScheduler({
+    debounceMs: options.debounceMs ?? DEFAULT_DEBOUNCE_MS,
+    onBatch: async (files) => {
+      const hasConfigChange = files.some(
+        (f) => path.basename(f) === '.oxlintrc.json',
+      )
+      if (hasConfigChange) {
+        const diagnostics = await runOxlint([...options.command, root], root)
+        manager.initWith(diagnostics)
+      } else {
+        const diagnostics = await runOxlint(
+          [...options.command, ...files],
+          root,
+        )
+        applyBatchedDiagnostics(manager, files, diagnostics, root)
+      }
+      dispatch()
+    },
   })
-}
 
-function handleFileUnlink(
-  root: string,
-  filePath: string,
-  manager: FileDiagnosticManager,
-) {
-  const absPath = path.resolve(root, filePath)
-  manager.updateByFileId(absPath, [])
-}
+  const watcher = chokidar.watch(options.watchTarget, {
+    cwd: root,
+    ignored: (p: string) => p.includes('node_modules'),
+  })
 
-async function handleFileChange(
-  root: string,
-  command: string,
-  filePath: string,
-  manager: FileDiagnosticManager,
-) {
-  const absPath = path.resolve(root, filePath)
+  watcher.on('change', (filePath) => {
+    scheduler.schedule(path.resolve(root, filePath))
+  })
 
-  const isConfigFile = path.basename(absPath) === '.oxlintrc.json'
-  if (isConfigFile) {
-    const diagnostics = await runOxlint(`${command} ${root}`, root)
-    manager.initWith(diagnostics)
-  } else {
-    const diagnostics = await runOxlint(`${command} ${absPath}`, root)
-    manager.updateByFileId(absPath, diagnostics)
-  }
+  watcher.on('unlink', (filePath) => {
+    const absPath = path.resolve(root, filePath)
+    manager.updateByFileId(absPath, [])
+    dispatch()
+  })
 }

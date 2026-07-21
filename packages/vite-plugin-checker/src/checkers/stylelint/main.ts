@@ -17,7 +17,11 @@ import {
   toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
-import { ignoreTransientFsError } from '../../utils.js'
+import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
+import {
+  createLintScheduler,
+  DEFAULT_DEBOUNCE_MS,
+} from '../_shared/lintScheduler.js'
 import { translateOptions } from './options.js'
 
 const manager = new FileDiagnosticManager()
@@ -93,27 +97,21 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         }
       }
 
-      const handleFileChange = async (
-        filePath: string,
-        type: 'change' | 'unlink',
-      ) => {
-        const absPath = path.resolve(root, filePath)
-
-        if (type === 'unlink') {
-          manager.updateByFileId(absPath, [])
-        } else if (type === 'change') {
-          const { results: diagnosticsOfChangedFile } = await stylelint.lint({
+      const scheduler = createLintScheduler({
+        debounceMs:
+          pluginConfig.stylelint.dev?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
+        onBatch: async (files) => {
+          const { results } = await stylelint.lint({
             ...baseConfig,
-            files: filePath,
+            files,
           })
-          const newDiagnostics = diagnosticsOfChangedFile.flatMap((d) =>
+          const newDiagnostics = results.flatMap((d) =>
             normalizeStylelintDiagnostic(d),
           )
-          manager.updateByFileId(absPath, newDiagnostics)
-        }
-
-        dispatchDiagnostics()
-      }
+          applyBatchedDiagnostics(manager, files, newDiagnostics, root)
+          dispatchDiagnostics()
+        },
+      })
 
       // initial lint
       const { results: diagnostics } = await stylelint.lint({
@@ -144,11 +142,12 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       })
 
       watcher.on('change', (filePath) => {
-        handleFileChange(filePath, 'change').catch(ignoreTransientFsError)
+        scheduler.schedule(path.resolve(root, filePath))
       })
-
       watcher.on('unlink', (filePath) => {
-        handleFileChange(filePath, 'unlink').catch(ignoreTransientFsError)
+        const absPath = path.resolve(root, filePath)
+        manager.updateByFileId(absPath, [])
+        dispatchDiagnostics()
       })
     },
   }

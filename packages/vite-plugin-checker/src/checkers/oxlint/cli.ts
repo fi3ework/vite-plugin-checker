@@ -1,4 +1,4 @@
-import { exec } from 'node:child_process'
+import { execFile } from 'node:child_process'
 import { stripVTControlCharacters as strip } from 'node:util'
 import colors from 'picocolors'
 import { createFrame, offsetRangeToBabelLocation } from '../../codeFrame.js'
@@ -37,14 +37,19 @@ export function getOxlintCommand(command: string) {
   return parsed
 }
 
-export function runOxlint(command: string, cwd: string) {
+export function runOxlint(argv: string[], cwd: string) {
   return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
     try {
-      const child = exec(
-        command,
+      const child = execFile(
+        argv[0]!,
+        argv.slice(1),
         {
           cwd,
           maxBuffer: Number.POSITIVE_INFINITY,
+          // Required on Windows so execFile can resolve .cmd/.bat shims in
+          // node_modules/.bin. Node >=18.20/20.12/22 auto-quotes argv under
+          // shell:true, preserving the no-splitting guarantee.
+          shell: process.platform === 'win32',
         },
         (_error, stdout, _stderr) => {
           parseOxlintOutput(stdout, cwd)
