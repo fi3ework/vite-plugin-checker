@@ -392,6 +392,18 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
 
+  playground/eslint-cwd-override:
+    devDependencies:
+      eslint:
+        specifier: ^10.2.1
+        version: 10.5.0(jiti@2.7.0)
+      vite:
+        specifier: ^8.0.9
+        version: 8.0.16(@types/node@20.19.9)(jiti@2.7.0)(yaml@2.9.0)
+      vite-plugin-checker:
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-checker
+
   playground/eslint-default:
     devDependencies:
       eslint:
