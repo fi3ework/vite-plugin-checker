@@ -1,0 +1,41 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`typescript-7 > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"TypeScript","frame":"    3 | }/n    4 |/n  > 5 | const count: number = 'not a number'/n      |       ^/n    6 |/n    7 | document.querySelector('#app')!.textContent = greet('Vite') + count/n    8 |","id":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","line":5},"message":"TS2322: Type 'string' is not assignable to type 'number'.","stack":""}]"`;
+
+exports[`typescript-7 > serve > get initial error and subsequent error 2`] = `
+[
+  "
+ ERROR(TypeScript)  TS2322: Type 'string' is not assignable to type 'number'.
+ FILE  <PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts:5:7
+
+    3 | }
+    4 |
+  > 5 | const count: number = 'not a number'
+      |       ^
+    6 |
+    7 | document.querySelector('#app')!.textContent = greet('Vite') + count
+    8 |
+
+[TypeScript] Found 1 error(s)",
+]
+`;
+
+exports[`typescript-7 > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"TypeScript","frame":"    3 | }/n    4 |/n  > 5 | const count: number = 'still not a number'/n      |       ^/n    6 |/n    7 | document.querySelector('#app')!.textContent = greet('Vite') + count/n    8 |","id":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","line":5},"message":"TS2322: Type 'string' is not assignable to type 'number'.","stack":""}]"`;
+
+exports[`typescript-7 > serve > get initial error and subsequent error 4`] = `
+[
+  "
+ ERROR(TypeScript)  TS2322: Type 'string' is not assignable to type 'number'.
+ FILE  <PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts:5:7
+
+    3 | }
+    4 |
+  > 5 | const count: number = 'still not a number'
+      |       ^
+    6 |
+    7 | document.querySelector('#app')!.textContent = greet('Vite') + count
+    8 |
+
+[TypeScript] Found 1 error(s)",
+]
+`;

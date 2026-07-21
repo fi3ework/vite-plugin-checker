@@ -27,7 +27,6 @@ import {
 const buildInCheckerKeys: BuildInCheckerNames[] = [
   'typescript',
   'vueTsc',
-  'vls',
   'eslint',
   'stylelint',
   'biome',
@@ -137,7 +136,11 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       }
 
       if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
-        return composePreambleCode({ baseWithOrigin, overlayConfig })
+        return composePreambleCode({
+          baseWithOrigin,
+          overlayConfig,
+          useBase: false,
+        })
       }
 
       return

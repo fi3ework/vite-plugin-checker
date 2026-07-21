@@ -2,7 +2,6 @@ import type { Worker } from 'node:worker_threads'
 import type { ESLint } from 'eslint'
 import type * as Stylelint from 'stylelint'
 import type { ConfigEnv, ErrorPayload } from 'vite'
-import type { VlsOptions } from './checkers/vls/initParams.js'
 
 /* ----------------------------- userland plugin options ----------------------------- */
 
@@ -43,9 +42,6 @@ export type VueTscConfig =
    * - set to `false` to disable type checking, you can also remove `config.vueTsc` directly
    */
   boolean | Partial<TsConfigOptions>
-
-/** vls checker configuration */
-export type VlsConfig = boolean | DeepPartial<VlsOptions>
 
 /** ESLint checker configuration */
 export type EslintConfig =
@@ -245,7 +241,6 @@ export interface SharedConfig {
 export interface BuildInCheckers {
   typescript: TscConfig
   vueTsc: VueTscConfig
-  vls: VlsConfig
   eslint: EslintConfig
   stylelint: StylelintConfig
   biome: BiomeConfig
@@ -355,9 +350,3 @@ export interface CheckerDiagnostic {
 export type CreateDiagnostic<T extends BuildInCheckerNames = any> = (
   config: Pick<BuildInCheckers, T> & SharedConfig,
 ) => CheckerDiagnostic
-
-/* ----------------------------- generic utility types ----------------------------- */
-
-export type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>
-}

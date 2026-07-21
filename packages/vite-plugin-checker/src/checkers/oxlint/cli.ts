@@ -39,24 +39,41 @@ export function getOxlintCommand(command: string) {
 
 export function runOxlint(argv: string[], cwd: string) {
   return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
-    execFile(
-      argv[0]!,
-      argv.slice(1),
-      {
-        cwd,
-        maxBuffer: Number.POSITIVE_INFINITY,
-        // Required on Windows so execFile can resolve .cmd/.bat shims in
-        // node_modules/.bin. Node >=18.20/20.12/22 auto-quotes argv under
-        // shell:true, preserving the no-splitting guarantee.
-        shell: process.platform === 'win32',
-      },
-      (_error, stdout, _stderr) => {
-        parseOxlintOutput(stdout, cwd)
-          .then(resolve)
-          .catch(() => resolve([]))
-      },
-    )
+    try {
+      const child = execFile(
+        argv[0]!,
+        argv.slice(1),
+        {
+          cwd,
+          maxBuffer: Number.POSITIVE_INFINITY,
+          // Required on Windows so execFile can resolve .cmd/.bat shims in
+          // node_modules/.bin. Node >=18.20/20.12/22 auto-quotes argv under
+          // shell:true, preserving the no-splitting guarantee.
+          shell: process.platform === 'win32',
+        },
+        (_error, stdout, _stderr) => {
+          parseOxlintOutput(stdout, cwd)
+            .then(resolve)
+            .catch(() => resolve([]))
+        },
+      )
+      child.on('error', (error) => {
+        logSpawnError(error)
+        resolve([])
+      })
+    } catch (error) {
+      logSpawnError(error)
+      resolve([])
+    }
   })
+}
+
+function logSpawnError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+  consoleLog(
+    colors.yellow(`vite-plugin-checker failed to spawn oxlint: ${message}`),
+    'warn',
+  )
 }
 
 type Span = { offset: number; length: number }

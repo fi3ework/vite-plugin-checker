@@ -3,7 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
 import chokidar from 'chokidar'
-import { ESLint } from 'eslint'
+import type { ESLint } from 'eslint'
 import invariant from 'tiny-invariant'
 
 import { Checker } from '../../Checker.js'
@@ -20,6 +20,7 @@ import {
   toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { ignoreTransientFsError } from '../../utils.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
 import {
   createLintScheduler,
@@ -56,10 +57,11 @@ function getEslintMajorVersion(): number {
  * - ESLint v9 with flat config (default): Use `ESLint` directly (it's the flat config class in v9).
  * - ESLint v9 with legacy eslintrc: Use `LegacyESLint` from `eslint/use-at-your-own-risk`.
  */
-function resolveEslintClass(
+async function resolveEslintClass(
   useFlatConfig: boolean,
   majorVersion: number,
-): typeof ESLint {
+): Promise<typeof ESLint> {
+  const { ESLint } = await import('eslint')
   if (majorVersion >= 10) {
     // v10+ only supports flat config
     return ESLint
@@ -140,7 +142,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ...pluginConfig.eslint.dev?.overrideConfig,
       }
 
-      const EslintClass = resolveEslintClass(
+      const EslintClass = await resolveEslintClass(
         effectiveUseFlatConfig,
         majorVersion,
       )
@@ -191,10 +193,10 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         },
       })
 
-      const shouldLintPath = async (filePath: string): Promise<boolean> => {
+      const shouldLintPath = async (absPath: string): Promise<boolean> => {
         // Legacy-mode extension filter (only meaningful if --ext was provided).
         if (!effectiveUseFlatConfig) {
-          const extension = path.extname(filePath)
+          const extension = path.extname(absPath)
           const { extensions } = eslintOptions as any
           const hasExtensionsConfig = Array.isArray(extensions)
           if (hasExtensionsConfig && !extensions.includes(extension)) {
@@ -202,7 +204,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           }
         }
         // Honor .eslintignore / ignorePatterns.
-        const isIgnored = await eslint.isPathIgnored(filePath)
+        const isIgnored = await eslint.isPathIgnored(absPath)
         return !isIgnored
       }
 
@@ -230,9 +232,13 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ignored: createIgnore(root, files),
       })
 
-      watcher.on('change', async (filePath) => {
-        if (!(await shouldLintPath(filePath))) return
-        scheduler.schedule(path.resolve(root, filePath))
+      watcher.on('change', (filePath) => {
+        const absPath = path.resolve(root, filePath)
+        shouldLintPath(absPath)
+          .then((shouldLint) => {
+            if (shouldLint) scheduler.schedule(absPath)
+          })
+          .catch(ignoreTransientFsError)
       })
       watcher.on('unlink', (filePath) => {
         const absPath = path.resolve(root, filePath)
