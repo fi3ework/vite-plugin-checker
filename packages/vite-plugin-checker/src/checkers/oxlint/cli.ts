@@ -39,19 +39,36 @@ export function getOxlintCommand(command: string) {
 
 export function runOxlint(command: string, cwd: string) {
   return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
-    exec(
-      command,
-      {
-        cwd,
-        maxBuffer: Number.POSITIVE_INFINITY,
-      },
-      (_error, stdout, _stderr) => {
-        parseOxlintOutput(stdout, cwd)
-          .then(resolve)
-          .catch(() => resolve([]))
-      },
-    )
+    try {
+      const child = exec(
+        command,
+        {
+          cwd,
+          maxBuffer: Number.POSITIVE_INFINITY,
+        },
+        (_error, stdout, _stderr) => {
+          parseOxlintOutput(stdout, cwd)
+            .then(resolve)
+            .catch(() => resolve([]))
+        },
+      )
+      child.on('error', (error) => {
+        logSpawnError(error)
+        resolve([])
+      })
+    } catch (error) {
+      logSpawnError(error)
+      resolve([])
+    }
   })
+}
+
+function logSpawnError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+  consoleLog(
+    colors.yellow(`vite-plugin-checker failed to spawn oxlint: ${message}`),
+    'warn',
+  )
 }
 
 type Span = { offset: number; length: number }

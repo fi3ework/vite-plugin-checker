@@ -20,6 +20,7 @@ import {
   toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { ignoreTransientFsError } from '../../utils.js'
 import { translateOptions } from './cli.js'
 import { options as optionator } from './options.js'
 
@@ -186,14 +187,15 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           if (hasExtensionsConfig && !extensions.includes(extension)) return
         }
 
-        const isChangedFileIgnored = await eslint.isPathIgnored(filePath)
+        const absPath = path.resolve(root, filePath)
+
+        const isChangedFileIgnored = await eslint.isPathIgnored(absPath)
         if (isChangedFileIgnored) return
 
-        const absPath = path.resolve(root, filePath)
         if (type === 'unlink') {
           manager.updateByFileId(absPath, [])
         } else if (type === 'change') {
-          const diagnosticsOfChangedFile = await eslint.lintFiles(filePath)
+          const diagnosticsOfChangedFile = await eslint.lintFiles(absPath)
           const newDiagnostics = diagnosticsOfChangedFile.flatMap((d) =>
             normalizeEslintDiagnostic(d),
           )
@@ -227,11 +229,12 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         ignored: createIgnore(root, files),
       })
 
-      watcher.on('change', async (filePath) => {
-        handleFileChange(filePath, 'change')
+      watcher.on('change', (filePath) => {
+        handleFileChange(filePath, 'change').catch(ignoreTransientFsError)
       })
-      watcher.on('unlink', async (filePath) => {
-        handleFileChange(filePath, 'unlink')
+
+      watcher.on('unlink', (filePath) => {
+        handleFileChange(filePath, 'unlink').catch(ignoreTransientFsError)
       })
     },
   }

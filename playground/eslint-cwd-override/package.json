@@ -1,0 +1,17 @@
+{
+  "name": "@playground/eslint-cwd-override",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "eslint .",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "eslint": "^10.2.1",
+    "vite": "^8.0.9",
+    "vite-plugin-checker": "workspace:*"
+  }
+}
