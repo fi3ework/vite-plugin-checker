@@ -52,11 +52,23 @@ export function runOxlint(command: string, cwd: string) {
             .catch(() => resolve([]))
         },
       )
-      child.on('error', () => resolve([]))
-    } catch {
+      child.on('error', (error) => {
+        logSpawnError(error)
+        resolve([])
+      })
+    } catch (error) {
+      logSpawnError(error)
       resolve([])
     }
   })
+}
+
+function logSpawnError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+  consoleLog(
+    colors.yellow(`vite-plugin-checker failed to spawn oxlint: ${message}`),
+    'warn',
+  )
 }
 
 type Span = { offset: number; length: number }
