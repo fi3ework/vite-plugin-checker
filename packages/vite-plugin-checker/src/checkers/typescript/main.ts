@@ -1,6 +1,6 @@
 import os from 'node:os'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { parentPort } from 'node:worker_threads'
 import colors from 'picocolors'
 import invariant from 'tiny-invariant'
@@ -57,9 +57,12 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             }
 
       let configFile: string | undefined
-      const ts: typeof typescript = await import(
-        finalConfig.typescriptPath
-      ).then((r) => r.default || r)
+      const typescriptSpecifier = path.isAbsolute(finalConfig.typescriptPath)
+        ? pathToFileURL(finalConfig.typescriptPath).href
+        : finalConfig.typescriptPath
+      const ts: typeof typescript = await import(typescriptSpecifier).then(
+        (r) => r.default || r,
+      )
 
       // TS v7 (Corsa) removed the entire ts namespace from the root import.
       // `ts.sys`, `ts.findConfigFile()`, `ts.createWatchCompilerHost()`, etc.
