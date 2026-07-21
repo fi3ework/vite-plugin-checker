@@ -70,6 +70,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       if (isTsV7) {
         const { spawn } = await import('node:child_process')
         const { existsSync, readFileSync } = await import('node:fs')
+        const { createRequire } = await import('node:module')
         const { stripVTControlCharacters: strip } = await import('node:util')
 
         const tsconfigPath = path.resolve(
@@ -89,102 +90,154 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           '--pretty',
           'false',
         ]
-        args.push('-p', tsconfigPath)
+        // In build mode the project path is a positional argument to `-b`;
+        // `tsc -b -p <path>` is rejected. Non-build mode uses `-p`.
+        if (isBuildMode) {
+          args.push(tsconfigPath)
+        } else {
+          args.push('-p', tsconfigPath)
+        }
 
-        const tscProcess = spawn('tsc', args, { cwd: finalConfig.root })
+        let tscBin = 'tsc'
+        let runWithNode = false
+        try {
+          const requireFromRoot = createRequire(
+            path.join(finalConfig.root, 'noop.js'),
+          )
+          const tsPkgJson = requireFromRoot.resolve(
+            `${finalConfig.typescriptPath}/package.json`,
+          )
+          tscBin = path.join(path.dirname(tsPkgJson), 'bin', 'tsc')
+          runWithNode = existsSync(tscBin)
+        } catch {}
+
+        const tscProcess = runWithNode
+          ? spawn(process.execPath, [tscBin, ...args], {
+              cwd: finalConfig.root,
+            })
+          : spawn(tscBin, args, { cwd: finalConfig.root, shell: true })
 
         let logChunk = ''
 
-        tscProcess.stdout.on('data', (chunk: Buffer) => {
-          const lines = chunk.toString().split('\n')
-          for (const rawLine of lines) {
-            // Strip \r and timestamp prefix that tsc --watch prepends to each line
-            const line = rawLine
-              .replace(/\r$/, '')
-              .replace(/^\d{1,2}:\d{2}:\d{2}\s+[AP]M\s+-\s+/, '')
+        // Buffer partial lines across `data` chunks; tsc may split a line
+        // (or a multi-line diagnostic) across chunk boundaries.
+        let stdoutBuffer = ''
+        // Accumulates continuation lines of a multi-line diagnostic message.
+        let pendingDiag: NormalizedDiagnostic | null = null
 
-            // Parse: "<file>(<line>,<col>): error TS<code>: <message>"
-            // This is the --pretty false format; the pretty format uses
-            // "<file>:<line>:<col> - error TS<code>: <message>" instead.
-            const diagMatch = line.match(
-              /^(.+?)\((\d+),(\d+)\): (error|warning) TS(\d+): (.+)$/,
-            )
-            if (diagMatch) {
-              const [, file, lineStr, colStr, severity, tsCode, message] =
-                diagMatch
-              const lineNum = +lineStr!
-              const colNum = +colStr!
+        const flushPendingDiag = () => {
+          if (!pendingDiag) return
+          currDiagnostics.push(diagnosticToRuntimeError(pendingDiag))
+          logChunk +=
+            os.EOL + diagnosticToTerminalLog(pendingDiag, 'TypeScript')
+          pendingDiag = null
+        }
 
-              // tsc outputs paths relative to its cwd (finalConfig.root);
-              // resolve to absolute so readFileSync works in the worker thread
-              const absFile = path.resolve(finalConfig.root, file!)
+        const handleLine = (rawLine: string) => {
+          // Strip \r and timestamp prefix that tsc --watch prepends to each line
+          const line = rawLine
+            .replace(/\r$/, '')
+            .replace(/^\d{1,2}:\d{2}:\d{2}\s+[AP]M\s+-\s+/, '')
 
-              let codeFrame: string | undefined
-              let stripedCodeFrame: string | undefined
-              if (existsSync(absFile)) {
-                try {
-                  const source = readFileSync(absFile, 'utf-8')
-                  codeFrame = createFrame(source, {
-                    start: { line: lineNum, column: colNum },
-                  })
-                  stripedCodeFrame = strip(codeFrame)
-                } catch {}
-              }
+          // Parse: "<file>(<line>,<col>): error TS<code>: <message>"
+          // This is the --pretty false format; the pretty format uses
+          // "<file>:<line>:<col> - error TS<code>: <message>" instead.
+          const diagMatch = line.match(
+            /^(.+?)\((\d+),(\d+)\): (error|warning) TS(\d+): (.+)$/,
+          )
+          if (diagMatch) {
+            flushPendingDiag()
+            const [, file, lineStr, colStr, severity, tsCode, message] =
+              diagMatch
+            const lineNum = +lineStr!
+            const colNum = +colStr!
 
-              const normalized: NormalizedDiagnostic = {
-                message: `TS${tsCode}: ${message}`,
-                conclusion: '',
-                id: absFile,
-                checker: 'TypeScript',
-                codeFrame,
-                stripedCodeFrame,
-                loc: {
+            // tsc outputs paths relative to its cwd (finalConfig.root);
+            // resolve to absolute so readFileSync works in the worker thread
+            const absFile = path.resolve(finalConfig.root, file!)
+
+            let codeFrame: string | undefined
+            let stripedCodeFrame: string | undefined
+            if (existsSync(absFile)) {
+              try {
+                const source = readFileSync(absFile, 'utf-8')
+                codeFrame = createFrame(source, {
                   start: { line: lineNum, column: colNum },
-                },
-                level:
-                  severity === 'warning'
-                    ? DiagnosticLevel.Warning
-                    : DiagnosticLevel.Error,
-              }
-              currDiagnostics.push(diagnosticToRuntimeError(normalized))
-              logChunk +=
-                os.EOL + diagnosticToTerminalLog(normalized, 'TypeScript')
+                })
+                stripedCodeFrame = strip(codeFrame)
+              } catch {}
             }
 
-            // Parse: "Found X errors." or "Found X errors. Watching for file changes."
-            const summaryMatch = line.match(/Found (\d+) errors?\./)
-            if (summaryMatch) {
-              const errorCount = +summaryMatch[1]!
-              if (overlay) {
-                parentPort?.postMessage({
-                  type: ACTION_TYPES.overlayError,
-                  payload: toClientPayload('typescript', currDiagnostics),
-                })
-              }
-              // Capture logChunk before resetting — ensureCall defers via setTimeout
-              const capturedLogChunk = logChunk
-              ensureCall(() => {
-                if (terminal) {
-                  const color = errorCount > 0 ? 'red' : 'green'
-                  consoleLog(
-                    colors[color](
-                      (errorCount > 0 ? capturedLogChunk : '') +
-                        os.EOL +
-                        wrapCheckerSummary(
-                          'TypeScript',
-                          errorCount > 0
-                            ? `Found ${errorCount} error(s)`
-                            : 'No errors',
-                        ),
-                    ),
-                    errorCount > 0 ? 'error' : 'info',
-                  )
-                }
-              })
-              logChunk = ''
-              currDiagnostics = []
+            pendingDiag = {
+              message: `TS${tsCode}: ${message}`,
+              conclusion: '',
+              id: absFile,
+              checker: 'TypeScript',
+              codeFrame,
+              stripedCodeFrame,
+              loc: {
+                start: { line: lineNum, column: colNum },
+              },
+              level:
+                severity === 'warning'
+                  ? DiagnosticLevel.Warning
+                  : DiagnosticLevel.Error,
             }
+            return
           }
+
+          // Parse: "Found X errors." or "Found X errors. Watching for file changes."
+          const summaryMatch = line.match(/Found (\d+) errors?\./)
+          if (summaryMatch) {
+            flushPendingDiag()
+            const errorCount = +summaryMatch[1]!
+            if (overlay) {
+              parentPort?.postMessage({
+                type: ACTION_TYPES.overlayError,
+                payload: toClientPayload('typescript', currDiagnostics),
+              })
+            }
+            // Capture logChunk before resetting; ensureCall defers via setTimeout
+            const capturedLogChunk = logChunk
+            ensureCall(() => {
+              if (terminal) {
+                const color = errorCount > 0 ? 'red' : 'green'
+                consoleLog(
+                  colors[color](
+                    (errorCount > 0 ? capturedLogChunk : '') +
+                      os.EOL +
+                      wrapCheckerSummary(
+                        'TypeScript',
+                        errorCount > 0
+                          ? `Found ${errorCount} error(s)`
+                          : 'No errors',
+                      ),
+                  ),
+                  errorCount > 0 ? 'error' : 'info',
+                )
+              }
+            })
+            logChunk = ''
+            currDiagnostics = []
+            return
+          }
+
+          // A non-empty, non-summary line while a diagnostic is open is a
+          // continuation of its (multi-line) message.
+          if (pendingDiag && line.trim() !== '') {
+            pendingDiag.message += os.EOL + line
+          }
+        }
+
+        tscProcess.stdout.on('data', (chunk: Buffer) => {
+          stdoutBuffer += chunk.toString()
+          const lines = stdoutBuffer.split('\n')
+          stdoutBuffer = lines.pop() ?? ''
+          for (const rawLine of lines) handleLine(rawLine)
+        })
+
+        tscProcess.stderr.on('data', (chunk: Buffer) => {
+          consoleLog(colors.red(chunk.toString()), 'error')
         })
 
         tscProcess.on('error', (err: Error) => {
@@ -194,10 +247,11 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           )
         })
 
-        // Cleanup on worker exit
-        parentPort?.on('close', () => {
+        const killTsc = () => {
           tscProcess.kill()
-        })
+        }
+        parentPort?.on('close', killTsc)
+        process.on('exit', killTsc)
 
         return
       }
