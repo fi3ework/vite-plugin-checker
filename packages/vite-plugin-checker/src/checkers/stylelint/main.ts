@@ -17,6 +17,7 @@ import {
   toClientPayload,
 } from '../../logger.js'
 import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { ignoreTransientFsError } from '../../utils.js'
 import { translateOptions } from './options.js'
 
 const manager = new FileDiagnosticManager()
@@ -142,11 +143,12 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         ignored: createIgnore(root, translatedOptions.files),
       })
 
-      watcher.on('change', async (filePath) => {
-        handleFileChange(filePath, 'change')
+      watcher.on('change', (filePath) => {
+        handleFileChange(filePath, 'change').catch(ignoreTransientFsError)
       })
-      watcher.on('unlink', async (filePath) => {
-        handleFileChange(filePath, 'unlink')
+
+      watcher.on('unlink', (filePath) => {
+        handleFileChange(filePath, 'unlink').catch(ignoreTransientFsError)
       })
     },
   }
