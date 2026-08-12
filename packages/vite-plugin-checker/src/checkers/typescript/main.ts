@@ -24,6 +24,7 @@ import {
   DiagnosticLevel,
   type DiagnosticToRuntime,
 } from '../../types.js'
+import { quoteShellArg } from '../../utils.js'
 import { forceNoEmitOnSolutionBuilderHost } from '../tscUtils.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -129,7 +130,9 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
               cwd: finalConfig.root,
               env: tscEnv,
             })
-          : spawn(tscBin, args, {
+          : // Falling back to `tsc` from PATH needs a shell, which splits the
+            // arguments on whitespace unless they are quoted.
+            spawn(tscBin, args.map(quoteShellArg), {
               cwd: finalConfig.root,
               env: tscEnv,
               shell: true,
@@ -412,9 +415,9 @@ export class TscChecker extends Checker<'typescript'> {
             if (projectPath) {
               // In build mode, the tsconfig path is an argument to -b, e.g. "tsc -b [path]"
               if (buildMode) {
-                args.push(projectPath)
+                args.push(quoteShellArg(projectPath))
               } else {
-                args.push('-p', projectPath)
+                args.push('-p', quoteShellArg(projectPath))
               }
             }
 
