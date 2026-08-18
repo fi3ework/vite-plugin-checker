@@ -23,6 +23,7 @@ import {
   createLintScheduler,
   DEFAULT_DEBOUNCE_MS,
 } from '../_shared/lintScheduler.js'
+import { parseArgsStringToArgv } from '../stylelint/argv.js'
 import { getBiomeCommand, runBiome, severityMap } from './cli.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -163,7 +164,15 @@ export class BiomeChecker extends Checker<'biome'> {
         buildBin: (pluginConfig) => {
           if (typeof pluginConfig.biome === 'object') {
             const { command, flags } = pluginConfig.biome
-            return ['biome', [command || 'check', flags || ''] as const]
+            // `flags` holds several flags in one string, and the command is
+            // spawned as a list, so split it the way a shell would.
+            return [
+              'biome',
+              [
+                command || 'check',
+                ...(flags ? parseArgsStringToArgv(flags) : []),
+              ],
+            ] as const
           }
           return ['biome', ['check']]
         },
