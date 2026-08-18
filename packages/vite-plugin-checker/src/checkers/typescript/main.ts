@@ -136,6 +136,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             })
 
         let logChunk = ''
+        let prevReport = ''
 
         // Buffer partial lines across `data` chunks; tsc may split a line
         // (or a multi-line diagnostic) across chunk boundaries.
@@ -220,19 +221,22 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             ensureCall(() => {
               if (terminal) {
                 const color = errorCount > 0 ? 'red' : 'green'
-                consoleLog(
-                  colors[color](
-                    (errorCount > 0 ? capturedLogChunk : '') +
-                      os.EOL +
-                      wrapCheckerSummary(
-                        'TypeScript',
-                        errorCount > 0
-                          ? `Found ${errorCount} error(s)`
-                          : 'No errors',
-                      ),
-                  ),
-                  errorCount > 0 ? 'error' : 'info',
+                const report = colors[color](
+                  (errorCount > 0 ? capturedLogChunk : '') +
+                    os.EOL +
+                    wrapCheckerSummary(
+                      'TypeScript',
+                      errorCount > 0
+                        ? `Found ${errorCount} error(s)`
+                        : 'No errors',
+                    ),
                 )
+                // One edit can reach the watcher as several events, and tsc
+                // then compiles and reports again with the same result. Print
+                // a report that repeats the last one once, as vue-tsc does.
+                if (report === prevReport) return
+                prevReport = report
+                consoleLog(report, errorCount > 0 ? 'error' : 'info')
               }
             })
             logChunk = ''
