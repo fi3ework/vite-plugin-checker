@@ -1,3 +1,4 @@
+import path from 'node:path'
 import spawn from 'cross-spawn'
 import { describe, expect, it } from 'vitest'
 
@@ -72,10 +73,10 @@ describe('typescript buildBin', () => {
   const checker = new TscChecker()
 
   it('leaves a project path containing a space untouched', () => {
-    const [, args] = buildBin(checker, {
-      typescript: { root: '/repo/my project' },
-    })
-    expect(args).toEqual(['--noEmit', '-p', '/repo/my project'])
+    // The checker joins the path itself, so the separators are the platform's.
+    const root = path.normalize('/repo/my project')
+    const [, args] = buildBin(checker, { typescript: { root } })
+    expect(args).toEqual(['--noEmit', '-p', root])
   })
 })
 
