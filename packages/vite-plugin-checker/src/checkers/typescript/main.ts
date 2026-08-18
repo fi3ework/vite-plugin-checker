@@ -232,8 +232,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
                     ),
                 )
                 // One edit can reach the watcher as several events, and tsc
-                // then compiles and reports again with the same result. Print
-                // a report that repeats the last one once, as vue-tsc does.
+                // then compiles and reports again with the same result.
                 if (report === prevReport) return
                 prevReport = report
                 consoleLog(report, errorCount > 0 ? 'error' : 'info')
@@ -291,6 +290,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       }
 
       let logChunk = ''
+      let prevReport = ''
 
       // https://github.com/microsoft/TypeScript/blob/a545ab1ac2cb24ff3b1aaf0bfbfb62c499742ac2/src/compiler/watch.ts#L12-L28
       const reportDiagnostic = (diagnostic: typescript.Diagnostic) => {
@@ -339,17 +339,17 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
           if (terminal) {
             const color = errorCount && errorCount > 0 ? 'red' : 'green'
-            consoleLog(
-              colors[color](
-                logChunk +
-                  os.EOL +
-                  wrapCheckerSummary(
-                    'TypeScript',
-                    diagnostic.messageText.toString(),
-                  ),
-              ),
-              errorCount ? 'error' : 'info',
+            const report = colors[color](
+              logChunk +
+                os.EOL +
+                wrapCheckerSummary(
+                  'TypeScript',
+                  diagnostic.messageText.toString(),
+                ),
             )
+            if (report === prevReport) return
+            prevReport = report
+            consoleLog(report, errorCount ? 'error' : 'info')
           }
         })
       }
