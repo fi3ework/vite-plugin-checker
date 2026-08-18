@@ -68,6 +68,9 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let buildWatch = false
   let logger: Logger | null = null
   let checkerPromise: Promise<void> | null = null
+  // Vite's resolved root, captured in `configResolved`. Build-mode checkers use
+  // this (like serve mode does) so spawned commands run from the same cwd.
+  let resolvedRoot = process.cwd()
 
   return {
     name: 'vite-plugin-checker',
@@ -105,6 +108,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         : config.base
       isProduction ||= config.isProduction || config.command === 'build'
       buildWatch = !!config.build.watch
+      resolvedRoot = config.root
     },
     async buildEnd() {
       if (viteMode !== 'serve') {
@@ -163,14 +167,18 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       // run a bin command in a separated process
       if (!isProduction || !enableBuild) return
 
+      // Mirror serve mode (see `configureServer`): run build commands from the
+      // resolved Vite root, falling back to an explicit `root` option, so
+      // checkers behave consistently in monorepos instead of using process.cwd().
+      const root = userConfig.root || resolvedRoot
       const localEnv = npmRunPathEnv({
         env: process.env,
-        cwd: process.cwd(),
+        cwd: root,
         execPath: process.execPath,
       })
 
       const spawnedCheckers = checkers.map((checker) =>
-        spawnChecker(checker, userConfig, localEnv),
+        spawnChecker(checker, userConfig, localEnv, root),
       )
 
       // wait for checker states while avoiding blocking the build from continuing in parallel
@@ -238,10 +246,11 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   }
 }
 
-function spawnChecker(
+export function spawnChecker(
   checker: ServeAndBuildChecker,
   userConfig: Partial<PluginConfig>,
   localEnv: ProcessEnv,
+  cwd: string,
 ) {
   return new Promise<number>((resolve) => {
     const buildBin = checker.build.buildBin
@@ -252,7 +261,7 @@ function spawnChecker(
     const commandWithArgs = [command, ...args].join(' ')
 
     const proc = spawn(commandWithArgs, {
-      cwd: process.cwd(),
+      cwd,
       stdio: 'inherit',
       env: localEnv,
       // shell is necessary on windows to get the process to even start.
