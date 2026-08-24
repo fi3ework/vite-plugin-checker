@@ -109,7 +109,7 @@ importers:
         version: 1.1.1
       picomatch:
         specifier: ^4.0.4
-        version: 4.0.4
+        version: 4.0.5
       proper-lockfile:
         specifier: ^4.1.2
         version: 4.1.2
@@ -5357,7 +5357,7 @@ snapshots:
       alien-signals: 3.2.1
       muggle-string: 0.4.1
       path-browserify: 1.0.1
-      picomatch: 4.0.4
+      picomatch: 4.0.5
 
   '@vue/reactivity@3.5.29':
     dependencies:
