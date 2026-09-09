@@ -28,3 +28,20 @@ export function ignoreTransientFsError(error: unknown): void {
   if (isTransientFsError(error)) return
   throw error
 }
+
+// Checker binaries are spawned through a shell (see `spawnChecker`), which
+// means every argument the plugin builds itself has to survive word splitting.
+// Paths are what bite: a project under "my apps/site" would otherwise reach the
+// binary as two arguments, and `tsc -p "my apps/site/tsconfig.json"` fails with
+// "TS5042: Option 'project' cannot be mixed with source files on a command
+// line". Quote per platform: cmd.exe understands double quotes only, while
+// POSIX shells would keep expanding `$` and backticks inside them.
+export function quoteShellArg(arg: string): string {
+  if (arg === '') return arg
+
+  if (process.platform === 'win32') {
+    return `"${arg.replace(/"/g, '\\"')}"`
+  }
+
+  return `'${arg.replace(/'/g, `'\\''`)}'`
+}
