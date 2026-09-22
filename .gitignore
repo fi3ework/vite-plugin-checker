@@ -115,3 +115,5 @@ docs/.vitepress/cache
 # vue-tsc fixture lock
 .vue-tsc-fixture.lock
 packages/vite-plugin-checker/README.md
+
+.pnpm-store
