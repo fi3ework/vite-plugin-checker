@@ -154,6 +154,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
             useBase: false,
           })
         }
+
+        return
       },
     },
     transformIndexHtml() {
