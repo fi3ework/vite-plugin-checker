@@ -1,6 +1,21 @@
+import { spawnSync } from 'node:child_process'
 import { describe, expect, it } from 'vitest'
 
-import { ignoreTransientFsError, isTransientFsError } from '../src/utils'
+import {
+  ignoreTransientFsError,
+  isTransientFsError,
+  quoteShellArg,
+} from '../src/utils'
+
+function withPlatform(platform: NodeJS.Platform, run: () => void) {
+  const descriptor = Object.getOwnPropertyDescriptor(process, 'platform')!
+  Object.defineProperty(process, 'platform', { ...descriptor, value: platform })
+  try {
+    run()
+  } finally {
+    Object.defineProperty(process, 'platform', descriptor)
+  }
+}
 
 const fsError = (code: string) => Object.assign(new Error(code), { code })
 
@@ -33,4 +48,53 @@ describe('ignoreTransientFsError', () => {
     const error = fsError('EISDIR')
     expect(() => ignoreTransientFsError(error)).toThrow(error)
   })
+})
+
+describe('quoteShellArg', () => {
+  it('keeps a path containing spaces in one argument', () => {
+    withPlatform('linux', () => {
+      expect(quoteShellArg('/repo/my apps/tsconfig.json')).toBe(
+        "'/repo/my apps/tsconfig.json'",
+      )
+    })
+  })
+
+  it('escapes quotes that the path itself contains', () => {
+    withPlatform('linux', () => {
+      expect(quoteShellArg("/repo/it's/tsconfig.json")).toBe(
+        "'/repo/it'\\''s/tsconfig.json'",
+      )
+    })
+
+    withPlatform('win32', () => {
+      expect(quoteShellArg('C:\\my apps\\tsconfig.json')).toBe(
+        '"C:\\my apps\\tsconfig.json"',
+      )
+    })
+  })
+
+  it('leaves an empty argument alone', () => {
+    expect(quoteShellArg('')).toBe('')
+  })
+
+  it.skipIf(process.platform === 'win32')(
+    'survives a round trip through a real shell',
+    () => {
+      const target = '/repo/my apps/tsconfig.json'
+      const command = [
+        quoteShellArg(process.execPath),
+        '-e',
+        quoteShellArg('console.log(JSON.stringify(process.argv.slice(1)))'),
+        quoteShellArg(target),
+      ].join(' ')
+
+      const { stdout, status } = spawnSync(command, {
+        shell: true,
+        encoding: 'utf8',
+      })
+
+      expect(status).toBe(0)
+      expect(JSON.parse(stdout)).toEqual([target])
+    },
+  )
 })
