@@ -105,7 +105,9 @@ it.each(
       entry.added,
     )
     await expect
-      .poll(() => JSON.stringify(messages), { timeout: 5000 })
+      .poll(() => JSON.stringify(messages).replace(/\\\\/g, '/'), {
+        timeout: 5000,
+      })
       .toContain(`src/added.${entry.extension}`)
     expect(JSON.stringify(messages)).toContain(entry.message)
     expect(workerError).toBeUndefined()
