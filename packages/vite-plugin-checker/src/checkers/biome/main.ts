@@ -140,11 +140,14 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
 
       const watcher = chokidar.watch(watchTarget, {
         cwd: root,
+        ignoreInitial: true,
         ignored: (p: string) => p.includes('node_modules'),
       })
-      watcher.on('change', (filePath) => {
+      const scheduleLintFile = (filePath: string) => {
         scheduler.schedule(path.resolve(root, filePath))
-      })
+      }
+      watcher.on('add', scheduleLintFile)
+      watcher.on('change', scheduleLintFile)
       watcher.on('unlink', (filePath) => {
         const absPath = path.resolve(root, filePath)
         manager.updateByFileId(absPath, [])

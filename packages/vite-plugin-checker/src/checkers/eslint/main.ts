@@ -229,17 +229,20 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       const watcher = chokidar.watch(watchTarget, {
         cwd: root,
+        ignoreInitial: true,
         ignored: createIgnore(root, files),
       })
 
-      watcher.on('change', (filePath) => {
+      const scheduleLintFile = (filePath: string) => {
         const absPath = path.resolve(root, filePath)
         shouldLintPath(absPath)
           .then((shouldLint) => {
             if (shouldLint) scheduler.schedule(absPath)
           })
           .catch(ignoreTransientFsError)
-      })
+      }
+      watcher.on('add', scheduleLintFile)
+      watcher.on('change', scheduleLintFile)
       watcher.on('unlink', (filePath) => {
         const absPath = path.resolve(root, filePath)
         manager.updateByFileId(absPath, [])
