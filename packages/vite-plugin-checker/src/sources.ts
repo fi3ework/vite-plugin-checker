@@ -1,11 +1,12 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 export function normalizePath(p: string, cwd: string) {
   let filename = p
-  // Strip file:// URL scheme (oxlint outputs file:// URLs in JSON format)
-  if (filename && filename.startsWith('file://')) {
-    filename = filename.slice(7)
+  // Decode file URLs, including escaped characters and platform-specific paths.
+  if (filename.startsWith('file://')) {
+    filename = fileURLToPath(filename)
   }
   if (filename) {
     filename = path.isAbsolute(filename)
