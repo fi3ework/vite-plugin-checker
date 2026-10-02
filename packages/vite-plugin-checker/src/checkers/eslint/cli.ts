@@ -111,6 +111,7 @@ function translateOptionsFlatConfig({
   parserOptions,
   plugin,
   quiet,
+  reportUnusedDisableDirectives,
   rule,
 }: any) {
   const languageOptions: any = {
@@ -133,6 +134,13 @@ function translateOptionsFlatConfig({
     rules: rule || {},
   }
   if (plugin) overrideConfig.plugins = plugin
+  if (reportUnusedDisableDirectives !== undefined) {
+    overrideConfig.linterOptions = {
+      reportUnusedDisableDirectives: reportUnusedDisableDirectives
+        ? 'error'
+        : 'off',
+    }
+  }
 
   return {
     allowInlineConfig: inlineConfig,
