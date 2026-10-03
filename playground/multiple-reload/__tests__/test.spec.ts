@@ -11,9 +11,9 @@ import {
   resetDiagnostics,
   resetReceivedLog,
   log,
-  sleepForEdit,
   sleepForServerReady,
   stripedLog,
+  waitForDiagnostics,
 } from '../../testUtils'
 
 describe('multiple-reload', () => {
@@ -29,7 +29,7 @@ describe('multiple-reload', () => {
       editFile('src/main.ts', (code) =>
         code.replace(`var count: number = 0`, `var count: number = 1`)
       )
-      await sleepForEdit()
+      await waitForDiagnostics()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
       // don't know why striped log in disorder on Linux, while correct on mac and Windows
       // comment out for now to pass test cases stably and striped log is duplicated with diagnostics somehow.
@@ -42,14 +42,14 @@ describe('multiple-reload', () => {
       editFile('src/main.ts', (code) =>
         code.replace('var count: number = 1', `var count: string = 1`)
       )
-      await sleepForEdit()
+      await waitForDiagnostics()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
 
       console.log('-- fix eslint error --')
       resetDiagnostics()
       resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace('var count: string = 1', 'const count = 0'))
-      await sleepForEdit()
+      await waitForDiagnostics()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
     })
   })

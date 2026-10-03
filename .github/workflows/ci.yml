@@ -21,19 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
-
-      - name: Set node version to latest LTS
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          node-version: lts/*
-          cache: 'pnpm'
-
-      - name: Install deps
-        run: pnpm install
+          cache: true
 
       - name: Build
         run: pnpm run build
@@ -46,31 +38,24 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node_version: [20, 22]
+        node_version: [22, 24]
         include:
           # Active LTS + other OS
           - os: macos-latest
-            node_version: 22
+            node_version: 24
           - os: windows-latest
-            node_version: 22
+            node_version: 24
       fail-fast: false
 
     name: 'Build&Test: node-${{ matrix.node_version }}, ${{ matrix.os }}'
     steps:
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
-
-      - name: Set node version to ${{ matrix.node_version }}
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          node-version: ${{ matrix.node_version }}
-          cache: 'pnpm'
-
-      - name: Install deps
-        run: pnpm install
+          runtime: node@${{ matrix.node_version }}
+          cache: true
 
       # Install playwright's binary under custom directory to cache
       - name: Set Playwright path (non-windows)
@@ -81,7 +66,7 @@ jobs:
         run: echo "PLAYWRIGHT_BROWSERS_PATH=$HOME\.cache\playwright-bin" >> $env:GITHUB_ENV
 
       - name: Cache Playwright's binary
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           # Playwright removes unused browsers automatically
           # So does not need to add playwright version to key
@@ -110,11 +95,5 @@ jobs:
       - name: Type check
         run: pnpm run type-check
 
-      - name: Test unit
-        run: pnpm run test-unit
-
-      - name: Test serve
-        run: pnpm run test-serve
-
-      - name: Test build
-        run: pnpm run test-build
+      - name: Test
+        run: pnpm run test

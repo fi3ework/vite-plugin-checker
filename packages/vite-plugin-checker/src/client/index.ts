@@ -12,11 +12,13 @@ export const wrapVirtualPrefix = (id: `/${string}`): `virtual:${string}` =>
 export const composePreambleCode = ({
   baseWithOrigin = '/',
   overlayConfig,
+  useBase = true,
 }: {
   baseWithOrigin: string
   overlayConfig: SharedConfig['overlay']
+  useBase?: boolean
 }) => `
-import { inject } from "${baseWithOrigin}${RUNTIME_CLIENT_RUNTIME_PATH.slice(1)}";
+import { inject } from "${useBase ? baseWithOrigin : '/'}${RUNTIME_CLIENT_RUNTIME_PATH.slice(1)}";
 inject({
   overlayConfig: ${JSON.stringify(overlayConfig)},
   base: "${baseWithOrigin}",

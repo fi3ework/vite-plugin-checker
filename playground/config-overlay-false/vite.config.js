@@ -7,7 +7,7 @@ export default defineConfig({
     checker({
       overlay: false,
       eslint: {
-        lintCommand: 'eslint ./src --ext .ts',
+        lintCommand: 'eslint "./src/**/*.ts"',
       },
     }),
   ],

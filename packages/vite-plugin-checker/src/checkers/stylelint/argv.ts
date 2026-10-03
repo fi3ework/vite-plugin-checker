@@ -2,6 +2,7 @@
 // to make less breaking change, we'll make it a dependency before v1.0.0
 
 export { parseArgsStringToArgv as default, parseArgsStringToArgv }
+
 function parseArgsStringToArgv(
   value: string,
   env?: string,
@@ -41,7 +42,7 @@ function parseArgsStringToArgv(
 
 // Accepts any number of arguments, and returns the first one that is a string
 // (even an empty string)
-// @ts-ignore
+// @ts-expect-error
 function firstString(...args: Array<any>): string | undefined {
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < args.length; i++) {

@@ -1,86 +1,174 @@
-import { exec } from 'node:child_process'
-import path from 'node:path'
+import { execFile } from 'node:child_process'
 import { stripVTControlCharacters as strip } from 'node:util'
 import { createFrame } from '../../codeFrame.js'
 import type { NormalizedDiagnostic } from '../../logger.js'
+import { normalizePath, readSources } from '../../sources.js'
 import { DiagnosticLevel } from '../../types.js'
-import type { BiomeOutput } from './types.js'
+import { parseArgsStringToArgv } from '../stylelint/argv.js'
+import type {
+  BiomeOutput,
+  Diagnostic,
+  LegacyDiagnostic,
+  ModernDiagnostic,
+} from './types.js'
 
 export const severityMap = {
   error: DiagnosticLevel.Error,
   warning: DiagnosticLevel.Warning,
   info: DiagnosticLevel.Suggestion,
+  information: DiagnosticLevel.Suggestion,
 } as const
 
-export function getBiomeCommand(command: string, flags: string, files: string) {
-  const defaultFlags = '--reporter json'
+export function getBiomeCommand(
+  command: string,
+  flags: string,
+  files: string[],
+): string[] {
   if (flags.includes('--flags')) {
     throw Error(
       `vite-plugin-checker will force append "--reporter json" to the flags in dev mode, please don't use "--flags" in "config.biome.flags".
 If you need to customize "--flags" in build mode, please use "config.biome.build.flags" instead.`,
     )
   }
-  return ['biome', command, flags, defaultFlags, files]
-    .filter(Boolean)
-    .join(' ')
+  return [
+    'biome',
+    command,
+    ...(flags ? parseArgsStringToArgv(flags) : []),
+    '--reporter',
+    'json',
+    ...files,
+  ]
 }
 
-export function runBiome(command: string, cwd: string) {
+export function runBiome(argv: string[], cwd: string) {
   return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
-    exec(
-      command,
+    execFile(
+      argv[0]!,
+      argv.slice(1),
       {
         cwd,
         maxBuffer: Number.POSITIVE_INFINITY,
+        // Required on Windows so execFile can resolve .cmd/.bat shims in
+        // node_modules/.bin. Node >=18.20/20.12/22 auto-quotes argv under
+        // shell:true, preserving the no-splitting guarantee.
+        shell: process.platform === 'win32',
       },
       (_error, stdout, _stderr) => {
-        resolve([...parseBiomeOutput(stdout, cwd)])
+        parseBiomeOutput(stdout, cwd)
+          .then(resolve)
+          .catch(() => resolve([]))
       },
     )
   })
 }
 
-function parseBiomeOutput(output: string, cwd: string) {
-  let parsed: BiomeOutput
-  try {
-    parsed = JSON.parse(output)
-  } catch {
-    return []
-  }
-
-  const diagnostics: NormalizedDiagnostic[] = parsed.diagnostics.map((d) => {
-    let file = d.location.path?.file
-    if (file) {
-      // Convert relative path to absolute path
-      file = path.isAbsolute(file) ? file : path.resolve(cwd, file)
-      file = path.normalize(file)
-    }
-
-    const loc = {
-      file: file || '',
-      start: getLineAndColumn(d.location.sourceCode, d.location.span?.[0]),
-      end: getLineAndColumn(d.location.sourceCode, d.location.span?.[1]),
-    }
-
-    const codeFrame = createFrame(d.location.sourceCode || '', loc)
-
-    return {
-      message: `[${d.category}] ${d.description}`,
-      conclusion: '',
-      level:
-        severityMap[d.severity as keyof typeof severityMap] ??
-        DiagnosticLevel.Error,
-      checker: 'Biome',
-      id: file,
-      codeFrame,
-      stripedCodeFrame: codeFrame && strip(codeFrame),
-      loc,
-    }
-  })
-
-  return diagnostics
+type Entry = {
+  file: string
+  message: string
+  category: string
+  severity: string
+  start: { line: number; column: number }
+  end: { line: number; column: number }
+  /** Embedded source code from legacy Biome output (pre-2.4). */
+  sourceCode?: string
 }
 
+function isModernDiagnostic(d: Diagnostic): d is ModernDiagnostic {
+  return d.location !== undefined && typeof d.location.path === 'string'
+}
+
+function isLegacyDiagnostic(d: Diagnostic): d is LegacyDiagnostic {
+  return (
+    d.location !== undefined &&
+    typeof d.location.path === 'object' &&
+    d.location.path !== null &&
+    'file' in d.location.path
+  )
+}
+
+function getEntries(parsed: BiomeOutput, cwd: string): Entry[] {
+  return parsed.diagnostics.flatMap((d): Entry[] => {
+    if (!d.location) return []
+
+    if (isModernDiagnostic(d)) {
+      return [
+        {
+          file: normalizePath(d.location.path, cwd),
+          message: d.message,
+          category: d.category ?? '',
+          severity: d.severity,
+          start: d.location.start,
+          end: d.location.end,
+        },
+      ]
+    }
+
+    if (isLegacyDiagnostic(d)) {
+      const file = d.location.path?.file ?? ''
+      return [
+        {
+          file: normalizePath(file, cwd),
+          message: d.description,
+          category: d.category ?? '',
+          severity: d.severity,
+          start: getLineAndColumn(d.location.sourceCode, d.location.span?.[0]),
+          end: getLineAndColumn(d.location.sourceCode, d.location.span?.[1]),
+          sourceCode: d.location.sourceCode,
+        },
+      ]
+    }
+
+    return []
+  })
+}
+
+function getUniqueFiles(entries: Entry[]) {
+  return Array.from(new Set(entries.map((e) => e.file)))
+}
+
+function buildDiagnostics(
+  entries: Entry[],
+  sources: Map<string, string>,
+): NormalizedDiagnostic[] {
+  return entries.flatMap((entry) => {
+    // Prefer embedded source code (legacy), fall back to disk read (modern).
+    const source = entry.sourceCode ?? sources.get(entry.file)
+    if (!source) return []
+
+    const loc = {
+      file: entry.file,
+      start: entry.start,
+      end: entry.end,
+    }
+
+    const codeFrame = createFrame(source, loc)
+
+    return [
+      {
+        message: `[${entry.category}] ${entry.message}`,
+        level:
+          severityMap[entry.severity as keyof typeof severityMap] ??
+          DiagnosticLevel.Error,
+        checker: 'Biome',
+        id: entry.file,
+        codeFrame,
+        stripedCodeFrame: codeFrame && strip(codeFrame),
+        loc,
+      },
+    ]
+  })
+}
+
+function sanitizeBiomeOutput(output: string) {
+  // Biome on Windows emits unescaped backslashes in JSON path values
+  return output.replace(/\\(?!["\\/bfnrtu])/g, '\\\\')
+}
+
+/**
+ * Convert a byte-offset into `text` to a 1-based line/column pair.
+ * Used only for the legacy Biome schema (< 2.4) which reports positions
+ * as byte offsets into the embedded `sourceCode`.
+ */
 function getLineAndColumn(text?: string, offset?: number) {
   if (!text || !offset) return { line: 0, column: 0 }
 
@@ -97,4 +185,24 @@ function getLineAndColumn(text?: string, offset?: number) {
   }
 
   return { line, column }
+}
+
+async function parseBiomeOutput(
+  output: string,
+  cwd: string,
+): Promise<NormalizedDiagnostic[]> {
+  let parsed: BiomeOutput
+  try {
+    parsed = JSON.parse(sanitizeBiomeOutput(output))
+  } catch {
+    return []
+  }
+
+  const entries = getEntries(parsed, cwd)
+
+  // Only read from disk for entries that don't have embedded source code.
+  const filesNeedingRead = getUniqueFiles(entries.filter((e) => !e.sourceCode))
+  const sourceCache = await readSources(filesNeedingRead)
+
+  return buildDiagnostics(entries, sourceCache)
 }

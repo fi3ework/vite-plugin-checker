@@ -6,9 +6,9 @@ import {
   editFile,
   isServe,
   resetReceivedLog,
-  sleepForEdit,
   sleepForServerReady,
   stripedLog,
+  waitForDiagnostics,
 } from '../../testUtils'
 
 describe('eslint-config-log-level', () => {
@@ -21,7 +21,7 @@ describe('eslint-config-log-level', () => {
       console.log('-- edit error file --')
       resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
-      await sleepForEdit()
+      await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })

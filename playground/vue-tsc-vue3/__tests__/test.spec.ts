@@ -9,9 +9,9 @@ import {
   isServe,
   log,
   resetReceivedLog,
-  sleepForEdit,
   sleepForServerReady,
   stripedLog,
+  waitForDiagnostics,
 } from '../../testUtils'
 
 describe('vue-tsc-vue3', () => {
@@ -26,7 +26,7 @@ describe('vue-tsc-vue3', () => {
       editFile('src/App.vue', (code) =>
         code.replace('<HelloWorld msg1="Diana" />', '<HelloWorld msg2="Diana" />')
       )
-      await sleepForEdit(2)
+      await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })

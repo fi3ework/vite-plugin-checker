@@ -8,9 +8,9 @@ import {
   isServe,
   log,
   resetReceivedLog,
-  sleepForEdit,
   sleepForServerReady,
   stripedLog,
+  waitForDiagnostics,
 } from '../../testUtils'
 
 describe('eslint-default', () => {
@@ -23,14 +23,14 @@ describe('eslint-default', () => {
       console.log('-- edit error file --')
       resetReceivedLog()
       editFile('src/main.ts', (code) => code.replace(`'Hello'`, `'Hello~'`))
-      await sleepForEdit()
+      await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
       console.log('-- edit non error file --')
       resetReceivedLog()
       editFile('src/text.ts', (code) => code.replace(`Vanilla`, `vanilla`))
-      await sleepForEdit()
+      await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })

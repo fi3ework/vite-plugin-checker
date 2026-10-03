@@ -8,7 +8,7 @@ export default defineConfig({
         initialIsOpen: 'error',
       },
       eslint: {
-        lintCommand: 'eslint ./src --ext .ts',
+        lintCommand: 'eslint "./src/**/*.ts"',
       },
     }),
   ],
