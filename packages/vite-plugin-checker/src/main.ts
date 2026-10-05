@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process'
+import spawn from 'cross-spawn'
 import { npmRunPathEnv, type ProcessEnv } from 'npm-run-path'
 import colors from 'picocolors'
 
@@ -249,19 +249,17 @@ function spawnChecker(
       typeof buildBin === 'function' ? buildBin(userConfig) : buildBin
 
     const [command, args] = finalBin
-    const commandWithArgs = [command, ...args].join(' ')
 
-    const proc = spawn(commandWithArgs, {
+    // No shell: the arguments are handed to the checker as a list, so nothing
+    // has to be escaped and an argument containing a space (a project path,
+    // say) cannot fall apart into two. cross-spawn is what makes that possible
+    // on Windows, where the binaries in node_modules/.bin are .cmd shims that
+    // Node refuses to run without a shell; it resolves the shim and quotes the
+    // arguments for cmd.exe itself.
+    const proc = spawn(command, [...args], {
       cwd: process.cwd(),
       stdio: 'inherit',
       env: localEnv,
-      // shell is necessary on windows to get the process to even start.
-      // Command line args constructed by checkers therefore need to escape double quotes
-      // to have them not striped out by cmd.exe. Using shell on all platforms lets us avoid
-      // having to perform platform-specific logic around escaping quotes since all platform
-      // shells will strip out unescaped double quotes. E.g. shell=false on linux only would
-      // result in escaped quotes not being unescaped.
-      shell: true,
     })
 
     proc.on('exit', (code) => {

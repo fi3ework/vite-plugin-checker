@@ -37,6 +37,7 @@ const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types'
+import { parseArgsStringToArgv } from '../stylelint/argv.js'
 
 /**
  * Detect the installed ESLint major version.
@@ -258,9 +259,11 @@ export class EslintChecker extends Checker<'eslint'> {
         buildBin: (pluginConfig) => {
           if (pluginConfig.eslint) {
             const { lintCommand } = pluginConfig.eslint
-            return ['eslint', lintCommand.split(' ').slice(1)]
+            // The command is spawned as a list of arguments, so split it the
+            // way a shell would and keep a quoted argument whole.
+            return ['eslint', parseArgsStringToArgv(lintCommand).slice(1)]
           }
-          return ['eslint', ['']]
+          return ['eslint', []]
         },
       },
       createDiagnostic,
