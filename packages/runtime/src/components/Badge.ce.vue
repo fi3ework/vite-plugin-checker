@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -34,38 +34,67 @@ const bgColorClass = computed(() => {
   return 'summary-success'
 })
 
-// $: calcBgColorClass = () => {
-//   if (!summary) return ''
-//   if (summary.errorCount > 0) return 'summary-error'
-//   if (summary.warningCount > 0) return 'summary-warning'
-//   return 'summary-success'
-// }
+const isCopied = ref(false)
+const onCopy = async () => {
+  const text = props.checkerResults
+    .map((result) => {
+      return result.diagnostics
+        .map((d: any) => {
+          return `[${result.checkerId}] ${d.message}${d.id ? ` (${d.id})` : ''}${
+            d.loc ? `\n${d.loc.file}:${d.loc.line}:${d.loc.column}` : ''
+          }${d.frame ? `\n${d.frame}` : ''}`
+        })
+        .join('\n\n')
+    })
+    .join('\n\n---\n\n')
 
-// $: bgColorClass = calcBgColorClass()
+  try {
+    await navigator.clipboard.writeText(text)
+    isCopied.value = true
+    setTimeout(() => {
+      isCopied.value = false
+    }, 2000)
+  } catch (err) {
+    console.error('Failed to copy: ', err)
+  }
+}
 </script>
 
 <template>
-  <button
-    :class="[
-      'badge-base',
-      collapsed ? `to-uncollpase ${bgColorClass}` : 'to-collpase',
-      `badge-${position}`,
-    ]"
-    :style="badgeStyle"
-    @click="onClick"
-  >
-    <template v-if="collapsed">
-      <span class="summary"><span class="emoji">❗️</span>{{ summary.errorCount }}</span>
-      <span class="summary"><span class="emoji">⚠️</span>{{ summary.warningCount }}</span>
-    </template>
-    <template v-else>
-      <span>Close</span>
-    </template>
-  </button>
+  <div :class="['badge-container', `badge-${position}`]" :style="badgeStyle">
+    <button v-if="!collapsed" class="badge-button copy-button" @click="onCopy">
+      {{ isCopied ? 'Copied!' : 'Copy' }}
+    </button>
+    <button
+      :class="[
+        'badge-button',
+        'action-button',
+        collapsed ? `to-uncollpase ${bgColorClass}` : 'to-collpase',
+      ]"
+      @click="onClick"
+    >
+      <template v-if="collapsed">
+        <span class="summary"><span class="emoji">❗️</span>{{ summary.errorCount }}</span>
+        <span class="summary"><span class="emoji">⚠️</span>{{ summary.warningCount }}</span>
+      </template>
+      <template v-else>
+        <span>Close</span>
+      </template>
+    </button>
+  </div>
 </template>
 
 <style>
-.badge-base {
+.badge-container {
+  display: flex;
+  gap: 0.5em;
+  position: fixed;
+  z-index: 99999;
+  margin: 0.5em;
+  border-radius: 0.3em;
+}
+
+.badge-button {
   appearance: none;
   font-size: 0.9em;
   font-weight: bold;
@@ -73,9 +102,20 @@ const bgColorClass = computed(() => {
   border-radius: 0.3em;
   padding: 0.5em;
   cursor: pointer;
-  position: fixed;
-  z-index: 99999;
-  margin: 0.5em;
+  color: white;
+}
+
+.copy-button {
+  background: rgb(63, 78, 96);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.copy-button:hover {
+  background: rgb(73, 88, 106);
+}
+
+.action-button {
+  background: transparent;
 }
 
 .badge-bl {
@@ -99,7 +139,6 @@ const bgColorClass = computed(() => {
 }
 
 .to-collpase {
-  color: white;
   background: rgb(63, 78, 96);
 }
 
