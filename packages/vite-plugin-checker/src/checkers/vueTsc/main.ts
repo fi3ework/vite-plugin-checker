@@ -21,6 +21,7 @@ import {
   type CreateDiagnostic,
   type DiagnosticToRuntime,
 } from '../../types.js'
+import { quoteShellArg } from '../../utils.js'
 import { forceNoEmitOnSolutionBuilderHost } from '../tscUtils.js'
 import { prepareVueTsc } from './prepareVueTsc.js'
 
@@ -185,9 +186,9 @@ export class VueTscChecker extends Checker<'vueTsc'> {
             if (projectPath) {
               // In build mode, the tsconfig path is an argument to -b, e.g. "vue-tsc -b [path]"
               if (buildMode) {
-                args.push(projectPath)
+                args.push(quoteShellArg(projectPath))
               } else {
-                args.push('-p', projectPath)
+                args.push('-p', quoteShellArg(projectPath))
               }
             }
 
