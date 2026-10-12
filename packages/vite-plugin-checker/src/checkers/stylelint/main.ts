@@ -28,6 +28,7 @@ const manager = new FileDiagnosticManager()
 let createServeAndBuild: any
 
 import type { CreateDiagnostic } from '../../types.js'
+import { parseArgsStringToArgv } from './argv.js'
 
 const __filename = fileURLToPath(import.meta.url)
 
@@ -162,9 +163,11 @@ export class StylelintChecker extends Checker<'stylelint'> {
         buildBin: (pluginConfig) => {
           if (pluginConfig.stylelint) {
             const { lintCommand } = pluginConfig.stylelint
-            return ['stylelint', lintCommand.split(' ').slice(1)]
+            // The command is spawned as a list of arguments, so split it the
+            // way a shell would and keep a quoted argument whole.
+            return ['stylelint', parseArgsStringToArgv(lintCommand).slice(1)]
           }
-          return ['stylelint', ['']]
+          return ['stylelint', []]
         },
       },
       createDiagnostic,
