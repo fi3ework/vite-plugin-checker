@@ -42,8 +42,8 @@ importers:
         specifier: ^1.61.0
         version: 1.69.0
       pkg-pr-new:
-        specifier: ^0.0.88
-        version: 0.0.88
+        specifier: ^0.0.91
+        version: 0.0.91
       playwright-chromium:
         specifier: ^1.59.1
         version: 1.60.0
@@ -3569,8 +3569,8 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  pkg-pr-new@0.0.88:
-    resolution: {integrity: sha512-Xc6PMJ2gher0WZP+rtjefFk26hIb7V1PTLL30bmy1Z2vsRmSvqiss7Ag1XUdyplTGYzIlFNJp4L3vMNmK44N6g==}
+  pkg-pr-new@0.0.91:
+    resolution: {integrity: sha512-FQPmjspKRKYV4MlHQnun9snJqlYm6Yhmo12x1O3pgE2Akim/y/BZjMOppK//BFdh222WOj6WGqlmeZfrtUtfgQ==}
     hasBin: true
 
   playwright-chromium@1.60.0:
@@ -6715,7 +6715,7 @@ snapshots:
 
   picomatch@4.0.7: {}
 
-  pkg-pr-new@0.0.88: {}
+  pkg-pr-new@0.0.91: {}
 
   playwright-chromium@1.60.0:
     dependencies:
