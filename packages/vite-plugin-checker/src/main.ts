@@ -120,30 +120,43 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         }
       }
     },
-    resolveId(id) {
-      if (
-        id === RUNTIME_CLIENT_RUNTIME_PATH ||
-        id === RUNTIME_CLIENT_ENTRY_PATH
-      ) {
-        return wrapVirtualPrefix(id)
-      }
-
-      return
+    resolveId: {
+      filter: {
+        id: {
+          include: [
+            new RegExp(RUNTIME_CLIENT_RUNTIME_PATH),
+            new RegExp(RUNTIME_CLIENT_ENTRY_PATH),
+          ],
+        },
+      },
+      handler(id) {
+        return wrapVirtualPrefix(id as `/${string}`)
+      },
     },
-    load(id) {
-      if (id === wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)) {
-        return runtimeCode
-      }
+    load: {
+      filter: {
+        id: {
+          include: [
+            new RegExp(wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)),
+            new RegExp(wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)),
+          ],
+        },
+      },
+      handler(id) {
+        if (id === wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)) {
+          return runtimeCode
+        }
 
-      if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
-        return composePreambleCode({
-          baseWithOrigin,
-          overlayConfig,
-          useBase: false,
-        })
-      }
+        if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
+          return composePreambleCode({
+            baseWithOrigin,
+            overlayConfig,
+            useBase: false,
+          })
+        }
 
-      return
+        return
+      },
     },
     transformIndexHtml() {
       if (initialized) return
