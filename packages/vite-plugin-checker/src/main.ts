@@ -62,6 +62,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
+  let workersTerminated = false
   let isProduction = false
   let baseWithOrigin: string
   let viteMode: ConfigEnv['command'] | undefined
@@ -110,15 +111,14 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       if (viteMode !== 'serve') {
         await checkerPromise
       }
-
-      if (initialized) return
-
-      if (viteMode === 'serve') {
-        for (const checker of checkers) {
-          const { worker } = checker.serve
-          worker.terminate()
-        }
-      }
+    },
+    async closeBundle() {
+      if (viteMode !== 'serve') return
+      if (workersTerminated) return
+      workersTerminated = true
+      await Promise.all(
+        checkers.map((checker) => checker.serve.worker.terminate()),
+      )
     },
     resolveId(id) {
       if (
