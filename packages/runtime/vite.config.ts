@@ -11,6 +11,7 @@ export default defineConfig({
   plugins: [vue()],
   define: {
     'import.meta.hot': 'import.meta.hot',
+    'process.env.NODE_ENV': '"production"',
   },
   build: {
     minify: false, // for easy to debug and the size is not that important

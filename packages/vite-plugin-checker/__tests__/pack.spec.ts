@@ -5,12 +5,14 @@ import { fileURLToPath } from 'node:url'
 import { gunzipSync } from 'node:zlib'
 import { execa } from 'execa'
 import { unpackTar } from 'modern-tar'
+import invariant from 'tiny-invariant'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 const packageRoot = path.resolve(fileURLToPath(import.meta.url), '../..')
 
 describe('npm pack', () => {
   let tarballFiles: string[]
+  let archive: Awaited<ReturnType<typeof unpackTar>>
   let dest: string
 
   beforeAll(async () => {
@@ -23,7 +25,7 @@ describe('npm pack', () => {
       },
     )
     const tarball = stdout.trim().split('\n').at(-1)!
-    const archive = await unpackTar(gunzipSync(fs.readFileSync(tarball)))
+    archive = await unpackTar(gunzipSync(fs.readFileSync(tarball)))
     tarballFiles = archive.map((entry) => entry.header.name)
   }, 60_000)
 
@@ -33,5 +35,17 @@ describe('npm pack', () => {
 
   it('publishes the runtime bundle the client resolves at runtime', () => {
     expect(tarballFiles).toContain('package/dist/@runtime/main.js')
+  })
+
+  it('bundles Vue in production mode', () => {
+    const runtimeEntry = archive.find(
+      (entry) => entry.header.name === 'package/dist/@runtime/main.js',
+    )
+    invariant(runtimeEntry?.data, 'runtime bundle is expected in the tarball')
+    const code = new TextDecoder().decode(runtimeEntry.data)
+
+    expect(code).not.toContain('process.env.NODE_ENV')
+    expect(code).not.toContain('__VUE_HMR_RUNTIME__')
+    expect(code).not.toContain('devtoolsInitApp')
   })
 })
