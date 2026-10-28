@@ -122,25 +122,26 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     resolveId: {
       filter: {
-        id: {
-          include: [
-            new RegExp(RUNTIME_CLIENT_RUNTIME_PATH),
-            new RegExp(RUNTIME_CLIENT_ENTRY_PATH),
-          ],
-        },
+        id: new RegExp(
+          `^(?:${RUNTIME_CLIENT_RUNTIME_PATH}|${RUNTIME_CLIENT_ENTRY_PATH})$`,
+        ),
       },
       handler(id) {
-        return wrapVirtualPrefix(id as `/${string}`)
+        if (
+          id === RUNTIME_CLIENT_RUNTIME_PATH ||
+          id === RUNTIME_CLIENT_ENTRY_PATH
+        ) {
+          return wrapVirtualPrefix(id)
+        }
+
+        return
       },
     },
     load: {
       filter: {
-        id: {
-          include: [
-            new RegExp(wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)),
-            new RegExp(wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)),
-          ],
-        },
+        id: new RegExp(
+          `^(?:${wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)}|${wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)})$`,
+        ),
       },
       handler(id) {
         if (id === wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)) {
