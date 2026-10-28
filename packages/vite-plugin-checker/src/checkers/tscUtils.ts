@@ -1,4 +1,38 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import type ts from 'typescript'
+
+import type { TscConfig } from '../types.js'
+
+function findConfigFile(searchPath: string, configName: string) {
+  let dir = path.resolve(searchPath)
+  while (true) {
+    const candidate = path.resolve(dir, configName)
+    if (fs.existsSync(candidate)) return candidate
+    const parent = path.dirname(dir)
+    if (parent === dir) return
+    dir = parent
+  }
+}
+
+export function getTscBuildArgs(
+  options: Exclude<TscConfig, boolean>,
+  cwd: string,
+): string[] {
+  const args = [options.buildMode ? '-b' : '--noEmit']
+  if (!options.root && !options.tsconfigPath) return args
+
+  const root = options.root || cwd
+  const tsconfigPath = options.tsconfigPath || 'tsconfig.json'
+  const configFile =
+    findConfigFile(root, tsconfigPath) ?? path.resolve(root, tsconfigPath)
+  const projectPath = path.relative(cwd, configFile)
+
+  // `tsc -b` takes the project as a positional argument and rejects `-p`.
+  return options.buildMode
+    ? [...args, projectPath]
+    : [...args, '-p', projectPath]
+}
 
 /**
  * Wrap a `SolutionBuilderWithWatchHost` so that when a referenced project's

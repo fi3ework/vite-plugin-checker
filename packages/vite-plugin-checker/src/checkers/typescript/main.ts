@@ -24,7 +24,10 @@ import {
   DiagnosticLevel,
   type DiagnosticToRuntime,
 } from '../../types.js'
-import { forceNoEmitOnSolutionBuilderHost } from '../tscUtils.js'
+import {
+  forceNoEmitOnSolutionBuilderHost,
+  getTscBuildArgs,
+} from '../tscUtils.js'
 
 const __filename = fileURLToPath(import.meta.url)
 let createServeAndBuild: any
@@ -396,37 +399,12 @@ export class TscChecker extends Checker<'typescript'> {
       name: 'typescript',
       absFilePath: __filename,
       build: {
-        buildBin: (config) => {
-          if (typeof config.typescript === 'object') {
-            const {
-              root = '',
-              tsconfigPath = '',
-              buildMode,
-            } = config.typescript
-
-            // Compiler option '--noEmit' may not be used with '--build'
-            const args = [buildMode ? '-b' : '--noEmit']
-
-            // Custom config path
-            let projectPath = ''
-            if (root || tsconfigPath) {
-              projectPath = root ? path.join(root, tsconfigPath) : tsconfigPath
-            }
-
-            if (projectPath) {
-              // In build mode, the tsconfig path is an argument to -b, e.g. "tsc -b [path]"
-              if (buildMode) {
-                args.push(projectPath)
-              } else {
-                args.push('-p', projectPath)
-              }
-            }
-
-            return ['tsc', args]
-          }
-
-          return ['tsc', ['--noEmit']]
-        },
+        buildBin: (config, { root }) => [
+          'tsc',
+          typeof config.typescript === 'object'
+            ? getTscBuildArgs(config.typescript, root)
+            : ['--noEmit'],
+        ],
       },
       createDiagnostic,
     })

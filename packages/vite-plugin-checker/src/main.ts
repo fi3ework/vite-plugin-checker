@@ -24,14 +24,17 @@ import {
   type UserPluginConfig,
 } from './types.js'
 
-const buildInCheckerKeys: BuildInCheckerNames[] = [
-  'typescript',
-  'vueTsc',
-  'eslint',
-  'stylelint',
-  'biome',
-  'oxlint',
-]
+const buildInCheckerLoaders: Record<
+  BuildInCheckerNames,
+  () => Promise<{ createServeAndBuild: any }>
+> = {
+  typescript: () => import('./checkers/typescript/main.js'),
+  vueTsc: () => import('./checkers/vueTsc/main.js'),
+  eslint: () => import('./checkers/eslint/main.js'),
+  stylelint: () => import('./checkers/stylelint/main.js'),
+  biome: () => import('./checkers/biome/main.js'),
+  oxlint: () => import('./checkers/oxlint/main.js'),
+}
 
 async function createCheckers(
   userConfig: UserPluginConfig,
@@ -41,10 +44,11 @@ async function createCheckers(
   const { enableBuild, overlay } = userConfig
   const sharedConfig = { enableBuild, overlay }
 
-  // buildInCheckerKeys.forEach(async (name: BuildInCheckerNames) => {
-  for (const name of buildInCheckerKeys) {
+  for (const name of Object.keys(
+    buildInCheckerLoaders,
+  ) as BuildInCheckerNames[]) {
     if (!userConfig[name]) continue
-    const { createServeAndBuild } = await import(`./checkers/${name}/main.js`)
+    const { createServeAndBuild } = await buildInCheckerLoaders[name]()
     serveAndBuildCheckers.push(
       createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env),
     )
@@ -76,8 +80,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let buildWatch = false
   let logger: Logger | null = null
   let checkerPromise: Promise<void> | null = null
-  // Vite's resolved root, captured in `configResolved`. Build-mode checkers use
-  // this (like serve mode does) so spawned commands run from the same cwd.
   let resolvedRoot = process.cwd()
 
   return {
@@ -220,12 +222,9 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       // run a bin command in a separated process
       if (!isProduction || !enableBuild) return
 
-      // Mirror serve mode (see `configureServer`): run build commands from the
-      // resolved Vite root, falling back to an explicit `root` option, so
-      // checkers behave consistently in monorepos instead of using process.cwd().
       const root = userConfig.root || resolvedRoot
       const localEnv = npmRunPathEnv({
-        env: process.env,
+        env: npmRunPathEnv({ env: process.env, addExecPath: false }),
         cwd: root,
         execPath: process.execPath,
       })
@@ -311,7 +310,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   }
 }
 
-export function spawnChecker(
+function spawnChecker(
   checker: ServeAndBuildChecker,
   userConfig: Partial<PluginConfig>,
   localEnv: ProcessEnv,
@@ -320,7 +319,9 @@ export function spawnChecker(
   return new Promise<number>((resolve) => {
     const buildBin = checker.build.buildBin
     const finalBin: BuildCheckBinStr =
-      typeof buildBin === 'function' ? buildBin(userConfig) : buildBin
+      typeof buildBin === 'function'
+        ? buildBin(userConfig, { root: cwd })
+        : buildBin
 
     const [command, args] = finalBin
     const commandWithArgs = [command, ...args].join(' ')
