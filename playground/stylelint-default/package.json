@@ -14,7 +14,7 @@
     "stylelint": "^17.0.0",
     "stylelint-config-standard": "^40.0.0",
     "typescript": "^5.8.3",
-    "vite": "^8.0.9",
+    "vite": "^8.3.3",
     "vite-plugin-checker": "workspace:*"
   }
 }
