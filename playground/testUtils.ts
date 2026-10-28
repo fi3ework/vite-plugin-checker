@@ -3,7 +3,7 @@ import path from 'path'
 import invariant from 'tiny-invariant'
 import { expect } from 'vitest'
 
-import { getDiagnosticsEmitCount, page, testDir } from './vitestSetup'
+import { diagnostics, getDiagnosticsEmitCount, page, testDir } from './vitestSetup'
 
 import type { ElementHandle } from 'playwright-chromium'
 
@@ -21,6 +21,14 @@ export function editFile(filename: string, replacer: (str: string) => string): v
 export function editFileTo(filename: string, content: string): void {
   const filePath = path.resolve(testDir, filename)
   fs.writeFileSync(filePath, content)
+}
+
+export function removeFile(filename: string): void {
+  fs.rmSync(path.resolve(testDir, filename))
+}
+
+export function hasDiagnosticFor(filename: string): boolean {
+  return diagnostics.some((d) => d.id?.replace(/\\/g, '/').endsWith(filename))
 }
 
 export function expectStderrContains(str: string | string[], expectedErrorMsg: string | string[]) {

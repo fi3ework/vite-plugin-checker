@@ -1,7 +1,6 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
-import chokidar from 'chokidar'
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
@@ -23,6 +22,8 @@ import {
   createLintScheduler,
   DEFAULT_DEBOUNCE_MS,
 } from '../_shared/lintScheduler.js'
+import { watchLintTargets } from '../_shared/lintWatcher.js'
+import { pruneMissingFiles } from '../_shared/pruneMissingFiles.js'
 import { getBiomeCommand, runBiome, severityMap } from './cli.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -60,6 +61,7 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
       })()
 
       const dispatchDiagnostics = () => {
+        pruneMissingFiles(manager)
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
 
         if (terminal) {
@@ -138,17 +140,13 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
         }
       }
 
-      const watcher = chokidar.watch(watchTarget, {
-        cwd: root,
-        ignored: (p: string) => p.includes('node_modules'),
-      })
-      watcher.on('change', (filePath) => {
-        scheduler.schedule(path.resolve(root, filePath))
-      })
-      watcher.on('unlink', (filePath) => {
-        const absPath = path.resolve(root, filePath)
-        manager.updateByFileId(absPath, [])
-        dispatchDiagnostics()
+      watchLintTargets(watchTarget, {
+        root,
+        onChange: (absPath) => scheduler.schedule(absPath),
+        onUnlink: (absPath) => {
+          manager.updateByFileId(absPath, [])
+          dispatchDiagnostics()
+        },
       })
     },
   }

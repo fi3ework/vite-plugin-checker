@@ -3,10 +3,13 @@ import { describe, expect, it } from 'vitest'
 import {
   diagnostics,
   editFile,
+  editFileTo,
   expectStderrContains,
+  hasDiagnosticFor,
   isBuild,
   isServe,
   log,
+  removeFile,
   resetReceivedLog,
   sleepForServerReady,
   stripedLog,
@@ -33,6 +36,18 @@ describe('eslint-default', () => {
       await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
+    })
+
+    it('lints added files and clears removed ones', async () => {
+      await sleepForServerReady()
+
+      editFileTo('src/added.ts', 'export var added = 1\n')
+      await waitForDiagnostics()
+      expect(hasDiagnosticFor('src/added.ts')).toBe(true)
+
+      removeFile('src/added.ts')
+      await waitForDiagnostics()
+      expect(hasDiagnosticFor('src/added.ts')).toBe(false)
     })
   })
 

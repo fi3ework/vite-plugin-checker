@@ -3,9 +3,12 @@ import { describe, expect, it } from 'vitest'
 import {
   diagnostics,
   editFile,
+  editFileTo,
   expectStderrContains,
+  hasDiagnosticFor,
   isBuild,
   isServe,
+  removeFile,
   log,
   resetReceivedLog,
   sleepForServerReady,
@@ -26,6 +29,18 @@ describe('stylelint', () => {
       await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
+    })
+
+    it('lints added files and clears removed ones', async () => {
+      await sleepForServerReady()
+
+      editFileTo('src/added.css', 'a {\n}\n')
+      await waitForDiagnostics()
+      expect(hasDiagnosticFor('src/added.css')).toBe(true)
+
+      removeFile('src/added.css')
+      await waitForDiagnostics()
+      expect(hasDiagnosticFor('src/added.css')).toBe(false)
     })
   })
 
