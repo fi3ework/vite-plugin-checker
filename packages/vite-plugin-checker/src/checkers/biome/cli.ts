@@ -159,9 +159,13 @@ function buildDiagnostics(
   })
 }
 
-function sanitizeBiomeOutput(output: string) {
-  // Biome on Windows emits unescaped backslashes in JSON path values
-  return output.replace(/\\(?!["\\/bfnrtu])/g, '\\\\')
+function parseBiomeJson(output: string): BiomeOutput {
+  try {
+    return JSON.parse(output)
+  } catch {
+    // Biome < 2.5.1 on Windows emits unescaped backslashes in JSON path values
+    return JSON.parse(output.replace(/\\(?!["\\/bfnrtu])/g, '\\\\'))
+  }
 }
 
 /**
@@ -193,7 +197,7 @@ async function parseBiomeOutput(
 ): Promise<NormalizedDiagnostic[]> {
   let parsed: BiomeOutput
   try {
-    parsed = JSON.parse(sanitizeBiomeOutput(output))
+    parsed = parseBiomeJson(output)
   } catch {
     return []
   }

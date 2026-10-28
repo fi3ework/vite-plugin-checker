@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "vcs": {
     "enabled": true,
@@ -14,7 +14,8 @@
       "!**/playground",
       "!**/packages/vite-plugin-checker/src/checkers/eslint/options.ts",
       "!**/packages/vite-plugin-checker/src/checkers/stylelint/options.ts",
-      "!**/playground/**/*/src/**/*.*"
+      "!**/playground/**/*/src/**/*.*",
+      "!pnpm-lock.yaml"
     ],
     "ignoreUnknown": true
   },
@@ -25,6 +26,16 @@
     "formatter": {
       "semicolons": "asNeeded",
       "quoteStyle": "single"
+    }
+  },
+  "yaml": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "markdown": {
+    "parser": {
+      "frontmatter": true
     }
   },
   "linter": {
