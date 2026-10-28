@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process'
 import { npmRunPathEnv, type ProcessEnv } from 'npm-run-path'
 import colors from 'picocolors'
 
-import type { ConfigEnv, Logger, Plugin } from 'vite'
+import type { ConfigEnv, Logger, Plugin, ResolvedConfig } from 'vite'
 import { Checker } from './Checker.js'
 import {
   composePreambleCode,
@@ -62,7 +62,14 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
-  let workersTerminated = false
+  let latestOverlayErrors: ClientReconnectPayload['data'] = []
+  let checkersPromise: Promise<ServeAndBuildChecker[]> | null = null
+  let serverCount = 0
+  let workersConfigured = false
+  const serverListeners = new WeakMap<
+    ResolvedConfig,
+    ((action: Action) => void)[]
+  >()
   let isProduction = false
   let baseWithOrigin: string
   let viteMode: ConfigEnv['command'] | undefined
@@ -79,25 +86,37 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       // for dev mode (1/2)
       // Initialize checker with config
       viteMode = env.command
-      // avoid running twice when running in SSR
-      if (initializeCounter === 0) {
-        initializeCounter++
-      } else {
-        initialized = true
+
+      if (viteMode !== 'serve') {
+        // avoid running twice when building client and server (SSR)
+        if (initializeCounter === 0) {
+          initializeCounter++
+        } else {
+          initialized = true
+          return
+        }
+
+        checkers = await createCheckers(userConfig || {}, env)
         return
       }
 
-      checkers = await createCheckers(userConfig || {}, env)
-      if (viteMode !== 'serve') return
-
-      for (const checker of checkers) {
-        const workerConfig = checker.serve.config
-        workerConfig({
-          enableOverlay,
-          enableTerminal,
-          env,
-        })
+      if (!checkersPromise) {
+        checkersPromise = createCheckers(userConfig || {}, env).then(
+          (created) => {
+            checkers = created
+            for (const checker of checkers) {
+              checker.serve.config({
+                enableOverlay,
+                enableTerminal,
+                env,
+              })
+            }
+            return checkers
+          },
+        )
       }
+
+      await checkersPromise
     },
     configResolved(config) {
       logger = config.logger
@@ -114,11 +133,31 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     async closeBundle() {
       if (viteMode !== 'serve') return
-      if (workersTerminated) return
-      workersTerminated = true
-      await Promise.all(
-        checkers.map((checker) => checker.serve.worker.terminate()),
-      )
+
+      // Vite 5 has no `this.environment`
+      const environment = this.environment
+      const config =
+        environment?.getTopLevelConfig() ?? (this as any)._container?.config
+
+      const listeners = serverListeners.get(config)
+      if (!listeners) return
+      serverListeners.delete(config)
+
+      serverCount--
+      checkers.forEach((checker, index) => {
+        checker.serve.worker.off('message', listeners[index]!)
+      })
+
+      if (serverCount === 0) {
+        const terminated = checkers
+        checkers = []
+        latestOverlayErrors = []
+        checkersPromise = null
+        workersConfigured = false
+        await Promise.all(
+          terminated.map((checker) => checker.serve.worker.terminate()),
+        )
+      }
     },
     resolveId(id) {
       if (
@@ -183,17 +222,27 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       })
     },
     configureServer(server) {
-      if (initialized) return
+      serverCount++
+      if (latestOverlayErrors.length !== checkers.length) {
+        latestOverlayErrors = new Array(checkers.length)
+      }
+      const listeners: ((action: Action) => void)[] = []
+      serverListeners.set(server.config, listeners)
 
-      const latestOverlayErrors: ClientReconnectPayload['data'] = new Array(
-        checkers.length,
-      )
+      if (!workersConfigured) {
+        workersConfigured = true
+        checkers.forEach((checker) => {
+          checker.serve.configureServer({
+            root: userConfig.root || server.config.root,
+          })
+        })
+      }
+
       // for dev mode (2/2)
       // Get the server instance and keep reference in a closure
       checkers.forEach((checker, index) => {
-        const { worker, configureServer: workerConfigureServer } = checker.serve
-        workerConfigureServer({ root: userConfig.root || server.config.root })
-        worker.on('message', (action: Action) => {
+        const { worker } = checker.serve
+        const listener = (action: Action) => {
           if (action.type === ACTION_TYPES.overlayError) {
             latestOverlayErrors[index] =
               action.payload as ClientDiagnosticPayload
@@ -208,7 +257,9 @@ export function checker(userConfig: UserPluginConfig): Plugin {
               logger![action.level](action.payload)
             }
           }
-        })
+        }
+        listeners.push(listener)
+        worker.on('message', listener)
       })
 
       if (server.ws.on) {
