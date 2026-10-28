@@ -21,7 +21,10 @@ import {
   type CreateDiagnostic,
   type DiagnosticToRuntime,
 } from '../../types.js'
-import { forceNoEmitOnSolutionBuilderHost } from '../tscUtils.js'
+import {
+  forceNoEmitOnSolutionBuilderHost,
+  getTscBuildArgs,
+} from '../tscUtils.js'
 import { prepareVueTsc } from './prepareVueTsc.js'
 
 const _require = createRequire(import.meta.url)
@@ -170,32 +173,12 @@ export class VueTscChecker extends Checker<'vueTsc'> {
       name: 'vueTsc',
       absFilePath: __filename,
       build: {
-        buildBin: (config) => {
-          if (typeof config.vueTsc === 'object') {
-            const { root = '', tsconfigPath = '', buildMode } = config.vueTsc
-
-            const args = [buildMode ? '-b' : '--noEmit']
-
-            // Custom config path
-            let projectPath = ''
-            if (root || tsconfigPath) {
-              projectPath = root ? path.join(root, tsconfigPath) : tsconfigPath
-            }
-
-            if (projectPath) {
-              // In build mode, the tsconfig path is an argument to -b, e.g. "vue-tsc -b [path]"
-              if (buildMode) {
-                args.push(projectPath)
-              } else {
-                args.push('-p', projectPath)
-              }
-            }
-
-            return ['vue-tsc', args]
-          }
-
-          return ['vue-tsc', ['--noEmit']]
-        },
+        buildBin: (config, { root }) => [
+          'vue-tsc',
+          typeof config.vueTsc === 'object'
+            ? getTscBuildArgs(config.vueTsc, root)
+            : ['--noEmit'],
+        ],
       },
       createDiagnostic,
     })

@@ -4,7 +4,10 @@ import path from 'node:path'
 import ts from 'typescript'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import { forceNoEmitOnSolutionBuilderHost } from '../src/checkers/tscUtils'
+import {
+  forceNoEmitOnSolutionBuilderHost,
+  getTscBuildArgs,
+} from '../src/checkers/tscUtils'
 
 describe('forceNoEmitOnSolutionBuilderHost', () => {
   let tmp: string
@@ -103,5 +106,57 @@ describe('forceNoEmitOnSolutionBuilderHost', () => {
     const host = forceNoEmitOnSolutionBuilderHost(ts, makeHost())
     const builder = ts.createSolutionBuilderWithWatch(host, [rootPath], {})
     expect(() => builder.build()).not.toThrow()
+  })
+})
+
+describe('getTscBuildArgs', () => {
+  let tmp: string
+  let src: string
+
+  beforeEach(() => {
+    tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'vpc-tscargs-'))
+    src = path.join(tmp, 'src')
+    fs.mkdirSync(src)
+    fs.writeFileSync(path.join(tmp, 'tsconfig.json'), '{}')
+    fs.writeFileSync(path.join(tmp, 'tsconfig.app.json'), '{}')
+  })
+
+  afterEach(() => {
+    fs.rmSync(tmp, { recursive: true, force: true })
+  })
+
+  it('lets tsc find the project when no root or tsconfigPath is set', () => {
+    expect(getTscBuildArgs({}, src)).toEqual(['--noEmit'])
+    expect(getTscBuildArgs({ buildMode: true }, src)).toEqual(['-b'])
+  })
+
+  it('finds tsconfigPath in a parent of the root', () => {
+    const expected = path.join('..', 'tsconfig.app.json')
+    expect(getTscBuildArgs({ tsconfigPath: 'tsconfig.app.json' }, src)).toEqual(
+      ['--noEmit', '-p', expected],
+    )
+    expect(
+      getTscBuildArgs(
+        { tsconfigPath: 'tsconfig.app.json', buildMode: true },
+        src,
+      ),
+    ).toEqual(['-b', expected])
+  })
+
+  it('resolves a relative root from process.cwd()', () => {
+    const root = path.relative(process.cwd(), tmp)
+    expect(getTscBuildArgs({ root }, src)).toEqual([
+      '--noEmit',
+      '-p',
+      path.join('..', 'tsconfig.json'),
+    ])
+  })
+
+  it('passes through a tsconfigPath that does not exist', () => {
+    expect(getTscBuildArgs({ tsconfigPath: 'missing.json' }, src)).toEqual([
+      '--noEmit',
+      '-p',
+      'missing.json',
+    ])
   })
 })

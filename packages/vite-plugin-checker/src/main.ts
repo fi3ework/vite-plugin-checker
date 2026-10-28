@@ -24,14 +24,17 @@ import {
   type UserPluginConfig,
 } from './types.js'
 
-const buildInCheckerKeys: BuildInCheckerNames[] = [
-  'typescript',
-  'vueTsc',
-  'eslint',
-  'stylelint',
-  'biome',
-  'oxlint',
-]
+const buildInCheckerLoaders: Record<
+  BuildInCheckerNames,
+  () => Promise<{ createServeAndBuild: any }>
+> = {
+  typescript: () => import('./checkers/typescript/main.js'),
+  vueTsc: () => import('./checkers/vueTsc/main.js'),
+  eslint: () => import('./checkers/eslint/main.js'),
+  stylelint: () => import('./checkers/stylelint/main.js'),
+  biome: () => import('./checkers/biome/main.js'),
+  oxlint: () => import('./checkers/oxlint/main.js'),
+}
 
 async function createCheckers(
   userConfig: UserPluginConfig,
@@ -41,10 +44,11 @@ async function createCheckers(
   const { enableBuild, overlay } = userConfig
   const sharedConfig = { enableBuild, overlay }
 
-  // buildInCheckerKeys.forEach(async (name: BuildInCheckerNames) => {
-  for (const name of buildInCheckerKeys) {
+  for (const name of Object.keys(
+    buildInCheckerLoaders,
+  ) as BuildInCheckerNames[]) {
     if (!userConfig[name]) continue
-    const { createServeAndBuild } = await import(`./checkers/${name}/main.js`)
+    const { createServeAndBuild } = await buildInCheckerLoaders[name]()
     serveAndBuildCheckers.push(
       createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env),
     )
@@ -76,6 +80,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let buildWatch = false
   let logger: Logger | null = null
   let checkerPromise: Promise<void> | null = null
+  let resolvedRoot = process.cwd()
 
   return {
     name: 'vite-plugin-checker',
@@ -125,6 +130,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         : config.base
       isProduction ||= config.isProduction || config.command === 'build'
       buildWatch = !!config.build.watch
+      resolvedRoot = config.root
     },
     async buildEnd() {
       if (viteMode !== 'serve') {
@@ -216,14 +222,15 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       // run a bin command in a separated process
       if (!isProduction || !enableBuild) return
 
+      const root = userConfig.root || resolvedRoot
       const localEnv = npmRunPathEnv({
-        env: process.env,
-        cwd: process.cwd(),
+        env: npmRunPathEnv({ env: process.env, addExecPath: false }),
+        cwd: root,
         execPath: process.execPath,
       })
 
       const spawnedCheckers = checkers.map((checker) =>
-        spawnChecker(checker, userConfig, localEnv),
+        spawnChecker(checker, userConfig, localEnv, root),
       )
 
       // wait for checker states while avoiding blocking the build from continuing in parallel
@@ -307,17 +314,20 @@ function spawnChecker(
   checker: ServeAndBuildChecker,
   userConfig: Partial<PluginConfig>,
   localEnv: ProcessEnv,
+  cwd: string,
 ) {
   return new Promise<number>((resolve) => {
     const buildBin = checker.build.buildBin
     const finalBin: BuildCheckBinStr =
-      typeof buildBin === 'function' ? buildBin(userConfig) : buildBin
+      typeof buildBin === 'function'
+        ? buildBin(userConfig, { root: cwd })
+        : buildBin
 
     const [command, args] = finalBin
     const commandWithArgs = [command, ...args].join(' ')
 
     const proc = spawn(commandWithArgs, {
-      cwd: process.cwd(),
+      cwd,
       stdio: 'inherit',
       env: localEnv,
       // shell is necessary on windows to get the process to even start.

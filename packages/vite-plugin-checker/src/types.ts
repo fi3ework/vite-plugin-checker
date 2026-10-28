@@ -345,6 +345,7 @@ export type BuildCheckBin = BuildCheckBinStr | BuildCheckBinFn
 export type BuildCheckBinStr = [string, ReadonlyArray<string>]
 export type BuildCheckBinFn = (
   config: UserPluginConfig,
+  context: { root: string },
 ) => [string, ReadonlyArray<string>]
 
 export interface ConfigureServeChecker {

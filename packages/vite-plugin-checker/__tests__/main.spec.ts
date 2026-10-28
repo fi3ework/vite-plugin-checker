@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   RUNTIME_CLIENT_ENTRY_PATH,
@@ -6,6 +6,21 @@ import {
   wrapVirtualPrefix,
 } from '../src/client'
 import { checker } from '../src/main'
+import type { UserPluginConfig } from '../src/types'
+
+const { spawnMock, buildBinMock } = vi.hoisted(() => ({
+  spawnMock: vi.fn(),
+  buildBinMock: vi.fn(() => ['tsc', ['--noEmit']] as const),
+}))
+
+vi.mock('node:child_process', () => ({ spawn: spawnMock }))
+
+vi.mock('../src/checkers/typescript/main', () => ({
+  createServeAndBuild: () => ({
+    serve: {},
+    build: { buildBin: buildBinMock },
+  }),
+}))
 
 interface FilteredHook {
   filter: { id: RegExp }
@@ -56,5 +71,60 @@ describe('load', () => {
       expect(hook.filter.id.test(id)).toBe(false)
       expect(hook.handler(id)).toBeUndefined()
     }
+  })
+})
+
+describe('build mode', () => {
+  beforeEach(() => {
+    spawnMock.mockReset()
+    spawnMock.mockReturnValue({
+      on: (event: string, cb: (code: number) => void) => {
+        if (event === 'exit') cb(0)
+      },
+    })
+    buildBinMock.mockClear()
+  })
+
+  async function runBuild(userConfig: UserPluginConfig, viteRoot: string) {
+    const plugin = checker(userConfig) as any
+    await plugin.config({}, { command: 'build', mode: 'production' })
+    plugin.configResolved({
+      root: viteRoot,
+      base: '/',
+      command: 'build',
+      isProduction: true,
+      logger: {},
+      server: {},
+      build: { watch: null },
+    })
+    plugin.buildStart()
+    await plugin.buildEnd()
+  }
+
+  it('runs checkers from the Vite root', async () => {
+    await runBuild({ typescript: true }, '/monorepo/packages/app')
+
+    expect(buildBinMock).toHaveBeenCalledWith(expect.anything(), {
+      root: '/monorepo/packages/app',
+    })
+    expect(spawnMock).toHaveBeenCalledWith(
+      'tsc --noEmit',
+      expect.objectContaining({ cwd: '/monorepo/packages/app' }),
+    )
+  })
+
+  it('prefers the plugin root option over the Vite root', async () => {
+    await runBuild(
+      { typescript: true, root: '/monorepo' },
+      '/monorepo/packages/app',
+    )
+
+    expect(buildBinMock).toHaveBeenCalledWith(expect.anything(), {
+      root: '/monorepo',
+    })
+    expect(spawnMock).toHaveBeenCalledWith(
+      'tsc --noEmit',
+      expect.objectContaining({ cwd: '/monorepo' }),
+    )
   })
 })
