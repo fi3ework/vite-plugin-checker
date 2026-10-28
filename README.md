@@ -8,8 +8,8 @@ A Vite plugin that can run TypeScript, vue-tsc, ESLint, Biome, Stylelint in work
 
 ## Online playground
 
-| Examples           | StackBlitz                                                       |
-| ------------------ | ---------------------------------------------------------------- |
+| Examples           | StackBlitz                                                      |
+| ------------------ | --------------------------------------------------------------- |
 | Vue3 + vue-tsc     | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-e8pddl) |
 | React + TypeScript | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-b4zcev) |
 | ESLint             | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-l1ritu) |

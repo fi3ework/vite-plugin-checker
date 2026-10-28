@@ -14,7 +14,8 @@
       "!**/playground",
       "!**/packages/vite-plugin-checker/src/checkers/eslint/options.ts",
       "!**/packages/vite-plugin-checker/src/checkers/stylelint/options.ts",
-      "!**/playground/**/*/src/**/*.*"
+      "!**/playground/**/*/src/**/*.*",
+      "!pnpm-lock.yaml"
     ],
     "ignoreUnknown": true
   },
@@ -25,6 +26,16 @@
     "formatter": {
       "semicolons": "asNeeded",
       "quoteStyle": "single"
+    }
+  },
+  "yaml": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "markdown": {
+    "parser": {
+      "frontmatter": true
     }
   },
   "linter": {

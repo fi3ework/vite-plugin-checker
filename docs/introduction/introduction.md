@@ -18,8 +18,8 @@ Stylelint and oxlint in worker thread to **add type checking and linting support
 
 ## Online playground
 
-| Examples           | StackBlitz                                                       |
-| ------------------ | ---------------------------------------------------------------- |
+| Examples           | StackBlitz                                                      |
+| ------------------ | --------------------------------------------------------------- |
 | Vue3 + vue-tsc     | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-e8pddl) |
 | React + TypeScript | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-b4zcev) |
 | ESLint             | [⚡️ StackBlitz](https://stackblitz.com/edit/vitejs-vite-l1ritu) |

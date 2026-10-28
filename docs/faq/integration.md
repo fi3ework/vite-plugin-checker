@@ -26,6 +26,7 @@ There are a few steps to do:
 
 1. Add `vite-plugin-checker` `typescript` `vue-tsc` `@types/node` as devDependencies to your Nuxt project.
 2. Create a Vue component with content:
+
    ```vue
    // vite-plugin-checker.vue
    <script setup>
