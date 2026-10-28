@@ -47,6 +47,10 @@ export function createScript<T extends Partial<BuildInCheckers>>({
           workerData: { env, checkerConfig },
         })
 
+        if (!isBuild) {
+          worker.unref()
+        }
+
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return {
           worker,
