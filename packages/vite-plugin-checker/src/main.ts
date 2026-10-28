@@ -159,30 +159,44 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         )
       }
     },
-    resolveId(id) {
-      if (
-        id === RUNTIME_CLIENT_RUNTIME_PATH ||
-        id === RUNTIME_CLIENT_ENTRY_PATH
-      ) {
-        return wrapVirtualPrefix(id)
-      }
+    resolveId: {
+      filter: {
+        id: new RegExp(
+          `^(?:${RUNTIME_CLIENT_RUNTIME_PATH}|${RUNTIME_CLIENT_ENTRY_PATH})$`,
+        ),
+      },
+      handler(id) {
+        if (
+          id === RUNTIME_CLIENT_RUNTIME_PATH ||
+          id === RUNTIME_CLIENT_ENTRY_PATH
+        ) {
+          return wrapVirtualPrefix(id)
+        }
 
-      return
+        return
+      },
     },
-    load(id) {
-      if (id === wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)) {
-        return runtimeCode
-      }
+    load: {
+      filter: {
+        id: new RegExp(
+          `^(?:${wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)}|${wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)})$`,
+        ),
+      },
+      handler(id) {
+        if (id === wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)) {
+          return runtimeCode
+        }
 
-      if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
-        return composePreambleCode({
-          baseWithOrigin,
-          overlayConfig,
-          useBase: false,
-        })
-      }
+        if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
+          return composePreambleCode({
+            baseWithOrigin,
+            overlayConfig,
+            useBase: false,
+          })
+        }
 
-      return
+        return
+      },
     },
     transformIndexHtml() {
       if (initialized) return
