@@ -1,3 +1,4 @@
+import { EventEmitter } from 'node:events'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
@@ -17,7 +18,11 @@ vi.mock('node:child_process', () => ({ spawn: spawnMock }))
 
 vi.mock('../src/checkers/typescript/main', () => ({
   createServeAndBuild: () => ({
-    serve: {},
+    serve: {
+      config: vi.fn(),
+      configureServer: vi.fn(),
+      worker: { on: vi.fn(), off: vi.fn() },
+    },
     build: { buildBin: buildBinMock },
   }),
 }))
@@ -126,5 +131,39 @@ describe('build mode', () => {
       'tsc --noEmit',
       expect.objectContaining({ cwd: '/monorepo' }),
     )
+  })
+})
+
+describe('configureServer', () => {
+  it('does not clear the terminal on file changes', async () => {
+    const clearScreen = vi.fn()
+    const logger = {
+      clearScreen,
+      error: vi.fn(),
+      warn: vi.fn(),
+      info: vi.fn(),
+    }
+    const plugin = checker({ typescript: true }) as any
+
+    await plugin.config({}, { command: 'serve', mode: 'development' })
+    plugin.configResolved({
+      root: '/project',
+      base: '/',
+      command: 'serve',
+      isProduction: false,
+      logger,
+      server: { origin: undefined },
+      build: { watch: null },
+    })
+
+    const watcher = new EventEmitter()
+    plugin.configureServer({
+      watcher,
+      ws: { on: vi.fn(), send: vi.fn() },
+      config: { root: '/project' },
+    })
+
+    watcher.emit('change', 'src/index.ts')
+    expect(clearScreen).not.toHaveBeenCalled()
   })
 })
