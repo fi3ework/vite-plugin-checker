@@ -290,6 +290,14 @@ export const options = optionator({
       description: 'Strategy to use for detecting changed files in the cache',
     },
     {
+      heading: 'Suppressing Violations',
+    },
+    {
+      option: 'suppressions-location',
+      type: 'path::String',
+      description: 'Specify the location of the suppressions file',
+    },
+    {
       heading: 'Miscellaneous',
     },
     {
