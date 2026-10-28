@@ -133,8 +133,8 @@ importers:
         specifier: ^14.0.0
         version: 14.1.0
       modern-tar:
-        specifier: ^0.7.6
-        version: 0.7.6
+        specifier: ^0.8.0
+        version: 0.8.6
       stylelint:
         specifier: ^17.0.0
         version: 17.13.0(typescript@5.9.3)
@@ -3283,8 +3283,8 @@ packages:
   mitt@3.0.1:
     resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
 
-  modern-tar@0.7.6:
-    resolution: {integrity: sha512-sweCIVXzx1aIGTCdzcMlSZt1h8k5Tmk08VNAuRk3IU28XamGiOH5ypi11g6De2CH7PhYqSSnGy2A/EFhbWnVKg==}
+  modern-tar@0.8.6:
+    resolution: {integrity: sha512-LYSks0tNVqbtez/9OB0YFP6qLRSqkdAxJWOQpVaR67lNTbj2zNLyYpowkRMia5lXLCZKzxwoxkxH2MbbBR2aEg==}
     engines: {node: '>=18.0.0'}
 
   mri@1.2.0:
@@ -6553,7 +6553,7 @@ snapshots:
 
   mitt@3.0.1: {}
 
-  modern-tar@0.7.6: {}
+  modern-tar@0.8.6: {}
 
   mri@1.2.0: {}
 
