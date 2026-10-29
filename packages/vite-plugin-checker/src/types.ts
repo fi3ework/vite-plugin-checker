@@ -285,7 +285,6 @@ export enum ACTION_TYPES {
   configureServer = 'configureServer',
   overlayError = 'overlayError',
   console = 'console',
-  unref = 'unref',
 }
 
 interface AbstractAction {
@@ -320,10 +319,6 @@ export interface ConsoleAction extends AbstractAction {
   payload: string
 }
 
-export interface UnrefAction extends AbstractAction {
-  type: ACTION_TYPES.unref
-}
-
 interface ConfigActionPayload {
   enableOverlay: boolean
   enableTerminal: boolean
@@ -335,7 +330,6 @@ export type Action =
   | ConfigureServerAction
   | ConsoleAction
   | OverlayErrorAction
-  | UnrefAction
 
 /* ----------------------------- internal types ----------------------------- */
 
