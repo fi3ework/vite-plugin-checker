@@ -162,8 +162,6 @@ export class BiomeChecker extends Checker<'biome'> {
         buildBin: (pluginConfig) => {
           if (typeof pluginConfig.biome === 'object') {
             const { command, flags } = pluginConfig.biome
-            // `flags` holds several flags in one string, and the command is
-            // spawned as a list, so split it the way a shell would.
             return [
               'biome',
               [

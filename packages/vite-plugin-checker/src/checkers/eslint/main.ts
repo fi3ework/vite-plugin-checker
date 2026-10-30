@@ -286,8 +286,6 @@ export class EslintChecker extends Checker<'eslint'> {
         buildBin: (pluginConfig) => {
           if (pluginConfig.eslint) {
             const { lintCommand } = pluginConfig.eslint
-            // The command is spawned as a list of arguments, so split it the
-            // way a shell would and keep a quoted argument whole.
             return ['eslint', parseArgsStringToArgv(lintCommand).slice(1)]
           }
           return ['eslint', []]

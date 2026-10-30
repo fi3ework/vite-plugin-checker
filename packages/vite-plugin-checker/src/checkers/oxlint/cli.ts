@@ -1,6 +1,6 @@
-import { execFile } from 'node:child_process'
 import { stripVTControlCharacters as strip } from 'node:util'
 import colors from 'picocolors'
+import { x } from 'tinyexec'
 import { createFrame, offsetRangeToBabelLocation } from '../../codeFrame.js'
 import { consoleLog, type NormalizedDiagnostic } from '../../logger.js'
 import { normalizePath, readSources } from '../../sources.js'
@@ -37,35 +37,18 @@ export function getOxlintCommand(command: string) {
   return parsed
 }
 
-export function runOxlint(argv: string[], cwd: string) {
-  return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
-    try {
-      const child = execFile(
-        argv[0]!,
-        argv.slice(1),
-        {
-          cwd,
-          maxBuffer: Number.POSITIVE_INFINITY,
-          // Required on Windows so execFile can resolve .cmd/.bat shims in
-          // node_modules/.bin. Node >=18.20/20.12/22 auto-quotes argv under
-          // shell:true, preserving the no-splitting guarantee.
-          shell: process.platform === 'win32',
-        },
-        (_error, stdout, _stderr) => {
-          parseOxlintOutput(stdout, cwd)
-            .then(resolve)
-            .catch(() => resolve([]))
-        },
-      )
-      child.on('error', (error) => {
-        logSpawnError(error)
-        resolve([])
-      })
-    } catch (error) {
-      logSpawnError(error)
-      resolve([])
-    }
-  })
+export async function runOxlint(
+  argv: string[],
+  cwd: string,
+): Promise<NormalizedDiagnostic[]> {
+  let stdout: string
+  try {
+    stdout = (await x(argv[0]!, argv.slice(1), { nodeOptions: { cwd } })).stdout
+  } catch (error) {
+    logSpawnError(error)
+    return []
+  }
+  return parseOxlintOutput(stdout, cwd).catch(() => [])
 }
 
 function logSpawnError(error: unknown) {

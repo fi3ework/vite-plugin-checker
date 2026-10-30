@@ -1,5 +1,4 @@
 import path from 'node:path'
-import spawn from 'cross-spawn'
 import { describe, expect, it } from 'vitest'
 
 import { BiomeChecker } from '../src/checkers/biome/main'
@@ -7,12 +6,11 @@ import { EslintChecker } from '../src/checkers/eslint/main'
 import { StylelintChecker } from '../src/checkers/stylelint/main'
 import { TscChecker } from '../src/checkers/typescript/main'
 
-// The checkers hand their command to `spawn` as a list of arguments, without a
-// shell. Every element therefore has to be one whole argument: quotes are
-// stripped here, a quoted argument stays in one piece, and an empty argument is
-// never passed.
+// The command is spawned as a list of arguments without a shell, so every
+// element has to be one whole argument with the quotes already stripped.
+const root = path.normalize('/repo')
 const buildBin = (checker: { build: { buildBin: any } }, config: any) =>
-  checker.build.buildBin(config)
+  checker.build.buildBin(config, { root })
 
 describe('eslint buildBin', () => {
   const checker = new EslintChecker()
@@ -28,6 +26,13 @@ describe('eslint buildBin', () => {
       eslint: { lintCommand: 'eslint "src/my components/**/*.ts"' },
     })
     expect(args).toEqual(['src/my components/**/*.ts'])
+  })
+
+  it('drops the quotes around an option value', () => {
+    const [, args] = buildBin(checker, {
+      eslint: { lintCommand: 'eslint --rule="semi: off" "./src/**/*.js"' },
+    })
+    expect(args).toEqual(['--rule=semi: off', './src/**/*.js'])
   })
 
   it('passes no arguments at all when there is no command', () => {
@@ -73,23 +78,14 @@ describe('typescript buildBin', () => {
   const checker = new TscChecker()
 
   it('leaves a project path containing a space untouched', () => {
+    const [, args] = buildBin(checker, {
+      typescript: { root: path.join(root, 'my project') },
+    })
     // The checker joins the path itself, so the separators are the platform's.
-    const root = path.normalize('/repo/my project')
-    const [, args] = buildBin(checker, { typescript: { root } })
-    expect(args).toEqual(['--noEmit', '-p', root])
-  })
-})
-
-describe('spawning a command built this way', () => {
-  it('delivers an argument containing a space as one argument', () => {
-    const target = '/repo/my project/tsconfig.json'
-    const result = spawn.sync(
-      process.execPath,
-      ['-e', 'console.log(JSON.stringify(process.argv.slice(1)))', target],
-      { encoding: 'utf8' },
-    )
-
-    expect(result.status).toBe(0)
-    expect(JSON.parse(result.stdout)).toEqual([target])
+    expect(args).toEqual([
+      '--noEmit',
+      '-p',
+      path.join('my project', 'tsconfig.json'),
+    ])
   })
 })

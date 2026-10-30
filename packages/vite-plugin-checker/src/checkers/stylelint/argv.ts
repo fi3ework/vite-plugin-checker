@@ -31,9 +31,11 @@ function parseArgsStringToArgv(
     // Each call to exec returns the next regex match as an array
     match = myRegexp.exec(myString)
     if (match !== null) {
-      // Index 1 in the array is the captured group if it exists
-      // Index 0 is the matched text, which we use if no captured group exists
-      myArray.push(firstString(match[1], match[6], match[0])!)
+      // Index 1 is a token with quotes inside it, like --rule="semi: off".
+      // Drop the quotes the way a shell would, so the value arrives bare.
+      // Index 6 is a fully quoted token, index 0 a bare one.
+      const unquoted = match[1]?.replace(/(['"])(.*?)\1/g, '$2')
+      myArray.push(firstString(unquoted, match[6], match[0])!)
     }
   } while (match !== null)
 

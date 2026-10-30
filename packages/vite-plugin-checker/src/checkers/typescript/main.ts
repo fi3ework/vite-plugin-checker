@@ -74,7 +74,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       const isTsV7 = !ts.sys
 
       if (isTsV7) {
-        const { default: spawn } = await import('cross-spawn')
+        const { x } = await import('tinyexec')
         const { existsSync, readFileSync } = await import('node:fs')
         const { createRequire } = await import('node:module')
         const { stripVTControlCharacters: strip } = await import('node:util')
@@ -127,16 +127,13 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
         // notices) so they don't get surfaced as checker diagnostics; tsc
         // reports through stdout, stderr is reserved for real failures.
         const tscEnv = { ...process.env, NODE_NO_WARNINGS: '1' }
-        // No shell either way, so a path containing a space stays one argument.
-        const tscProcess = runWithNode
-          ? spawn(process.execPath, [tscBin, ...args], {
-              cwd: finalConfig.root,
-              env: tscEnv,
-            })
-          : spawn(tscBin, args, {
-              cwd: finalConfig.root,
-              env: tscEnv,
-            })
+        const tscOptions = {
+          nodeOptions: { cwd: finalConfig.root, env: tscEnv },
+        }
+        const tsc = runWithNode
+          ? x(process.execPath, [tscBin, ...args], tscOptions)
+          : x(tscBin, args, tscOptions)
+        const tscProcess = tsc.process
 
         let logChunk = ''
         let prevReport = ''
@@ -253,10 +250,8 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           }
         }
 
-        // The streams are typed as nullable because stdio can be configured
-        // away; the spawn above leaves it at the default, so they are there.
         invariant(
-          tscProcess.stdout && tscProcess.stderr,
+          tscProcess?.stdout && tscProcess.stderr,
           'tsc was spawned without pipes for its output',
         )
 
@@ -279,7 +274,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
         })
 
         const killTsc = () => {
-          tscProcess.kill()
+          tsc.kill()
         }
         parentPort?.on('close', killTsc)
         process.on('exit', killTsc)

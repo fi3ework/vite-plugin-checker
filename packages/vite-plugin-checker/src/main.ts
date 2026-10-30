@@ -1,6 +1,6 @@
-import spawn from 'cross-spawn'
 import { npmRunPathEnv, type ProcessEnv } from 'npm-run-path'
 import colors from 'picocolors'
+import { x } from 'tinyexec'
 
 import type { ConfigEnv, Logger, Plugin, ResolvedConfig } from 'vite'
 import { Checker } from './Checker.js'
@@ -307,41 +307,33 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   }
 }
 
-function spawnChecker(
+async function spawnChecker(
   checker: ServeAndBuildChecker,
   userConfig: Partial<PluginConfig>,
   localEnv: ProcessEnv,
   cwd: string,
-) {
-  return new Promise<number>((resolve) => {
-    const buildBin = checker.build.buildBin
-    const finalBin: BuildCheckBinStr =
-      typeof buildBin === 'function'
-        ? buildBin(userConfig, { root: cwd })
-        : buildBin
+): Promise<number> {
+  const buildBin = checker.build.buildBin
+  const finalBin: BuildCheckBinStr =
+    typeof buildBin === 'function'
+      ? buildBin(userConfig, { root: cwd })
+      : buildBin
 
-    const [command, args] = finalBin
+  const [command, args] = finalBin
 
-    // No shell: the arguments are handed to the checker as a list, so nothing
-    // has to be escaped and an argument containing a space (a project path,
-    // say) cannot fall apart into two. cross-spawn is what makes that possible
-    // on Windows, where the binaries in node_modules/.bin are .cmd shims that
-    // Node refuses to run without a shell; it resolves the shim and quotes the
-    // arguments for cmd.exe itself.
-    const proc = spawn(command, [...args], {
-      cwd,
-      stdio: 'inherit',
-      env: localEnv,
+  try {
+    // No shell, so an argument containing a space stays one argument.
+    const { exitCode } = await x(command, args, {
+      nodeOptions: { cwd, stdio: 'inherit', env: localEnv },
     })
-
-    proc.on('exit', (code) => {
-      if (code !== null && code !== 0) {
-        resolve(code)
-      } else {
-        resolve(0)
-      }
-    })
-  })
+    return exitCode ?? 0
+  } catch (error) {
+    const notFound = (error as NodeJS.ErrnoException).code === 'ENOENT'
+    console.error(
+      colors.red(notFound ? `${command}: not found` : String(error)),
+    )
+    return notFound ? 127 : 1
+  }
 }
 
 export default checker

@@ -1,5 +1,5 @@
-import { execFile } from 'node:child_process'
 import { stripVTControlCharacters as strip } from 'node:util'
+import { x } from 'tinyexec'
 import { createFrame } from '../../codeFrame.js'
 import type { NormalizedDiagnostic } from '../../logger.js'
 import { normalizePath, readSources } from '../../sources.js'
@@ -40,26 +40,18 @@ If you need to customize "--flags" in build mode, please use "config.biome.build
   ]
 }
 
-export function runBiome(argv: string[], cwd: string) {
-  return new Promise<NormalizedDiagnostic[]>((resolve, _reject) => {
-    execFile(
-      argv[0]!,
-      argv.slice(1),
-      {
-        cwd,
-        maxBuffer: Number.POSITIVE_INFINITY,
-        // Required on Windows so execFile can resolve .cmd/.bat shims in
-        // node_modules/.bin. Node >=18.20/20.12/22 auto-quotes argv under
-        // shell:true, preserving the no-splitting guarantee.
-        shell: process.platform === 'win32',
-      },
-      (_error, stdout, _stderr) => {
-        parseBiomeOutput(stdout, cwd)
-          .then(resolve)
-          .catch(() => resolve([]))
-      },
-    )
-  })
+export async function runBiome(
+  argv: string[],
+  cwd: string,
+): Promise<NormalizedDiagnostic[]> {
+  try {
+    const { stdout } = await x(argv[0]!, argv.slice(1), {
+      nodeOptions: { cwd },
+    })
+    return await parseBiomeOutput(stdout, cwd)
+  } catch {
+    return []
+  }
 }
 
 type Entry = {

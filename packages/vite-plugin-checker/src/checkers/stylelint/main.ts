@@ -161,8 +161,6 @@ export class StylelintChecker extends Checker<'stylelint'> {
         buildBin: (pluginConfig) => {
           if (pluginConfig.stylelint) {
             const { lintCommand } = pluginConfig.stylelint
-            // The command is spawned as a list of arguments, so split it the
-            // way a shell would and keep a quoted argument whole.
             return ['stylelint', parseArgsStringToArgv(lintCommand).slice(1)]
           }
           return ['stylelint', []]
