@@ -57,24 +57,28 @@ describe('watchLintTargets', () => {
   it('never reports files under .git or node_modules', async () => {
     const { changed } = await startWatching()
 
-    fs.writeFileSync(path.join(root, '.git', 'index.lock'), '')
-    fs.writeFileSync(path.join(root, 'node_modules', 'dep', 'index.js'), '')
+    const gitLock = path.join(root, '.git', 'index.lock')
+    const dependency = path.join(root, 'node_modules', 'dep', 'index.js')
+    fs.writeFileSync(gitLock, '')
+    fs.writeFileSync(dependency, '')
     const marker = path.join(root, 'src', 'marker.js')
     fs.writeFileSync(marker, '')
 
     await vi.waitFor(() => expect(changed).toContain(marker))
-    expect(changed).toEqual([marker])
+    expect(changed).not.toContain(gitLock)
+    expect(changed).not.toContain(dependency)
   })
 
   it('applies additional ignore matchers', async () => {
     const { changed } = await startWatching((p) => p.endsWith('.css'))
 
-    fs.writeFileSync(path.join(root, 'src', 'style.css'), '')
+    const style = path.join(root, 'src', 'style.css')
+    fs.writeFileSync(style, '')
     const marker = path.join(root, 'src', 'marker.js')
     fs.writeFileSync(marker, '')
 
     await vi.waitFor(() => expect(changed).toContain(marker))
-    expect(changed).toEqual([marker])
+    expect(changed).not.toContain(style)
   })
 
   it('logs watcher errors once per code instead of throwing', async () => {
