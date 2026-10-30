@@ -516,6 +516,24 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
 
+  playground/stylelint-build-glob:
+    devDependencies:
+      stylelint:
+        specifier: ^17.0.0
+        version: 17.13.0(typescript@5.9.3)
+      stylelint-config-standard:
+        specifier: ^40.0.0
+        version: 40.0.0(stylelint@17.13.0(typescript@5.9.3))
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.0.9
+        version: 8.3.5(@types/node@20.19.9)(jiti@2.7.0)(yaml@2.9.1)
+      vite-plugin-checker:
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-checker
+
   playground/stylelint-default:
     devDependencies:
       meow:
@@ -7173,10 +7191,19 @@ snapshots:
     dependencies:
       stylelint: 17.13.0(typescript@5.8.3)
 
+  stylelint-config-recommended@18.0.0(stylelint@17.13.0(typescript@5.9.3)):
+    dependencies:
+      stylelint: 17.13.0(typescript@5.9.3)
+
   stylelint-config-standard@40.0.0(stylelint@17.13.0(typescript@5.8.3)):
     dependencies:
       stylelint: 17.13.0(typescript@5.8.3)
       stylelint-config-recommended: 18.0.0(stylelint@17.13.0(typescript@5.8.3))
+
+  stylelint-config-standard@40.0.0(stylelint@17.13.0(typescript@5.9.3)):
+    dependencies:
+      stylelint: 17.13.0(typescript@5.9.3)
+      stylelint-config-recommended: 18.0.0(stylelint@17.13.0(typescript@5.9.3))
 
   stylelint@17.13.0(typescript@5.8.3):
     dependencies:
