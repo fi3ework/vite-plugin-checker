@@ -10,7 +10,6 @@ import type {
   ServeAndBuildChecker,
   ServeChecker,
   SharedConfig,
-  UnrefAction,
 } from './types.js'
 import { ACTION_TYPES } from './types.js'
 
@@ -46,6 +45,10 @@ export function createScript<T extends Partial<BuildInCheckers>>({
         const worker = new Worker(absFilename, {
           workerData: { env, checkerConfig },
         })
+
+        if (!isBuild) {
+          worker.unref()
+        }
 
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         return {
@@ -87,7 +90,7 @@ export function createScript<T extends Partial<BuildInCheckers>>({
 
       const port = parentPort.on(
         'message',
-        (action: ConfigAction | ConfigureServerAction | UnrefAction) => {
+        (action: ConfigAction | ConfigureServerAction) => {
           switch (action.type) {
             case ACTION_TYPES.config: {
               const checkerConfig: T & SharedConfig = workerData.checkerConfig
@@ -101,9 +104,6 @@ export function createScript<T extends Partial<BuildInCheckers>>({
                   'diagnostic should be initialized in `config` hook of Vite',
                 )
               diagnostic.configureServer(action.payload)
-              break
-            case ACTION_TYPES.unref:
-              port.unref()
               break
           }
         },
