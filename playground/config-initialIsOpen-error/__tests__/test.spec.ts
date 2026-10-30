@@ -2,12 +2,10 @@ import { describe, expect, it } from 'vitest'
 
 import {
   editFile,
-  getHmrOverlay,
   getHmrOverlayText,
   isServe,
-  pollingUntil,
-  sleepForEdit,
   sleepForServerReady,
+  waitForDiagnostics,
   waitForNoOverlay,
 } from '../../testUtils'
 
@@ -22,8 +20,7 @@ describe('config-initialIsOpen-error', () => {
 
       console.log('-- overlay remains after fix error --')
       editFile('src/main.ts', (code) => code.replace('var hello', `const hello`))
-      await sleepForEdit()
-      await pollingUntil(getHmrOverlay, (dom) => !!dom)
+      await waitForDiagnostics()
       const [, , frame2] = await getHmrOverlayText()
       expect(frame2).toMatchSnapshot()
 
