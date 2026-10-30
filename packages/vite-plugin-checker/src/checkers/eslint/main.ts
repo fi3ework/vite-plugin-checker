@@ -40,15 +40,33 @@ let createServeAndBuild: any
 import type { CreateDiagnostic } from '../../types'
 
 /**
+ * Detect the installed ESLint version.
+ */
+function getEslintVersion(): string {
+  try {
+    const eslintPkg = _require('eslint/package.json')
+    return eslintPkg.version
+  } catch {
+    return ''
+  }
+}
+
+/**
  * Detect the installed ESLint major version.
  */
 function getEslintMajorVersion(): number {
-  try {
-    const eslintPkg = _require('eslint/package.json')
-    return Number.parseInt(eslintPkg.version.split('.')[0], 10)
-  } catch {
-    return 10 // assume latest if we can't detect
-  }
+  const major = Number.parseInt(getEslintVersion().split('.')[0] ?? '', 10)
+  return Number.isNaN(major) ? 10 : major
+}
+
+/**
+ * Whether the installed ESLint supports `applySuppressions`.
+ */
+function supportsApplyingSuppressions(): boolean {
+  const [major = 0, minor = 0] = getEslintVersion()
+    .split('.')
+    .map((part) => Number.parseInt(part, 10))
+  return major > 10 || (major === 10 && minor >= 1)
 }
 
 /**
@@ -125,6 +143,15 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         effectiveUseFlatConfig,
       ) as ESLint.Options
 
+      const suppressionOptions: ESLint.Options = supportsApplyingSuppressions()
+        ? {
+            applySuppressions: true,
+            ...(options.suppressionsLocation
+              ? { suppressionsLocation: options.suppressionsLocation }
+              : {}),
+          }
+        : {}
+
       const logLevel = (() => {
         if (typeof pluginConfig.eslint !== 'object') return undefined
         const userLogLevel = pluginConfig.eslint.dev?.logLevel
@@ -140,6 +167,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const eslintOptions: ESLint.Options = {
         cwd: root,
         ...translatedOptions,
+        ...suppressionOptions,
         ...pluginConfig.eslint.dev?.overrideConfig,
       }
 
