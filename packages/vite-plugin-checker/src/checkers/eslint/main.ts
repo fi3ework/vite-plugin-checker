@@ -2,7 +2,6 @@ import Module from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
-import chokidar from 'chokidar'
 import type { ESLint } from 'eslint'
 import invariant from 'tiny-invariant'
 
@@ -26,6 +25,8 @@ import {
   createLintScheduler,
   DEFAULT_DEBOUNCE_MS,
 } from '../_shared/lintScheduler.js'
+import { watchLintTargets } from '../_shared/lintWatcher.js'
+import { pruneMissingFiles } from '../_shared/pruneMissingFiles.js'
 import { translateOptions } from './cli.js'
 import { options as optionator } from './options.js'
 
@@ -149,6 +150,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const eslint = new EslintClass(eslintOptions)
 
       const dispatchDiagnostics = () => {
+        pruneMissingFiles(manager)
         const diagnostics = filterLogLevel(manager.getDiagnostics(), logLevel)
         if (terminal) {
           for (const d of diagnostics) {
@@ -227,23 +229,20 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         }
       }
 
-      const watcher = chokidar.watch(watchTarget, {
-        cwd: root,
+      watchLintTargets(watchTarget, {
+        root,
         ignored: createIgnore(root, files),
-      })
-
-      watcher.on('change', (filePath) => {
-        const absPath = path.resolve(root, filePath)
-        shouldLintPath(absPath)
-          .then((shouldLint) => {
-            if (shouldLint) scheduler.schedule(absPath)
-          })
-          .catch(ignoreTransientFsError)
-      })
-      watcher.on('unlink', (filePath) => {
-        const absPath = path.resolve(root, filePath)
-        manager.updateByFileId(absPath, [])
-        dispatchDiagnostics()
+        onChange: (absPath) => {
+          shouldLintPath(absPath)
+            .then((shouldLint) => {
+              if (shouldLint) scheduler.schedule(absPath)
+            })
+            .catch(ignoreTransientFsError)
+        },
+        onUnlink: (absPath) => {
+          manager.updateByFileId(absPath, [])
+          dispatchDiagnostics()
+        },
       })
     },
   }

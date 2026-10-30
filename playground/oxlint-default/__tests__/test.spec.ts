@@ -3,9 +3,12 @@ import { describe, expect, it } from 'vitest'
 import {
   diagnostics,
   editFile,
+  editFileTo,
   expectStderrContains,
+  hasDiagnosticFor,
   isBuild,
   isServe,
+  removeFile,
   log,
   resetDiagnostics,
   resetReceivedLog,
@@ -57,6 +60,18 @@ describe('oxlint-default', () => {
 
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
+    })
+
+    it('lints added files and clears removed ones', async () => {
+      await sleepForServerReady()
+
+      editFileTo('src/added.ts', 'debugger;\n')
+      await waitForDiagnostics()
+      expect(hasDiagnosticFor('src/added.ts')).toBe(true)
+
+      removeFile('src/added.ts')
+      await waitForDiagnostics()
+      expect(hasDiagnosticFor('src/added.ts')).toBe(false)
     })
   })
 

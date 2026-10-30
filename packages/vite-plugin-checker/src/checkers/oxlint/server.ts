@@ -1,5 +1,4 @@
 import path from 'node:path'
-import chokidar from 'chokidar'
 import type { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import { filterLogLevel } from '../../logger.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
@@ -7,6 +6,8 @@ import {
   createLintScheduler,
   DEFAULT_DEBOUNCE_MS,
 } from '../_shared/lintScheduler.js'
+import { watchLintTargets } from '../_shared/lintWatcher.js'
+import { pruneMissingFiles } from '../_shared/pruneMissingFiles.js'
 import { runOxlint } from './cli.js'
 import { dispatchDiagnostics } from './diagnostics.js'
 import type { ResolvedOptions } from './options.js'
@@ -18,18 +19,17 @@ export async function setupDevServer(
   manager: FileDiagnosticManager,
   displayTargets: Set<DisplayTarget>,
 ): Promise<void> {
-  const initial = await runOxlint(options.command, root)
-  manager.initWith(initial)
-  dispatchDiagnostics(
-    filterLogLevel(manager.getDiagnostics(), options.logLevel),
-    displayTargets,
-  )
-
-  const dispatch = () =>
+  const dispatch = () => {
+    pruneMissingFiles(manager)
     dispatchDiagnostics(
       filterLogLevel(manager.getDiagnostics(), options.logLevel),
       displayTargets,
     )
+  }
+
+  const initial = await runOxlint(options.command, root)
+  manager.initWith(initial)
+  dispatch()
 
   const scheduler = createLintScheduler({
     debounceMs: options.debounceMs ?? DEFAULT_DEBOUNCE_MS,
@@ -51,18 +51,12 @@ export async function setupDevServer(
     },
   })
 
-  const watcher = chokidar.watch(options.watchTarget, {
-    cwd: root,
-    ignored: (p: string) => p.includes('node_modules'),
-  })
-
-  watcher.on('change', (filePath) => {
-    scheduler.schedule(path.resolve(root, filePath))
-  })
-
-  watcher.on('unlink', (filePath) => {
-    const absPath = path.resolve(root, filePath)
-    manager.updateByFileId(absPath, [])
-    dispatch()
+  watchLintTargets(options.watchTarget, {
+    root,
+    onChange: (absPath) => scheduler.schedule(absPath),
+    onUnlink: (absPath) => {
+      manager.updateByFileId(absPath, [])
+      dispatch()
+    },
   })
 }
