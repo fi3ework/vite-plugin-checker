@@ -24,6 +24,7 @@ import {
 } from '../_shared/lintScheduler.js'
 import { watchLintTargets } from '../_shared/lintWatcher.js'
 import { pruneMissingFiles } from '../_shared/pruneMissingFiles.js'
+import { parseArgsStringToArgv } from '../stylelint/argv.js'
 import { getBiomeCommand, runBiome, severityMap } from './cli.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -161,7 +162,13 @@ export class BiomeChecker extends Checker<'biome'> {
         buildBin: (pluginConfig) => {
           if (typeof pluginConfig.biome === 'object') {
             const { command, flags } = pluginConfig.biome
-            return ['biome', [command || 'check', flags || ''] as const]
+            return [
+              'biome',
+              [
+                command || 'check',
+                ...(flags ? parseArgsStringToArgv(flags) : []),
+              ],
+            ] as const
           }
           return ['biome', ['check']]
         },

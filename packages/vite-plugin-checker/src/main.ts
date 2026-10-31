@@ -1,6 +1,6 @@
-import { spawn } from 'node:child_process'
 import { npmRunPathEnv, type ProcessEnv } from 'npm-run-path'
 import colors from 'picocolors'
+import { x } from 'tinyexec'
 
 import type { ConfigEnv, Logger, Plugin, ResolvedConfig } from 'vite'
 import { Checker } from './Checker.js'
@@ -307,43 +307,33 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   }
 }
 
-function spawnChecker(
+async function spawnChecker(
   checker: ServeAndBuildChecker,
   userConfig: Partial<PluginConfig>,
   localEnv: ProcessEnv,
   cwd: string,
-) {
-  return new Promise<number>((resolve) => {
-    const buildBin = checker.build.buildBin
-    const finalBin: BuildCheckBinStr =
-      typeof buildBin === 'function'
-        ? buildBin(userConfig, { root: cwd })
-        : buildBin
+): Promise<number> {
+  const buildBin = checker.build.buildBin
+  const finalBin: BuildCheckBinStr =
+    typeof buildBin === 'function'
+      ? buildBin(userConfig, { root: cwd })
+      : buildBin
 
-    const [command, args] = finalBin
-    const commandWithArgs = [command, ...args].join(' ')
+  const [command, args] = finalBin
 
-    const proc = spawn(commandWithArgs, {
-      cwd,
-      stdio: 'inherit',
-      env: localEnv,
-      // shell is necessary on windows to get the process to even start.
-      // Command line args constructed by checkers therefore need to escape double quotes
-      // to have them not striped out by cmd.exe. Using shell on all platforms lets us avoid
-      // having to perform platform-specific logic around escaping quotes since all platform
-      // shells will strip out unescaped double quotes. E.g. shell=false on linux only would
-      // result in escaped quotes not being unescaped.
-      shell: true,
+  try {
+    // No shell, so an argument containing a space stays one argument.
+    const { exitCode } = await x(command, args, {
+      nodeOptions: { cwd, stdio: 'inherit', env: localEnv },
     })
-
-    proc.on('exit', (code) => {
-      if (code !== null && code !== 0) {
-        resolve(code)
-      } else {
-        resolve(0)
-      }
-    })
-  })
+    return exitCode ?? 0
+  } catch (error) {
+    const notFound = (error as NodeJS.ErrnoException).code === 'ENOENT'
+    console.error(
+      colors.red(notFound ? `${command}: not found` : String(error)),
+    )
+    return notFound ? 127 : 1
+  }
 }
 
 export default checker

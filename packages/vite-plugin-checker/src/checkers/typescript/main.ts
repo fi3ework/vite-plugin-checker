@@ -74,7 +74,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       const isTsV7 = !ts.sys
 
       if (isTsV7) {
-        const { spawn } = await import('node:child_process')
+        const { x } = await import('tinyexec')
         const { existsSync, readFileSync } = await import('node:fs')
         const { createRequire } = await import('node:module')
         const { stripVTControlCharacters: strip } = await import('node:util')
@@ -127,16 +127,13 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
         // notices) so they don't get surfaced as checker diagnostics; tsc
         // reports through stdout, stderr is reserved for real failures.
         const tscEnv = { ...process.env, NODE_NO_WARNINGS: '1' }
-        const tscProcess = runWithNode
-          ? spawn(process.execPath, [tscBin, ...args], {
-              cwd: finalConfig.root,
-              env: tscEnv,
-            })
-          : spawn(tscBin, args, {
-              cwd: finalConfig.root,
-              env: tscEnv,
-              shell: true,
-            })
+        const tscOptions = {
+          nodeOptions: { cwd: finalConfig.root, env: tscEnv },
+        }
+        const tsc = runWithNode
+          ? x(process.execPath, [tscBin, ...args], tscOptions)
+          : x(tscBin, args, tscOptions)
+        const tscProcess = tsc.process
 
         let logChunk = ''
         let prevReport = ''
@@ -253,6 +250,11 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           }
         }
 
+        invariant(
+          tscProcess?.stdout && tscProcess.stderr,
+          'tsc was spawned without pipes for its output',
+        )
+
         tscProcess.stdout.on('data', (chunk: Buffer) => {
           stdoutBuffer += chunk.toString()
           const lines = stdoutBuffer.split('\n')
@@ -272,7 +274,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
         })
 
         const killTsc = () => {
-          tscProcess.kill()
+          tsc.kill()
         }
         parentPort?.on('close', killTsc)
         process.on('exit', killTsc)

@@ -9,12 +9,12 @@ import {
 import { checker } from '../src/main'
 import type { UserPluginConfig } from '../src/types'
 
-const { spawnMock, buildBinMock } = vi.hoisted(() => ({
-  spawnMock: vi.fn(),
+const { execMock, buildBinMock } = vi.hoisted(() => ({
+  execMock: vi.fn(),
   buildBinMock: vi.fn(() => ['tsc', ['--noEmit']] as const),
 }))
 
-vi.mock('node:child_process', () => ({ spawn: spawnMock }))
+vi.mock('tinyexec', () => ({ x: execMock }))
 
 vi.mock('../src/checkers/typescript/main', () => ({
   createServeAndBuild: () => ({
@@ -81,12 +81,8 @@ describe('load', () => {
 
 describe('build mode', () => {
   beforeEach(() => {
-    spawnMock.mockReset()
-    spawnMock.mockReturnValue({
-      on: (event: string, cb: (code: number) => void) => {
-        if (event === 'exit') cb(0)
-      },
-    })
+    execMock.mockReset()
+    execMock.mockResolvedValue({ exitCode: 0 })
     buildBinMock.mockClear()
   })
 
@@ -112,10 +108,9 @@ describe('build mode', () => {
     expect(buildBinMock).toHaveBeenCalledWith(expect.anything(), {
       root: '/monorepo/packages/app',
     })
-    expect(spawnMock).toHaveBeenCalledWith(
-      'tsc --noEmit',
-      expect.objectContaining({ cwd: '/monorepo/packages/app' }),
-    )
+    expect(execMock).toHaveBeenCalledWith('tsc', ['--noEmit'], {
+      nodeOptions: expect.objectContaining({ cwd: '/monorepo/packages/app' }),
+    })
   })
 
   it('prefers the plugin root option over the Vite root', async () => {
@@ -127,10 +122,9 @@ describe('build mode', () => {
     expect(buildBinMock).toHaveBeenCalledWith(expect.anything(), {
       root: '/monorepo',
     })
-    expect(spawnMock).toHaveBeenCalledWith(
-      'tsc --noEmit',
-      expect.objectContaining({ cwd: '/monorepo' }),
-    )
+    expect(execMock).toHaveBeenCalledWith('tsc', ['--noEmit'], {
+      nodeOptions: expect.objectContaining({ cwd: '/monorepo' }),
+    })
   })
 })
 
