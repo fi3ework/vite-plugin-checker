@@ -31,7 +31,7 @@ importers:
         version: 2.1.0
       knip:
         specifier: ^6.5.0
-        version: 6.44.1
+        version: 6.44.0
       lint-staged:
         specifier: ^17.0.0
         version: 17.1.0
@@ -42,8 +42,8 @@ importers:
         specifier: ^1.61.0
         version: 1.69.0
       pkg-pr-new:
-        specifier: ^0.0.92
-        version: 0.0.92
+        specifier: ^0.0.93
+        version: 0.0.93
       playwright-chromium:
         specifier: ^1.59.1
         version: 1.64.1
@@ -3178,8 +3178,8 @@ packages:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
 
-  knip@6.44.1:
-    resolution: {integrity: sha512-Hbd8nvkIsNgFfXgC7Jsb5LHv7jj6VwA3tmfHd53XPX2z9Vc9RnAZqV0BIiP4OrtYqKwCoLseFHQZerb1bNlbSw==}
+  knip@6.44.0:
+    resolution: {integrity: sha512-mT0fl71Mqrko91azUO2Jw/uhYKwldORKT4liRq6yV0ZAtt6G2eYusdnvx8eBSQJDjvhRGKkpKUUx+vUG6syV4w==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
@@ -3637,8 +3637,8 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  pkg-pr-new@0.0.92:
-    resolution: {integrity: sha512-l9HE4y0LmS5n3pw9vKby7m9O+SBzjWF5HXGH6Z8jdPWW7OW7hFMKsFOrgubc0JuPz8gYEuIw1mLaU3GEmPuukQ==}
+  pkg-pr-new@0.0.93:
+    resolution: {integrity: sha512-JH3HEO+m8sNFpalNAeGrNKjdwxNcXT3yuEuGMU/65dvLojPo+Ofnmc8la2v2ceisjXTOKQw/738Pj4KNFY7F+w==}
     hasBin: true
 
   playwright-chromium@1.64.1:
@@ -6502,7 +6502,7 @@ snapshots:
 
   kind-of@6.0.3: {}
 
-  knip@6.44.1:
+  knip@6.44.0:
     dependencies:
       formatly: 0.11.4
       get-tsconfig: 4.14.3
@@ -6830,7 +6830,7 @@ snapshots:
 
   picomatch@4.0.7: {}
 
-  pkg-pr-new@0.0.92: {}
+  pkg-pr-new@0.0.93: {}
 
   playwright-chromium@1.64.1:
     dependencies:
