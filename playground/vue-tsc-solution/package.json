@@ -1,0 +1,21 @@
+{
+  "name": "@playground/vue-tsc-solution",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.32"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "typescript": "^5.8.3",
+    "vite": "^8.0.9",
+    "vite-plugin-checker": "workspace:*",
+    "vue-tsc": "~3.3.0"
+  }
+}

@@ -15,23 +15,59 @@ function findConfigFile(searchPath: string, configName: string) {
   }
 }
 
+function readJsonc(file: string): unknown {
+  const text = fs
+    .readFileSync(file, 'utf-8')
+    .replace(
+      /("(?:\\.|[^"\\])*")|\/\/[^\n]*|\/\*[\s\S]*?\*\//g,
+      (_, str) => str ?? '',
+    )
+    .replace(/("(?:\\.|[^"\\])*")|,(\s*[}\]])/g, (_, str, end) => str ?? end)
+  return JSON.parse(text)
+}
+
+function isSolutionTsconfig(configFile: string): boolean {
+  try {
+    const config = readJsonc(configFile) as {
+      files?: unknown
+      references?: unknown
+    }
+    return (
+      Array.isArray(config.files) &&
+      config.files.length === 0 &&
+      !('include' in config) &&
+      Array.isArray(config.references) &&
+      config.references.length > 0
+    )
+  } catch {
+    return false
+  }
+}
+
+export function resolveBuildMode(
+  buildMode: boolean | undefined,
+  configFile: string | undefined,
+): boolean {
+  return buildMode ?? (!!configFile && isSolutionTsconfig(configFile))
+}
+
 export function getTscBuildArgs(
   options: Exclude<TscConfig, boolean>,
   cwd: string,
 ): string[] {
-  const args = [options.buildMode ? '-b' : '--noEmit']
-  if (!options.root && !options.tsconfigPath) return args
-
   const root = options.root || cwd
   const tsconfigPath = options.tsconfigPath || 'tsconfig.json'
-  const configFile =
-    findConfigFile(root, tsconfigPath) ?? path.resolve(root, tsconfigPath)
+  const foundConfigFile = findConfigFile(root, tsconfigPath)
+  const buildMode = resolveBuildMode(options.buildMode, foundConfigFile)
+
+  const args = [buildMode ? '-b' : '--noEmit']
+  if (!options.root && !options.tsconfigPath) return args
+
+  const configFile = foundConfigFile ?? path.resolve(root, tsconfigPath)
   const projectPath = path.relative(cwd, configFile)
 
   // `tsc -b` takes the project as a positional argument and rejects `-p`.
-  return options.buildMode
-    ? [...args, projectPath]
-    : [...args, '-p', projectPath]
+  return buildMode ? [...args, projectPath] : [...args, '-p', projectPath]
 }
 
 /**
