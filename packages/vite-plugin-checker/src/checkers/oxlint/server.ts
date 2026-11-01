@@ -1,8 +1,6 @@
-import path from 'node:path'
 import type { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import { filterLogLevel } from '../../logger.js'
 import type { LintWatchOptions } from '../../types.js'
-import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
 import {
   createLintScheduler,
   DEFAULT_DEBOUNCE_MS,
@@ -29,28 +27,16 @@ export async function setupDevServer(
     )
   }
 
-  const initial = await runOxlint(options.command, root)
-  manager.initWith(initial)
-  dispatch()
+  const lint = async () => {
+    manager.initWith(await runOxlint(options.command, root))
+    dispatch()
+  }
+
+  await lint()
 
   const scheduler = createLintScheduler({
     debounceMs: options.debounceMs ?? DEFAULT_DEBOUNCE_MS,
-    onBatch: async (files) => {
-      const hasConfigChange = files.some(
-        (f) => path.basename(f) === '.oxlintrc.json',
-      )
-      if (hasConfigChange) {
-        const diagnostics = await runOxlint([...options.command, root], root)
-        manager.initWith(diagnostics)
-      } else {
-        const diagnostics = await runOxlint(
-          [...options.command, ...files],
-          root,
-        )
-        applyBatchedDiagnostics(manager, files, diagnostics, root)
-      }
-      dispatch()
-    },
+    onBatch: lint,
   })
 
   watchLintTargets(options.watchTarget, {
