@@ -128,6 +128,40 @@ describe('build mode', () => {
   })
 })
 
+describe('serve mode with NODE_ENV=production', () => {
+  beforeEach(() => {
+    execMock.mockReset()
+    execMock.mockResolvedValue({ exitCode: 0 })
+    buildBinMock.mockClear()
+  })
+
+  async function runServe(userConfig: UserPluginConfig) {
+    const plugin = checker(userConfig) as any
+    await plugin.config({}, { command: 'serve', mode: 'production' })
+    plugin.configResolved({
+      root: '/project',
+      base: '/',
+      command: 'serve',
+      isProduction: true,
+      logger: {},
+      server: {},
+      build: { watch: null },
+    })
+    return plugin
+  }
+
+  it('does not run build checkers and still injects the overlay', async () => {
+    const plugin = await runServe({ typescript: true })
+
+    plugin.buildStart()
+    expect(execMock).not.toHaveBeenCalled()
+
+    const html = plugin.transformIndexHtml()
+    expect(html).toHaveLength(1)
+    expect(html[0].tag).toBe('script')
+  })
+})
+
 describe('configureServer', () => {
   it('does not clear the terminal on file changes', async () => {
     const clearScreen = vi.fn()

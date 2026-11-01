@@ -74,7 +74,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     ResolvedConfig,
     ((action: Action) => void)[]
   >()
-  let isProduction = false
   let baseWithOrigin: string
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
@@ -128,7 +127,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       baseWithOrigin = config.server.origin
         ? config.server.origin + config.base
         : config.base
-      isProduction ||= config.isProduction || config.command === 'build'
       buildWatch = !!config.build.watch
       resolvedRoot = config.root
     },
@@ -206,7 +204,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     transformIndexHtml() {
       if (initialized) return
-      if (isProduction) return
+      if (viteMode === 'build') return
 
       return [
         {
@@ -220,7 +218,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       if (initialized) return
       // only run in build mode
       // run a bin command in a separated process
-      if (!isProduction || !enableBuild) return
+      if (viteMode !== 'build' || !enableBuild) return
 
       const root = userConfig.root || resolvedRoot
       const localEnv = npmRunPathEnv({
