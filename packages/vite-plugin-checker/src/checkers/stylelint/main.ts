@@ -42,7 +42,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       overlay = enableOverlay
       terminal = enableTerminal
     },
-    async configureServer({ root }) {
+    async configureServer({ root, watch }) {
       if (!pluginConfig.stylelint) return
 
       const translatedOptions = await translateOptions(
@@ -141,6 +141,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
 
       watchLintTargets(watchTarget, {
         root,
+        watch,
         ignored: createIgnore(root, translatedOptions.files),
         onChange: (absPath) => scheduler.schedule(absPath),
         onUnlink: (absPath) => {

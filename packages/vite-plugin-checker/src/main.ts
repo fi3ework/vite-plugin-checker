@@ -2,7 +2,13 @@ import { npmRunPathEnv, type ProcessEnv } from 'npm-run-path'
 import colors from 'picocolors'
 import { x } from 'tinyexec'
 
-import type { ConfigEnv, Logger, Plugin, ResolvedConfig } from 'vite'
+import type {
+  ConfigEnv,
+  Logger,
+  Plugin,
+  ResolvedConfig,
+  ServerWatchOptions,
+} from 'vite'
 import { Checker } from './Checker.js'
 import {
   composePreambleCode,
@@ -19,6 +25,7 @@ import {
   type BuildInCheckerNames,
   type ClientDiagnosticPayload,
   type ClientReconnectPayload,
+  type LintWatchOptions,
   type PluginConfig,
   type ServeAndBuildChecker,
   type UserPluginConfig,
@@ -252,9 +259,11 @@ export function checker(userConfig: UserPluginConfig): Plugin {
 
       if (!workersConfigured) {
         workersConfigured = true
+        const watch = toLintWatchOptions(server.config.server?.watch)
         checkers.forEach((checker) => {
           checker.serve.configureServer({
             root: userConfig.root || server.config.root,
+            watch,
           })
         })
       }
@@ -337,3 +346,17 @@ async function spawnChecker(
 }
 
 export default checker
+
+function toLintWatchOptions(
+  watch: ServerWatchOptions | null | undefined,
+): LintWatchOptions | undefined {
+  if (!watch || typeof watch !== 'object') return undefined
+
+  const options: LintWatchOptions = {}
+  if (watch.usePolling !== undefined) options.usePolling = watch.usePolling
+  if (watch.interval !== undefined) options.interval = watch.interval
+  if (watch.binaryInterval !== undefined) {
+    options.binaryInterval = watch.binaryInterval
+  }
+  return options
+}

@@ -1,6 +1,7 @@
 import path from 'node:path'
 import type { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import { filterLogLevel } from '../../logger.js'
+import type { LintWatchOptions } from '../../types.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
 import {
   createLintScheduler,
@@ -18,6 +19,7 @@ export async function setupDevServer(
   options: ResolvedOptions,
   manager: FileDiagnosticManager,
   displayTargets: Set<DisplayTarget>,
+  watch?: LintWatchOptions,
 ): Promise<void> {
   const dispatch = () => {
     pruneMissingFiles(manager)
@@ -53,6 +55,7 @@ export async function setupDevServer(
 
   watchLintTargets(options.watchTarget, {
     root,
+    watch,
     onChange: (absPath) => scheduler.schedule(absPath),
     onUnlink: (absPath) => {
       manager.updateByFileId(absPath, [])

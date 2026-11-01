@@ -118,7 +118,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       overlay = enableOverlay
       terminal = enableTerminal
     },
-    async configureServer({ root }) {
+    async configureServer({ root, watch }) {
       if (!pluginConfig.eslint) return
 
       const majorVersion = getEslintMajorVersion()
@@ -260,6 +260,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       watchLintTargets(watchTarget, {
         root,
+        watch,
         ignored: createIgnore(root, files),
         onChange: (absPath) => {
           shouldLintPath(absPath)

@@ -9,9 +9,10 @@ import {
 import { checker } from '../src/main'
 import type { UserPluginConfig } from '../src/types'
 
-const { execMock, buildBinMock } = vi.hoisted(() => ({
+const { execMock, buildBinMock, configureServerMock } = vi.hoisted(() => ({
   execMock: vi.fn(),
   buildBinMock: vi.fn(() => ['tsc', ['--noEmit']] as const),
+  configureServerMock: vi.fn(),
 }))
 
 vi.mock('tinyexec', () => ({ x: execMock }))
@@ -20,7 +21,7 @@ vi.mock('../src/checkers/typescript/main', () => ({
   createServeAndBuild: () => ({
     serve: {
       config: vi.fn(),
-      configureServer: vi.fn(),
+      configureServer: configureServerMock,
       worker: { on: vi.fn(), off: vi.fn() },
     },
     build: { buildBin: buildBinMock },
@@ -159,5 +160,41 @@ describe('configureServer', () => {
 
     watcher.emit('change', 'src/index.ts')
     expect(clearScreen).not.toHaveBeenCalled()
+  })
+
+  it('forwards serialisable server.watch options to checkers', async () => {
+    configureServerMock.mockClear()
+    const plugin = checker({ typescript: true }) as any
+    await plugin.config({}, { command: 'serve', mode: 'development' })
+    plugin.configResolved({
+      root: '/project',
+      base: '/',
+      command: 'serve',
+      isProduction: false,
+      logger: {},
+      server: { origin: undefined },
+      build: { watch: null },
+    })
+
+    plugin.configureServer({
+      watcher: new EventEmitter(),
+      ws: { on: vi.fn(), send: vi.fn() },
+      config: {
+        root: '/project',
+        server: {
+          watch: {
+            usePolling: true,
+            interval: 100,
+            binaryInterval: 300,
+            ignored: () => true,
+          },
+        },
+      },
+    })
+
+    expect(configureServerMock).toHaveBeenCalledWith({
+      root: '/project',
+      watch: { usePolling: true, interval: 100, binaryInterval: 300 },
+    })
   })
 })

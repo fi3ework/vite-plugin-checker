@@ -2,12 +2,14 @@ import path from 'node:path'
 import chokidar, { type FSWatcher, type Matcher } from 'chokidar'
 import colors from 'picocolors'
 import { consoleLog } from '../../logger.js'
+import type { LintWatchOptions } from '../../types.js'
 
 const ALWAYS_IGNORED_RE = /(?:^|[\\/])(?:node_modules|\.git)(?:[\\/]|$)/
 
 export interface LintWatcherOptions {
   root: string
   ignored?: Matcher
+  watch?: LintWatchOptions
   onChange: (absPath: string) => void
   onUnlink: (absPath: string) => void
 }
@@ -19,11 +21,12 @@ export interface LintWatcherOptions {
  */
 export function watchLintTargets(
   target: string | string[],
-  { root, ignored, onChange, onUnlink }: LintWatcherOptions,
+  { root, ignored, watch, onChange, onUnlink }: LintWatcherOptions,
 ): FSWatcher {
   const watcher = chokidar.watch(target, {
     cwd: root,
     ignoreInitial: true,
+    ...watch,
     ignored: [
       (p: string) => ALWAYS_IGNORED_RE.test(path.relative(root, p)),
       ...(ignored ? [ignored] : []),

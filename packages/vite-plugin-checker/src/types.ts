@@ -306,10 +306,18 @@ export interface ConfigAction extends AbstractAction {
   payload: ConfigActionPayload
 }
 
+/** Serialisable subset of Vite's resolved `server.watch` forwarded to lint checkers. */
+export interface LintWatchOptions {
+  usePolling?: boolean
+  interval?: number
+  binaryInterval?: number
+}
+
 export interface ConfigureServerAction extends AbstractAction {
   type: ACTION_TYPES.configureServer
   payload: {
     root: string
+    watch?: LintWatchOptions
   }
 }
 
@@ -363,7 +371,7 @@ export interface ServeChecker<T extends BuildInCheckerNames = any> {
 
 export interface CheckerDiagnostic {
   config: (options: ConfigActionPayload) => unknown
-  configureServer: (options: { root: string }) => unknown
+  configureServer: (options: ConfigureServerAction['payload']) => unknown
 }
 
 export type CreateDiagnostic<T extends BuildInCheckerNames = any> = (
