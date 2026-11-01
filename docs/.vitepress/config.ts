@@ -50,6 +50,7 @@ function sidebar() {
         { text: 'Overview', link: '/checkers/overview' },
         { text: 'TypeScript', link: '/checkers/typescript' },
         { text: 'vue-tsc', link: '/checkers/vue-tsc' },
+        { text: 'svelte-check', link: '/checkers/svelte-check' },
         { text: 'ESLint', link: '/checkers/eslint' },
         { text: 'Biome', link: '/checkers/biome' },
         { text: 'Stylelint', link: '/checkers/stylelint' },

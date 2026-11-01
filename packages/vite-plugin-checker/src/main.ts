@@ -41,6 +41,7 @@ const buildInCheckerLoaders: Record<
   stylelint: () => import('./checkers/stylelint/main.js'),
   biome: () => import('./checkers/biome/main.js'),
   oxlint: () => import('./checkers/oxlint/main.js'),
+  svelteCheck: () => import('./checkers/svelteCheck/main.js'),
 }
 
 async function createCheckers(

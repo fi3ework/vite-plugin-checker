@@ -1,6 +1,6 @@
 # About vite-plugin-checker
 
-A Vite plugin that can run TypeScript, vue-tsc, ESLint,
+A Vite plugin that can run TypeScript, vue-tsc, svelte-check, ESLint,
 Stylelint and oxlint in worker thread to **add type checking and linting support** for Vite.
 
 <div :style="{ 'display': 'flex' }">
