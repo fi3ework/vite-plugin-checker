@@ -27,6 +27,7 @@ import {
 import {
   forceNoEmitOnSolutionBuilderHost,
   getTscBuildArgs,
+  resolveBuildMode,
 } from '../tscUtils.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -50,6 +51,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
               root,
               tsconfigPath: 'tsconfig.json',
               typescriptPath: 'typescript',
+              buildMode: undefined,
             }
           : {
               root: pluginConfig.typescript.root ?? root,
@@ -57,6 +59,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
                 pluginConfig.typescript.tsconfigPath ?? 'tsconfig.json',
               typescriptPath:
                 pluginConfig.typescript.typescriptPath ?? 'typescript',
+              buildMode: pluginConfig.typescript.buildMode,
             }
 
       let configFile: string | undefined
@@ -87,9 +90,10 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           throw new Error(`Failed to find tsconfig.json: ${tsconfigPath}`)
         }
 
-        const isBuildMode =
-          typeof pluginConfig.typescript === 'object' &&
-          pluginConfig.typescript.buildMode
+        const isBuildMode = resolveBuildMode(
+          finalConfig.buildMode,
+          tsconfigPath,
+        )
         const args = [
           ...(isBuildMode ? ['-b'] : ['--noEmit']),
           '--watch',
@@ -363,10 +367,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       // https://github.com/microsoft/TypeScript/pull/33082/files
       const createProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram
 
-      if (
-        typeof pluginConfig.typescript === 'object' &&
-        pluginConfig.typescript.buildMode
-      ) {
+      if (resolveBuildMode(finalConfig.buildMode, configFile)) {
         const host = forceNoEmitOnSolutionBuilderHost(
           ts,
           ts.createSolutionBuilderWithWatchHost(
@@ -403,9 +404,10 @@ export class TscChecker extends Checker<'typescript'> {
       build: {
         buildBin: (config, { root }) => [
           'tsc',
-          typeof config.typescript === 'object'
-            ? getTscBuildArgs(config.typescript, root)
-            : ['--noEmit'],
+          getTscBuildArgs(
+            typeof config.typescript === 'object' ? config.typescript : {},
+            root,
+          ),
         ],
       },
       createDiagnostic,

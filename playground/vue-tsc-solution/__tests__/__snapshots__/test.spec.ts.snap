@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`vue-tsc-solution > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"vue-tsc","frame":"    1 | <script setup lang=/"ts/">/n  > 2 | const count: number = 'not a number'/n      |       ^^^^^/n    3 | </script>/n    4 |/n    5 | <template>","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","line":2},"message":"Type 'string' is not assignable to type 'number'.","stack":""}]"`;
+
+exports[`vue-tsc-solution > serve > get initial error and subsequent error 2`] = `
+[
+  "
+ ERROR(vue-tsc)  Type 'string' is not assignable to type 'number'.
+ FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue:2:7
+
+    1 | <script setup lang="ts">
+  > 2 | const count: number = 'not a number'
+      |       ^^^^^
+    3 | </script>
+    4 |
+    5 | <template>
+
+[vue-tsc] Found 1 error. Watching for file changes.",
+]
+`;
+
+exports[`vue-tsc-solution > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"vue-tsc","frame":"    1 | <script setup lang=/"ts/">/n  > 2 | const count: number = 'still not a number'/n      |       ^^^^^/n    3 | </script>/n    4 |/n    5 | <template>","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","line":2},"message":"Type 'string' is not assignable to type 'number'.","stack":""}]"`;
+
+exports[`vue-tsc-solution > serve > get initial error and subsequent error 4`] = `
+[
+  "
+ ERROR(vue-tsc)  Type 'string' is not assignable to type 'number'.
+ FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue:2:7
+
+    1 | <script setup lang="ts">
+  > 2 | const count: number = 'still not a number'
+      |       ^^^^^
+    3 | </script>
+    4 |
+    5 | <template>
+
+[vue-tsc] Found 1 error. Watching for file changes.",
+]
+`;

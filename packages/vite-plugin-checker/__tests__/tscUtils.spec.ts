@@ -152,6 +152,19 @@ describe('getTscBuildArgs', () => {
     ])
   })
 
+  it('uses build mode for a solution-style tsconfig unless disabled', () => {
+    fs.writeFileSync(
+      path.join(tmp, 'tsconfig.json'),
+      `{
+        // solution
+        "files": [],
+        "references": [{ "path": "./tsconfig.app.json" },],
+      }`,
+    )
+    expect(getTscBuildArgs({}, src)).toEqual(['-b'])
+    expect(getTscBuildArgs({ buildMode: false }, src)).toEqual(['--noEmit'])
+  })
+
   it('passes through a tsconfigPath that does not exist', () => {
     expect(getTscBuildArgs({ tsconfigPath: 'missing.json' }, src)).toEqual([
       '--noEmit',

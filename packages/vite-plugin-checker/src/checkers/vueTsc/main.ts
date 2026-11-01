@@ -24,6 +24,7 @@ import {
 import {
   forceNoEmitOnSolutionBuilderHost,
   getTscBuildArgs,
+  resolveBuildMode,
 } from '../tscUtils.js'
 import { prepareVueTsc } from './prepareVueTsc.js'
 
@@ -49,10 +50,11 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
       const vueTs = _require(path.resolve(targetTsDir, 'lib/typescript.js'))
       const finalConfig =
         pluginConfig.vueTsc === true
-          ? { root, tsconfigPath: 'tsconfig.json' }
+          ? { root, tsconfigPath: 'tsconfig.json', buildMode: undefined }
           : {
               root: pluginConfig.vueTsc.root ?? root,
               tsconfigPath: pluginConfig.vueTsc.tsconfigPath ?? 'tsconfig.json',
+              buildMode: pluginConfig.vueTsc.buildMode,
             }
 
       const configFile = vueTs.findConfigFile(
@@ -135,10 +137,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
       // https://github.com/microsoft/TypeScript/pull/33082/files
       const createProgram = vueTs.createEmitAndSemanticDiagnosticsBuilderProgram
 
-      if (
-        typeof pluginConfig.vueTsc === 'object' &&
-        pluginConfig.vueTsc.buildMode
-      ) {
+      if (resolveBuildMode(finalConfig.buildMode, configFile)) {
         const host = forceNoEmitOnSolutionBuilderHost(
           vueTs,
           vueTs.createSolutionBuilderWithWatchHost(
@@ -175,9 +174,10 @@ export class VueTscChecker extends Checker<'vueTsc'> {
       build: {
         buildBin: (config, { root }) => [
           'vue-tsc',
-          typeof config.vueTsc === 'object'
-            ? getTscBuildArgs(config.vueTsc, root)
-            : ['--noEmit'],
+          getTscBuildArgs(
+            typeof config.vueTsc === 'object' ? config.vueTsc : {},
+            root,
+          ),
         ],
       },
       createDiagnostic,

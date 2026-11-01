@@ -19,7 +19,8 @@ interface TsConfigOptions {
    */
   root: string
   /**
-   * root path of cwd
+   * run in build mode (`--build`). Defaults to `true` when the tsconfig is
+   * solution-style (`"files": []` with `references`), otherwise `false`
    */
   buildMode: boolean
 }

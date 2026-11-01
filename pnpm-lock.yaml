@@ -595,6 +595,18 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vite-plugin-checker
 
+  playground/typescript-solution:
+    devDependencies:
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.0.9
+        version: 8.3.5(@types/node@20.19.9)(jiti@2.7.0)(yaml@2.9.1)
+      vite-plugin-checker:
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-checker
+
   playground/vue-tsc-buildmode:
     dependencies:
       vue:
@@ -616,6 +628,28 @@ importers:
       vue-tsc:
         specifier: ~3.3.0
         version: 3.3.14(typescript@5.8.3)
+
+  playground/vue-tsc-solution:
+    dependencies:
+      vue:
+        specifier: ^3.5.32
+        version: 3.5.44(typescript@5.9.3)
+    devDependencies:
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.6
+        version: 6.0.10(vite@8.3.5(@types/node@20.19.9)(jiti@2.7.0)(yaml@2.9.1))(vue@3.5.44(typescript@5.9.3))
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.0.9
+        version: 8.3.5(@types/node@20.19.9)(jiti@2.7.0)(yaml@2.9.1)
+      vite-plugin-checker:
+        specifier: workspace:*
+        version: link:../../packages/vite-plugin-checker
+      vue-tsc:
+        specifier: ~3.3.0
+        version: 3.3.14(typescript@5.9.3)
 
   playground/vue-tsc-vue3:
     dependencies:
@@ -5688,7 +5722,7 @@ snapshots:
       '@types/web-bluetooth': 0.0.21
       '@vueuse/metadata': 12.8.2
       '@vueuse/shared': 12.8.2(typescript@7.0.2)
-      vue: 3.5.29(typescript@7.0.2)
+      vue: 3.5.44(typescript@7.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -5696,7 +5730,7 @@ snapshots:
     dependencies:
       '@vueuse/core': 12.8.2(typescript@7.0.2)
       '@vueuse/shared': 12.8.2(typescript@7.0.2)
-      vue: 3.5.29(typescript@7.0.2)
+      vue: 3.5.44(typescript@7.0.2)
     optionalDependencies:
       focus-trap: 7.6.5
     transitivePeerDependencies:
@@ -5706,7 +5740,7 @@ snapshots:
 
   '@vueuse/shared@12.8.2(typescript@7.0.2)':
     dependencies:
-      vue: 3.5.29(typescript@7.0.2)
+      vue: 3.5.44(typescript@7.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -7619,6 +7653,16 @@ snapshots:
       '@vue/shared': 3.5.44
     optionalDependencies:
       typescript: 5.9.3
+
+  vue@3.5.44(typescript@7.0.2):
+    dependencies:
+      '@vue/compiler-dom': 3.5.44
+      '@vue/compiler-sfc': 3.5.44
+      '@vue/runtime-dom': 3.5.44
+      '@vue/server-renderer': 3.5.44
+      '@vue/shared': 3.5.44
+    optionalDependencies:
+      typescript: 7.0.2
 
   walk-up-path@4.0.0: {}
 
