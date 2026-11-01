@@ -50,7 +50,7 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
       overlay = enableOverlay
       terminal = enableTerminal
     },
-    async configureServer({ root }) {
+    async configureServer({ root, watch }) {
       if (!biomeConfig) return
 
       const logLevel = (() => {
@@ -143,6 +143,7 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
 
       watchLintTargets(watchTarget, {
         root,
+        watch,
         onChange: (absPath) => scheduler.schedule(absPath),
         onUnlink: (absPath) => {
           manager.updateByFileId(absPath, [])

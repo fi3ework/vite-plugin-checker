@@ -30,11 +30,11 @@ export const createDiagnostic: CreateDiagnostic<'oxlint'> = (pluginConfig) => {
       if (enableOverlay) displayTargets.add('overlay')
       if (enableTerminal) displayTargets.add('terminal')
     },
-    async configureServer({ root }) {
+    async configureServer({ root, watch }) {
       if (!oxlintConfig) return
 
       const options = resolveOptions(root, oxlintConfig)
-      await setupDevServer(root, options, manager, displayTargets)
+      await setupDevServer(root, options, manager, displayTargets, watch)
     },
   }
 }

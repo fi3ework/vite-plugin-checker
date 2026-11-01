@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import type { FSWatcher } from 'chokidar'
+import chokidar, { type FSWatcher } from 'chokidar'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { watchLintTargets } from '../src/checkers/_shared/lintWatcher'
@@ -79,6 +79,27 @@ describe('watchLintTargets', () => {
 
     await vi.waitFor(() => expect(changed).toContain(marker))
     expect(changed).not.toContain(style)
+  })
+
+  it('forwards serialisable server.watch options to chokidar', () => {
+    const fakeWatcher = { on: vi.fn() } as unknown as FSWatcher
+    const watch = vi.spyOn(chokidar, 'watch').mockReturnValue(fakeWatcher)
+
+    watchLintTargets(root, {
+      root,
+      watch: { usePolling: true, interval: 100, binaryInterval: 300 },
+      onChange: () => {},
+      onUnlink: () => {},
+    })
+
+    expect(watch).toHaveBeenCalledWith(
+      root,
+      expect.objectContaining({
+        usePolling: true,
+        interval: 100,
+        binaryInterval: 300,
+      }),
+    )
   })
 
   it('logs watcher errors once per code instead of throwing', async () => {
