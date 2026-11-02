@@ -6,7 +6,7 @@ exports[`vue-tsc-build-mode > serve > get initial error and subsequent error 2`]
 [
   "
  ERROR(vue-tsc)  Argument of type 'string' is not assignable to parameter of type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts:4:38
+ FILE  playground-temp/vue-tsc-buildmode/packages/core/src/index.ts:4:38
 
     2 |
     3 | export function processData(data: string): string {
@@ -25,7 +25,7 @@ exports[`vue-tsc-build-mode > serve > get initial error and subsequent error 4`]
 [
   "
  ERROR(vue-tsc)  Argument of type 'string' is not assignable to parameter of type 'boolean'.
- FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-buildmode/packages/core/src/index.ts:4:38
+ FILE  playground-temp/vue-tsc-buildmode/packages/core/src/index.ts:4:38
 
     2 |
     3 | export function processData(data: string): string {

@@ -6,7 +6,7 @@ exports[`multiple-hmr > serve > get initial error and subsequent error 2`] = `
 [
   "
  ERROR(TypeScript)  Type 'number' is not assignable to type 'string'.
- FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts:1:12
+ FILE  playground-temp/multiple-hmr/src/value.ts:1:12
 
   > 1 | export var value: string = 1
       |            ^^^^^
@@ -14,7 +14,7 @@ exports[`multiple-hmr > serve > get initial error and subsequent error 2`] = `
 
 [TypeScript] Found 1 error. Watching for file changes.",
   " ERROR(ESLint)  Unexpected var, use let or const instead. (no-var)
- FILE  <PROJECT_ROOT>/playground-temp/multiple-hmr/src/value.ts:1:8
+ FILE  playground-temp/multiple-hmr/src/value.ts:1:8
 
   > 1 | export var value: string = 1
       |        ^^^^^^^^^^^^^^^^^^^^^

@@ -6,7 +6,7 @@ exports[`typescript-react > serve > get initial error and subsequent error 2`] =
 [
   "
  ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx:6:46
+ FILE  playground-temp/typescript-react/src/App.tsx:6:46
 
     4 |
     5 | function App() {
@@ -26,7 +26,7 @@ exports[`typescript-react > serve > get initial error and subsequent error 4`] =
 [
   "
  ERROR(TypeScript)  Argument of type 'number' is not assignable to parameter of type 'string | (() => string)'.
- FILE  <PROJECT_ROOT>/playground-temp/typescript-react/src/App.tsx:6:46
+ FILE  playground-temp/typescript-react/src/App.tsx:6:46
 
     4 |
     5 | function App() {
