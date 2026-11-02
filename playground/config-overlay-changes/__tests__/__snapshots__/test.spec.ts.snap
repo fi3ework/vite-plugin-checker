@@ -2,7 +2,7 @@
 
 exports[`config-overlay-changes > serve > get initial error from overlay and overlay error content changes on modifying 1`] = `"Unexpected var, use let or const instead. (no-var)"`;
 
-exports[`config-overlay-changes > serve > get initial error from overlay and overlay error content changes on modifying 2`] = `"<PROJECT_ROOT>/playground-temp/config-overlay-changes/src/main.ts:3:1"`;
+exports[`config-overlay-changes > serve > get initial error from overlay and overlay error content changes on modifying 2`] = `"src/main.ts:3:1"`;
 
 exports[`config-overlay-changes > serve > get initial error from overlay and overlay error content changes on modifying 3`] = `
 "    1 | import { text } from './text'

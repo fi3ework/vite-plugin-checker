@@ -5,35 +5,6 @@ const { diagnostic, base } = defineProps<{
   base: string
 }>()
 
-interface Link {
-  textContent: string
-  onclick: any
-}
-
-function calcLink(text: string) {
-  let curIndex = 0
-  let match
-  fileRE.lastIndex = 0
-  const links: Link[] = []
-  while ((match = fileRE.exec(text))) {
-    const { 0: file, index } = match
-    if (index !== null) {
-      const frag = text.slice(curIndex, index)
-      const link: Link = {
-        textContent: file,
-        onclick: () => {
-          fetch(`${base}__open-in-editor?file=` + encodeURIComponent(file))
-        },
-      }
-
-      curIndex += frag.length + file.length
-      links.push(link)
-    }
-  }
-
-  return links
-}
-
 const checkerColorMap: Record<string, string> = {
   TypeScript: '#3178c6',
   ESLint: '#7b7fe3',
@@ -44,7 +15,6 @@ const checkerColorMap: Record<string, string> = {
   'svelte-check': '#ff3e00'
 } as const
 
-const fileRE = /(?:[a-zA-Z]:\\|\/).*(:\d+:\d+)?/g
 const codeFrameRE = /^(?:>?\s+\d+\s+\|.*|\s+\|\s*\^.*)\r?\n/gm
 
 const hasFrame = computed(() => {
@@ -52,18 +22,24 @@ const hasFrame = computed(() => {
   return diagnostic.frame && codeFrameRE.test(diagnostic.frame)
 })
 
-const file = computed(() => {
-  return (diagnostic.loc?.file || diagnostic.id || 'unknown file').split(`?`)
-}).value[0]
+const fileLink = computed(() => {
+  const file: string | undefined = (diagnostic.loc?.file || diagnostic.id)?.split('?')[0]
+  if (!file) return
 
-const errorSource = computed(() => {
+  const position = diagnostic.loc ? `:${diagnostic.loc.line}:${diagnostic.loc.column}` : ''
   return {
-    ...calcLink(
-      `${file}` + (diagnostic.loc ? `:${diagnostic.loc.line}:${diagnostic.loc.column}` : '')
-    )[0],
-    linkFiles: true,
+    file: file + position,
+    label: (diagnostic.relativeFile || file) + position,
+    href:
+      diagnostic.editorUrl || `${base}__open-in-editor?file=${encodeURIComponent(file + position)}`,
   }
 })
+
+function openInEditor(event: MouseEvent) {
+  if (diagnostic.editorUrl || !fileLink.value) return
+  event.preventDefault()
+  fetch(fileLink.value.href)
+}
 </script>
 
 <template>
@@ -74,9 +50,12 @@ const errorSource = computed(() => {
       >{{ `[${diagnostic.checkerId}]` }} </span
     ><span :class="['message-body', `message-body-${diagnostic.level}`]">{{ diagnostic.message }}</span>
   </pre>
-    <pre
-      class="file"
-    ><a class="file-link" @click="errorSource.onclick">{{ errorSource.textContent }}</a></pre>
+    <pre v-if="fileLink" class="file"><a
+      class="file-link"
+      :href="fileLink.href"
+      :title="fileLink.file"
+      @click="openInEditor"
+    >{{ fileLink.label }}</a></pre>
     <pre v-if="hasFrame" class="frame"><code class="frame-code">{{ diagnostic.frame }}</code></pre>
     <pre class="stack">{{ diagnostic.stack }}</pre>
   </li>
@@ -160,6 +139,7 @@ pre::-webkit-scrollbar {
 }
 
 .file-link {
+  color: inherit;
   text-decoration: underline;
   cursor: pointer;
 }

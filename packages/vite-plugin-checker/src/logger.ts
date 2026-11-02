@@ -18,6 +18,7 @@ import {
   type ClientDiagnosticPayload,
   DiagnosticLevel,
   type DiagnosticToRuntime,
+  type EditorLocation,
 } from './types.js'
 import { isMainThread } from './utils.js'
 
@@ -208,6 +209,33 @@ export function toClientPayload(
     data: {
       checkerId: id,
       diagnostics,
+    },
+  }
+}
+
+export function withOverlayFileLinks(
+  payload: ClientDiagnosticPayload,
+  root: string,
+  editorUrl?: (location: EditorLocation) => string | undefined,
+): ClientDiagnosticPayload {
+  return {
+    ...payload,
+    data: {
+      ...payload.data,
+      diagnostics: payload.data.diagnostics.map((d) => {
+        const file = (d.loc?.file || d.id)?.split('?')[0]
+        if (!file || !path.isAbsolute(file)) return d
+
+        return {
+          ...d,
+          relativeFile: path.relative(root, file).split(path.sep).join('/'),
+          editorUrl: editorUrl?.({
+            file,
+            line: d.loc?.line || 1,
+            column: d.loc?.column || 1,
+          }),
+        }
+      }),
     },
   }
 }

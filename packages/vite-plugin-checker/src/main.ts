@@ -19,6 +19,7 @@ import {
   WS_CHECKER_RECONNECT_EVENT,
   wrapVirtualPrefix,
 } from './client/index.js'
+import { withOverlayFileLinks } from './logger.js'
 import {
   ACTION_TYPES,
   type Action,
@@ -50,8 +51,8 @@ async function createCheckers(
   env: ConfigEnv,
 ): Promise<ServeAndBuildChecker[]> {
   const serveAndBuildCheckers: ServeAndBuildChecker[] = []
-  const { enableBuild, overlay } = userConfig
-  const sharedConfig = { enableBuild, overlay }
+  const { enableBuild } = userConfig
+  const sharedConfig = { enableBuild }
 
   for (const name of Object.keys(
     buildInCheckerLoaders,
@@ -70,8 +71,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   const enableBuild = userConfig?.enableBuild ?? true
   const enableOverlay = userConfig?.overlay !== false
   const enableTerminal = userConfig?.terminal !== false
-  const overlayConfig =
-    typeof userConfig?.overlay === 'object' ? userConfig?.overlay : {}
+  const { editorUrl, ...overlayConfig } =
+    typeof userConfig?.overlay === 'object' ? userConfig.overlay : {}
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
@@ -259,13 +260,14 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       }
       const listeners: ((action: Action) => void)[] = []
       serverListeners.set(server.config, listeners)
+      const root = userConfig.root || server.config.root
 
       if (!workersConfigured) {
         workersConfigured = true
         const watch = toLintWatchOptions(server.config.server?.watch)
         checkers.forEach((checker) => {
           checker.serve.configureServer({
-            root: userConfig.root || server.config.root,
+            root,
             watch,
           })
         })
@@ -277,10 +279,16 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         const { worker } = checker.serve
         const listener = (action: Action) => {
           if (action.type === ACTION_TYPES.overlayError) {
-            latestOverlayErrors[index] =
-              action.payload as ClientDiagnosticPayload
-            if (action.payload) {
-              server.ws.send('vite-plugin-checker', action.payload)
+            const payload =
+              action.payload &&
+              withOverlayFileLinks(
+                action.payload as ClientDiagnosticPayload,
+                root,
+                editorUrl,
+              )
+            latestOverlayErrors[index] = payload as ClientDiagnosticPayload
+            if (payload) {
+              server.ws.send('vite-plugin-checker', payload)
             }
           } else if (action.type === ACTION_TYPES.console) {
             if (Checker.logger.length) {
