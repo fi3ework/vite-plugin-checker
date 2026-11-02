@@ -50,7 +50,7 @@
     "meow": "^14.0.0",
     "modern-tar": "^0.8.0",
     "stylelint": "^17.0.0",
-    "tsdown": "^0.22.3",
+    "tsdown": "^0.23.0",
     "typescript": "^5.9.3",
     "vue-tsc": "~3.3.0"
   },
