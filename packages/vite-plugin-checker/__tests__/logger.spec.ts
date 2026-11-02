@@ -1,11 +1,13 @@
 import { pathToFileURL } from 'node:url'
 import { stripVTControlCharacters as strip } from 'node:util'
+import type Stylelint from 'stylelint'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   normalizeEslintDiagnostic,
+  normalizeStylelintDiagnostic,
   setTerminalHyperlinks,
   toClientPayload,
   withOverlayFileLinks,
@@ -88,6 +90,24 @@ describe('logger', () => {
     it('get multiple diagnostics', () => {
       const received = normalizeEslintDiagnostic(eslintResult1)
       expect(received).toMatchSnapshot()
+    })
+  })
+
+  describe('normalizeStylelintDiagnostic', () => {
+    it('does not repeat the rule name in the message', () => {
+      const [diagnostic] = normalizeStylelintDiagnostic({
+        source: '/project/src/style.css',
+        warnings: [
+          {
+            line: 1,
+            column: 7,
+            rule: 'block-no-empty',
+            severity: 'error',
+            text: 'Empty block (block-no-empty)',
+          },
+        ],
+      } as unknown as Stylelint.LintResult)
+      expect(diagnostic!.message).toBe('Empty block (block-no-empty)')
     })
   })
 })

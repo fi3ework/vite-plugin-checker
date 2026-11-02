@@ -387,7 +387,9 @@ export function normalizeStylelintDiagnostic(
       const codeFrame = createFrame(diagnostic._postcssResult?.css ?? '', loc)
 
       return {
-        message: `${d.text} (${d.rule})`,
+        message: d.text.endsWith(`(${d.rule})`)
+          ? d.text
+          : `${d.text} (${d.rule})`,
         conclusion: '',
         codeFrame,
         stripedCodeFrame: codeFrame && strip(codeFrame),
