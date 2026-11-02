@@ -4,7 +4,7 @@ import path from 'node:path'
 import { stripVTControlCharacters as strip } from 'node:util'
 import { parentPort } from 'node:worker_threads'
 import type { SourceLocation } from '@babel/code-frame'
-import { link } from 'clickable-path'
+import { hyperlink, link } from 'clickable-path'
 import colors from 'picocolors'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
@@ -34,6 +34,10 @@ import type {
 export interface NormalizedDiagnostic {
   /** error message */
   message?: string
+  /** rule that reported the diagnostic, as it appears in `message` */
+  rule?: string
+  /** documentation URL for `rule` */
+  ruleUrl?: string
   /** error conclusion */
   conclusion?: string
   /** error stack */
@@ -108,6 +112,22 @@ function formatTerminalFile(file: string, loc?: SourceLocation): string {
   })
 }
 
+function formatTerminalMessage({
+  message,
+  rule,
+  ruleUrl,
+}: NormalizedDiagnostic): string | undefined {
+  if (!message || !rule || !ruleUrl) return message
+  const index = message.lastIndexOf(rule)
+  if (index === -1) return message
+
+  return (
+    message.slice(0, index) +
+    hyperlink(rule, ruleUrl, { enabled: terminalHyperlinks }) +
+    message.slice(index + rule.length)
+  )
+}
+
 export function diagnosticToTerminalLog(
   d: NormalizedDiagnostic,
   name?:
@@ -141,7 +161,7 @@ export function diagnosticToTerminalLog(
   const fileLabel = `${boldBlack(colors.bgCyanBright(' FILE '))} `
 
   return [
-    `${levelLabel} ${d.message}`,
+    `${levelLabel} ${formatTerminalMessage(d)}`,
     d.id && `${fileLabel}${formatTerminalFile(d.id, d.loc)}${os.EOL}`,
     d.codeFrame + os.EOL,
     d.conclusion,
@@ -194,6 +214,8 @@ export function diagnosticToRuntimeError(
       checkerId: d.checker,
       level: d.level,
       loc,
+      rule: d.rule,
+      ruleUrl: d.ruleUrl,
     }
   })
 
@@ -328,6 +350,7 @@ const isNormalizedDiagnostic = (
 
 export function normalizeEslintDiagnostic(
   diagnostic: ESLint.LintResult,
+  rulesMeta?: ReturnType<ESLint['getRulesMetaForResults']>,
 ): NormalizedDiagnostic[] {
   return diagnostic.messages
     .map((d) => {
@@ -350,6 +373,8 @@ export function normalizeEslintDiagnostic(
 
       return {
         message: `${d.message} (${d.ruleId})`,
+        rule: d.ruleId ?? undefined,
+        ruleUrl: d.ruleId ? rulesMeta?.[d.ruleId]?.docs?.url : undefined,
         conclusion: '',
         codeFrame,
         stripedCodeFrame: codeFrame && strip(codeFrame),
@@ -366,6 +391,7 @@ export function normalizeEslintDiagnostic(
 
 export function normalizeStylelintDiagnostic(
   diagnostic: Stylelint.LintResult,
+  ruleMetadata?: Stylelint.LinterResult['ruleMetadata'],
 ): NormalizedDiagnostic[] {
   return diagnostic.warnings
     .map((d) => {
@@ -390,6 +416,8 @@ export function normalizeStylelintDiagnostic(
         message: d.text.endsWith(`(${d.rule})`)
           ? d.text
           : `${d.text} (${d.rule})`,
+        rule: d.rule,
+        ruleUrl: d.url ?? ruleMetadata?.[d.rule]?.url,
         conclusion: '',
         codeFrame,
         stripedCodeFrame: codeFrame && strip(codeFrame),

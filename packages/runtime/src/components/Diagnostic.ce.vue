@@ -35,6 +35,20 @@ const fileLink = computed(() => {
   }
 })
 
+const ruleLink = computed(() => {
+  const { message, rule, ruleUrl } = diagnostic
+  if (!message || !rule || !ruleUrl) return
+  const index = message.lastIndexOf(rule)
+  if (index === -1) return
+
+  return {
+    before: message.slice(0, index),
+    rule,
+    after: message.slice(index + rule.length),
+    href: ruleUrl,
+  }
+})
+
 function openInEditor(event: MouseEvent) {
   if (diagnostic.editorUrl || !fileLink.value) return
   event.preventDefault()
@@ -48,7 +62,7 @@ function openInEditor(event: MouseEvent) {
     <!-- @vue-ignore -->
     <span class="plugin" :style="{ color: checkerColorMap[diagnostic.checkerId] }"
       >{{ `[${diagnostic.checkerId}]` }} </span
-    ><span :class="['message-body', `message-body-${diagnostic.level}`]">{{ diagnostic.message }}</span>
+    ><span :class="['message-body', `message-body-${diagnostic.level}`]"><template v-if="ruleLink">{{ ruleLink.before }}<a class="rule-link" :href="ruleLink.href" target="_blank" rel="noopener noreferrer">{{ ruleLink.rule }}</a>{{ ruleLink.after }}</template><template v-else>{{ diagnostic.message }}</template></span>
   </pre>
     <pre v-if="fileLink" class="file"><a
       class="file-link"
@@ -136,6 +150,10 @@ pre::-webkit-scrollbar {
 .stack {
   font-size: 13px;
   color: var(--dim);
+}
+
+.rule-link {
+  color: inherit;
 }
 
 .file-link {

@@ -104,12 +104,12 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
         debounceMs:
           pluginConfig.stylelint.dev?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
-          const { results } = await stylelint.lint({
+          const { results, ruleMetadata } = await stylelint.lint({
             ...baseConfig,
             files,
           })
           const newDiagnostics = results.flatMap((d) =>
-            normalizeStylelintDiagnostic(d),
+            normalizeStylelintDiagnostic(d, ruleMetadata),
           )
           applyBatchedDiagnostics(manager, files, newDiagnostics, root)
           dispatchDiagnostics()
@@ -117,13 +117,15 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       })
 
       // initial lint
-      const { results: diagnostics } = await stylelint.lint({
+      const { results: diagnostics, ruleMetadata } = await stylelint.lint({
         ...baseConfig,
         ...pluginConfig.stylelint.dev?.overrideConfig,
       })
 
       manager.initWith(
-        diagnostics.flatMap((p) => normalizeStylelintDiagnostic(p)),
+        diagnostics.flatMap((p) =>
+          normalizeStylelintDiagnostic(p, ruleMetadata),
+        ),
       )
       dispatchDiagnostics()
 

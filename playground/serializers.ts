@@ -3,8 +3,8 @@ import type { SnapshotSerializer } from 'vitest'
 function normalizePaths(val: string) {
   return val
     .replace(/\\/gim, '/') // replace slashes
-    .replace(/\/\//gim, '/') // replace slashes
-    .replace(/[a-zA-Z]:\//gim, '/') // Remove win32 drive letters, C:\ -> \
+    .replace(/(?<!:)\/\//gim, '/') // replace slashes
+    .replace(/\b[a-zA-Z]:\//gim, '/') // Remove win32 drive letters, C:\ -> \
 }
 
 function createResult(val: string) {

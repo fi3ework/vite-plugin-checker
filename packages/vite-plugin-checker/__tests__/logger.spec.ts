@@ -53,6 +53,22 @@ describe('logger', () => {
       expect(received).not.toContain('\u001B]8;')
     })
 
+    it('links the rule to its docs when hyperlinks are enabled', () => {
+      setTerminalHyperlinks(true)
+      const received = diagnosticToTerminalLog(
+        {
+          ...eslintError1,
+          message: 'Unexpected var, use let or const instead. (no-var)',
+          rule: 'no-var',
+          ruleUrl: 'https://eslint.org/docs/latest/rules/no-var',
+        },
+        'ESLint',
+      )
+      expect(received).toContain(
+        'instead. (\u001B]8;;https://eslint.org/docs/latest/rules/no-var\u0007no-var\u001B]8;;\u0007)',
+      )
+    })
+
     it('omits the file line when the diagnostic has no file', () => {
       const received = strip(
         diagnosticToTerminalLog({ ...eslintError1, id: undefined }, 'ESLint'),
@@ -90,6 +106,18 @@ describe('logger', () => {
     it('get multiple diagnostics', () => {
       const received = normalizeEslintDiagnostic(eslintResult1)
       expect(received).toMatchSnapshot()
+    })
+
+    it('adds the rule docs URL from rule metadata', () => {
+      const [diagnostic] = normalizeEslintDiagnostic(eslintResult1, {
+        'no-var': {
+          docs: { url: 'https://eslint.org/docs/latest/rules/no-var' },
+        },
+      })
+      expect(diagnostic!.rule).toBe('no-var')
+      expect(diagnostic!.ruleUrl).toBe(
+        'https://eslint.org/docs/latest/rules/no-var',
+      )
     })
   })
 
