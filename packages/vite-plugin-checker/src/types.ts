@@ -203,6 +203,10 @@ export interface DiagnosticToRuntime extends ErrorPayloadErr {
   relativeFile?: string
   /** URL opened when the file is clicked in the overlay, from `overlay.editorUrl` */
   editorUrl?: string
+  /** rule that reported the diagnostic, as it appears in `message` */
+  rule?: string
+  /** documentation URL for `rule` */
+  ruleUrl?: string
 }
 
 /** Location passed to `overlay.editorUrl` */

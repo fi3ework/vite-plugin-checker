@@ -212,13 +212,16 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
         }
       }
 
+      const lint = async (files: string[]) => {
+        const results = await eslint.lintFiles(files)
+        const rulesMeta = eslint.getRulesMetaForResults(results)
+        return results.flatMap((r) => normalizeEslintDiagnostic(r, rulesMeta))
+      }
+
       const scheduler = createLintScheduler({
         debounceMs: pluginConfig.eslint.dev?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
-          const diagnosticsOfChangedFiles = await eslint.lintFiles(files)
-          const newDiagnostics = diagnosticsOfChangedFiles.flatMap((d) =>
-            normalizeEslintDiagnostic(d),
-          )
+          const newDiagnostics = await lint(files)
           applyBatchedDiagnostics(manager, files, newDiagnostics, root)
           dispatchDiagnostics()
         },
@@ -241,9 +244,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
 
       // initial lint
       const files = options._.slice(1) as string[]
-      const diagnostics = await eslint.lintFiles(files)
-
-      manager.initWith(diagnostics.flatMap((p) => normalizeEslintDiagnostic(p)))
+      manager.initWith(await lint(files))
       dispatchDiagnostics()
 
       // watch lint

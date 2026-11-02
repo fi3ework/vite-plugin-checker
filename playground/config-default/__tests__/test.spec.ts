@@ -22,6 +22,15 @@ describe('config-default', () => {
       expect(stripedLog).toMatchSnapshot()
     })
 
+    it('links the rule to its docs', async () => {
+      await sleepForServerReady()
+      const shadowRoot = await getHmrOverlay()
+      const link = await shadowRoot!.$('.rule-link')
+
+      expect(await link!.innerText()).toBe('no-var')
+      expect(await link!.getAttribute('href')).toBe('https://eslint.org/docs/latest/rules/no-var')
+    })
+
     it('opens the file through `__open-in-editor` when clicked', async () => {
       await sleepForServerReady()
       const requested = new Promise<URL>((resolve) => {

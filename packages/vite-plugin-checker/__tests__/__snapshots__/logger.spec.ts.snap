@@ -53,6 +53,8 @@ exports[`logger > normalizeEslintDiagnostic > get multiple diagnostics 1`] = `
       },
     },
     "message": "Unexpected var, use let or const instead. (no-var)",
+    "rule": "no-var",
+    "ruleUrl": undefined,
     "stripedCodeFrame": "    1 | import { text } from './text'
     2 |
   > 3 | var hello = 'Hello'
@@ -84,6 +86,8 @@ exports[`logger > normalizeEslintDiagnostic > get multiple diagnostics 1`] = `
       },
     },
     "message": "Unexpected var, use let or const instead. (no-var)",
+    "rule": "no-var",
+    "ruleUrl": undefined,
     "stripedCodeFrame": "    2 |
     3 | var hello = 'Hello'
   > 4 | var hello1 = 'Hello1'

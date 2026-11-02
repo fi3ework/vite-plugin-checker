@@ -119,6 +119,28 @@ describe('svelte-check machine output parser', () => {
     fs.rmSync(workspace, { recursive: true, force: true })
   })
 
+  it('links svelte codes to their docs', async () => {
+    const { parser, runs, nextRun } = collect()
+
+    const done = nextRun()
+    for (const line of [
+      `1 START ${JSON.stringify(root)}`,
+      `2 {"type":"WARNING","filename":"src/App.svelte","start":{"line":0,"character":0},"end":{"line":0,"character":1},"message":"\`<img>\` element should have an alt attribute\\nhttps://svelte.dev/e/a11y_missing_attribute","code":"a11y_missing_attribute","codeDescription":{"href":"https://svelte.dev/docs/svelte/compiler-warnings#a11y_missing_attribute"},"source":"svelte"}`,
+      '3 COMPLETED 1 FILES 0 ERRORS 1 WARNINGS 1 FILES_WITH_PROBLEMS',
+    ]) {
+      parser.push(line)
+    }
+    await done
+
+    expect(runs[0]![0]).toMatchObject({
+      message:
+        '`<img>` element should have an alt attribute (a11y_missing_attribute)',
+      rule: 'a11y_missing_attribute',
+      ruleUrl:
+        'https://svelte.dev/docs/svelte/compiler-warnings#a11y_missing_attribute',
+    })
+  })
+
   it('reports failures and ignores unrelated output', () => {
     const { parser, runs, failures } = collect()
     parser.push('Loading svelte-check in workspace')

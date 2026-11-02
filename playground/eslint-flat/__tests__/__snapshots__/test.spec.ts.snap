@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`eslint > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"ESLint","frame":"  > 1 | const a = /"hello/"/n      |                  ^/n  > 2 |/n      | ^","id":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","level":1,"loc":{"column":18,"file":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","line":1},"message":"Missing semicolon. (semi)","relativeFile":"src/index.js","stack":""}]"`;
+exports[`eslint > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"ESLint","frame":"  > 1 | const a = /"hello/"/n      |                  ^/n  > 2 |/n      | ^","id":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","level":1,"loc":{"column":18,"file":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","line":1},"message":"Missing semicolon. (semi)","relativeFile":"src/index.js","rule":"semi","ruleUrl":"https://eslint.org/docs/latest/rules/semi","stack":""}]"`;
 
 exports[`eslint > serve > get initial error and subsequent error 2`] = `
 [
@@ -16,7 +16,7 @@ exports[`eslint > serve > get initial error and subsequent error 2`] = `
 ]
 `;
 
-exports[`eslint > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"ESLint","frame":"  > 1 | const a = /"hello/"/n      |                  ^/n  > 2 |/n      | ^","id":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","level":1,"loc":{"column":18,"file":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","line":1},"message":"Missing semicolon. (semi)","relativeFile":"src/index.js","stack":""}]"`;
+exports[`eslint > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"ESLint","frame":"  > 1 | const a = /"hello/"/n      |                  ^/n  > 2 |/n      | ^","id":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","level":1,"loc":{"column":18,"file":"<PROJECT_ROOT>/playground-temp/eslint-flat/src/index.js","line":1},"message":"Missing semicolon. (semi)","relativeFile":"src/index.js","rule":"semi","ruleUrl":"https://eslint.org/docs/latest/rules/semi","stack":""}]"`;
 
 exports[`eslint > serve > get initial error and subsequent error 4`] = `
 [

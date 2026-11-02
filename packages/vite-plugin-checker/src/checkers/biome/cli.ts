@@ -118,6 +118,13 @@ function getUniqueFiles(entries: Entry[]) {
   return Array.from(new Set(entries.map((e) => e.file)))
 }
 
+function getRuleUrl(category: string) {
+  const rule = category.match(/^lint\/\w+\/(\w+)$/)?.[1]
+  if (!rule) return undefined
+  const slug = rule.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)
+  return `https://biomejs.dev/linter/rules/${slug}`
+}
+
 function buildDiagnostics(
   entries: Entry[],
   sources: Map<string, string>,
@@ -138,6 +145,8 @@ function buildDiagnostics(
     return [
       {
         message: `[${entry.category}] ${entry.message}`,
+        rule: entry.category || undefined,
+        ruleUrl: getRuleUrl(entry.category),
         level:
           severityMap[entry.severity as keyof typeof severityMap] ??
           DiagnosticLevel.Error,

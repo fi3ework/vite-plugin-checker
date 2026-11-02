@@ -66,6 +66,7 @@ type Entry = {
   code: string
   message: string
   severity: string
+  url?: string
 }
 
 async function parseOxlintOutput(
@@ -94,7 +95,7 @@ function safeParseOxlint(output: string): OxlintOutput | null {
 
 function getEntries(parsed: OxlintOutput, cwd: string) {
   return parsed.diagnostics.flatMap(
-    ({ filename, labels, code, message, severity }) => {
+    ({ filename, labels, code, message, severity, url }) => {
       const file = normalizePath(filename, cwd)
 
       const [label] = labels
@@ -107,6 +108,7 @@ function getEntries(parsed: OxlintOutput, cwd: string) {
           code,
           message,
           severity,
+          url,
         },
       ] as Entry[]
     },
@@ -132,6 +134,8 @@ function buildDiagnostics(entries: Entry[], sources: Map<string, string>) {
     return [
       {
         message: `${entry.code}: ${entry.message}`,
+        rule: entry.code,
+        ruleUrl: entry.url,
         conclusion: '',
         level: mapSeverity(entry.severity),
         checker: 'oxlint',
