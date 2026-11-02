@@ -2,7 +2,7 @@
 
 exports[`config-initialIsOpen-error > serve > -- should find overlay with error -- 1`] = `"Unexpected var, use let or const instead. (no-var)"`;
 
-exports[`config-initialIsOpen-error > serve > -- should find overlay with error -- 2`] = `"<PROJECT_ROOT>/playground-temp/config-initialIsOpen-error/src/main.ts:3:1"`;
+exports[`config-initialIsOpen-error > serve > -- should find overlay with error -- 2`] = `"src/main.ts:3:1"`;
 
 exports[`config-initialIsOpen-error > serve > -- should find overlay with error -- 3`] = `
 "    1 | import { text } from './text'

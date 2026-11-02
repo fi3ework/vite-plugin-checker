@@ -199,6 +199,20 @@ type ErrorPayloadErr = ErrorPayload['err']
 export interface DiagnosticToRuntime extends ErrorPayloadErr {
   checkerId: string
   level?: DiagnosticLevel
+  /** file path shown in the overlay, relative to the project root */
+  relativeFile?: string
+  /** URL opened when the file is clicked in the overlay, from `overlay.editorUrl` */
+  editorUrl?: string
+}
+
+/** Location passed to `overlay.editorUrl` */
+export interface EditorLocation {
+  /** absolute path of the file, as reported by the checker */
+  file: string
+  /** 1-based line number */
+  line: number
+  /** 1-based column number */
+  column: number
 }
 
 export interface ClientDiagnosticPayload {
@@ -257,6 +271,21 @@ export interface SharedConfig {
          * @default no default value
          */
         panelStyle?: string
+        /**
+         * Build the URL opened when a file path is clicked in the overlay, such as
+         * `vscode://file/...`. Return `undefined` to open the file with Vite's
+         * `/__open-in-editor` endpoint instead.
+         *
+         * Called on the dev server, so it can map paths from a container to the host.
+         *
+         * @example
+         * ```ts
+         * editorUrl: ({ file, line, column }) =>
+         *   `vscode://file${file.replace('/app', '/Users/me/project')}:${line}:${column}`
+         * ```
+         * @default no default value
+         */
+        editorUrl?: (location: EditorLocation) => string | undefined
       }
   /**
    * stdout in terminal which starts the Vite server in dev mode.

@@ -45,6 +45,19 @@ Shared configuration to control the checker behaviors of the plugin.
          * @default no default value
          */
         panelStyle?: string
+        /**
+         * Build the URL opened when a file path is clicked in the overlay, such as
+         * `vscode://file/...`. Return `undefined` to open the file with Vite's
+         * `/__open-in-editor` endpoint instead.
+         *
+         * Called on the dev server, so it can map paths from a container to the host.
+         * @default no default value
+         */
+        editorUrl?: (location: {
+          file: string
+          line: number
+          column: number
+        }) => string | undefined
       }
   /**
    * stdout in terminal which starts the Vite server in dev mode.
@@ -67,3 +80,18 @@ Shared configuration to control the checker behaviors of the plugin.
   root?: boolean;
 }
 ```
+
+## Opening files from the overlay
+
+Clicking a file path in the overlay opens it through Vite's `/__open-in-editor` endpoint, which launches the editor on the machine running the dev server. When the dev server runs in a container, set `overlay.editorUrl` to open the file through a URL handler on the host instead, mapping the container path to the host path:
+
+```ts
+checker({
+  overlay: {
+    editorUrl: ({ file, line, column }) =>
+      `vscode://file${file.replace('/app', '/Users/me/project')}:${line}:${column}`,
+  },
+})
+```
+
+In the terminal, file paths are printed relative to the current working directory, and link to the file in [terminals that support hyperlinks](https://github.com/danielroe/clickable-path#terminal-support).

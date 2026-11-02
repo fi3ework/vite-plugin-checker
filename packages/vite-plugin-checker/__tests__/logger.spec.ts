@@ -3,9 +3,12 @@ import { stripVTControlCharacters as strip } from 'node:util'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
+  diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   normalizeEslintDiagnostic,
   setTerminalHyperlinks,
+  toClientPayload,
+  withOverlayFileLinks,
 } from '../src/logger'
 import {
   error1 as eslintError1,
@@ -53,6 +56,31 @@ describe('logger', () => {
         diagnosticToTerminalLog({ ...eslintError1, id: undefined }, 'ESLint'),
       )
       expect(received).not.toContain('FILE')
+    })
+  })
+
+  describe('withOverlayFileLinks', () => {
+    const payload = toClientPayload('ESLint', [
+      diagnosticToRuntimeError(eslintError1),
+    ])
+
+    it('adds a project-relative file path', () => {
+      const [diagnostic] = withOverlayFileLinks(payload, projectRoot).data
+        .diagnostics
+      expect(diagnostic!.relativeFile).toBe('src/main.ts')
+      expect(diagnostic!.editorUrl).toBeUndefined()
+    })
+
+    it('adds an editor URL from `overlay.editorUrl`', () => {
+      const [diagnostic] = withOverlayFileLinks(
+        payload,
+        projectRoot,
+        ({ file, line, column }) =>
+          `vscode://file${file.replace(projectRoot, '/home/me/project')}:${line}:${column}`,
+      ).data.diagnostics
+      expect(diagnostic!.editorUrl).toBe(
+        'vscode://file/home/me/project/src/main.ts:3:1',
+      )
     })
   })
 
