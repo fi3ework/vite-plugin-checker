@@ -52,6 +52,7 @@ interface MachineDiagnostic {
   end: { line: number; character: number }
   message: string
   code?: string | number
+  codeDescription?: { href?: string }
   source?: string
 }
 
@@ -107,8 +108,12 @@ async function normalizeDiagnostics(
     const source = sources.get(id)
     const codeFrame = source ? createFrame(source, loc) : undefined
 
+    const ruleUrl = d.codeDescription?.href
+
     return {
       message: formatMessage(d),
+      rule: ruleUrl ? formatCode(d) : undefined,
+      ruleUrl,
       conclusion: '',
       codeFrame,
       stripedCodeFrame: codeFrame && strip(codeFrame),
@@ -121,9 +126,17 @@ async function normalizeDiagnostics(
   })
 }
 
+function formatCode(d: MachineDiagnostic): string | undefined {
+  if (d.code === undefined || d.code === '') return undefined
+  return d.source === 'ts' ? `TS${d.code}` : String(d.code)
+}
+
 function formatMessage(d: MachineDiagnostic): string {
-  if (d.code === undefined || d.code === '') return d.message
-  const code = d.source === 'ts' ? `TS${d.code}` : String(d.code)
-  if (d.message.includes(code)) return d.message
-  return `${d.message} (${code})`
+  const code = formatCode(d)
+  if (!code) return d.message
+  const message = d.codeDescription?.href
+    ? d.message.replace(/\nhttps?:\/\/\S+$/, '')
+    : d.message
+  if (message.includes(code)) return message
+  return `${message} (${code})`
 }
