@@ -5,7 +5,7 @@ exports[`svelte-check-default > serve > get initial error and subsequent error 1
 exports[`svelte-check-default > serve > get initial error and subsequent error 2`] = `
 [
   " ERROR(svelte-check)  Type 'string' is not assignable to type 'number'. (TS2322)
- FILE  <PROJECT_ROOT>/playground-temp/svelte-check-default/src/App.svelte:2:7
+ FILE  playground-temp/svelte-check-default/src/App.svelte:2:7
 
     1 | <script lang="ts">
   > 2 |   let count: number = 'hello'
@@ -24,7 +24,7 @@ exports[`svelte-check-default > serve > get initial error and subsequent error 4
 [
   " WARNING(svelte-check)  Visible, non-interactive element \`<div>\` with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as \`<button type="button">\` or \`<a>\` might be more appropriate
 http/svelte.dev/e/a11y_click_events_have_key_events
- FILE  <PROJECT_ROOT>/playground-temp/svelte-check-default/src/App.svelte:5:1
+ FILE  playground-temp/svelte-check-default/src/App.svelte:5:1
 
     3 | </script>
     4 |
@@ -34,7 +34,7 @@ http/svelte.dev/e/a11y_click_events_have_key_events
 ",
   " WARNING(svelte-check)  \`<div>\` with a click handler must have an ARIA role
 http/svelte.dev/e/a11y_no_static_element_interactions
- FILE  <PROJECT_ROOT>/playground-temp/svelte-check-default/src/App.svelte:5:1
+ FILE  playground-temp/svelte-check-default/src/App.svelte:5:1
 
     3 | </script>
     4 |
