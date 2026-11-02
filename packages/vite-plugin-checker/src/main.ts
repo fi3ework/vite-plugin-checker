@@ -1,3 +1,4 @@
+import { supportsHyperlinks } from 'clickable-path'
 import { npmRunPathEnv, type ProcessEnv } from 'npm-run-path'
 import colors from 'picocolors'
 import { x } from 'tinyexec'
@@ -119,6 +120,9 @@ export function checker(userConfig: UserPluginConfig): Plugin {
               checker.serve.config({
                 enableOverlay,
                 enableTerminal,
+                terminalHyperlinks:
+                  supportsHyperlinks(process.stdout) &&
+                  supportsHyperlinks(process.stderr),
                 env,
               })
             }

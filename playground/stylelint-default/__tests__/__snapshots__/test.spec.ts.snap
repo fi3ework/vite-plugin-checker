@@ -5,7 +5,7 @@ exports[`stylelint > serve > get initial error and subsequent error 1`] = `"[{"c
 exports[`stylelint > serve > get initial error and subsequent error 2`] = `
 [
   " ERROR(Stylelint)  Empty block (block-no-empty) (block-no-empty)
- FILE  <PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css:1:7
+ FILE  playground-temp/stylelint-default/src/style.css:1:7
 
   > 1 | #root {
       |       ^
@@ -16,7 +16,7 @@ exports[`stylelint > serve > get initial error and subsequent error 2`] = `
     5 |   color: rgb(0, 0, 0);
 ",
   " ERROR(Stylelint)  Expected modern color-function notation (color-function-notation) (color-function-notation)
- FILE  <PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css:5:10
+ FILE  playground-temp/stylelint-default/src/style.css:5:10
 
     3 |
     4 | body {
@@ -34,7 +34,7 @@ exports[`stylelint > serve > get initial error and subsequent error 3`] = `"[{"c
 exports[`stylelint > serve > get initial error and subsequent error 4`] = `
 [
   " ERROR(Stylelint)  Empty block (block-no-empty) (block-no-empty)
- FILE  <PROJECT_ROOT>/playground-temp/stylelint-default/src/style.css:1:7
+ FILE  playground-temp/stylelint-default/src/style.css:1:7
 
   > 1 | #root {
       |       ^

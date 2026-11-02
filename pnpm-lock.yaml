@@ -104,6 +104,9 @@ importers:
       chokidar:
         specifier: ^6.0.0
         version: 6.0.0
+      clickable-path:
+        specifier: ^0.1.1
+        version: 0.1.1
       npm-run-path:
         specifier: ^6.0.0
         version: 6.0.0
@@ -2641,6 +2644,10 @@ packages:
   chokidar@6.0.0:
     resolution: {integrity: sha512-Ec2Z7wpcKBiMpR7DxteoqS/sq5G5d2A4fpxzPv6+fD7xNNdrTghn7L11YwV5EN1B3i72Erc3XVT5FkWIDx90+A==}
     engines: {node: '>= 22.22'}
+
+  clickable-path@0.1.1:
+    resolution: {integrity: sha512-ROn/mdV2pR8WFdpJjFDCSouLRg9myf95xacO1iy8G/AVO/x5y124pjF3EaoWrTBRWC3vh0DPqa/MhKyx3mMeKg==}
+    engines: {node: '>=22.1.0'}
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -5902,6 +5909,8 @@ snapshots:
   chokidar@6.0.0:
     dependencies:
       readdirp: 5.1.1
+
+  clickable-path@0.1.1: {}
 
   color-convert@2.0.1:
     dependencies:

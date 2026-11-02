@@ -331,6 +331,7 @@ export interface ConsoleAction extends AbstractAction {
 interface ConfigActionPayload {
   enableOverlay: boolean
   enableTerminal: boolean
+  terminalHyperlinks: boolean
   env: ConfigEnv
 }
 

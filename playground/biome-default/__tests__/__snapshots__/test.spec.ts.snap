@@ -5,7 +5,7 @@ exports[`biome > serve > get initial error and subsequent error 1`] = `"[{"check
 exports[`biome > serve > get initial error and subsequent error 2`] = `
 [
   " WARNING(Biome)  [lint/correctness/noUnusedVariables] This variable d is unused.
- FILE  <PROJECT_ROOT>/playground-temp/biome-default/src/index.js:4:5
+ FILE  playground-temp/biome-default/src/index.js:4:5
 
     2 | var b = 'world'
     3 | const c = '!'
@@ -16,7 +16,7 @@ exports[`biome > serve > get initial error and subsequent error 2`] = `
     7 |
 ",
   " ERROR(Biome)  [lint/style/noDefaultExport] Avoid default exports.
- FILE  <PROJECT_ROOT>/playground-temp/biome-default/src/index.js:6:8
+ FILE  playground-temp/biome-default/src/index.js:6:8
 
     4 | var d = a + b + c
     5 |
@@ -33,7 +33,7 @@ exports[`biome > serve > get initial error and subsequent error 3`] = `"[{"check
 exports[`biome > serve > get initial error and subsequent error 4`] = `
 [
   " WARNING(Biome)  [lint/correctness/noUnusedVariables] This variable d is unused.
- FILE  <PROJECT_ROOT>/playground-temp/biome-default/src/index.js:4:5
+ FILE  playground-temp/biome-default/src/index.js:4:5
 
     2 | const b = 'world'
     3 | const c = '!'
@@ -44,7 +44,7 @@ exports[`biome > serve > get initial error and subsequent error 4`] = `
     7 |
 ",
   " ERROR(Biome)  [lint/style/noDefaultExport] Avoid default exports.
- FILE  <PROJECT_ROOT>/playground-temp/biome-default/src/index.js:6:8
+ FILE  playground-temp/biome-default/src/index.js:6:8
 
     4 | var d = a + b + c
     5 |
