@@ -6,7 +6,7 @@ exports[`typescript-solution > serve > get initial error and subsequent error 2`
 [
   "
  ERROR(TypeScript)  Type 'string' is not assignable to type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/typescript-solution/src/main.ts:5:7
+ FILE  playground-temp/typescript-solution/src/main.ts:5:7
 
     3 | }
     4 |
@@ -26,7 +26,7 @@ exports[`typescript-solution > serve > get initial error and subsequent error 4`
 [
   "
  ERROR(TypeScript)  Type 'string' is not assignable to type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/typescript-solution/src/main.ts:5:7
+ FILE  playground-temp/typescript-solution/src/main.ts:5:7
 
     3 | }
     4 |

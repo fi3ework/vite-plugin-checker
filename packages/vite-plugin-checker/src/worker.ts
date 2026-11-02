@@ -1,5 +1,6 @@
 import { parentPort, Worker, workerData } from 'node:worker_threads'
 import type { ConfigEnv } from 'vite'
+import { setTerminalHyperlinks } from './logger.js'
 import type {
   BuildCheckBin,
   BuildInCheckers,
@@ -93,6 +94,7 @@ export function createScript<T extends Partial<BuildInCheckers>>({
         (action: ConfigAction | ConfigureServerAction) => {
           switch (action.type) {
             case ACTION_TYPES.config: {
+              setTerminalHyperlinks(action.payload.terminalHyperlinks)
               const checkerConfig: T & SharedConfig = workerData.checkerConfig
               diagnostic = serverChecker.createDiagnostic(checkerConfig)
               diagnostic.config(action.payload)

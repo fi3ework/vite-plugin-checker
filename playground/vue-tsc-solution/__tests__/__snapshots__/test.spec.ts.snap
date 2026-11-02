@@ -6,7 +6,7 @@ exports[`vue-tsc-solution > serve > get initial error and subsequent error 2`] =
 [
   "
  ERROR(vue-tsc)  Type 'string' is not assignable to type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue:2:7
+ FILE  playground-temp/vue-tsc-solution/src/App.vue:2:7
 
     1 | <script setup lang="ts">
   > 2 | const count: number = 'not a number'
@@ -25,7 +25,7 @@ exports[`vue-tsc-solution > serve > get initial error and subsequent error 4`] =
 [
   "
  ERROR(vue-tsc)  Type 'string' is not assignable to type 'number'.
- FILE  <PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue:2:7
+ FILE  playground-temp/vue-tsc-solution/src/App.vue:2:7
 
     1 | <script setup lang="ts">
   > 2 | const count: number = 'still not a number'

@@ -1,8 +1,10 @@
 import { createRequire } from 'node:module'
 import os from 'node:os'
+import path from 'node:path'
 import { stripVTControlCharacters as strip } from 'node:util'
 import { parentPort } from 'node:worker_threads'
 import type { SourceLocation } from '@babel/code-frame'
+import { link } from 'clickable-path'
 import colors from 'picocolors'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
@@ -78,6 +80,33 @@ export function filterLogLevel(
   return level.includes(diagnostics.level) ? diagnostics : null
 }
 
+let terminalHyperlinks = false
+
+/**
+ * Whether file paths in terminal logs are emitted as OSC 8 hyperlinks. Set from
+ * the main thread, as worker threads have no real TTY to detect support from.
+ */
+export function setTerminalHyperlinks(enabled: boolean) {
+  terminalHyperlinks = enabled
+}
+
+function formatTerminalFile(file: string, loc?: SourceLocation): string {
+  const line = loc?.start.line
+  const column = loc?.start.column || undefined
+  const position = line
+    ? `:${colors.yellow(line)}${column ? `:${colors.yellow(column)}` : ''}`
+    : ''
+
+  if (!path.isAbsolute(file)) return file + position
+
+  return link(file, {
+    line,
+    column,
+    enabled: terminalHyperlinks,
+    formatter: (absolute) => path.relative(process.cwd(), absolute) + position,
+  })
+}
+
 export function diagnosticToTerminalLog(
   d: NormalizedDiagnostic,
   name?:
@@ -109,13 +138,10 @@ export function diagnosticToTerminalLog(
 
   const levelLabel = labelMap[d.level ?? DiagnosticLevel.Error]
   const fileLabel = `${boldBlack(colors.bgCyanBright(' FILE '))} `
-  const position = d.loc
-    ? `${colors.yellow(d.loc.start.line)}:${colors.yellow(d.loc.start.column || '')}`
-    : ''
 
   return [
     `${levelLabel} ${d.message}`,
-    `${fileLabel + d.id}:${position}${os.EOL}`,
+    d.id && `${fileLabel}${formatTerminalFile(d.id, d.loc)}${os.EOL}`,
     d.codeFrame + os.EOL,
     d.conclusion,
   ]
