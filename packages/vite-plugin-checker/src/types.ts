@@ -173,6 +173,21 @@ export type OxlintConfig =
       }>
     }
 
+/** svelte-check checker configuration */
+export type SvelteCheckConfig =
+  | boolean
+  | {
+      /**
+       * Flags passed to `svelte-check`, e.g. `'--tsconfig ./tsconfig.app.json'`.
+       * In dev mode, `--watch` and `--output` are managed by the plugin.
+       */
+      flags?: string
+      dev?: Partial<{
+        /** Which level of the diagnostic will be emitted from plugin */
+        logLevel: ('error' | 'warning')[]
+      }>
+    }
+
 export enum DiagnosticLevel {
   Warning = 0,
   Error = 1,
@@ -270,6 +285,7 @@ export interface BuildInCheckers {
   stylelint: StylelintConfig
   biome: BiomeConfig
   oxlint: OxlintConfig
+  svelteCheck: SvelteCheckConfig
 }
 
 export type BuildInCheckerNames = keyof BuildInCheckers

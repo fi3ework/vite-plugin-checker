@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { BiomeChecker } from '../src/checkers/biome/main'
 import { EslintChecker } from '../src/checkers/eslint/main'
 import { StylelintChecker } from '../src/checkers/stylelint/main'
+import { SvelteCheckChecker } from '../src/checkers/svelteCheck/main'
 
 const root = path.normalize('/repo')
 const buildBin = (checker: { build: { buildBin: any } }, config: any) =>
@@ -67,6 +68,25 @@ describe('biome buildBin', () => {
     expect(buildBin(checker, { biome: { command: 'check' } })).toEqual([
       'biome',
       ['check'],
+    ])
+  })
+})
+
+describe('svelte-check buildBin', () => {
+  const checker = new SvelteCheckChecker()
+
+  it('splits the flags string into separate arguments', () => {
+    expect(
+      buildBin(checker, {
+        svelteCheck: { flags: '--tsconfig "./tsconfig app.json"' },
+      }),
+    ).toEqual(['svelte-check', ['--tsconfig', './tsconfig app.json']])
+  })
+
+  it('passes no arguments at all when enabled with `true`', () => {
+    expect(buildBin(checker, { svelteCheck: true })).toEqual([
+      'svelte-check',
+      [],
     ])
   })
 })

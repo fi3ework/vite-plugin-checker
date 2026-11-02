@@ -61,6 +61,7 @@
     "optionator": "^0.9.4",
     "oxlint": ">=1",
     "stylelint": ">=16.26.1",
+    "svelte-check": ">=4",
     "typescript": "*",
     "vite": ">=5.4.21",
     "vue-tsc": "~2.2.10 || ^3.0.0"
@@ -82,6 +83,9 @@
       "optional": true
     },
     "stylelint": {
+      "optional": true
+    },
+    "svelte-check": {
       "optional": true
     },
     "typescript": {
