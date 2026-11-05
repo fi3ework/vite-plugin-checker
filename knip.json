@@ -18,6 +18,9 @@
     },
     "playground/backend-integration": {
       "entry": ["src/*.{js,ts,tsx}", "__test__/serve.js"]
+    },
+    "playground/multiple-servers": {
+      "entry": ["widget/vite.config.js", "widget/src/*.ts"]
     }
   }
 }
