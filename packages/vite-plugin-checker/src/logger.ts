@@ -3,7 +3,6 @@ import os from 'node:os'
 import path from 'node:path'
 import { stripVTControlCharacters as strip } from 'node:util'
 import { parentPort } from 'node:worker_threads'
-import type { SourceLocation } from '@babel/code-frame'
 import { hyperlink, link } from 'clickable-path'
 import colors from 'picocolors'
 
@@ -11,6 +10,7 @@ import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
 import {
   createFrame,
   lineColLocToBabelLoc,
+  type SourceLocation,
   tsLikeLocToBabelLoc,
 } from './codeFrame.js'
 import {

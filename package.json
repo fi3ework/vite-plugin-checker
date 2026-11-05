@@ -31,7 +31,6 @@
     "@biomejs/biome": "^2.4.12",
     "@tsconfig/node24": "^24.0.4",
     "@tsconfig/strictest": "^2.0.8",
-    "@types/babel__code-frame": "^7.27.0",
     "@types/node": "^20.19.9",
     "execa": "^10.0.0",
     "fast-json-stable-stringify": "^2.1.0",
