@@ -1,16 +1,15 @@
 # Integration
 
-## with traditional backend (require version >= 0.5.4)
+## Overlay in development mode
 
-### overlay does not display in development mode
+The overlay runtime is loaded by the Vite client (`/@vite/client`). Any page that loads the Vite client in development shows the overlay, including pages rendered by a [traditional backend](https://vitejs.dev/guide/backend-integration.html#backend-integration) or by an SSR framework such as Nuxt, SvelteKit or TanStack Start.
 
-When integrating with a [traditional backend](https://vitejs.dev/guide/backend-integration.html#backend-integration), in development mode, you need to inject vite-plugin-checker's runtime manually.
+### overlay does not display
+
+If a page does not load the Vite client, inject vite-plugin-checker's runtime manually.
 
 ```html
 <!-- if development -->
-<script type="module" src="http://localhost:5173/@vite/client"></script>
-<script type="module" src="http://localhost:5173/main.js"></script>
-<!-- add below for vite-plugin-checker -->
 <script type="module" src="http://localhost:5173/@vite-plugin-checker-runtime-entry"></script>
 ```
 
@@ -40,64 +39,22 @@ When integrating with a [traditional backend](https://vitejs.dev/guide/backend-i
    })
    ```
 
-## with Nuxt3
+## with Nuxt
 
-### overlay does not display in development mode
+Add vite-plugin-checker to `vite.plugins` in `nuxt.config.ts`.
 
-There're two ways to use vite-plugin-checker with Nuxt3 for now.
+```ts
+import { checker } from 'vite-plugin-checker'
+// https://nuxt.com/docs/api/configuration/nuxt-config
+export default defineNuxtConfig({
+  vite: {
+    plugins: [
+      checker({
+        vueTsc: true,
+      }),
+    ],
+  },
+})
+```
 
-#### Use vite-plugin-checker as a normal Vite plugin (require version >= 0.5.5)
-
-There are a few steps to do:
-
-1. Add `vite-plugin-checker` `typescript` `vue-tsc` `@types/node` as devDependencies to your Nuxt project.
-2. Create a Vue component with content:
-
-   ```vue
-   // vite-plugin-checker.vue
-   <script setup>
-   import('/@vite-plugin-checker-runtime-entry')
-   </script>
-   ```
-3. Add vite-plugin-checker to `vite.plugins` in `nuxt.config.ts`.
-
-   ```ts
-   import { checker } from 'vite-plugin-checker'
-   // https://nuxt.com/docs/api/configuration/nuxt-config
-   export default defineNuxtConfig({
-     vite: {
-       plugins: [
-         checker({
-           vueTsc: true,
-         }),
-       ],
-     },
-   })
-   ```
-
-4. Import component above in the root component of your Nuxt project to have a global error overlay.
-
-   ```vue
-   <script setup lang="ts">
-   import Vpc from './vite-plugin-checker.vue'
-   </script>
-
-   <template>
-     <!-- your app code -->
-     <DevOnly>
-       <ClientOnly>
-         <Vpc />
-       </ClientOnly>
-     </DevOnly>
-   </template>
-   ```
-
-You are all set in both development and build mode.
-
-#### Enable vite-plugin-checker as a built-in Nuxt functionality
-
-::: warning
-The error overlay can not be displayed in this way, we'll try to fix this with Nuxt in the future.
-:::
-
-See Nuxt's official documentation's [typecheck section](https://nuxt.com/docs/api/commands/typecheck#nuxi-typecheck).
+Alternatively, enable type checking as a built-in Nuxt feature. See the [typecheck section](https://nuxt.com/docs/api/commands/typecheck) of the Nuxt documentation.

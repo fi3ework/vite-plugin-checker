@@ -11,6 +11,7 @@ import type {
 } from 'vite'
 import { Checker } from './Checker.js'
 import {
+  composeClientInjectionCode,
   composePreambleCode,
   RUNTIME_CLIENT_ENTRY_PATH,
   RUNTIME_CLIENT_RUNTIME_PATH,
@@ -32,6 +33,9 @@ import {
   type ServeAndBuildChecker,
   type UserPluginConfig,
 } from './types.js'
+
+const VITE_CLIENT_ENTRY_RE =
+  /[\\/](?:rolldown-)?vite[\\/]dist[\\/]client[\\/]client\.mjs(?:\?.*)?$/
 
 const buildInCheckerLoaders: Record<
   BuildInCheckerNames,
@@ -206,27 +210,20 @@ export function checker(userConfig: UserPluginConfig): Plugin {
         }
 
         if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
-          return composePreambleCode({
-            baseWithOrigin,
-            overlayConfig,
-            useBase: false,
-          })
+          return composePreambleCode({ baseWithOrigin, overlayConfig })
         }
 
         return
       },
     },
-    transformIndexHtml() {
-      if (initialized) return
-      if (viteMode === 'build') return
+    transform: {
+      filter: { id: VITE_CLIENT_ENTRY_RE },
+      handler(code, id) {
+        if (viteMode !== 'serve' || !enableOverlay) return
+        if (!VITE_CLIENT_ENTRY_RE.test(id)) return
 
-      return [
-        {
-          tag: 'script',
-          attrs: { type: 'module' },
-          children: composePreambleCode({ baseWithOrigin, overlayConfig }),
-        },
-      ]
+        return `${code}\n${composeClientInjectionCode()}`
+      },
     },
     buildStart: () => {
       if (initialized) return

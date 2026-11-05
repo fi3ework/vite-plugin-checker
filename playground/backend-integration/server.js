@@ -27,8 +27,6 @@ export async function createServer() {
   window.__vite_plugin_react_preamble_installed__ = true
 </script>
 
-<script type="module" src="http://localhost:5173/@vite-plugin-checker-runtime-entry"></script>
-
 <script type="module" src="http://localhost:5173/@vite/client"></script>
 <script type="module" src="http://localhost:5173/src/main.tsx"></script>
 
