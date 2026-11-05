@@ -380,6 +380,7 @@ export interface ConsoleAction extends AbstractAction {
 interface ConfigActionPayload {
   enableOverlay: boolean
   enableTerminal: boolean
+  terminalColors: boolean
   terminalHyperlinks: boolean
   env: ConfigEnv
 }

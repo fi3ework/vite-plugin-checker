@@ -1,7 +1,7 @@
 import { stripVTControlCharacters as strip } from 'node:util'
-import colors from 'picocolors'
 import { x } from 'tinyexec'
 import { createFrame, offsetRangeToBabelLocation } from '../../codeFrame.js'
+import { colorize } from '../../colors.js'
 import { consoleLog, type NormalizedDiagnostic } from '../../logger.js'
 import { normalizePath, readSources } from '../../sources.js'
 import { DiagnosticLevel } from '../../types.js'
@@ -25,7 +25,8 @@ export function getOxlintCommand(command: string) {
     parsed.push('--format', 'json')
   } else {
     consoleLog(
-      colors.yellow(
+      colorize(
+        'yellow',
         'vite-plugin-checker will force append "--format json" to the flags in dev mode, please don\'t use "--format" or "-f" flag in "config.oxlint.lintCommand".',
       ),
       'warn',
@@ -54,7 +55,10 @@ export async function runOxlint(
 function logSpawnError(error: unknown) {
   const message = error instanceof Error ? error.message : String(error)
   consoleLog(
-    colors.yellow(`vite-plugin-checker failed to spawn oxlint: ${message}`),
+    colorize(
+      'yellow',
+      `vite-plugin-checker failed to spawn oxlint: ${message}`,
+    ),
     'warn',
   )
 }

@@ -2,6 +2,8 @@ import os from 'node:os'
 
 import { codeFrameColumns } from '@babel/code-frame'
 
+import { supportsTerminalColors } from './colors.js'
+
 interface Position {
   line: number
   column?: number | undefined
@@ -28,8 +30,7 @@ export function createFrame(source: string, location: SourceLocation): string {
     end: end && toZeroBasedPosition(end),
   } as Parameters<typeof codeFrameColumns>[1]
   return codeFrameColumns(source, zeroBased, {
-    // worker tty did not fork parent process stdout, let's make a workaround
-    forceColor: true,
+    forceColor: supportsTerminalColors(),
   })
     .split('\n')
     .map((line) => `  ${line}`)

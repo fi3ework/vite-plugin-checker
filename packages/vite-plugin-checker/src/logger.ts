@@ -4,7 +4,6 @@ import path from 'node:path'
 import { stripVTControlCharacters as strip } from 'node:util'
 import { parentPort } from 'node:worker_threads'
 import { hyperlink, link } from 'clickable-path'
-import colors from 'picocolors'
 
 import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
 import {
@@ -13,6 +12,7 @@ import {
   type SourceLocation,
   tsLikeLocToBabelLoc,
 } from './codeFrame.js'
+import { colorize } from './colors.js'
 import {
   ACTION_TYPES,
   type ClientDiagnosticPayload,
@@ -99,7 +99,7 @@ function formatTerminalFile(file: string, loc?: SourceLocation): string {
   const line = loc?.start.line
   const column = loc?.start.column || undefined
   const position = line
-    ? `:${colors.yellow(line)}${column ? `:${colors.yellow(column)}` : ''}`
+    ? `:${colorize('yellow', String(line))}${column ? `:${colorize('yellow', String(column))}` : ''}`
     : ''
 
   if (!path.isAbsolute(file)) return file + position
@@ -140,25 +140,27 @@ export function diagnosticToTerminalLog(
     | 'svelte-check',
 ): string {
   const nameInLabel = name ? `(${name})` : ''
-  const boldBlack = (str: string) => colors.bold(colors.black(str))
-
   const labelMap: Record<DiagnosticLevel, string> = {
-    [DiagnosticLevel.Error]: boldBlack(
-      colors.bgRedBright(` ERROR${nameInLabel} `),
+    [DiagnosticLevel.Error]: colorize(
+      ['bold', 'black', 'bgRedBright'],
+      ` ERROR${nameInLabel} `,
     ),
-    [DiagnosticLevel.Warning]: boldBlack(
-      colors.bgYellowBright(` WARNING${nameInLabel} `),
+    [DiagnosticLevel.Warning]: colorize(
+      ['bold', 'black', 'bgYellowBright'],
+      ` WARNING${nameInLabel} `,
     ),
-    [DiagnosticLevel.Suggestion]: boldBlack(
-      colors.bgBlueBright(` SUGGESTION${nameInLabel} `),
+    [DiagnosticLevel.Suggestion]: colorize(
+      ['bold', 'black', 'bgBlueBright'],
+      ` SUGGESTION${nameInLabel} `,
     ),
-    [DiagnosticLevel.Message]: boldBlack(
-      colors.bgCyanBright(` MESSAGE${nameInLabel} `),
+    [DiagnosticLevel.Message]: colorize(
+      ['bold', 'black', 'bgCyanBright'],
+      ` MESSAGE${nameInLabel} `,
     ),
   }
 
   const levelLabel = labelMap[d.level ?? DiagnosticLevel.Error]
-  const fileLabel = `${boldBlack(colors.bgCyanBright(' FILE '))} `
+  const fileLabel = `${colorize(['bold', 'black', 'bgCyanBright'], ' FILE ')} `
 
   return [
     `${levelLabel} ${formatTerminalMessage(d)}`,
@@ -281,7 +283,7 @@ export function composeCheckerSummary(
   const hasError = errorCount > 0
   const hasWarning = warningCount > 0
   const color = hasError ? 'red' : hasWarning ? 'yellow' : 'green'
-  return colors[color](wrapCheckerSummary(checkerName, message))
+  return colorize(color, wrapCheckerSummary(checkerName, message))
 }
 
 /* ------------------------------- TypeScript ------------------------------- */

@@ -3,6 +3,7 @@ import { stripVTControlCharacters as strip } from 'node:util'
 import type Stylelint from 'stylelint'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { setTerminalColors } from '../src/colors'
 import {
   diagnosticToRuntimeError,
   diagnosticToTerminalLog,
@@ -21,6 +22,10 @@ import {
 const projectRoot = '/Users/vite-plugin-checker/playground/eslint'
 
 describe('logger', () => {
+  beforeEach(() => {
+    setTerminalColors(false)
+  })
+
   describe('diagnosticToTerminalLog', () => {
     beforeEach(() => {
       vi.spyOn(process, 'cwd').mockReturnValue(projectRoot)
