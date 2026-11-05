@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process'
 import { rmSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import os from 'node:os'
@@ -39,6 +40,11 @@ export async function setup(): Promise<void> {
         throw error
       }
     })
+
+  // oxlint skips files matched by `.gitignore` in any enclosing repository,
+  // which would otherwise exclude everything under `playground-temp/`
+  execFileSync('git', ['init', '--quiet'], { cwd: tempDir })
+  await fs.writeFile(path.join(tempDir, '.gitignore'), 'node_modules\n')
 }
 
 export async function teardown(): Promise<void> {
