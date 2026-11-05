@@ -21,12 +21,28 @@
    });
    ```
 
+### Hiding warnings
+
+Add `--quiet` to `lintCommand` to report errors only. `lintCommand` is also used in dev mode, so to hide warnings in build mode only, set it based on the command:
+
+```js
+export default defineConfig(({ command }) => ({
+  plugins: [
+    checker({
+      oxlint: {
+        lintCommand: command === "build" ? "oxlint --quiet" : "oxlint",
+      },
+    }),
+  ],
+}));
+```
+
 ## Configuration
 
 Advanced object configuration table of `options.oxlint`
 
 | field        | Type                       | Default value          | Description                                                                                                            |
 | :----------- | -------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| lintCommand  | `string`                   | `oxlint`               | `lintCommand` will be executed at build mode.                                                                          |
+| lintCommand  | `string`                   | `oxlint`               | `lintCommand` will be executed at build mode, and will also be used in dev mode.                                       |
 | watchPath    | `string \| string[]`       | `undefined`            | **(Only in dev mode)** Configure path to watch files for oxlint. If not specified, will watch the entire project root. |
 | dev.logLevel | `('error' \| 'warning')[]` | `['error', 'warning']` | **(Only in dev mode)** Which level of oxlint should be emitted to terminal and overlay in dev mode.                    |

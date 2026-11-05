@@ -58,6 +58,24 @@ export default {
 }
 ```
 
+### Hiding warnings in build mode
+
+In build mode, `lintCommand` runs as a regular ESLint CLI command, so ESLint's own flags apply. Add `--quiet` to report errors only:
+
+```js
+export default {
+  plugins: [
+    checker({
+      eslint: {
+        lintCommand: 'eslint --quiet "./src/**/*.{ts,tsx}"',
+      },
+    }),
+  ],
+}
+```
+
+`--quiet` does not affect dev mode. Use `dev.logLevel` to filter diagnostics there.
+
 ## Configuration
 
 Advanced object configuration table of `options.eslint`
