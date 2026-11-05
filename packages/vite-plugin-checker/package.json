@@ -34,7 +34,7 @@
     "prepack": "node -e \"require('fs').copyFileSync('../../README.md', 'README.md')\" && pnpm run build"
   },
   "dependencies": {
-    "@babel/code-frame": "^7.29.0",
+    "@babel/code-frame": "^8.0.0",
     "chokidar": "^6.0.0",
     "clickable-path": "^0.1.1",
     "npm-run-path": "^6.0.0",
