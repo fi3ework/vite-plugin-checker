@@ -26,6 +26,15 @@ export function inject({
   base: string
   overlayConfig: Record<string, any>
 }) {
+  if (!document.body) {
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => inject({ base, overlayConfig }),
+      { once: true },
+    )
+    return
+  }
+
   const existing = document.querySelectorAll<HTMLElement>(
     '[data-vite-plugin-checker]',
   )
