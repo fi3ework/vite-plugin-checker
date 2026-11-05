@@ -14,6 +14,32 @@ When integrating with a [traditional backend](https://vitejs.dev/guide/backend-i
 <script type="module" src="http://localhost:5173/@vite-plugin-checker-runtime-entry"></script>
 ```
 
+## with Tailwind CSS
+
+### reporting Tailwind CSS class issues
+
+[eslint-plugin-better-tailwindcss](https://github.com/schoero/eslint-plugin-better-tailwindcss) reports conflicting, unknown, deprecated and non-canonical classes. It runs as an ESLint plugin or an oxlint JS plugin, so its diagnostics are shown by the [ESLint](/checkers/eslint) or [oxlint](/checkers/oxlint) checker.
+
+1. Install and configure the plugin for your framework by following its [quick start](https://github.com/schoero/eslint-plugin-better-tailwindcss#quick-start).
+2. Enable the checker for the linter you configured it with.
+
+   ```ts
+   import { defineConfig } from 'vite'
+   import checker from 'vite-plugin-checker'
+
+   export default defineConfig({
+     plugins: [
+       checker({
+         eslint: {
+           lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+         },
+         // or
+         oxlint: true,
+       }),
+     ],
+   })
+   ```
+
 ## with Nuxt3
 
 ### overlay does not display in development mode
