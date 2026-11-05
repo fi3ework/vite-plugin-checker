@@ -1,6 +1,5 @@
 import path from 'node:path'
 import { supportsHyperlinks } from 'clickable-path'
-import colors from 'picocolors'
 import { x } from 'tinyexec'
 
 import type {
@@ -19,6 +18,7 @@ import {
   WS_CHECKER_RECONNECT_EVENT,
   wrapVirtualPrefix,
 } from './client/index.js'
+import { colorize, supportsTerminalColors } from './colors.js'
 import { withOverlayFileLinks } from './logger.js'
 import {
   ACTION_TYPES,
@@ -122,6 +122,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
               checker.serve.config({
                 enableOverlay,
                 enableTerminal,
+                terminalColors: supportsTerminalColors(),
                 terminalHyperlinks:
                   supportsHyperlinks(process.stdout) &&
                   supportsHyperlinks(process.stderr),
@@ -312,7 +313,8 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       } else {
         setTimeout(() => {
           logger!.warn(
-            colors.yellow(
+            colorize(
+              'yellow',
               '[vite-plugin-checker]: `server.ws.on` is introduced to Vite in 2.6.8, see [PR](https://github.com/vitejs/vite/pull/5273) and [changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md#268-2021-10-18). \nvite-plugin-checker relies on `server.ws.on` to send overlay message to client. Support for Vite < 2.6.8 will be removed in the next major version release.',
             ),
           )
@@ -346,7 +348,7 @@ async function spawnChecker(
   } catch (error) {
     const notFound = (error as NodeJS.ErrnoException).code === 'ENOENT'
     console.error(
-      colors.red(notFound ? `${command}: not found` : String(error)),
+      colorize('red', notFound ? `${command}: not found` : String(error)),
     )
     return notFound ? 127 : 1
   }

@@ -1,6 +1,6 @@
 import path from 'node:path'
 import chokidar, { type FSWatcher, type Matcher } from 'chokidar'
-import colors from 'picocolors'
+import { colorize } from '../../colors.js'
 import { consoleLog } from '../../logger.js'
 import type { LintWatchOptions } from '../../types.js'
 
@@ -45,7 +45,7 @@ export function watchLintTargets(
     if (reported.has(key)) return
     reported.add(key)
     consoleLog(
-      colors.yellow(`vite-plugin-checker file watcher error: ${message}`),
+      colorize('yellow', `vite-plugin-checker file watcher error: ${message}`),
       'warn',
     )
   })

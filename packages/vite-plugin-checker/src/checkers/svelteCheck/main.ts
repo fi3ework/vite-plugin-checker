@@ -1,8 +1,8 @@
 import readline from 'node:readline'
 import { fileURLToPath } from 'node:url'
 import { parentPort, Worker } from 'node:worker_threads'
-import colors from 'picocolors'
 import { Checker } from '../../Checker.js'
+import { colorize } from '../../colors.js'
 import {
   composeCheckerSummary,
   consoleLog,
@@ -88,7 +88,8 @@ const createDiagnostic: CreateDiagnostic<'svelteCheck'> = (pluginConfig) => {
         bin = resolveSvelteCheckBin(root)
       } catch {
         consoleLog(
-          colors.yellow(
+          colorize(
+            'yellow',
             `[svelte-check] could not resolve svelte-check from ${root}. Make sure it is installed.`,
           ),
           'warn',
@@ -106,7 +107,7 @@ const createDiagnostic: CreateDiagnostic<'svelteCheck'> = (pluginConfig) => {
       const parser = createMachineOutputParser({
         onComplete: dispatchDiagnostics,
         onFailure: (message) => {
-          consoleLog(colors.red(`[svelte-check] ${message}`), 'error')
+          consoleLog(colorize('red', `[svelte-check] ${message}`), 'error')
         },
       })
 
@@ -115,7 +116,7 @@ const createDiagnostic: CreateDiagnostic<'svelteCheck'> = (pluginConfig) => {
         .on('line', (line) => parser.push(line))
 
       worker.on('error', (error) => {
-        consoleLog(colors.red(`[svelte-check] ${error}`), 'error')
+        consoleLog(colorize('red', `[svelte-check] ${error}`), 'error')
       })
     },
   }

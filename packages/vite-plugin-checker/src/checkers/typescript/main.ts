@@ -3,11 +3,11 @@ import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { parentPort } from 'node:worker_threads'
-import colors from 'picocolors'
 import type * as typescript from 'typescript'
 
 import { Checker } from '../../Checker.js'
 import { createFrame } from '../../codeFrame.js'
+import { colorize } from '../../colors.js'
 import {
   consoleLog,
   diagnosticToRuntimeError,
@@ -225,7 +225,8 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             ensureCall(() => {
               if (terminal) {
                 const color = errorCount > 0 ? 'red' : 'green'
-                const report = colors[color](
+                const report = colorize(
+                  color,
                   (errorCount > 0 ? capturedLogChunk : '') +
                     os.EOL +
                     wrapCheckerSummary(
@@ -267,12 +268,12 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
         })
 
         tscProcess.stderr.on('data', (chunk: Buffer) => {
-          consoleLog(colors.red(chunk.toString()), 'error')
+          consoleLog(colorize('red', chunk.toString()), 'error')
         })
 
         tscProcess.on('error', (err: Error) => {
           consoleLog(
-            colors.red(`TypeScript checker failed: ${err.message}`),
+            colorize('red', `TypeScript checker failed: ${err.message}`),
             'error',
           )
         })
@@ -348,7 +349,8 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
           if (terminal) {
             const color = errorCount && errorCount > 0 ? 'red' : 'green'
-            const report = colors[color](
+            const report = colorize(
+              color,
               logChunk +
                 os.EOL +
                 wrapCheckerSummary(

@@ -1,5 +1,6 @@
 import { parentPort, Worker, workerData } from 'node:worker_threads'
 import type { ConfigEnv } from 'vite'
+import { setTerminalColors } from './colors.js'
 import { setTerminalHyperlinks } from './logger.js'
 import type {
   BuildCheckBin,
@@ -94,6 +95,7 @@ export function createScript<T extends Partial<BuildInCheckers>>({
         (action: ConfigAction | ConfigureServerAction) => {
           switch (action.type) {
             case ACTION_TYPES.config: {
+              setTerminalColors(action.payload.terminalColors)
               setTerminalHyperlinks(action.payload.terminalHyperlinks)
               const checkerConfig: T & SharedConfig = workerData.checkerConfig
               diagnostic = serverChecker.createDiagnostic(checkerConfig)
