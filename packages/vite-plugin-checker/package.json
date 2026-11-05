@@ -39,12 +39,10 @@
     "clickable-path": "^0.1.1",
     "picocolors": "^1.1.1",
     "picomatch": "^4.0.4",
-    "proper-lockfile": "^4.1.2",
     "tinyexec": "^1.2.4"
   },
   "devDependencies": {
     "@types/picomatch": "^4.0.3",
-    "@types/proper-lockfile": "^4.1.4",
     "@vue/language-core": "~3.3.0",
     "meow": "^14.0.0",
     "modern-tar": "^0.8.0",

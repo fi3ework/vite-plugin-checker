@@ -1,8 +1,18 @@
-import { access, cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
+import {
+  access,
+  cp,
+  mkdir,
+  mkdtemp,
+  readdir,
+  readFile,
+  rename,
+  rm,
+  writeFile,
+} from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import lockfile from 'proper-lockfile'
 
 const _require = createRequire(import.meta.url)
 
@@ -17,33 +27,15 @@ const proxyApiPath = _require.resolve(
   },
 )
 const extraSupportedExtensions = ['.vue']
+const fixturesDir = path.resolve(_dirname, 'typescript-vue-tsc')
 
-const LOCK_TIMEOUT_MS = 60000 // Max wait time
-const STALE_TIMEOUT_MS = 30000 // Auto-release stale locks
-
-async function isFixtureValid(
-  targetTsDir: string,
-  vueTscFlagFile: string,
-  currTsVersion: string,
-) {
-  try {
-    await access(targetTsDir)
-    const targetTsVersion = JSON.parse(
-      await readFile(path.resolve(targetTsDir, 'package.json'), 'utf8'),
-    ).version
-    await access(vueTscFlagFile)
-    const fixtureFlagContent = await readFile(vueTscFlagFile, 'utf8')
-    return (
-      targetTsVersion === currTsVersion && fixtureFlagContent === proxyApiPath
-    )
-  } catch {
-    return false
-  }
-}
+const exists = (p: string) =>
+  access(p).then(
+    () => true,
+    () => false,
+  )
 
 export async function prepareVueTsc() {
-  const targetTsDir = path.resolve(_dirname, 'typescript-vue-tsc')
-  const vueTscFlagFile = path.resolve(targetTsDir, 'vue-tsc-resolve-path')
   const currTsVersion = _require('typescript/package.json').version
 
   const tsMajorVersion = Number(currTsVersion.split('.')[0])
@@ -53,50 +45,38 @@ export async function prepareVueTsc() {
     )
   }
 
-  if (await isFixtureValid(targetTsDir, vueTscFlagFile, currTsVersion)) {
+  const fixtureId = createHash('sha256')
+    .update(`${currTsVersion}\0${proxyApiPath}`)
+    .digest('hex')
+    .slice(0, 16)
+  const targetTsDir = path.join(fixturesDir, fixtureId)
+  if (await exists(targetTsDir)) {
     return { targetTsDir }
   }
 
-  let release: Awaited<ReturnType<typeof lockfile.lock>>
+  // Renamed into place so that an existing fixture is always complete.
+  await mkdir(fixturesDir, { recursive: true })
+  const tempDir = await mkdtemp(path.join(fixturesDir, '.tmp-'))
   try {
-    release = await lockfile.lock(_dirname, {
-      lockfilePath: path.resolve(_dirname, '.vue-tsc-fixture.lock'),
-      stale: STALE_TIMEOUT_MS,
-      retries: {
-        retries: Math.ceil(LOCK_TIMEOUT_MS / 1000),
-        factor: 1,
-        minTimeout: 1000,
-        maxTimeout: 2000,
-        randomize: true,
-      },
-    })
-  } catch (err) {
-    throw new Error(
-      '[vite-plugin-checker] Failed to acquire lock for vue-tsc fixture preparation. ' +
-        'Another process may be holding the lock.\n' +
-        String(err),
-    )
-  }
-
-  try {
-    // Double-check that the fixture is valid, another process may have built while trying to acquire the lock
-    if (await isFixtureValid(targetTsDir, vueTscFlagFile, currTsVersion)) {
+    const sourceTsDir = path.resolve(_require.resolve('typescript'), '../..')
+    await cp(sourceTsDir, tempDir, { recursive: true })
+    // sync modification of lib/tsc.js with vue-tsc
+    await overrideTscJs(path.join(tempDir, 'lib/typescript.js'))
+    await rename(tempDir, targetTsDir)
+  } catch (error) {
+    await rm(tempDir, { force: true, recursive: true })
+    if (await exists(targetTsDir)) {
       return { targetTsDir }
     }
-
-    await rm(targetTsDir, { force: true, recursive: true })
-    await mkdir(targetTsDir, { recursive: true })
-    const sourceTsDir = path.resolve(_require.resolve('typescript'), '../..')
-    await cp(sourceTsDir, targetTsDir, { recursive: true })
-    await writeFile(vueTscFlagFile, proxyApiPath)
-
-    // sync modification of lib/tsc.js with vue-tsc
-    await overrideTscJs(
-      _require.resolve(path.resolve(targetTsDir, 'lib/typescript.js')),
-    )
-  } finally {
-    await release()
+    throw error
   }
+
+  const stale = (await readdir(fixturesDir)).filter((e) => e !== fixtureId)
+  await Promise.all(
+    stale.map((e) =>
+      rm(path.join(fixturesDir, e), { force: true, recursive: true }),
+    ),
+  ).catch(() => {})
 
   return { targetTsDir }
 }
