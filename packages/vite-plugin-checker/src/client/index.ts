@@ -12,18 +12,19 @@ export const wrapVirtualPrefix = (id: `/${string}`): `virtual:${string}` =>
 export const composePreambleCode = ({
   baseWithOrigin = '/',
   overlayConfig,
-  useBase = true,
 }: {
   baseWithOrigin: string
   overlayConfig: SharedConfig['overlay']
-  useBase?: boolean
 }) => `
-import { inject } from "${useBase ? baseWithOrigin : '/'}${RUNTIME_CLIENT_RUNTIME_PATH.slice(1)}";
+import { inject } from "${RUNTIME_CLIENT_RUNTIME_PATH}";
 inject({
   overlayConfig: ${JSON.stringify(overlayConfig)},
   base: "${baseWithOrigin}",
 });
 `
+
+export const composeClientInjectionCode = () =>
+  `if (typeof document !== "undefined") import("${RUNTIME_CLIENT_ENTRY_PATH}");`
 
 // #region
 // NOTE: sync modification with packages/runtime/src/ws.js

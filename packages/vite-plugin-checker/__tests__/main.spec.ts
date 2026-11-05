@@ -171,9 +171,53 @@ describe('serve mode with NODE_ENV=production', () => {
     plugin.buildStart()
     expect(execMock).not.toHaveBeenCalled()
 
-    const html = plugin.transformIndexHtml()
-    expect(html).toHaveLength(1)
-    expect(html[0].tag).toBe('script')
+    const code = plugin.transform.handler('', clientEntry)
+    expect(code).toContain(`import("${RUNTIME_CLIENT_ENTRY_PATH}")`)
+  })
+})
+
+const clientEntry = '/project/node_modules/vite/dist/client/client.mjs'
+
+describe('transform', () => {
+  const clientEntries = [
+    clientEntry,
+    '/project/node_modules/.pnpm/vite@8.0.0/node_modules/vite/dist/client/client.mjs',
+    '/project/node_modules/rolldown-vite/dist/client/client.mjs',
+    'C:\\project\\node_modules\\vite\\dist\\client\\client.mjs',
+  ]
+
+  it('injects the runtime entry into the Vite client in serve mode', async () => {
+    const plugin = checker({}) as any
+    await plugin.config({}, { command: 'serve', mode: 'development' })
+
+    for (const id of clientEntries) {
+      expect(plugin.transform.filter.id.test(id)).toBe(true)
+      const code = plugin.transform.handler('client();', id)
+      expect(code).toMatch(/^client\(\);\n/)
+      expect(code).toContain(`import("${RUNTIME_CLIENT_ENTRY_PATH}")`)
+      expect(code).toContain('typeof document !== "undefined"')
+    }
+  })
+
+  it('ignores other modules', async () => {
+    const plugin = checker({}) as any
+    await plugin.config({}, { command: 'serve', mode: 'development' })
+
+    for (const id of [
+      '/project/src/main.ts',
+      '/project/node_modules/vite/dist/client/env.mjs',
+      '/project/node_modules/not-vite/dist/client/client.mjs',
+    ]) {
+      expect(plugin.transform.filter.id.test(id)).toBe(false)
+      expect(plugin.transform.handler('', id)).toBeUndefined()
+    }
+  })
+
+  it('does not inject in build mode', async () => {
+    const plugin = checker({}) as any
+    await plugin.config({}, { command: 'build', mode: 'production' })
+
+    expect(plugin.transform.handler('', clientEntry)).toBeUndefined()
   })
 })
 
