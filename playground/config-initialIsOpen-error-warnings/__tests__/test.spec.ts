@@ -18,7 +18,7 @@ describe('config-initialIsOpen-error-warnings', () => {
         await getHmrOverlayText()
       } catch (e) {
         expect((e as any).toString()).toContain(
-          'Invariant failed: .message-body is expected in shadow root'
+          '.message-body is expected in shadow root'
         )
       }
 

@@ -1,9 +1,9 @@
+import assert from 'node:assert'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { parentPort } from 'node:worker_threads'
 import colors from 'picocolors'
-import invariant from 'tiny-invariant'
 import type * as typescript from 'typescript'
 
 import { Checker } from '../../Checker.js'
@@ -44,7 +44,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
       terminal = enableTerminal
     },
     async configureServer({ root }) {
-      invariant(pluginConfig.typescript, 'config.typescript should be `false`')
+      assert(pluginConfig.typescript, 'config.typescript should be `false`')
       const finalConfig =
         pluginConfig.typescript === true
           ? {
@@ -254,7 +254,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           }
         }
 
-        invariant(
+        assert(
           tscProcess?.stdout && tscProcess.stderr,
           'tsc was spawned without pipes for its output',
         )

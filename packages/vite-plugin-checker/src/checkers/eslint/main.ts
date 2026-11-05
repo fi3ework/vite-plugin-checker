@@ -1,9 +1,9 @@
+import assert from 'node:assert'
 import Module from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
 import type { ESLint } from 'eslint'
-import invariant from 'tiny-invariant'
 
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
@@ -134,7 +134,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const effectiveUseFlatConfig = majorVersion >= 10 ? true : useFlatConfig
 
       const options = optionator.parse(pluginConfig.eslint.lintCommand)
-      invariant(
+      assert(
         !options.fix,
         'Using `--fix` in `config.eslint.lintCommand` is not allowed in vite-plugin-checker, you could using `--fix` with editor.',
       )

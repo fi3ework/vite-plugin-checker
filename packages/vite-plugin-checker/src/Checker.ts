@@ -1,4 +1,4 @@
-import invariant from 'tiny-invariant'
+import assert from 'node:assert'
 import type {
   BuildInCheckerNames,
   BuildInCheckers,
@@ -62,7 +62,7 @@ export abstract class Checker<T extends BuildInCheckerNames>
   }
 
   public initMainThread() {
-    invariant(
+    assert(
       this.script,
       `script should be created in 'prepare', but got ${this.script}`,
     )
@@ -76,7 +76,7 @@ export abstract class Checker<T extends BuildInCheckerNames>
   }
 
   public initWorkerThread() {
-    invariant(
+    assert(
       this.script,
       `script should be created in 'prepare', but got ${this.script}`,
     )

@@ -1,6 +1,6 @@
+import assert from 'assert'
 import fs from 'fs'
 import path from 'path'
-import invariant from 'tiny-invariant'
 import { expect } from 'vitest'
 
 import { diagnostics, getDiagnosticsEmitCount, page, testDir } from './vitestSetup'
@@ -72,7 +72,7 @@ export async function getHmrOverlayText(
     shadowRoot = element
   } else {
     shadowRoot = await getHmrOverlay()
-    invariant(
+    assert(
       shadowRoot,
       `<vite-plugin-checker-error-overlay> shadow dom is expected to be found, but got ${shadowRoot}`
     )
@@ -83,15 +83,15 @@ export async function getHmrOverlayText(
   }
 
   const messageBody = await shadowRoot.$('.message-body')
-  invariant(messageBody, '.message-body is expected in shadow root')
+  assert(messageBody, '.message-body is expected in shadow root')
   const message = await messageBody.innerText()
 
   const fileDom = await shadowRoot.$('.file-link')
-  invariant(fileDom, '.file-link is expected in shadow root')
+  assert(fileDom, '.file-link is expected in shadow root')
   const file = await fileDom.innerText()
 
   const frameDom = await shadowRoot.$('.frame')
-  invariant(frameDom, '.frame is expected in shadow root')
+  assert(frameDom, '.frame is expected in shadow root')
   const frame = await frameDom.innerText()
 
   return [message, file, frame]

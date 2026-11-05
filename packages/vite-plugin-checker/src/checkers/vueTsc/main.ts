@@ -1,9 +1,9 @@
+import assert from 'node:assert'
 import { createRequire } from 'node:module'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parentPort } from 'node:worker_threads'
-import invariant from 'tiny-invariant'
 import type ts from 'typescript'
 
 import { Checker } from '../../Checker.js'
@@ -44,7 +44,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
       terminal = enableTerminal
     },
     async configureServer({ root }) {
-      invariant(pluginConfig.vueTsc, 'config.vueTsc should be `false`')
+      assert(pluginConfig.vueTsc, 'config.vueTsc should be `false`')
 
       const { targetTsDir } = await prepareVueTsc()
       const vueTs = _require(path.resolve(targetTsDir, 'lib/typescript.js'))

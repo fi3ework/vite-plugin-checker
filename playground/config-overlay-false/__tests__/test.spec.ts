@@ -10,7 +10,7 @@ describe('config-overlay-false', () => {
         await getHmrOverlayText()
       } catch (e) {
         await expect((e as any).toString()).toContain(
-          'Error: Invariant failed: .message-body is expected in shadow root'
+          '.message-body is expected in shadow root'
         )
       }
     })
