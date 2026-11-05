@@ -28,6 +28,7 @@ const proxyApiPath = _require.resolve(
 )
 const extraSupportedExtensions = ['.vue']
 const fixturesDir = path.resolve(_dirname, 'typescript-vue-tsc')
+const tempPrefix = '.tmp-'
 
 const exists = (p: string) =>
   access(p).then(
@@ -56,7 +57,7 @@ export async function prepareVueTsc() {
 
   // Renamed into place so that an existing fixture is always complete.
   await mkdir(fixturesDir, { recursive: true })
-  const tempDir = await mkdtemp(path.join(fixturesDir, '.tmp-'))
+  const tempDir = await mkdtemp(path.join(fixturesDir, tempPrefix))
   try {
     const sourceTsDir = path.resolve(_require.resolve('typescript'), '../..')
     await cp(sourceTsDir, tempDir, { recursive: true })
@@ -64,14 +65,19 @@ export async function prepareVueTsc() {
     await overrideTscJs(path.join(tempDir, 'lib/typescript.js'))
     await rename(tempDir, targetTsDir)
   } catch (error) {
-    await rm(tempDir, { force: true, recursive: true })
+    await rm(tempDir, { force: true, recursive: true, maxRetries: 5 }).catch(
+      () => {},
+    )
     if (await exists(targetTsDir)) {
       return { targetTsDir }
     }
     throw error
   }
 
-  const stale = (await readdir(fixturesDir)).filter((e) => e !== fixtureId)
+  // `.tmp-*` entries may belong to concurrent calls that are still copying.
+  const stale = (await readdir(fixturesDir)).filter(
+    (e) => e !== fixtureId && !e.startsWith(tempPrefix),
+  )
   await Promise.all(
     stale.map((e) =>
       rm(path.join(fixturesDir, e), { force: true, recursive: true }),

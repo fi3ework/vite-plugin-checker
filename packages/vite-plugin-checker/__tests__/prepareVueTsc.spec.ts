@@ -40,4 +40,14 @@ describe('prepareVueTsc', () => {
     ).toContain('proxyCreateProgram')
     await expect(prepareVueTsc()).resolves.toEqual({ targetTsDir })
   })
+
+  it('keeps temporary directories of in-flight builds', async () => {
+    fs.rmSync(fixturesDir, { force: true, recursive: true })
+    const inFlight = path.join(fixturesDir, '.tmp-in-flight')
+    fs.mkdirSync(inFlight, { recursive: true })
+
+    await prepareVueTsc()
+
+    expect(fs.existsSync(inFlight)).toBe(true)
+  })
 })
