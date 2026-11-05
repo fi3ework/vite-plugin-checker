@@ -1,14 +1,33 @@
 import os from 'node:os'
 
-import { codeFrameColumns, type SourceLocation } from '@babel/code-frame'
+import { codeFrameColumns } from '@babel/code-frame'
+
+interface Position {
+  line: number
+  column?: number | undefined
+}
+
+export interface SourceLocation {
+  start: Position
+  end?: Position | undefined
+}
+
+function toZeroBasedPosition({ line, column }: Position): Position {
+  return { line, column: column ? column - 1 : undefined }
+}
 
 /**
  * Create a code frame from source code and location
  * @param source source code
- * @param location babel compatible location to highlight
+ * @param location 1-based location to highlight
  */
 export function createFrame(source: string, location: SourceLocation): string {
-  return codeFrameColumns(source, location, {
+  const { start, end } = location
+  const zeroBased = {
+    start: toZeroBasedPosition(start),
+    end: end && toZeroBasedPosition(end),
+  } as Parameters<typeof codeFrameColumns>[1]
+  return codeFrameColumns(source, zeroBased, {
     // worker tty did not fork parent process stdout, let's make a workaround
     forceColor: true,
   })
