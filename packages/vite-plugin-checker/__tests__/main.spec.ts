@@ -1,4 +1,5 @@
 import { EventEmitter } from 'node:events'
+import path from 'node:path'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
@@ -126,6 +127,19 @@ describe('build mode', () => {
     expect(execMock).toHaveBeenCalledWith('tsc', ['--noEmit'], {
       nodeOptions: expect.objectContaining({ cwd: '/monorepo' }),
     })
+  })
+
+  it('falls back to node_modules/.bin from the working directory', async () => {
+    await runBuild({ typescript: true }, '/monorepo/packages/app')
+
+    const { env } = execMock.mock.calls[0]![2].nodeOptions
+    const key = Object.keys(env).find((k) => /^path$/i.test(k))!
+    const entries = env[key].split(path.delimiter)
+    expect(entries[0]).toBe(path.join(process.cwd(), 'node_modules', '.bin'))
+    expect(entries).toContain(
+      path.join(path.parse(process.cwd()).root, 'node_modules', '.bin'),
+    )
+    expect(env[key].endsWith(process.env[key]!)).toBe(true)
   })
 })
 

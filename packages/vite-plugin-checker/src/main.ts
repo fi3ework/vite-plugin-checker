@@ -1,5 +1,5 @@
+import path from 'node:path'
 import { supportsHyperlinks } from 'clickable-path'
-import { npmRunPathEnv, type ProcessEnv } from 'npm-run-path'
 import colors from 'picocolors'
 import { x } from 'tinyexec'
 
@@ -234,11 +234,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       if (viteMode !== 'build' || !enableBuild) return
 
       const root = userConfig.root || resolvedRoot
-      const localEnv = npmRunPathEnv({
-        env: npmRunPathEnv({ env: process.env, addExecPath: false }),
-        cwd: root,
-        execPath: process.execPath,
-      })
+      const localEnv = withCwdBinPath(process.env)
 
       const spawnedCheckers = checkers.map((checker) =>
         spawnChecker(checker, userConfig, localEnv, root),
@@ -330,7 +326,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
 async function spawnChecker(
   checker: ServeAndBuildChecker,
   userConfig: Partial<PluginConfig>,
-  localEnv: ProcessEnv,
+  localEnv: NodeJS.ProcessEnv,
   cwd: string,
 ): Promise<number> {
   const buildBin = checker.build.buildBin
@@ -354,6 +350,18 @@ async function spawnChecker(
     )
     return notFound ? 127 : 1
   }
+}
+
+// `tinyexec` already prepends the `node_modules/.bin` dirs of the spawn `cwd`.
+function withCwdBinPath(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const key = Object.keys(env).find((k) => /^path$/i.test(k)) ?? 'PATH'
+  const bins: string[] = []
+  for (let dir = process.cwd(); ; dir = path.dirname(dir)) {
+    bins.push(path.join(dir, 'node_modules', '.bin'))
+    if (path.dirname(dir) === dir) break
+  }
+  if (env[key]) bins.push(env[key])
+  return { ...env, [key]: bins.join(path.delimiter) }
 }
 
 export default checker
