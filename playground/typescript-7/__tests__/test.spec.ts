@@ -1,9 +1,10 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import stringify from 'fast-json-stable-stringify'
 import { describe, expect, it } from 'vitest'
 
 import {
   diagnostics,
-  editFile,
   expectStderrContains,
   isBuild,
   isServe,
@@ -11,6 +12,7 @@ import {
   resetReceivedLog,
   sleepForServerReady,
   stripedLog,
+  testDir,
   waitForDiagnostics,
 } from '../../testUtils'
 
@@ -23,9 +25,15 @@ describe('typescript-7', () => {
 
       console.log('-- edit file --')
       resetReceivedLog()
-      editFile('src/main.ts', (code) =>
-        code.replace("'not a number'", "'still not a number'"),
+      const file = path.resolve(testDir, 'src/main.ts')
+      const tmp = path.resolve(testDir, 'main.ts.tmp')
+      fs.writeFileSync(
+        tmp,
+        fs
+          .readFileSync(file, 'utf-8')
+          .replace("'not a number'", "'still not a number'"),
       )
+      fs.renameSync(tmp, file)
       await waitForDiagnostics()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
