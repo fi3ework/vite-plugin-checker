@@ -219,7 +219,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     transform: {
       filter: { id: VITE_CLIENT_ENTRY_RE },
       handler(code, id) {
-        if (viteMode !== 'serve') return
+        if (viteMode !== 'serve' || !enableOverlay) return
         if (!VITE_CLIENT_ENTRY_RE.test(id)) return
 
         return `${code}\n${composeClientInjectionCode()}`

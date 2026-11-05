@@ -213,6 +213,13 @@ describe('transform', () => {
     }
   })
 
+  it('does not inject when the overlay is disabled', async () => {
+    const plugin = checker({ overlay: false }) as any
+    await plugin.config({}, { command: 'serve', mode: 'development' })
+
+    expect(plugin.transform.handler('', clientEntry)).toBeUndefined()
+  })
+
   it('does not inject in build mode', async () => {
     const plugin = checker({}) as any
     await plugin.config({}, { command: 'build', mode: 'production' })
