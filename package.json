@@ -8,6 +8,7 @@
     "dev": "pnpm -r --filter='./packages/**' --parallel run dev",
     "docs:build": "pnpm --filter docs run build",
     "docs:dev": "pnpm --filter docs run dev",
+    "docs:screenshots": "node scripts/screenshots.ts",
     "format": "biome format . --write",
     "postinstall": "simple-git-hooks install",
     "lint": "biome check . --diagnostic-level=warn",

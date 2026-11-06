@@ -8,7 +8,12 @@ vite-plugin-checker is a Vite plugin that runs type checkers and linters while y
   <a href="https://github.com/fi3ework/vite-plugin-checker/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/fi3ework/vite-plugin-checker/actions/workflows/ci.yml/badge.svg" /></a>
 </div>
 
-![The vite-plugin-checker overlay showing a TypeScript error with a code frame](https://user-images.githubusercontent.com/12322740/152739742-7444ee62-9ca7-4379-8f02-495c612ecc5c.png)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="/screenshots/diagnostics-page-dark.png">
+    <img alt="The vite-plugin-checker diagnostics page listing TypeScript and ESLint problems grouped by file" src="/screenshots/diagnostics-page-light.png">
+  </picture>
+</p>
 
 ## Why use it
 

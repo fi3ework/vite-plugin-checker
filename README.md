@@ -7,7 +7,10 @@
 A Vite plugin that runs TypeScript, vue-tsc, svelte-check, ESLint, Biome, oxlint, and Stylelint in worker threads. It reports problems in the terminal and in a browser overlay while you develop, and fails `vite build` when a check fails.
 
 <p align="center">
-  <img alt="The vite-plugin-checker overlay showing a TypeScript error with a code frame" src="https://user-images.githubusercontent.com/12322740/152739742-7444ee62-9ca7-4379-8f02-495c612ecc5c.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/fi3ework/vite-plugin-checker/main/docs/public/screenshots/diagnostics-page-dark.png">
+    <img alt="The vite-plugin-checker diagnostics page listing TypeScript and ESLint problems grouped by file" src="https://raw.githubusercontent.com/fi3ework/vite-plugin-checker/main/docs/public/screenshots/diagnostics-page-light.png" width="800">
+  </picture>
 </p>
 
 ## Quick start
