@@ -6,7 +6,7 @@ describe('config-overlay-position-style', () => {
     it('find badge in right top corner and customized by badgeStyle', async () => {
       await sleepForServerReady()
       const shadowRoot = await getHmrOverlay()
-      const badge = await shadowRoot!.$('.badge-base')
+      const badge = await shadowRoot!.$('.badge-container')
 
       const { bgColor, top, right } = await badge!.evaluate((el) => {
         const bgColor = window.getComputedStyle(el).getPropertyValue('background-color')
