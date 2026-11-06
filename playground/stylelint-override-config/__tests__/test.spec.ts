@@ -9,7 +9,7 @@ describe('stylelint-override-config', () => {
 
       editFile('src/style.css', (code) => code.replace('rgb(0 0 0)', '#000'))
       await waitForDiagnostics()
-      expect(diagnostics.map((d) => d.message)).toEqual([expect.stringContaining('color-no-hex')])
+      expect(diagnostics.map((d) => d.code)).toEqual(['color-no-hex'])
     })
   })
 })

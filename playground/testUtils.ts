@@ -28,7 +28,7 @@ export function removeFile(filename: string): void {
 }
 
 export function hasDiagnosticFor(filename: string): boolean {
-  return diagnostics.some((d) => d.id?.replace(/\\/g, '/').endsWith(filename))
+  return diagnostics.some((d) => d.file?.replace(/\\/g, '/').endsWith(filename))
 }
 
 export function expectStderrContains(str: string | string[], expectedErrorMsg: string | string[]) {

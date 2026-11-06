@@ -12,7 +12,7 @@ import { createServer, mergeConfig } from 'vite'
 import type { RunnerTestFile } from 'vitest'
 import { beforeAll, expect } from 'vitest'
 import type { Checker } from '../packages/vite-plugin-checker/src/Checker'
-import type { DiagnosticToRuntime } from '../packages/vite-plugin-checker/src/types'
+import type { CheckerApi, Diagnostic } from '../packages/vite-plugin-checker/src/protocol'
 import { normalizeLogSerializer } from './serializers'
 
 expect.addSnapshotSerializer(normalizeLogSerializer)
@@ -58,16 +58,15 @@ export let viteConfig: InlineConfig | undefined
 
 export let log = ''
 export let stripedLog: string[] = []
-export let diagnostics: DiagnosticToRuntime[] = []
+export let diagnostics: Diagnostic[] = []
 export let buildSucceed: boolean
 
 let diagnosticsEmitCount = 0
 
 /**
- * Number of `vite-plugin-checker:error` ws messages received from the dev
- * server since the last `resetDiagnostics()`. Empty-diagnostics emissions
- * still count: tests use this to know a checker has finished a re-lint cycle,
- * even when the final result is `[]`.
+ * Number of checker runs that finished since the last `resetDiagnostics()`.
+ * Runs that leave the diagnostics unchanged still count: tests use this to
+ * know a checker has finished a re-lint cycle.
  */
 export function getDiagnosticsEmitCount(): number {
   return diagnosticsEmitCount
@@ -202,10 +201,24 @@ export async function startDefaultServe({
     const viteDevServer = _server || (await createServer(testConfig))
     const checker = viteDevServer.config.plugins.filter(
       ({ name }) => name === 'vite-plugin-checker',
-    )[0]
+    )[0]!
 
     // @ts-ignore
     setCheckerLoggerForTest(checker.__internal__checker)
+
+    const api = checker.api as CheckerApi
+    const sync = () => {
+      diagnostics = api.getState().flatMap((state) => state.diagnostics)
+    }
+    api.subscribe((event) => {
+      if (event.type === 'update') sync()
+      else if (event.status === 'idle' || event.status === 'failed') {
+        sync()
+        diagnosticsEmitCount++
+      }
+    })
+    sync()
+
     viteServer = server = await viteDevServer.listen()
 
     // use resolved port/base from server
@@ -213,37 +226,6 @@ export async function startDefaultServe({
     viteTestUrl = `http://localhost:${port ?? server.config.server.port}${
       devBase === '/' ? '' : devBase
     }`
-
-    const rawWsSend = server.ws.send
-    server.ws.send = (...args) => {
-      const type = args?.[0]
-      const payload = args?.[1]
-
-      if (
-        type === 'vite-plugin-checker' &&
-        payload.event === 'vite-plugin-checker:error'
-      ) {
-        const currentCheckerId = payload.data.diagnostics[0]?.checkerId
-        const checkerReported = diagnostics.some(
-          (d) => d.checkerId === currentCheckerId,
-        )
-
-        if (checkerReported) {
-          // replace the previous batch from the same checker so the accumulated
-          // array reflects the latest lint result instead of every intermediate
-          // emission seen while polling
-          diagnostics = diagnostics.filter(
-            (d) => d.checkerId !== currentCheckerId,
-          )
-        }
-
-        diagnostics = diagnostics.concat(payload.data.diagnostics)
-        diagnosticsEmitCount++
-      }
-
-      // @ts-ignore
-      return rawWsSend(...args)
-    }
 
     await page.goto(viteTestUrl, {
       timeout: 1000 * 60 * 3, // 3min

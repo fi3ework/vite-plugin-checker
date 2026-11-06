@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`eslint-config-log-level > serve > should only emit warning logs 1`] = `"[{"checkerId":"ESLint","frame":"    3 | var hello = 'Hello'/n    4 |/n  > 5 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    6 | rootDom.innerHTML = hello + text/n    7 |/n    8 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts","line":5},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","relativeFile":"src/main.ts","rule":"@typescript-eslint/no-non-null-assertion","ruleUrl":"https://typescript-eslint.io/rules/no-non-null-assertion","stack":""}]"`;
+exports[`eslint-config-log-level > serve > should only emit warning logs 1`] = `"[{"checkerId":"eslint","code":"@typescript-eslint/no-non-null-assertion","column":17,"displayFile":"src/main.ts","docsUrl":"https://typescript-eslint.io/rules/no-non-null-assertion","endColumn":49,"endLine":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts","id":"7d57b772f4712985","level":"warning","line":5,"message":"Forbidden non-null assertion.","snippet":{"lang":"ts","lines":["var hello = 'Hello'","","const rootDom = document.querySelector('#root')!","rootDom.innerHTML = hello + text","","export {}"],"start":3}}]"`;
 
 exports[`eslint-config-log-level > serve > should only emit warning logs 2`] = `
 [
@@ -19,7 +19,7 @@ exports[`eslint-config-log-level > serve > should only emit warning logs 2`] = `
 ]
 `;
 
-exports[`eslint-config-log-level > serve > should only emit warning logs 3`] = `"[{"checkerId":"ESLint","frame":"    3 | var hello = 'Hello~'/n    4 |/n  > 5 | const rootDom = document.querySelector('#root')!/n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^/n    6 | rootDom.innerHTML = hello + text/n    7 |/n    8 | export {}","id":"<PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts","level":0,"loc":{"column":17,"file":"<PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts","line":5},"message":"Forbidden non-null assertion. (@typescript-eslint/no-non-null-assertion)","relativeFile":"src/main.ts","rule":"@typescript-eslint/no-non-null-assertion","ruleUrl":"https://typescript-eslint.io/rules/no-non-null-assertion","stack":""}]"`;
+exports[`eslint-config-log-level > serve > should only emit warning logs 3`] = `"[{"checkerId":"eslint","code":"@typescript-eslint/no-non-null-assertion","column":17,"displayFile":"src/main.ts","docsUrl":"https://typescript-eslint.io/rules/no-non-null-assertion","endColumn":49,"endLine":5,"file":"<PROJECT_ROOT>/playground-temp/eslint-config-log-level/src/main.ts","id":"7d57b772f4712985","level":"warning","line":5,"message":"Forbidden non-null assertion.","snippet":{"lang":"ts","lines":["var hello = 'Hello~'","","const rootDom = document.querySelector('#root')!","rootDom.innerHTML = hello + text","","export {}"],"start":3}}]"`;
 
 exports[`eslint-config-log-level > serve > should only emit warning logs 4`] = `
 [

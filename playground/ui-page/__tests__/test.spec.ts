@@ -7,7 +7,7 @@ const diagnostics = () => page.locator('.diagnostic')
 async function openPage() {
   await page.goto(`${viteTestUrl}__checker/`)
   await page.locator('.groups').waitFor()
-  await expect.poll(() => diagnostics().count()).toBe(2)
+  await expect.poll(() => diagnostics().count(), { timeout: 20_000 }).toBe(2)
 }
 
 describe.runIf(isServe)('ui-page', () => {

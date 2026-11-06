@@ -42,7 +42,7 @@ describe('config-default', () => {
 
       const shadowRoot = await getHmrOverlay()
       const link = await shadowRoot!.$('.file-link')
-      const file = `${diagnostics[0]!.loc!.file}:3:1`
+      const file = `${diagnostics[0]!.file}:3:1`
       expect(await link!.getAttribute('href')).toBe(
         `/my-app/__open-in-editor?file=${encodeURIComponent(file)}`,
       )
