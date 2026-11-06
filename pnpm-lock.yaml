@@ -77,6 +77,9 @@ importers:
       vitepress:
         specifier: ^1.6.4
         version: 1.6.4(@algolia/client-search@5.34.1)(@types/node@20.19.9)(lightningcss@1.33.0)(postcss@8.5.32)(typescript@7.0.2)
+      vue:
+        specifier: ^3.5.44
+        version: 3.5.44(typescript@7.0.2)
 
   packages/runtime:
     devDependencies:
