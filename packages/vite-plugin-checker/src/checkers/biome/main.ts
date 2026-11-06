@@ -162,12 +162,14 @@ export class BiomeChecker extends Checker<'biome'> {
       build: {
         buildBin: (pluginConfig) => {
           if (typeof pluginConfig.biome === 'object') {
-            const { command, flags } = pluginConfig.biome
+            const { command, flags, build } = pluginConfig.biome
+            const buildCommand = build?.command || command || 'check'
+            const buildFlags = build?.flags || flags
             return [
               'biome',
               [
-                command || 'check',
-                ...(flags ? parseArgsStringToArgv(flags) : []),
+                buildCommand,
+                ...(buildFlags ? parseArgsStringToArgv(buildFlags) : []),
               ],
             ] as const
           }

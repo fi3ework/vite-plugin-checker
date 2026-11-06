@@ -70,6 +70,18 @@ describe('biome buildBin', () => {
       ['check'],
     ])
   })
+
+  it('prefers `build.command` and `build.flags` over the shared options', () => {
+    expect(
+      buildBin(checker, {
+        biome: {
+          command: 'lint',
+          flags: '--max-diagnostics=10',
+          build: { command: 'ci', flags: '--error-on-warnings' },
+        },
+      }),
+    ).toEqual(['biome', ['ci', '--error-on-warnings']])
+  })
 })
 
 describe('svelte-check buildBin', () => {
