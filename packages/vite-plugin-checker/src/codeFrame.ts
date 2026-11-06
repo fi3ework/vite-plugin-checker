@@ -59,8 +59,13 @@ export function createSnippet(
     Math.max(location.end?.line || line, line),
     line + SNIPPET_MAX_RANGE_LINES,
   )
+  const lastLine =
+    lines.length > 1 && lines.at(-1) === '' ? lines.length - 1 : lines.length
   const start = Math.max(1, line - SNIPPET_LINES_ABOVE)
-  const end = Math.min(lines.length, endLine + SNIPPET_LINES_BELOW)
+  const end = Math.min(
+    Math.max(lastLine, endLine),
+    endLine + SNIPPET_LINES_BELOW,
+  )
   const lang = file ? path.extname(file.split('?')[0]!).slice(1) : ''
 
   return {

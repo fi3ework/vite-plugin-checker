@@ -70,6 +70,18 @@ describe('code frame', () => {
     expect(snippet!.lines.at(-1)).toBe('18')
   })
 
+  it('does not treat the final newline as a line of its own', () => {
+    expect(createSnippet('a\nb\n', { start: { line: 1 } })!.lines).toEqual([
+      'a',
+      'b',
+    ])
+    expect(createSnippet('a\nb\n', { start: { line: 3 } })!.lines).toEqual([
+      'a',
+      'b',
+      '',
+    ])
+  })
+
   it('returns no snippet for a line outside the source', () => {
     expect(createSnippet('a\nb', { start: { line: 0 } })).toBeUndefined()
     expect(createSnippet('a\nb', { start: { line: 3 } })).toBeUndefined()

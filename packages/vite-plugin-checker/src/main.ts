@@ -43,6 +43,7 @@ import {
   type ServeAndBuildChecker,
   type UserPluginConfig,
 } from './types.js'
+import { createUiMiddleware, uiDir, uiUrlFor } from './uiServer.js'
 
 export type {
   CheckerApi,
@@ -138,7 +139,7 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     (payload: ClientDiagnosticPayload) => void
   >()
   let latestOverlayErrors = new Map<number, ClientDiagnosticPayload>()
-  let uiUrl = '/__checker/'
+  let uiUrl = uiUrlFor('/')
   let baseWithOrigin: string
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
@@ -276,7 +277,7 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     },
     configResolved(config) {
       logger = config.logger
-      uiUrl = `${config.base.endsWith('/') ? config.base : `${config.base}/`}__checker/`
+      uiUrl = uiUrlFor(config.base)
       baseWithOrigin = config.server.origin
         ? config.server.origin + config.base
         : config.base
@@ -411,6 +412,10 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
         snapshotBroadcasters.delete(broadcastSnapshot)
         legacyBroadcasters.delete(broadcastLegacy)
       })
+
+      server.middlewares.use(
+        createUiMiddleware({ base: server.config.base, dir: uiDir }),
+      )
 
       server.ws.on(EVENT_HELLO, (_data, client) => {
         client.send(EVENT_SNAPSHOT, snapshot())

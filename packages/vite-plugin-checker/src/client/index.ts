@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
+import { PAGE_MARKER } from '../protocol.js'
 import type { SharedConfig } from '../types'
 
 const _require = createRequire(import.meta.url)
@@ -24,7 +25,7 @@ inject({
 `
 
 export const composeClientInjectionCode = () =>
-  `if (typeof document !== "undefined") import("${RUNTIME_CLIENT_ENTRY_PATH}");`
+  `if (typeof document !== "undefined" && !globalThis.${PAGE_MARKER}) import("${RUNTIME_CLIENT_ENTRY_PATH}");`
 
 // #region
 // NOTE: sync modification with packages/runtime/src/ws.js

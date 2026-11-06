@@ -5,6 +5,9 @@ export const EVENT_SNAPSHOT = 'vite-plugin-checker:snapshot'
 export const EVENT_UPDATE = 'vite-plugin-checker:update'
 export const EVENT_STATUS = 'vite-plugin-checker:status'
 
+/** Global set by the diagnostics page so the in-page UI does not mount inside it. */
+export const PAGE_MARKER = '__VITE_PLUGIN_CHECKER_PAGE__'
+
 export type DiagnosticSeverity = 'error' | 'warning' | 'info'
 
 /** Source lines around a diagnostic */

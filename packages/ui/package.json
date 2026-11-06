@@ -1,0 +1,17 @@
+{
+  "name": "@vite-plugin-checker/ui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Diagnostics page for vite-plugin-checker",
+  "type": "module",
+  "scripts": {
+    "build": "vue-tsc --noEmit && vite build",
+    "dev": "vite build --watch"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "vite": "^8.0.9",
+    "vue": "^3.5.32",
+    "vue-tsc": "~3.3.0"
+  }
+}

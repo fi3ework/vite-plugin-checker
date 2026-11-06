@@ -219,6 +219,7 @@ describe('transform', () => {
       expect(code).toMatch(/^client\(\);\n/)
       expect(code).toContain(`import("${RUNTIME_CLIENT_ENTRY_PATH}")`)
       expect(code).toContain('typeof document !== "undefined"')
+      expect(code).toContain('!globalThis.__VITE_PLUGIN_CHECKER_PAGE__')
     }
   })
 
@@ -285,15 +286,18 @@ describe('dev server state', () => {
       }),
       send: vi.fn(),
     }
+    const middlewares = { use: vi.fn() }
     plugin.configureServer({
       watcher: new EventEmitter(),
       ws,
-      config: { root },
+      middlewares,
+      config: { root, base: '/app/' },
     })
 
     return {
       api: plugin.api as import('../src/protocol').CheckerApi,
       ws,
+      middlewares,
       handlers,
       logger,
       worker: workers.at(-1)!,
@@ -411,6 +415,11 @@ describe('dev server state', () => {
     expect(api.uiUrl).toBe('/app/__checker/')
   })
 
+  it('serves the diagnostics page from the dev server', async () => {
+    const { middlewares } = await serve()
+    expect(middlewares.use).toHaveBeenCalledOnce()
+  })
+
   it('keeps the api working when the overlay is disabled', async () => {
     const { api, ws, worker } = await serve({
       typescript: true,
@@ -452,7 +461,8 @@ describe('configureServer', () => {
     plugin.configureServer({
       watcher,
       ws: { on: vi.fn(), send: vi.fn() },
-      config: { root: '/project' },
+      middlewares: { use: vi.fn() },
+      config: { root: '/project', base: '/' },
     })
 
     watcher.emit('change', 'src/index.ts')
@@ -476,8 +486,10 @@ describe('configureServer', () => {
     plugin.configureServer({
       watcher: new EventEmitter(),
       ws: { on: vi.fn(), send: vi.fn() },
+      middlewares: { use: vi.fn() },
       config: {
         root: '/project',
+        base: '/',
         server: {
           watch: {
             usePolling: true,

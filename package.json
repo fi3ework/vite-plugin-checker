@@ -2,8 +2,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "pnpm -r --filter='./packages/**' run build",
-    "build:test": "pnpm -r --filter='./packages/**' run build:test",
+    "build": "pnpm --filter vite-plugin-checker run build",
+    "build:test": "pnpm --filter vite-plugin-checker run build:test",
     "clean": "pnpm -r --filter='./packages/**' run clean",
     "dev": "pnpm -r --filter='./packages/**' --parallel run dev",
     "docs:build": "pnpm --filter docs run build",
