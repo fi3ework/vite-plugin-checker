@@ -65,6 +65,8 @@ const location = computed(() => {
 
 <style scoped>
 .diagnostic {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 160px;
   display: flex;
   gap: 10px;
   padding: 12px 16px 14px;

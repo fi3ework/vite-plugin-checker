@@ -10,7 +10,17 @@ import { diagnosticsToMarkdown } from './markdown'
 import { loadPreferences, savePreferences } from './preferences'
 import { createState, diagnosticsOf } from './state'
 import { useNow } from './useNow'
-import { countLevels, defaultFilters, filterDiagnostics, type GroupBy, groupDiagnostics } from './view'
+import {
+  countLevels,
+  defaultFilters,
+  filterDiagnostics,
+  type Group,
+  type GroupBy,
+  groupDiagnostics,
+  windowGroups,
+} from './view'
+
+const PAGE_SIZE = 200
 
 const state = reactive(createState())
 const preferences = reactive(loadPreferences())
@@ -25,6 +35,38 @@ const all = computed(() => state.checkers.flatMap(diagnosticsOf))
 const totals = computed(() => countLevels(all.value))
 const visible = computed(() => filterDiagnostics(state.checkers, filters))
 const groups = computed(() => groupDiagnostics(visible.value, state.checkers, filters.groupBy))
+const limit = ref(PAGE_SIZE)
+const isCollapsed = (group: Group) => preferences.collapsed.includes(`${filters.groupBy}:${group.key}`)
+const windowed = computed(() => windowGroups(groups.value, limit.value, isCollapsed))
+const more = ref<HTMLElement>()
+
+watch(
+  () => [filters.query, filters.groupBy, filters.levels, filters.hiddenCheckers],
+  () => {
+    limit.value = PAGE_SIZE
+  },
+  { deep: true },
+)
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    if (entries.some((entry) => entry.isIntersecting)) showMore()
+  },
+  { rootMargin: '800px' },
+)
+watch(
+  [more, limit],
+  () => {
+    observer.disconnect()
+    if (more.value) observer.observe(more.value)
+  },
+  { flush: 'post' },
+)
+onScopeDispose(() => observer.disconnect())
+
+function showMore() {
+  limit.value += PAGE_SIZE
+}
 const busy = computed(() => state.checkers.some((c) => c.status === 'checking' || c.status === 'starting'))
 const failed = computed(() => state.checkers.filter((c) => c.status === 'failed'))
 
@@ -208,14 +250,20 @@ onScopeDispose(() => window.removeEventListener('keydown', onKeydown))
 
       <div v-else class="groups">
         <DiagnosticGroup
-          v-for="group in groups"
+          v-for="{ group, shown } in windowed.windows"
           :key="`${filters.groupBy}:${group.key}`"
           :group="group"
-          :collapsed="preferences.collapsed.includes(`${filters.groupBy}:${group.key}`)"
+          :shown="shown"
+          :collapsed="isCollapsed(group)"
           :show-file="filters.groupBy === 'checker'"
           :label-of="labelOf"
           @toggle="toggleGroup(group.key)"
         />
+        <div v-if="windowed.remaining" ref="more" class="more">
+          <button type="button" class="link" @click="showMore">
+            Show more ({{ windowed.remaining }} remaining)
+          </button>
+        </div>
       </div>
     </main>
   </div>
@@ -376,6 +424,11 @@ kbd {
 .groups {
   display: grid;
   gap: 12px;
+}
+.more {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
 }
 .notice {
   padding: 10px 14px;

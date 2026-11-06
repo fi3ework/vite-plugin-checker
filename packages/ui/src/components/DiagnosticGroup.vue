@@ -5,6 +5,8 @@ import DiagnosticItem from './DiagnosticItem.vue'
 
 const props = defineProps<{
   group: Group
+  /** number of diagnostics to render */
+  shown: number
   collapsed: boolean
   showFile: boolean
   labelOf: (checkerId: string) => string
@@ -13,6 +15,7 @@ const props = defineProps<{
 defineEmits<{ toggle: [] }>()
 
 const counts = computed(() => countLevels(props.group.diagnostics))
+const diagnostics = computed(() => props.group.diagnostics.slice(0, props.shown))
 const id = computed(() => `group-${encodeURIComponent(props.group.key)}`)
 </script>
 
@@ -39,7 +42,7 @@ const id = computed(() => `group-${encodeURIComponent(props.group.key)}`)
     </h2>
     <ul v-show="!collapsed" :id="id" class="list">
       <DiagnosticItem
-        v-for="diagnostic in group.diagnostics"
+        v-for="diagnostic in diagnostics"
         :key="diagnostic.id"
         :diagnostic="diagnostic"
         :label="labelOf(diagnostic.checkerId)"

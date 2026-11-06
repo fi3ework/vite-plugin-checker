@@ -17,6 +17,8 @@ describe.runIf(isServe)('devtools', () => {
     const panelMessage = page
       .frameLocator('devframes-dock-embedded iframe[src*="__checker/"]')
       .locator('.diagnostic .message')
-    expect(await panelMessage.innerText({ timeout: 20_000 })).toBe(message)
+    await expect
+      .poll(() => panelMessage.innerText(), { timeout: 20_000 })
+      .toBe(message)
   })
 })

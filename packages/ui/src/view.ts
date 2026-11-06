@@ -119,3 +119,34 @@ export function groupDiagnostics(
         : order.indexOf(a.key) - order.indexOf(b.key),
     )
 }
+
+export interface GroupWindow {
+  group: Group
+  /** number of the group's diagnostics to render */
+  shown: number
+}
+
+/**
+ * Select the groups and diagnostics to render so that at most `limit`
+ * diagnostics of expanded groups are in the DOM. Collapsed groups cost nothing.
+ */
+export function windowGroups(
+  groups: Group[],
+  limit: number,
+  isCollapsed: (group: Group) => boolean,
+): { windows: GroupWindow[]; remaining: number } {
+  const windows: GroupWindow[] = []
+  let budget = limit
+  let remaining = 0
+  for (const group of groups) {
+    if (isCollapsed(group)) {
+      windows.push({ group, shown: 0 })
+      continue
+    }
+    const shown = Math.min(group.diagnostics.length, budget)
+    if (shown > 0) windows.push({ group, shown })
+    budget -= shown
+    remaining += group.diagnostics.length - shown
+  }
+  return { windows, remaining }
+}

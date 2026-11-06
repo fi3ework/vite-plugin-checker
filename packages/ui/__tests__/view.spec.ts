@@ -5,6 +5,7 @@ import {
   defaultFilters,
   filterDiagnostics,
   groupDiagnostics,
+  windowGroups,
 } from '../src/view'
 import { diagnostic } from './fixtures'
 
@@ -98,6 +99,40 @@ describe('groupDiagnostics', () => {
     ])
     expect(groups[0]!.file).toBe('/root/src/a.ts')
     expect(groups[2]!.file).toBeUndefined()
+  })
+
+  it('windows groups to a diagnostic limit, skipping collapsed groups', () => {
+    const groups = groupDiagnostics(all, checkers, 'file')
+    const shown = (limit: number, collapsed: string[] = []) => {
+      const { windows, remaining } = windowGroups(groups, limit, (g) =>
+        collapsed.includes(g.title),
+      )
+      return [windows.map((w) => [w.group.title, w.shown]), remaining]
+    }
+
+    expect(shown(3)).toEqual([
+      [
+        ['src/a.ts', 2],
+        ['src/b.ts', 1],
+      ],
+      2,
+    ])
+    expect(shown(3, ['src/a.ts'])).toEqual([
+      [
+        ['src/a.ts', 0],
+        ['src/b.ts', 2],
+        ['Other', 1],
+      ],
+      0,
+    ])
+    expect(shown(2)).toEqual([[['src/a.ts', 2]], 3])
+    expect(shown(2, ['Other'])).toEqual([
+      [
+        ['src/a.ts', 2],
+        ['Other', 0],
+      ],
+      2,
+    ])
   })
 
   it('groups by checker in checker order', () => {
