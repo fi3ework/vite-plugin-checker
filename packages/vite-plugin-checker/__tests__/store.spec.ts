@@ -40,14 +40,18 @@ describe('createCheckerStore', () => {
     const { store, events, tick } = setup()
 
     store.setStatus('eslint', 'checking')
-    tick(250)
+    tick(100)
+    store.setStatus('eslint', 'checking')
+    tick(150)
     store.setDiagnostics('eslint', [])
+    tick(1000)
+    store.setStatus('eslint', 'checking')
 
     expect(events).toEqual([
       {
         type: 'status',
         checkerId: 'eslint',
-        status: 'checking',
+        status: 'starting',
         lastRun: { startedAt: 1000 },
       },
       {
@@ -55,6 +59,12 @@ describe('createCheckerStore', () => {
         checkerId: 'eslint',
         status: 'idle',
         lastRun: { startedAt: 1000, finishedAt: 1250 },
+      },
+      {
+        type: 'status',
+        checkerId: 'eslint',
+        status: 'checking',
+        lastRun: { startedAt: 2250 },
       },
     ])
   })

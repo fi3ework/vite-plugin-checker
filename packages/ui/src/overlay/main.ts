@@ -173,6 +173,7 @@ function createOverlay(
     const busy = state.checkers.some(
       (c) => c.status === 'checking' || c.status === 'starting',
     )
+    const starting = state.checkers.some((c) => c.status === 'starting')
     const enabled =
       options.badge === true ||
       (options.badge === 'auto' && !state.indicatorClaimed)
@@ -194,7 +195,7 @@ function createOverlay(
     }
 
     drawer.hidden = !enabled || !open
-    badge.hidden = !enabled || open || !problems
+    badge.hidden = !enabled || open || !(problems || starting)
     badge.setAttribute('aria-expanded', String(open))
     spinner.hidden = !busy
     errors.hidden = !counts.error

@@ -32,25 +32,36 @@ export function createCheckerStore(now = Date.now): CheckerStore {
 
   const setStatus = (
     id: string,
-    status: CheckerStatus,
+    requested: CheckerStatus,
     error?: string,
     force = false,
   ) => {
     const state = checkers.get(id)
     if (!state) return
 
+    const running = state.status === 'checking' || state.status === 'starting'
+    const status =
+      requested === 'checking' && state.status === 'starting'
+        ? 'starting'
+        : requested
     const nextError = status === 'failed' ? error : undefined
-    if (!force && state.status === status && state.error === nextError) return
+    const firstStart = status === 'starting' && !state.lastRun
+    if (
+      !force &&
+      !firstStart &&
+      state.status === status &&
+      state.error === nextError
+    ) {
+      return
+    }
 
-    if (status === 'checking') {
+    if (status === 'checking' || firstStart) {
       state.lastRun = { startedAt: now() }
     } else if (status === 'idle' || status === 'failed') {
       const finishedAt = now()
       state.lastRun = {
         startedAt:
-          state.status === 'checking' && state.lastRun
-            ? state.lastRun.startedAt
-            : finishedAt,
+          running && state.lastRun ? state.lastRun.startedAt : finishedAt,
         finishedAt,
       }
     }

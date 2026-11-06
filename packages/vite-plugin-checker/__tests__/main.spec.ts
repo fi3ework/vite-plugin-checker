@@ -391,7 +391,7 @@ describe('dev server state', () => {
     expect(api.getState()[0]).toMatchObject({
       id: 'typescript',
       label: 'TypeScript',
-      status: 'checking',
+      status: 'starting',
     })
 
     worker.emit('message', {

@@ -44,6 +44,7 @@ export interface Diagnostic {
   editorUrl?: string
 }
 
+/** `'starting'` covers the first run, `'checking'` every later one. */
 export type CheckerStatus = 'starting' | 'checking' | 'idle' | 'failed'
 
 export interface CheckerRun {
