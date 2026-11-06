@@ -2,7 +2,6 @@ import assert from 'node:assert'
 import Module from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parentPort } from 'node:worker_threads'
 import type { ESLint } from 'eslint'
 
 import { Checker } from '../../Checker.js'
@@ -12,13 +11,13 @@ import {
   composeCheckerSummary,
   consoleLog,
   diagnosticToConsoleLevel,
-  diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
   normalizeEslintDiagnostic,
-  toClientPayload,
+  reportDiagnostics,
+  reportStatus,
 } from '../../logger.js'
-import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { DiagnosticLevel } from '../../types.js'
 import { ignoreTransientFsError } from '../../utils.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
 import {
@@ -110,12 +109,10 @@ async function resolveEslintClass(
 }
 
 const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
-  let overlay = true
   let terminal = true
 
   return {
-    config: async ({ enableOverlay, enableTerminal }) => {
-      overlay = enableOverlay
+    config: async ({ enableTerminal }) => {
       terminal = enableTerminal
     },
     async configureServer({ root, watch }) {
@@ -201,15 +198,7 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
           )
         }
 
-        if (overlay) {
-          parentPort?.postMessage({
-            type: ACTION_TYPES.overlayError,
-            payload: toClientPayload(
-              'eslint',
-              diagnostics.map((d) => diagnosticToRuntimeError(d)),
-            ),
-          })
-        }
+        reportDiagnostics(diagnostics)
       }
 
       const lint = async (files: string[]) => {
@@ -221,8 +210,14 @@ const createDiagnostic: CreateDiagnostic<'eslint'> = (pluginConfig) => {
       const scheduler = createLintScheduler({
         debounceMs: pluginConfig.eslint.dev?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
-          const newDiagnostics = await lint(files)
-          applyBatchedDiagnostics(manager, files, newDiagnostics, root)
+          reportStatus('checking')
+          try {
+            const newDiagnostics = await lint(files)
+            applyBatchedDiagnostics(manager, files, newDiagnostics, root)
+          } catch (error) {
+            reportStatus('failed', error)
+            throw error
+          }
           dispatchDiagnostics()
         },
       })

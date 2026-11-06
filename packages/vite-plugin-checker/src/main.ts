@@ -20,19 +20,40 @@ import {
   wrapVirtualPrefix,
 } from './client/index.js'
 import { colorize, supportsTerminalColors } from './colors.js'
-import { withOverlayFileLinks } from './logger.js'
+import { toDiagnostics, toLegacyDiagnostics } from './diagnostics.js'
+import { toClientPayload, withOverlayFileLinks } from './logger.js'
+import {
+  type CheckerApi,
+  EVENT_HELLO,
+  EVENT_SNAPSHOT,
+  EVENT_STATUS,
+  EVENT_UPDATE,
+  PROTOCOL_VERSION,
+  type SnapshotPayload,
+} from './protocol.js'
+import { createCheckerStore } from './store.js'
 import {
   ACTION_TYPES,
   type Action,
   type BuildCheckBinStr,
   type BuildInCheckerNames,
   type ClientDiagnosticPayload,
-  type ClientReconnectPayload,
   type LintWatchOptions,
   type PluginConfig,
   type ServeAndBuildChecker,
   type UserPluginConfig,
 } from './types.js'
+
+export type {
+  CheckerApi,
+  CheckerEvent,
+  CheckerRun,
+  CheckerState,
+  CheckerStatus,
+  Diagnostic,
+  DiagnosticSeverity,
+  Snippet,
+} from './protocol.js'
 
 const VITE_CLIENT_ENTRY_RE =
   /[\\/](?:rolldown-)?vite[\\/]dist[\\/]client[\\/]client\.mjs(?:\?.*)?$/
@@ -50,6 +71,28 @@ const buildInCheckerLoaders: Record<
   svelteCheck: () => import('./checkers/svelteCheck/main.js'),
 }
 
+const checkerLabels: Record<BuildInCheckerNames, string> = {
+  typescript: 'TypeScript',
+  vueTsc: 'vue-tsc',
+  eslint: 'ESLint',
+  stylelint: 'Stylelint',
+  biome: 'Biome',
+  oxlint: 'oxlint',
+  svelteCheck: 'svelte-check',
+}
+
+// TODO: remove with the legacy runtime once the new overlay consumes `EVENT_*`
+const legacyCheckerIds: Record<BuildInCheckerNames, string> = {
+  typescript: 'typescript',
+  vueTsc: 'vue-tsc',
+  eslint: 'eslint',
+  stylelint: 'stylelint',
+  biome: 'biome',
+  oxlint: 'oxlint',
+  svelteCheck: 'svelte-check',
+}
+const LEGACY_EVENT = 'vite-plugin-checker'
+
 async function createCheckers(
   userConfig: UserPluginConfig,
   env: ConfigEnv,
@@ -63,15 +106,19 @@ async function createCheckers(
   ) as BuildInCheckerNames[]) {
     if (!userConfig[name]) continue
     const { createServeAndBuild } = await buildInCheckerLoaders[name]()
-    serveAndBuildCheckers.push(
-      createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env),
-    )
+    serveAndBuildCheckers.push({
+      ...createServeAndBuild(
+        { [name]: userConfig[name], ...sharedConfig },
+        env,
+      ),
+      name,
+    })
   }
 
   return serveAndBuildCheckers
 }
 
-export function checker(userConfig: UserPluginConfig): Plugin {
+export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
   const enableBuild = userConfig?.enableBuild ?? true
   const enableOverlay = userConfig?.overlay !== false
   const enableTerminal = userConfig?.terminal !== false
@@ -80,14 +127,18 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
-  let latestOverlayErrors: ClientReconnectPayload['data'] = []
   let checkersPromise: Promise<ServeAndBuildChecker[]> | null = null
   let serverCount = 0
   let workersConfigured = false
-  const serverListeners = new WeakMap<
-    ResolvedConfig,
-    ((action: Action) => void)[]
+  const serverCleanups = new WeakMap<ResolvedConfig, () => void>()
+  const store = createCheckerStore()
+  const indicatorClaims = new Set<symbol>()
+  const snapshotBroadcasters = new Set<() => void>()
+  const legacyBroadcasters = new Set<
+    (payload: ClientDiagnosticPayload) => void
   >()
+  let latestOverlayErrors = new Map<number, ClientDiagnosticPayload>()
+  let uiUrl = '/__checker/'
   let baseWithOrigin: string
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
@@ -95,9 +146,93 @@ export function checker(userConfig: UserPluginConfig): Plugin {
   let checkerPromise: Promise<void> | null = null
   let resolvedRoot = process.cwd()
 
+  const snapshot = (): SnapshotPayload => ({
+    protocol: PROTOCOL_VERSION,
+    checkers: store.getState(),
+    indicatorClaimed: indicatorClaims.size > 0,
+  })
+
+  const broadcastSnapshot = () => {
+    for (const broadcast of snapshotBroadcasters) broadcast()
+  }
+
+  const api: CheckerApi = {
+    protocol: PROTOCOL_VERSION,
+    getState: () => store.getState(),
+    subscribe: (listener) => store.subscribe(listener),
+    claimIndicator(owner) {
+      const claim = Symbol(owner)
+      indicatorClaims.add(claim)
+      if (indicatorClaims.size === 1) broadcastSnapshot()
+      return () => {
+        if (indicatorClaims.delete(claim) && indicatorClaims.size === 0) {
+          broadcastSnapshot()
+        }
+      }
+    },
+    get uiUrl() {
+      return uiUrl
+    },
+  }
+
+  const startWorkers = (root: string, watch: LintWatchOptions | undefined) => {
+    const context = { root, editorUrl }
+
+    checkers.forEach((checker, index) => {
+      const name = checker.name!
+      const { worker } = checker.serve
+      store.register(name, checkerLabels[name])
+
+      worker.on('message', (action: Action) => {
+        switch (action.type) {
+          case ACTION_TYPES.diagnostics: {
+            store.setDiagnostics(
+              name,
+              toDiagnostics(name, action.payload, context),
+            )
+            if (!enableOverlay) break
+            const payload = withOverlayFileLinks(
+              toClientPayload(
+                legacyCheckerIds[name],
+                toLegacyDiagnostics(action.payload),
+              ),
+              root,
+              editorUrl,
+            )
+            latestOverlayErrors.set(index, payload)
+            for (const broadcast of legacyBroadcasters) broadcast(payload)
+            break
+          }
+          case ACTION_TYPES.status:
+            store.setStatus(name, action.payload.status, action.payload.error)
+            break
+          case ACTION_TYPES.console:
+            if (Checker.logger.length) {
+              // for test injection and customize logger in the future
+              Checker.log(action)
+            } else {
+              logger![action.level](action.payload)
+            }
+            break
+        }
+      })
+
+      worker.on('error', (error: Error) => {
+        store.setStatus(name, 'failed', error.message)
+        logger?.error(
+          colorize('red', `[${checkerLabels[name]}] ${error.stack ?? error}`),
+        )
+      })
+
+      checker.serve.configureServer({ root, watch })
+      store.setStatus(name, 'checking')
+    })
+  }
+
   return {
     name: 'vite-plugin-checker',
     enforce: 'pre',
+    api,
     // @ts-expect-error
     __internal__checker: Checker,
     config: async (_config, env) => {
@@ -124,7 +259,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
             checkers = created
             for (const checker of checkers) {
               checker.serve.config({
-                enableOverlay,
                 enableTerminal,
                 terminalColors: supportsTerminalColors(),
                 terminalHyperlinks:
@@ -142,6 +276,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     configResolved(config) {
       logger = config.logger
+      uiUrl = `${config.base.endsWith('/') ? config.base : `${config.base}/`}__checker/`
       baseWithOrigin = config.server.origin
         ? config.server.origin + config.base
         : config.base
@@ -161,19 +296,18 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       const config =
         environment?.getTopLevelConfig() ?? (this as any)._container?.config
 
-      const listeners = serverListeners.get(config)
-      if (!listeners) return
-      serverListeners.delete(config)
+      const cleanup = serverCleanups.get(config)
+      if (!cleanup) return
+      serverCleanups.delete(config)
+      cleanup()
 
       serverCount--
-      checkers.forEach((checker, index) => {
-        checker.serve.worker.off('message', listeners[index]!)
-      })
 
       if (serverCount === 0) {
         const terminated = checkers
         checkers = []
-        latestOverlayErrors = []
+        latestOverlayErrors = new Map()
+        store.clear()
         checkersPromise = null
         workersConfigured = false
         await Promise.all(
@@ -249,60 +383,46 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     configureServer(server) {
       serverCount++
-      if (latestOverlayErrors.length !== checkers.length) {
-        latestOverlayErrors = new Array(checkers.length)
-      }
-      const listeners: ((action: Action) => void)[] = []
-      serverListeners.set(server.config, listeners)
-      const root = userConfig.root || server.config.root
 
       if (!workersConfigured) {
         workersConfigured = true
-        const watch = toLintWatchOptions(server.config.server?.watch)
-        checkers.forEach((checker) => {
-          checker.serve.configureServer({
-            root,
-            watch,
-          })
-        })
+        startWorkers(
+          userConfig.root || server.config.root,
+          toLintWatchOptions(server.config.server?.watch),
+        )
       }
 
-      // for dev mode (2/2)
-      // Get the server instance and keep reference in a closure
-      checkers.forEach((checker, index) => {
-        const { worker } = checker.serve
-        const listener = (action: Action) => {
-          if (action.type === ACTION_TYPES.overlayError) {
-            const payload =
-              action.payload &&
-              withOverlayFileLinks(
-                action.payload as ClientDiagnosticPayload,
-                root,
-                editorUrl,
-              )
-            latestOverlayErrors[index] = payload as ClientDiagnosticPayload
-            if (payload) {
-              server.ws.send('vite-plugin-checker', payload)
-            }
-          } else if (action.type === ACTION_TYPES.console) {
-            if (Checker.logger.length) {
-              // for test injection and customize logger in the future
-              Checker.log(action)
-            } else {
-              logger![action.level](action.payload)
-            }
-          }
+      const unsubscribe = store.subscribe((event) => {
+        if (event.type === 'update') {
+          const { type: _, ...payload } = event
+          server.ws.send(EVENT_UPDATE, payload)
+        } else {
+          const { type: _, ...payload } = event
+          server.ws.send(EVENT_STATUS, payload)
         }
-        listeners.push(listener)
-        worker.on('message', listener)
+      })
+      const broadcastSnapshot = () => server.ws.send(EVENT_SNAPSHOT, snapshot())
+      const broadcastLegacy = (payload: ClientDiagnosticPayload) =>
+        server.ws.send(LEGACY_EVENT, payload)
+      snapshotBroadcasters.add(broadcastSnapshot)
+      legacyBroadcasters.add(broadcastLegacy)
+      serverCleanups.set(server.config, () => {
+        unsubscribe()
+        snapshotBroadcasters.delete(broadcastSnapshot)
+        legacyBroadcasters.delete(broadcastLegacy)
       })
 
-      server.ws.on('vite-plugin-checker', (data) => {
-        // NOTE: sync modification with packages /packages/runtime/src/ws.js
+      server.ws.on(EVENT_HELLO, (_data, client) => {
+        client.send(EVENT_SNAPSHOT, snapshot())
+      })
+
+      server.ws.on(LEGACY_EVENT, (data) => {
         if (data.event === 'runtime-loaded') {
-          server.ws.send('vite-plugin-checker', {
+          server.ws.send(LEGACY_EVENT, {
             event: WS_CHECKER_RECONNECT_EVENT,
-            data: latestOverlayErrors.filter(Boolean),
+            data: [...latestOverlayErrors]
+              .sort(([a], [b]) => a - b)
+              .map(([, payload]) => payload),
           })
         }
       })

@@ -1,7 +1,11 @@
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { stripVTControlCharacters as strip } from 'node:util'
-import { createFrame, tsLikeLocToBabelLoc } from '../../codeFrame.js'
+import {
+  createFrame,
+  createSnippet,
+  tsLikeLocToBabelLoc,
+} from '../../codeFrame.js'
 import type { NormalizedDiagnostic } from '../../logger.js'
 import { readSources } from '../../sources.js'
 import { DiagnosticLevel } from '../../types.js'
@@ -57,6 +61,7 @@ interface MachineDiagnostic {
 }
 
 export function createMachineOutputParser(handlers: {
+  onStart?: () => void
   onComplete: (diagnostics: NormalizedDiagnostic[]) => void
   onFailure: (message: string) => void
 }): { push: (line: string) => void } {
@@ -74,6 +79,7 @@ export function createMachineOutputParser(handlers: {
         case 'START':
           workspace = JSON.parse(rest!.trim())
           pending = []
+          handlers.onStart?.()
           break
         case '{':
           pending.push(JSON.parse(`{${rest}`))
@@ -109,14 +115,17 @@ async function normalizeDiagnostics(
     const codeFrame = source ? createFrame(source, loc) : undefined
 
     const ruleUrl = d.codeDescription?.href
+    const code = formatCode(d)
 
     return {
       message: formatMessage(d),
-      rule: ruleUrl ? formatCode(d) : undefined,
+      rule: ruleUrl ? code : undefined,
       ruleUrl,
+      code,
       conclusion: '',
       codeFrame,
       stripedCodeFrame: codeFrame && strip(codeFrame),
+      snippet: source ? createSnippet(source, loc, id) : undefined,
       id,
       checker: 'svelte-check',
       loc,

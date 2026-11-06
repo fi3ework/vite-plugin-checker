@@ -8,26 +8,49 @@ import {
   wrapVirtualPrefix,
 } from '../src/client'
 import { checker } from '../src/main'
-import type { UserPluginConfig } from '../src/types'
+import {
+  EVENT_HELLO,
+  EVENT_SNAPSHOT,
+  EVENT_STATUS,
+  EVENT_UPDATE,
+} from '../src/protocol'
+import {
+  ACTION_TYPES,
+  DiagnosticLevel,
+  type DiagnosticRecord,
+  type UserPluginConfig,
+} from '../src/types'
 
-const { execMock, buildBinMock, configureServerMock } = vi.hoisted(() => ({
-  execMock: vi.fn(),
-  buildBinMock: vi.fn(() => ['tsc', ['--noEmit']] as const),
-  configureServerMock: vi.fn(),
-}))
+const { execMock, buildBinMock, configureServerMock, workers } = vi.hoisted(
+  () => ({
+    execMock: vi.fn(),
+    buildBinMock: vi.fn(() => ['tsc', ['--noEmit']] as const),
+    configureServerMock: vi.fn(),
+    workers: [] as import('node:events').EventEmitter[],
+  }),
+)
 
 vi.mock('tinyexec', () => ({ x: execMock }))
 
-vi.mock('../src/checkers/typescript/main', () => ({
-  createServeAndBuild: () => ({
-    serve: {
-      config: vi.fn(),
-      configureServer: configureServerMock,
-      worker: { on: vi.fn(), off: vi.fn() },
+vi.mock('../src/checkers/typescript/main', async () => {
+  const { EventEmitter } = await import('node:events')
+  return {
+    createServeAndBuild: () => {
+      const worker = Object.assign(new EventEmitter(), {
+        terminate: vi.fn(async () => {}),
+      })
+      workers.push(worker)
+      return {
+        serve: {
+          config: vi.fn(),
+          configureServer: configureServerMock,
+          worker,
+        },
+        build: { buildBin: buildBinMock },
+      }
     },
-    build: { buildBin: buildBinMock },
-  }),
-}))
+  }
+})
 
 interface FilteredHook {
   filter: { id: RegExp }
@@ -225,6 +248,181 @@ describe('transform', () => {
     await plugin.config({}, { command: 'build', mode: 'production' })
 
     expect(plugin.transform.handler('', clientEntry)).toBeUndefined()
+  })
+})
+
+describe('dev server state', () => {
+  const root = path.resolve('/project')
+  const file = path.join(root, 'src', 'main.ts')
+  const record: DiagnosticRecord = {
+    message: `Type 'number' is not assignable to type 'string'.`,
+    stack: '',
+    id: file,
+    checkerId: 'TypeScript',
+    level: DiagnosticLevel.Error,
+    loc: { file, line: 1, column: 7 },
+    code: 'TS2322',
+  }
+
+  async function serve(userConfig: UserPluginConfig = { typescript: true }) {
+    const plugin = checker(userConfig) as any
+    const logger = { error: vi.fn(), warn: vi.fn(), info: vi.fn() }
+    await plugin.config({}, { command: 'serve', mode: 'development' })
+    plugin.configResolved({
+      root,
+      base: '/app/',
+      command: 'serve',
+      isProduction: false,
+      logger,
+      server: { origin: undefined },
+      build: { watch: null },
+    })
+
+    const handlers = new Map<string, (...args: any[]) => void>()
+    const ws = {
+      on: vi.fn((event: string, handler: (...args: any[]) => void) => {
+        handlers.set(event, handler)
+      }),
+      send: vi.fn(),
+    }
+    plugin.configureServer({
+      watcher: new EventEmitter(),
+      ws,
+      config: { root },
+    })
+
+    return {
+      api: plugin.api as import('../src/protocol').CheckerApi,
+      ws,
+      handlers,
+      logger,
+      worker: workers.at(-1)!,
+    }
+  }
+
+  const sent = (ws: { send: ReturnType<typeof vi.fn> }, event: string) =>
+    ws.send.mock.calls
+      .filter(([name]) => name === event)
+      .map(([, data]) => data)
+
+  it('exposes the api before a dev server exists', () => {
+    const { api } = checker({ typescript: true })
+
+    expect(api!.protocol).toBe(1)
+    expect(api!.getState()).toEqual([])
+    expect(api!.uiUrl).toBe('/__checker/')
+  })
+
+  it('publishes worker diagnostics through the api and the HMR channel', async () => {
+    const { api, ws, worker } = await serve()
+    const events: unknown[] = []
+    api.subscribe((event) => events.push(event))
+
+    expect(api.getState()[0]).toMatchObject({
+      id: 'typescript',
+      label: 'TypeScript',
+      status: 'checking',
+    })
+
+    worker.emit('message', {
+      type: ACTION_TYPES.diagnostics,
+      payload: [record],
+    })
+
+    const [state] = api.getState()
+    expect(state).toMatchObject({ status: 'idle' })
+    expect(state!.diagnostics).toEqual([
+      expect.objectContaining({
+        checkerId: 'typescript',
+        code: 'TS2322',
+        displayFile: 'src/main.ts',
+        line: 1,
+        column: 7,
+      }),
+    ])
+    expect(events.map((e: any) => e.type)).toEqual(['update', 'status'])
+    expect(sent(ws, EVENT_UPDATE)).toEqual([
+      { checkerId: 'typescript', files: { [file]: state!.diagnostics } },
+    ])
+    expect(sent(ws, EVENT_STATUS).at(-1)).toMatchObject({
+      checkerId: 'typescript',
+      status: 'idle',
+    })
+    expect(sent(ws, 'vite-plugin-checker')).toEqual([
+      expect.objectContaining({ event: 'vite-plugin-checker:error' }),
+    ])
+  })
+
+  it('answers a client hello with a snapshot', async () => {
+    const { handlers, worker } = await serve()
+    worker.emit('message', {
+      type: ACTION_TYPES.diagnostics,
+      payload: [record],
+    })
+
+    const client = { send: vi.fn() }
+    handlers.get(EVENT_HELLO)!({ protocol: 1 }, client)
+
+    expect(client.send).toHaveBeenCalledWith(EVENT_SNAPSHOT, {
+      protocol: 1,
+      checkers: [expect.objectContaining({ id: 'typescript' })],
+      indicatorClaimed: false,
+    })
+  })
+
+  it('broadcasts indicator claims only when the claimed state flips', async () => {
+    const { api, ws } = await serve()
+
+    const releaseA = api.claimIndicator('my-bad')
+    const releaseB = api.claimIndicator('nuxt')
+    releaseA()
+    releaseA()
+    expect(sent(ws, EVENT_SNAPSHOT)).toEqual([
+      expect.objectContaining({ indicatorClaimed: true }),
+    ])
+
+    releaseB()
+    expect(sent(ws, EVENT_SNAPSHOT).at(-1)).toMatchObject({
+      indicatorClaimed: false,
+    })
+  })
+
+  it('marks a checker failed when its worker reports or crashes', async () => {
+    const { api, logger, worker } = await serve()
+
+    worker.emit('message', {
+      type: ACTION_TYPES.status,
+      payload: { status: 'failed', error: 'tsconfig.json not found' },
+    })
+    expect(api.getState()[0]).toMatchObject({
+      status: 'failed',
+      error: 'tsconfig.json not found',
+    })
+
+    worker.emit('error', new Error('worker crashed'))
+    expect(api.getState()[0]).toMatchObject({ error: 'worker crashed' })
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.stringContaining('worker crashed'),
+    )
+  })
+
+  it('includes the Vite base in the UI URL', async () => {
+    const { api } = await serve()
+    expect(api.uiUrl).toBe('/app/__checker/')
+  })
+
+  it('keeps the api working when the overlay is disabled', async () => {
+    const { api, ws, worker } = await serve({
+      typescript: true,
+      overlay: false,
+    })
+    worker.emit('message', {
+      type: ACTION_TYPES.diagnostics,
+      payload: [record],
+    })
+
+    expect(api.getState()[0]!.diagnostics).toHaveLength(1)
+    expect(sent(ws, 'vite-plugin-checker')).toEqual([])
   })
 })
 

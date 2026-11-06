@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import {
   createFrame,
+  createSnippet,
   lineColLocToBabelLoc,
   tsLikeLocToBabelLoc,
 } from '../src/codeFrame'
@@ -32,6 +33,46 @@ describe('code frame', () => {
       start: { line: 2, column: 3 },
       end: { line: 4, column: 5 },
     })
+  })
+
+  it('extracts the lines around a location', () => {
+    const source = Array.from({ length: 20 }, (_, i) => `line ${i + 1}`).join(
+      '\r\n',
+    )
+
+    expect(
+      createSnippet(source, { start: { line: 10 } }, '/p/App.vue?vue'),
+    ).toEqual({
+      start: 8,
+      lines: ['line 8', 'line 9', 'line 10', 'line 11', 'line 12', 'line 13'],
+      lang: 'vue',
+    })
+    expect(
+      createSnippet(source, { start: { line: 1 }, end: { line: 2 } }),
+    ).toEqual({
+      start: 1,
+      lines: ['line 1', 'line 2', 'line 3', 'line 4', 'line 5'],
+    })
+    expect(createSnippet(source, { start: { line: 19 } })!.lines).toEqual([
+      'line 17',
+      'line 18',
+      'line 19',
+      'line 20',
+    ])
+  })
+
+  it('caps the snippet of a long range', () => {
+    const source = Array.from({ length: 100 }, (_, i) => `${i + 1}`).join('\n')
+    const snippet = createSnippet(source, {
+      start: { line: 5 },
+      end: { line: 90 },
+    })
+    expect(snippet!.lines.at(-1)).toBe('18')
+  })
+
+  it('returns no snippet for a line outside the source', () => {
+    expect(createSnippet('a\nb', { start: { line: 0 } })).toBeUndefined()
+    expect(createSnippet('a\nb', { start: { line: 3 } })).toBeUndefined()
   })
 
   it('transform location without offset', () => {

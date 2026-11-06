@@ -2,6 +2,7 @@ import type { Worker } from 'node:worker_threads'
 import type { ESLint } from 'eslint'
 import type * as Stylelint from 'stylelint'
 import type { ConfigEnv, ErrorPayload } from 'vite'
+import type { CheckerStatus, Snippet } from './protocol.js'
 
 /* ----------------------------- userland plugin options ----------------------------- */
 
@@ -230,6 +231,15 @@ export interface DiagnosticToRuntime extends ErrorPayloadErr {
   ruleUrl?: string
 }
 
+/** Diagnostic posted from a checker worker to the main thread */
+export interface DiagnosticRecord extends DiagnosticToRuntime {
+  /** error code, when it is not the `rule` */
+  code?: string
+  endLine?: number
+  endColumn?: number
+  snippet?: Snippet
+}
+
 /** Location passed to `overlay.editorUrl` */
 export interface EditorLocation {
   /** absolute path of the file, as reported by the checker */
@@ -355,7 +365,8 @@ export type UserPluginConfig = Partial<PluginConfig>
 export enum ACTION_TYPES {
   config = 'config',
   configureServer = 'configureServer',
-  overlayError = 'overlayError',
+  diagnostics = 'diagnostics',
+  status = 'status',
   console = 'console',
 }
 
@@ -364,13 +375,18 @@ interface AbstractAction {
   payload: unknown
 }
 
-export interface OverlayErrorAction extends AbstractAction {
-  type: ACTION_TYPES.overlayError
-  /**
-   * send `ClientPayload` to raise error overlay
-   * send `null` to clear overlay for current checker
-   */
-  payload: ClientPayload
+/** Every current diagnostic of the checker, replacing the previous set */
+export interface DiagnosticsAction extends AbstractAction {
+  type: ACTION_TYPES.diagnostics
+  payload: DiagnosticRecord[]
+}
+
+export interface StatusAction extends AbstractAction {
+  type: ACTION_TYPES.status
+  payload: {
+    status: Extract<CheckerStatus, 'checking' | 'failed'>
+    error?: string
+  }
 }
 
 export interface ConfigAction extends AbstractAction {
@@ -400,7 +416,6 @@ export interface ConsoleAction extends AbstractAction {
 }
 
 interface ConfigActionPayload {
-  enableOverlay: boolean
   enableTerminal: boolean
   terminalColors: boolean
   terminalHyperlinks: boolean
@@ -411,7 +426,8 @@ export type Action =
   | ConfigAction
   | ConfigureServerAction
   | ConsoleAction
-  | OverlayErrorAction
+  | DiagnosticsAction
+  | StatusAction
 
 /* ----------------------------- internal types ----------------------------- */
 
@@ -431,6 +447,7 @@ export interface ConfigureServeChecker {
 }
 
 export interface ServeAndBuildChecker {
+  name?: BuildInCheckerNames
   serve: ConfigureServeChecker
   build: { buildBin: BuildCheckBin; buildFile?: string }
 }
