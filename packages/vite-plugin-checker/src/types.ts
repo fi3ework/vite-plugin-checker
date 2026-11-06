@@ -7,20 +7,23 @@ import type { ConfigEnv, ErrorPayload } from 'vite'
 
 interface TsConfigOptions {
   /**
-   * path to tsconfig.json file
+   * Path to the tsconfig file, relative to `root`.
+   * @default 'tsconfig.json'
    */
   tsconfigPath: string
   /**
-   * path to typescript package
+   * Module specifier or absolute path of the `typescript` package used in dev
+   * mode. Only supported by the `typescript` checker.
+   * @default 'typescript'
    */
   typescriptPath: string
   /**
-   * root path of cwd
+   * Directory to resolve `tsconfigPath` from. Defaults to the Vite root.
    */
   root: string
   /**
-   * run in build mode (`--build`). Defaults to `true` when the tsconfig is
-   * solution-style (`"files": []` with `references`), otherwise `false`
+   * Run in build mode (`--build`). Defaults to `true` when the tsconfig is
+   * solution-style (`"files": []` with `references`), otherwise `false`.
    */
   buildMode: boolean
 }
@@ -49,12 +52,13 @@ export type EslintConfig =
   | false
   | {
       /**
-       * Configure path to watch files
+       * Paths to watch in dev mode, relative to the root. Defaults to the root.
        */
       watchPath?: string | string[]
       /**
-       * lintCommand will be executed at build mode, and will also be used as
-       * default config for dev mode when options.eslint.dev.eslint is nullable.
+       * ESLint CLI command, such as `eslint "./src/**\/*.ts"`. Runs as-is in
+       * build mode; in dev mode its options and file patterns are passed to
+       * the ESLint Node.js API.
        */
       lintCommand: string
       /**
@@ -69,9 +73,12 @@ export type EslintConfig =
        */
       useFlatConfig?: boolean
       dev?: Partial<{
-        /** You can override the options of translated from lintCommand. */
+        /** ESLint options that override the ones translated from `lintCommand`. */
         overrideConfig: ESLint.Options
-        /** which level of the diagnostic will be emitted from plugin */
+        /**
+         * Diagnostic levels to report.
+         * @default ['error', 'warning']
+         */
         logLevel: ('error' | 'warning')[]
         /**
          * How long to wait (in ms) after a file change before linting,
@@ -87,18 +94,22 @@ export type StylelintConfig =
   | false
   | {
       /**
-       * Configure path to watch files
+       * Paths to watch in dev mode, relative to the root. Defaults to the root.
        */
       watchPath?: string | string[]
       /**
-       * lintCommand will be executed at build mode, and will also be used as
-       * default config for dev mode when options.stylelint.dev.stylelint is nullable.
+       * Stylelint CLI command, such as `stylelint "./src/**\/*.css"`. Runs
+       * as-is in build mode; in dev mode its options and file pattern are
+       * passed to the Stylelint Node.js API.
        */
       lintCommand: string
       dev?: Partial<{
-        /** You can override the options of translated from lintCommand. */
+        /** Stylelint options that override the ones translated from `lintCommand`. */
         overrideConfig: Stylelint.LinterOptions
-        /** which level of the diagnostic will be emitted from plugin */
+        /**
+         * Diagnostic levels to report.
+         * @default ['error', 'warning']
+         */
         logLevel: ('error' | 'warning')[]
         /**
          * How long to wait (in ms) after a file change before linting,
@@ -115,25 +126,27 @@ export type BiomeConfig =
   | boolean
   | {
       /**
-       * Command will be used in dev and build mode, will be override
-       * if `dev.command` or `build.command` is set their mode.
+       * Biome command to run. Defaults to `lint` in dev mode and `check` in
+       * build mode. Overridden by `dev.command` and `build.command`.
        */
       command?: BiomeCommand
       /**
-       * Flags of the command, will be override if `dev.flags`
-       * or `build.command` is set their mode.
-       * */
+       * CLI flags for the command. Overridden by `dev.flags` and `build.flags`.
+       */
       flags?: string
       /**
-       * Configure path to watch files
+       * Paths to watch in dev mode, relative to the root. Defaults to the root.
        */
       watchPath?: string | string[]
       dev?: Partial<{
-        /** Command will be used in dev mode */
+        /** Biome command to run in dev mode. */
         command: BiomeCommand
-        /** Flags of the command */
+        /** CLI flags for the command in dev mode. */
         flags?: string
-        /** Which level of the diagnostic will be emitted from plugin */
+        /**
+         * Diagnostic levels to report.
+         * @default ['error', 'warning', 'info']
+         */
         logLevel: ('error' | 'warning' | 'info')[]
         /**
          * How long to wait (in ms) after a file change before linting,
@@ -143,26 +156,31 @@ export type BiomeConfig =
         debounceMs: number
       }>
       build?: Partial<{
-        /** Command will be used in build mode */
+        /** Biome command to run in build mode. */
         command: BiomeCommand
-        /** Flags of the command */
+        /** CLI flags for the command in build mode. */
         flags?: string
       }>
     }
 
+/** oxlint checker configuration */
 export type OxlintConfig =
   | boolean
   | {
       /**
-       * `lintCommand` will be executed at build mode.
+       * oxlint CLI command. Used in both dev and build mode.
+       * @default 'oxlint'
        */
-      lintCommand: string
+      lintCommand?: string
       /**
-       * Configure path to watch files
+       * Paths to watch in dev mode, relative to the root. Defaults to the root.
        */
       watchPath?: string | string[]
       dev?: Partial<{
-        /** Specifies which level of the diagnostic will be emitted from the plugin */
+        /**
+         * Diagnostic levels to report.
+         * @default ['error', 'warning']
+         */
         logLevel: ('error' | 'warning')[]
         /**
          * How long to wait (in ms) after a file change before linting,
@@ -183,7 +201,10 @@ export type SvelteCheckConfig =
        */
       flags?: string
       dev?: Partial<{
-        /** Which level of the diagnostic will be emitted from plugin */
+        /**
+         * Diagnostic levels to report.
+         * @default ['error', 'warning']
+         */
         logLevel: ('error' | 'warning')[]
       }>
     }
@@ -248,8 +269,10 @@ export interface SharedConfig {
     | boolean
     | {
         /**
-         * Set this true if you want the overlay to default to being open if
-         * errors/warnings are found
+         * Whether the panel starts open when there are diagnostics.
+         * - `true`: open when there are errors or warnings
+         * - `'error'`: open only when there are errors
+         * - `false`: start collapsed to the badge
          * @defaultValue `true`
          */
         initialIsOpen?: boolean | 'error'
@@ -305,8 +328,7 @@ export interface SharedConfig {
    */
   enableBuild: boolean
   /**
-   * Configure root directory of checkers
-   * @defaultValue no default value
+   * Directory the checkers run from. Defaults to the Vite root.
    */
   root?: string
 }
