@@ -1,41 +1,58 @@
 # svelte-check
 
-You can use the svelte-check checker for your Svelte project.
+The svelte-check checker runs [svelte-check](https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check), which reports type errors, Svelte compiler warnings, and accessibility warnings in Svelte components and `.ts` files.
 
-## Installation
+## Set up
 
-1. Make sure [svelte-check](https://www.npmjs.com/package/svelte-check) is installed as a peer dependency of your Vite project.
+1. Install `svelte-check` (version 4 or later) and TypeScript:
 
-   ```bash
-   pnpm add svelte-check typescript -D
+   ::: code-group
+
+   ```bash [pnpm]
+   pnpm add -D svelte-check typescript
    ```
 
-2. Add `svelteCheck` field to plugin config. Valid options are either `true` or a configuration object. See the [svelte-check documentation](https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check#usage) for the available flags. The command runs from Vite's [root](https://vitejs.dev/config/#root).
-
-   ```js
-   // e.g.
-   export default {
-     plugins: [
-       checker({
-         svelteCheck: true,
-         // or
-         svelteCheck: {
-           flags: '--tsconfig ./tsconfig.app.json',
-         },
-       }),
-     ],
-   }
+   ```bash [npm]
+   npm install -D svelte-check typescript
    ```
 
-   :::tip
-   In dev mode, svelte-check runs with `--watch --output machine-verbose`, so `--watch`, `--preserveWatchOutput` and `--output` in `flags` only apply to build mode.
+   ```bash [yarn]
+   yarn add -D svelte-check typescript
+   ```
+
+   ```bash [bun]
+   bun add -d svelte-check typescript
+   ```
+
    :::
 
-## Configuration
+2. Enable the checker:
 
-Advanced object configuration table of `options.svelteCheck`
+   ```ts
+   checker({
+     svelteCheck: true,
+   })
+   ```
 
-| field        | Type                       | Default value          | Description                                                                                               |
-| :----------- | -------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------- |
-| flags        | `string`                   | `''`                   | CLI flags to pass to `svelte-check`.                                                                      |
-| dev.logLevel | `('error' \| 'warning')[]` | `['error', 'warning']` | **(Only in dev mode)** Which level of svelte-check diagnostics should be emitted to terminal and overlay. |
+In dev mode, the checker runs `svelte-check --watch` from the Vite root. In build mode, it runs `svelte-check`.
+
+## Pass flags to svelte-check
+
+Use `flags` to pass [svelte-check CLI flags](https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check#usage), for example to choose a tsconfig:
+
+```ts
+checker({
+  svelteCheck: {
+    flags: '--tsconfig ./tsconfig.app.json',
+  },
+})
+```
+
+In dev mode, the checker manages `--watch`, `--preserveWatchOutput`, and `--output` itself, so those flags only apply in build mode. `--workspace` applies in both modes and defaults to the Vite root.
+
+## Options
+
+| Option         | Type                       | Default                | Description                              |
+| -------------- | -------------------------- | ---------------------- | ---------------------------------------- |
+| `flags`        | `string`                   | `''`                   | CLI flags for `svelte-check`.            |
+| `dev.logLevel` | `('error' \| 'warning')[]` | `['error', 'warning']` | Diagnostic levels to report in dev mode. |

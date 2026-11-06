@@ -7,3 +7,28 @@
   publish = "docs/.vitepress/dist"
   command = "npx pnpm i --store=node_modules/.pnpm-store --frozen-lockfile && npm run docs:build"
   ignore = "./scripts/docs-check.sh"
+
+[[redirects]]
+  from = "/introduction/introduction"
+  to = "/guide/introduction"
+[[redirects]]
+  from = "/introduction/introduction.html"
+  to = "/guide/introduction"
+[[redirects]]
+  from = "/introduction/getting-started"
+  to = "/guide/getting-started"
+[[redirects]]
+  from = "/introduction/getting-started.html"
+  to = "/guide/getting-started"
+[[redirects]]
+  from = "/configuration/config"
+  to = "/reference/shared-options"
+[[redirects]]
+  from = "/configuration/config.html"
+  to = "/reference/shared-options"
+[[redirects]]
+  from = "/faq/integration"
+  to = "/recipes/backend-integration"
+[[redirects]]
+  from = "/faq/integration.html"
+  to = "/recipes/backend-integration"

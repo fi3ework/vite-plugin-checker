@@ -1,89 +1,122 @@
 # ESLint
 
-## Installation
+The ESLint checker reports lint problems using your project's ESLint configuration. It supports ESLint 9 and later, with flat config (`eslint.config.js`) by default.
 
-1. Make sure [eslint](https://www.npmjs.com/package/eslint) and related plugins for your `eslintrc` are installed as peer dependencies.
+## Set up
 
-:::warning
+1. Install ESLint and the plugins your config uses:
 
-<details>
-<summary>Check out if version less than 0.7.1.</summary>
+   ::: code-group
 
-**(Optional but highly recommended)** Install `optionator@^0.9.1` with your package manager. It's needed because of ESLint dependents on it. It's probably working fine even it's not installed as it's accessed as a phantom dependency. But when you set `hoist=false` of pnpm. It won't be accessible anymore without explicit installation.
+   ```bash [pnpm]
+   pnpm add -D eslint
+   ```
 
-From 0.7.1, the plugin will resolve optionator from eslint's path, so no more need to install it explicitly.
+   ```bash [npm]
+   npm install -D eslint
+   ```
 
-</details>
+   ```bash [yarn]
+   yarn add -D eslint
+   ```
 
-:::
+   ```bash [bun]
+   bun add -d eslint
+   ```
 
-2. Add `eslint` field to plugin config and `options.eslint.lintCommand` is required. The `lintCommand` is the same as the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
+   :::
 
-:::tip
-Do not add `--fix` to the lint command since the plugin is only aiming at checking issues.
-:::
+2. Enable the checker with a `lintCommand`. Use the same command you'd run in your terminal or CI:
 
-```js
-// e.g.
-export default {
-  plugins: [
-    checker({
-      eslint: {
-        // for example, lint .ts and .tsx
-        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-      },
-    }),
-  ],
-}
+   ```ts
+   checker({
+     eslint: {
+       lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+     },
+   })
+   ```
+
+## How `lintCommand` is used
+
+- **In build mode**, the checker runs `lintCommand` as an ESLint CLI command from the Vite root. The first word must be `eslint`; it runs the `eslint` binary installed in your project.
+- **In dev mode**, the checker translates the CLI flags in `lintCommand` to [ESLint Node.js API options](https://eslint.org/docs/latest/integrate/nodejs-api#parameters), and lints the files that match its patterns. When a file changes, only that file is linted again. Files ignored by your ESLint config are skipped.
+
+Some flags only have an effect in the CLI, so they don't apply in dev mode. For example, `--max-warnings` and `--quiet` only affect build mode.
+
+Don't add `--fix` to `lintCommand`. In dev mode, the checker refuses to start with it; in build mode, ESLint would modify your files during the build.
+
+## Hide warnings in build mode
+
+Add `--quiet` to `lintCommand` to report only errors during `vite build`:
+
+```ts
+checker({
+  eslint: {
+    lintCommand: 'eslint --quiet "./src/**/*.{ts,tsx}"',
+  },
+})
 ```
 
-### Performance Optimization
+In dev mode, `--quiet` has no effect. To hide warnings there, set `dev.logLevel`:
 
-If you're experiencing `EMFILE: too many open files` errors or want to improve performance, you can use the `watchPath` option to limit file watching to specific directories:
-
-```js
-export default {
-  plugins: [
-    checker({
-      eslint: {
-        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-        // Single directory
-        watchPath: './src',
-
-        // Multiple directories
-        // watchPath: ['./src', './lib'],
-      },
-    }),
-  ],
-}
+```ts
+checker({
+  eslint: {
+    lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+    dev: {
+      logLevel: ['error'],
+    },
+  },
+})
 ```
 
-### Hiding warnings in build mode
+## Watch fewer files
 
-In build mode, `lintCommand` runs as a regular ESLint CLI command, so ESLint's own flags apply. Add `--quiet` to report errors only:
+By default, dev mode watches the whole Vite root, excluding `node_modules` and `.git`. In large projects, this can be slow or fail with `EMFILE: too many open files`. Set `watchPath` to watch only the directories you lint:
 
-```js
-export default {
-  plugins: [
-    checker({
-      eslint: {
-        lintCommand: 'eslint --quiet "./src/**/*.{ts,tsx}"',
-      },
-    }),
-  ],
-}
+```ts
+checker({
+  eslint: {
+    lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+    watchPath: ['./src', './lib'],
+  },
+})
 ```
 
-`--quiet` does not affect dev mode. Use `dev.logLevel` to filter diagnostics there.
+## Override dev mode options
 
-## Configuration
+`dev.overrideConfig` takes [ESLint options](https://eslint.org/docs/latest/integrate/nodejs-api#parameters) that override the ones translated from `lintCommand`, in dev mode only:
 
-Advanced object configuration table of `options.eslint`
+```ts
+checker({
+  eslint: {
+    lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+    dev: {
+      overrideConfig: {
+        cache: true,
+      },
+    },
+  },
+})
+```
 
-| field              | Type                                                                                                       | Default value          | Description                                                                                                                                                                                                              |
-| :----------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| lintCommand        | `string`                                                                                                   | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `eslint.dev.eslint` is nullable.                                                                                 |
-| watchPath          | `string \| string[]`                                                                                       | `undefined`            | **(Only in dev mode)** Configure path to watch files for ESLint. If not specified, will watch the entire project root. Use this to improve performance and avoid `EMFILE: too many open files` errors.                   |
-| useFlatConfig      | `boolean`                                                                                                  | `true`                 | Use flat config mode. Only relevant for ESLint v9 which supports both flat config and legacy eslintrc modes. ESLint v10+ always uses flat config. Set to `false` to use legacy eslintrc config with ESLint v9.           |
-| dev.overrideConfig | [`ESLint.Options`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) | `undefined`            | **(Only in dev mode)** You can override the options of the translated from `lintCommand`. Config priority: `const eslint = new ESLint({cwd: root, ...translatedOptions, ...pluginConfig.eslint.dev?.overrideConfig, })`. |
-| dev.logLevel       | `('error' \| 'warning')[]`                                                                                 | `['error', 'warning']` | **(Only in dev mode)** Which level of ESLint should be emitted to terminal and overlay in dev mode                                                                                                                       |
+The final options are `{ cwd: root, ...translatedOptions, ...dev.overrideConfig }`.
+
+## Bulk suppressions
+
+With ESLint 10.1 or later, dev mode applies [bulk suppressions](https://eslint.org/docs/latest/use/suppressions) from `eslint-suppressions.json`, as the CLI does in build mode. If you store the file elsewhere, pass `--suppressions-location` in `lintCommand`.
+
+## Legacy eslintrc config
+
+ESLint 9 can still use an `.eslintrc` config. To use it, set `useFlatConfig: false`. ESLint 10 and later only support flat config, so this option is ignored there.
+
+## Options
+
+| Option               | Type                                                                               | Default                | Description                                                                                                 |
+| -------------------- | ---------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `lintCommand`        | `string`                                                                           | Required               | ESLint CLI command. See [How `lintCommand` is used](#how-lintcommand-is-used).                              |
+| `watchPath`          | `string \| string[]`                                                               | The Vite root          | Paths to watch in dev mode, relative to the root.                                                           |
+| `useFlatConfig`      | `boolean`                                                                          | `true`                 | Use flat config. Set `false` to use eslintrc with ESLint 9.                                                 |
+| `dev.overrideConfig` | [`ESLint.Options`](https://eslint.org/docs/latest/integrate/nodejs-api#parameters) | `undefined`            | Options that override the ones translated from `lintCommand` in dev mode.                                   |
+| `dev.logLevel`       | `('error' \| 'warning')[]`                                                         | `['error', 'warning']` | Diagnostic levels to report in dev mode.                                                                    |
+| `dev.debounceMs`     | `number`                                                                           | `300`                  | Time in milliseconds to wait after a change before linting. Changes within this window are linted together. |

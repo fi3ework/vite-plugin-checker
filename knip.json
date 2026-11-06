@@ -8,6 +8,9 @@
       "entry": ["scripts/*", "playground/*"],
       "ignoreDependencies": ["oxlint"]
     },
+    "docs": {
+      "entry": [".vitepress/components/*.vue"]
+    },
     "packages/vite-plugin-checker": {
       "entry": [
         "src/**/*.ts",

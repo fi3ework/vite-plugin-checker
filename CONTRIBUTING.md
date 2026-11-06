@@ -1,15 +1,37 @@
-# CONTRIBUTING
+# Contributing
 
 ## Development
 
+This repository uses pnpm. The version is pinned in `package.json`; [corepack](https://github.com/nodejs/corepack) installs it for you.
+
 ```bash
-# Make sure that corepack(https://github.com/nodejs/corepack) is enabled.
 corepack enable
-pnpm i
+pnpm install
 pnpm build
 pnpm dev
 ```
 
-## Publish
+## Tests
 
-Package is automated published in CI, see `.github/workflows/release.yml`.
+```bash
+# Unit tests and playground end-to-end tests
+pnpm test
+
+# Lint and type check
+pnpm lint
+pnpm type-check
+```
+
+The playground tests need Chromium. Install it once with `pnpm exec playwright install chromium`.
+
+## Documentation
+
+The documentation site lives in `docs` and uses VitePress:
+
+```bash
+pnpm docs:dev
+```
+
+## Publishing
+
+CI publishes the package. See `.github/workflows/release.yml`.

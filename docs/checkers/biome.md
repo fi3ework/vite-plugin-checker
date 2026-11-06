@@ -1,39 +1,98 @@
 # Biome
 
-## Installation
+The Biome checker reports lint, format, and import-sorting problems using [Biome](https://biomejs.dev) and your project's `biome.json`.
 
-1. Make sure [@biomejs/biome](https://www.npmjs.com/package/@biomejs/biome) is installed as peer dependency.
+## Set up
 
-2. Add `biome` field to plugin config. The exact command to be run can be further configured with `command` and `flags` parameters. See [the documentation](https://biomejs.dev/reference/cli/) for CLI reference. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
+1. Install Biome (version 2.4.12 or later):
 
-   :::tip
-   Do not add `--apply` to the flags since the plugin is only aiming at checking issues.
-   :::
+   ::: code-group
 
-   ```js
-   // e.g.
-   export default {
-     plugins: [
-       checker({
-         biome: {
-           command: 'check',
-         },
-       }),
-     ],
-   }
+   ```bash [pnpm]
+   pnpm add -D @biomejs/biome
    ```
 
-## Configuration
+   ```bash [npm]
+   npm install -D @biomejs/biome
+   ```
 
-Advanced object configuration table of `options.biome`
+   ```bash [yarn]
+   yarn add -D @biomejs/biome
+   ```
 
-| field         | Type                                    | Default value                        | Description                                                                                                           |
-| :------------ | --------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| command       | `'check' \| 'lint' \| 'format' \| 'ci'` | `'lint'` in dev, `'check'` in build. | The command to execute biome with.                                                                                    |
-| flags         | `string`                                | `''`                                 | CLI flags to pass to the command.                                                                                     |
-| watchPath     | `string \| string[]`                    | `undefined`                          | **(Only in dev mode)** Configure path to watch files for Biome. If not specified, will watch the entire project root. |
-| dev.logLevel  | `('error' \| 'warning')[]`              | `['error', 'warning']`               | **(Only in dev mode)** Which level of Biome diagnostics should be emitted to terminal and overlay in dev mode.        |
-| dev.command   | `'check' \| 'lint' \| 'format' \| 'ci'` | `''`                                 | Command to run in dev mode, it will override `command` config in dev mode.                                            |
-| dev.flags     | `string`                                | `''`                                 | Flags to run in dev mode, it will override `flags` config in dev mode.                                                |
-| build.command | `'check' \| 'lint' \| 'format' \| 'ci'` | `''`                                 | Command to run in build mode, it will override `command` config in build mode.                                        |
-| build.flags   | `string`                                | `''`                                 | Flags to run in build mode, it will override `flags` config in build mode.                                            |
+   ```bash [bun]
+   bun add -d @biomejs/biome
+   ```
+
+   :::
+
+2. Enable the checker:
+
+   ```ts
+   checker({
+     biome: true,
+   })
+   ```
+
+With `biome: true`, dev mode runs `biome lint` and build mode runs `biome check`. Both run from the Vite root.
+
+## Choose the command and flags
+
+Set `command` to one of `'lint'`, `'check'`, `'format'`, or `'ci'`, and `flags` to pass [Biome CLI flags](https://biomejs.dev/reference/cli/). These apply in both modes:
+
+```ts
+checker({
+  biome: {
+    command: 'check',
+    flags: '--diagnostic-level=warn',
+  },
+})
+```
+
+To use different values per mode, set `dev` or `build`. They take precedence over the top-level `command` and `flags`:
+
+```ts
+checker({
+  biome: {
+    dev: {
+      command: 'lint',
+    },
+    build: {
+      command: 'ci',
+      flags: '--reporter=github',
+    },
+  },
+})
+```
+
+In dev mode, the checker reads Biome's JSON output, so it ignores `--reporter` and `--reporter-file` and prints a warning. Use `build.flags` to set a reporter for build mode.
+
+Don't pass `--write` or `--fix`; Biome would modify your files while the dev server or build runs.
+
+## How dev mode works
+
+When the dev server starts, the checker runs Biome on the whole project. When a file changes, it runs Biome on the changed files only. When `biome.json` changes, it runs on the whole project again.
+
+To watch fewer files, set `watchPath`:
+
+```ts
+checker({
+  biome: {
+    watchPath: './src',
+  },
+})
+```
+
+## Options
+
+| Option           | Type                                    | Default                             | Description                                                                                                 |
+| ---------------- | --------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `command`        | `'lint' \| 'check' \| 'format' \| 'ci'` | `'lint'` in dev, `'check'` in build | Biome command to run.                                                                                       |
+| `flags`          | `string`                                | `''`                                | CLI flags for the command.                                                                                  |
+| `watchPath`      | `string \| string[]`                    | The Vite root                       | Paths to watch in dev mode, relative to the root.                                                           |
+| `dev.command`    | `'lint' \| 'check' \| 'format' \| 'ci'` | `command`                           | Biome command to run in dev mode.                                                                           |
+| `dev.flags`      | `string`                                | `flags`                             | CLI flags for the command in dev mode.                                                                      |
+| `dev.logLevel`   | `('error' \| 'warning' \| 'info')[]`    | `['error', 'warning', 'info']`      | Diagnostic levels to report in dev mode.                                                                    |
+| `dev.debounceMs` | `number`                                | `300`                               | Time in milliseconds to wait after a change before linting. Changes within this window are linted together. |
+| `build.command`  | `'lint' \| 'check' \| 'format' \| 'ci'` | `command`                           | Biome command to run in build mode.                                                                         |
+| `build.flags`    | `string`                                | `flags`                             | CLI flags for the command in build mode.                                                                    |

@@ -71,9 +71,15 @@ importers:
 
   docs:
     dependencies:
+      simple-icons:
+        specifier: ^16.36.0
+        version: 16.36.0
       vitepress:
         specifier: ^1.6.4
         version: 1.6.4(@algolia/client-search@5.34.1)(@types/node@20.19.9)(lightningcss@1.33.0)(postcss@8.5.32)(typescript@7.0.2)
+      vue:
+        specifier: ^3.5.44
+        version: 3.5.44(typescript@7.0.2)
 
   packages/runtime:
     devDependencies:
@@ -3756,6 +3762,10 @@ packages:
     resolution: {integrity: sha512-kkTORPAuxQz2g1QUuN0J8yGWT28tjGBfPOdJ4xT7Vbeu30veKUZQIoID2qGgCDAakaQn59UeZJJ4cFGB8PVP2A==}
     hasBin: true
 
+  simple-icons@16.36.0:
+    resolution: {integrity: sha512-+VNPPkqSOLidFeSgBKUWX4n50WPpDC09hav+BgS26anIF1oQOlGBb8LvwGR+6fYRjo+B6CiKzNBceMPkSVXANQ==}
+    engines: {node: '>=0.12.18'}
+
   slash@5.1.0:
     resolution: {integrity: sha512-ZA6oR3T/pEyuqwMgAKT0/hAv8oAXckzbkmR0UkUosQ+Mc4RxGoJkRmwHgHufaenlyAgE1Mxgpdcrf75y6XcnDg==}
     engines: {node: '>=14.16'}
@@ -6852,6 +6862,8 @@ snapshots:
   signal-exit@4.1.0: {}
 
   simple-git-hooks@2.14.0: {}
+
+  simple-icons@16.36.0: {}
 
   slash@5.1.0: {}
 
