@@ -277,8 +277,8 @@ export function composeCheckerSummary(
   warningCount: number,
 ): string {
   const message = `Found ${errorCount} error${
-    errorCount > 1 ? 's' : ''
-  } and ${warningCount} warning${warningCount > 1 ? 's' : ''}`
+    errorCount === 1 ? '' : 's'
+  } and ${warningCount} warning${warningCount === 1 ? '' : 's'}`
 
   const hasError = errorCount > 0
   const hasWarning = warningCount > 0

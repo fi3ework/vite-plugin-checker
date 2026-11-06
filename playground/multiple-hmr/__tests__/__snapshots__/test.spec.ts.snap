@@ -20,7 +20,7 @@ exports[`multiple-hmr > serve > get initial error and subsequent error 2`] = `
       |        ^^^^^^^^^^^^^^^^^^^^^
     2 |
 ",
-  "[ESLint] Found 1 error and 0 warning",
+  "[ESLint] Found 1 error and 0 warnings",
 ]
 `;
 

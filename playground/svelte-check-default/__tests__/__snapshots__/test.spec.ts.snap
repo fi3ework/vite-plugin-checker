@@ -14,7 +14,7 @@ exports[`svelte-check-default > serve > get initial error and subsequent error 2
     4 |
     5 | <button onclick={() => count++}>count is {count}</button>
 ",
-  "[svelte-check] Found 1 error and 0 warning",
+  "[svelte-check] Found 1 error and 0 warnings",
 ]
 `;
 
@@ -40,6 +40,6 @@ exports[`svelte-check-default > serve > get initial error and subsequent error 4
       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     6 |
 ",
-  "[svelte-check] Found 0 error and 2 warnings",
+  "[svelte-check] Found 0 errors and 2 warnings",
 ]
 `;

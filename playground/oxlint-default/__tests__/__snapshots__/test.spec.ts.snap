@@ -46,7 +46,7 @@ exports[`oxlint-default > serve > should display initial errors 2`] = `
     15 | console.log('no');
     16 |
 ",
-  "[oxlint] Found 4 errors and 0 warning",
+  "[oxlint] Found 4 errors and 0 warnings",
 ]
 `;
 
@@ -91,7 +91,7 @@ exports[`oxlint-default > serve > should react to oxlint config file change 4`] 
     15 | console.log('no');
     16 |
 ",
-  "[oxlint] Found 0 error and 3 warnings",
+  "[oxlint] Found 0 errors and 3 warnings",
 ]
 `;
 
@@ -141,7 +141,7 @@ exports[`oxlint-default > serve > should react to project file change 2`] = `
     15 | console.log('no');
     16 |
 ",
-  "[oxlint] Found 4 errors and 0 warning",
+  "[oxlint] Found 4 errors and 0 warnings",
 ]
 `;
 

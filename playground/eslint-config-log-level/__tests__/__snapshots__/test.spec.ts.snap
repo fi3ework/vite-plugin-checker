@@ -15,7 +15,7 @@ exports[`eslint-config-log-level > serve > should only emit warning logs 2`] = `
     7 |
     8 | export {}
 ",
-  "[ESLint] Found 0 error and 1 warning",
+  "[ESLint] Found 0 errors and 1 warning",
 ]
 `;
 
@@ -34,6 +34,6 @@ exports[`eslint-config-log-level > serve > should only emit warning logs 4`] = `
     7 |
     8 | export {}
 ",
-  "[ESLint] Found 0 error and 1 warning",
+  "[ESLint] Found 0 errors and 1 warning",
 ]
 `;

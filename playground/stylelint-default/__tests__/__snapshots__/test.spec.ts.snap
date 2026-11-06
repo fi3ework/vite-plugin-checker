@@ -25,7 +25,7 @@ exports[`stylelint > serve > get initial error and subsequent error 2`] = `
     6 | }
     7 |
 ",
-  "[Stylelint] Found 2 errors and 0 warning",
+  "[Stylelint] Found 2 errors and 0 warnings",
 ]
 `;
 
@@ -44,6 +44,6 @@ exports[`stylelint > serve > get initial error and subsequent error 4`] = `
     4 | body {
     5 |   color: #fff;
 ",
-  "[Stylelint] Found 1 error and 0 warning",
+  "[Stylelint] Found 1 error and 0 warnings",
 ]
 `;
