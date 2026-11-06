@@ -25,7 +25,12 @@ import {
 import { watchLintTargets } from '../_shared/lintWatcher.js'
 import { pruneMissingFiles } from '../_shared/pruneMissingFiles.js'
 import { parseArgsStringToArgv } from '../stylelint/argv.js'
-import { getBiomeCommand, runBiome, severityMap } from './cli.js'
+import {
+  getBiomeCommand,
+  getBiomeDevArgs,
+  runBiome,
+  severityMap,
+} from './cli.js'
 
 const __filename = fileURLToPath(import.meta.url)
 
@@ -52,6 +57,8 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
     },
     async configureServer({ root, watch }) {
       if (!biomeConfig) return
+
+      const args = getBiomeDevArgs(flags)
 
       const logLevel = (() => {
         if (typeof biomeConfig !== 'object') return undefined
@@ -107,13 +114,13 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
           )
           if (hasConfigChange) {
             const diagnostics = await runBiome(
-              getBiomeCommand(command, flags, [root]),
+              getBiomeCommand(command, args, [root]),
               root,
             )
             manager.initWith(diagnostics)
           } else {
             const diagnostics = await runBiome(
-              getBiomeCommand(command, flags, files),
+              getBiomeCommand(command, args, files),
               root,
             )
             applyBatchedDiagnostics(manager, files, diagnostics, root)
@@ -124,7 +131,7 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
 
       // initial check
       const diagnostics = await runBiome(
-        getBiomeCommand(command, flags, [root]),
+        getBiomeCommand(command, args, [root]),
         root,
       )
 

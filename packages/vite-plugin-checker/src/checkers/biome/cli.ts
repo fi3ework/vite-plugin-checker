@@ -1,7 +1,8 @@
 import { stripVTControlCharacters as strip } from 'node:util'
 import { x } from 'tinyexec'
 import { createFrame } from '../../codeFrame.js'
-import type { NormalizedDiagnostic } from '../../logger.js'
+import { colorize } from '../../colors.js'
+import { consoleLog, type NormalizedDiagnostic } from '../../logger.js'
 import { normalizePath, readSources } from '../../sources.js'
 import { DiagnosticLevel } from '../../types.js'
 import { parseArgsStringToArgv } from '../stylelint/argv.js'
@@ -19,25 +20,35 @@ export const severityMap = {
   information: DiagnosticLevel.Suggestion,
 } as const
 
-export function getBiomeCommand(
-  command: string,
-  flags: string,
-  files: string[],
-): string[] {
-  if (flags.includes('--flags')) {
-    throw Error(
-      `vite-plugin-checker will force append "--reporter json" to the flags in dev mode, please don't use "--flags" in "config.biome.flags".
-If you need to customize "--flags" in build mode, please use "config.biome.build.flags" instead.`,
+const REPORTER_FLAG_RE = /^--reporter(?:-file)?(?:=|$)/
+
+export function getBiomeDevArgs(flags: string): string[] {
+  const args = flags ? parseArgsStringToArgv(flags) : []
+  const devArgs = args.filter((arg, i) => {
+    const prev = args[i - 1] ?? ''
+    return (
+      !REPORTER_FLAG_RE.test(arg) &&
+      !(REPORTER_FLAG_RE.test(prev) && !prev.includes('='))
+    )
+  })
+  if (devArgs.length !== args.length) {
+    consoleLog(
+      colorize(
+        'yellow',
+        'vite-plugin-checker uses "--reporter json" in dev mode and ignores "--reporter" and "--reporter-file" flags. Use "config.biome.build.flags" to set a reporter for build mode.',
+      ),
+      'warn',
     )
   }
-  return [
-    'biome',
-    command,
-    ...(flags ? parseArgsStringToArgv(flags) : []),
-    '--reporter',
-    'json',
-    ...files,
-  ]
+  return devArgs
+}
+
+export function getBiomeCommand(
+  command: string,
+  args: string[],
+  files: string[],
+): string[] {
+  return ['biome', command, ...args, '--reporter', 'json', ...files]
 }
 
 export async function runBiome(
