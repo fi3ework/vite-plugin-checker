@@ -2,10 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="color-scheme" content="light dark" />
     <title>Vite App</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 40px 48px;
+        font: 16px/1.5 system-ui, sans-serif;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+      p {
+        margin: 0;
+        opacity: 0.7;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <h1>My app</h1>
+    <p id="app">Loading…</p>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

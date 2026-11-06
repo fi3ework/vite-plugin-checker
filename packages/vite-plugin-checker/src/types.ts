@@ -218,21 +218,15 @@ export enum DiagnosticLevel {
 }
 
 type ErrorPayloadErr = ErrorPayload['err']
-export interface DiagnosticToRuntime extends ErrorPayloadErr {
+
+/** Diagnostic posted from a checker worker to the main thread */
+export interface DiagnosticRecord extends ErrorPayloadErr {
   checkerId: string
   level?: DiagnosticLevel
-  /** file path shown in the overlay, relative to the project root */
-  relativeFile?: string
-  /** URL opened when the file is clicked in the overlay, from `overlay.editorUrl` */
-  editorUrl?: string
   /** rule that reported the diagnostic, as it appears in `message` */
   rule?: string
   /** documentation URL for `rule` */
   ruleUrl?: string
-}
-
-/** Diagnostic posted from a checker worker to the main thread */
-export interface DiagnosticRecord extends DiagnosticToRuntime {
   /** error code, when it is not the `rule` */
   code?: string
   endLine?: number
@@ -250,28 +244,14 @@ export interface EditorLocation {
   column: number
 }
 
-export interface ClientDiagnosticPayload {
-  event: 'vite-plugin-checker:error'
-  data: {
-    checkerId: string
-    diagnostics: DiagnosticToRuntime[]
-  }
-}
-
-export interface ClientReconnectPayload {
-  event: 'vite-plugin-checker:reconnect'
-  data: ClientDiagnosticPayload[]
-}
-
-export type ClientPayload = ClientDiagnosticPayload | ClientReconnectPayload
-
 /** checkers shared configuration */
 export interface SharedConfig {
   /**
-   * Show overlay on UI view when there are errors or warnings in dev mode.
-   * - Set `true` to show overlay
-   * - Set `false` to disable overlay
-   * - Set with a object to customize overlay
+   * Show a badge and a diagnostics drawer on pages served by the dev server.
+   * The same diagnostics are always available at `{base}__checker/`.
+   * - Set `true` to show the overlay
+   * - Set `false` to disable the overlay
+   * - Set with a object to customize the overlay
    *
    * @defaultValue `true`
    */
@@ -279,35 +259,28 @@ export interface SharedConfig {
     | boolean
     | {
         /**
-         * Whether the panel starts open when there are diagnostics.
+         * Show the in-page badge and drawer.
+         * - `'auto'`: show unless another integration, such as Nuxt, displays the
+         *   diagnostics itself
+         * - `true`: always show
+         * - `false`: never show; diagnostics stay available at `{base}__checker/`
+         * @defaultValue `'auto'`
+         */
+        badge?: boolean | 'auto'
+        /**
+         * Whether the drawer opens by itself when there are diagnostics, until
+         * it is opened or closed by hand.
          * - `true`: open when there are errors or warnings
          * - `'error'`: open only when there are errors
-         * - `false`: start collapsed to the badge
+         * - `false`: stay closed until the badge is clicked
          * @defaultValue `true`
          */
         initialIsOpen?: boolean | 'error'
         /**
-         * The position of the vite-plugin-checker badge to open and close
-         * the diagnostics panel
-         * @default `bl`
+         * Corner of the badge. The drawer opens along the same edge.
+         * @defaultValue `'bl'`
          */
         position?: 'tl' | 'tr' | 'bl' | 'br'
-        /**
-         * Use this to add extra style string to the badge button, the string format is
-         * [HTML element's style property](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
-         * For example, if you want to hide the badge,
-         * you can pass `display: none;` to the badgeStyle property
-         * @default no default value
-         */
-        badgeStyle?: string
-        /**
-         * Use this to add extra style string to the diagnostic panel, the string format is
-         * [HTML element's style property](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
-         * For example, if you want to change the opacity of the panel,
-         * you can pass `opacity: 0.8;` to the panelStyle property
-         * @default no default value
-         */
-        panelStyle?: string
         /**
          * Build the URL opened when a file path is clicked in the overlay, such as
          * `vscode://file/...`. Return `undefined` to open the file with Vite's

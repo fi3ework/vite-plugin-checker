@@ -1,18 +1,39 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { composePreambleCode, RUNTIME_CLIENT_RUNTIME_PATH } from '../src/client'
+import { composeOverlayEntryCode, OVERLAY_PATH } from '../src/client'
 
-describe('composePreambleCode', () => {
-  it('emits the un-based runtime specifier for the virtual entry so resolveId matches under a non-root base', () => {
-    const code = composePreambleCode({
-      baseWithOrigin: '/static/dist/',
-      overlayConfig: {},
+describe('composeOverlayEntryCode', () => {
+  it('imports the overlay by its un-based id and mounts it with the HMR context', () => {
+    const code = composeOverlayEntryCode({
+      uiUrl: '/static/dist/__checker/',
+      badge: 'auto',
+      position: 'bl',
+      initialIsOpen: true,
     })
 
-    expect(code).toContain(
-      `import { inject } from "${RUNTIME_CLIENT_RUNTIME_PATH}"`,
-    )
-    expect(code).not.toContain('/static/dist/@vite-plugin-checker-runtime"')
-    expect(code).toContain('base: "/static/dist/"')
+    expect(code).toContain(`import { mount } from "${OVERLAY_PATH}"`)
+    expect(code).toContain('mount(import.meta.hot, options)')
+  })
+
+  it('resolves the page URL against the dev server that served the overlay', () => {
+    const code = composeOverlayEntryCode({
+      uiUrl: '/static/dist/__checker/',
+      badge: 'auto',
+      position: 'bl',
+      initialIsOpen: true,
+    })
+    const mount = vi.fn()
+    new Function(
+      'mount',
+      'meta',
+      code.replace(/^import .*$/m, '').replaceAll('import.meta', 'meta'),
+    )(mount, { url: 'http://localhost:5173/@id/virtual:entry', hot: 'hot' })
+
+    expect(mount).toHaveBeenCalledWith('hot', {
+      uiUrl: 'http://localhost:5173/static/dist/__checker/',
+      badge: 'auto',
+      position: 'bl',
+      initialIsOpen: true,
+    })
   })
 })

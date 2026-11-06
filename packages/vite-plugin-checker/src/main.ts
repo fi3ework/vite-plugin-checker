@@ -12,16 +12,15 @@ import type {
 import { Checker } from './Checker.js'
 import {
   composeClientInjectionCode,
-  composePreambleCode,
-  RUNTIME_CLIENT_ENTRY_PATH,
-  RUNTIME_CLIENT_RUNTIME_PATH,
-  runtimeCode,
-  WS_CHECKER_RECONNECT_EVENT,
+  composeOverlayEntryCode,
+  OVERLAY_ENTRY_PATH,
+  OVERLAY_PATH,
+  readOverlayCode,
   wrapVirtualPrefix,
 } from './client/index.js'
+import type { OverlayOptions } from './client/options.js'
 import { colorize, supportsTerminalColors } from './colors.js'
-import { toDiagnostics, toLegacyDiagnostics } from './diagnostics.js'
-import { toClientPayload, withOverlayFileLinks } from './logger.js'
+import { toDiagnostics } from './diagnostics.js'
 import {
   type CheckerApi,
   EVENT_HELLO,
@@ -37,7 +36,6 @@ import {
   type Action,
   type BuildCheckBinStr,
   type BuildInCheckerNames,
-  type ClientDiagnosticPayload,
   type LintWatchOptions,
   type PluginConfig,
   type ServeAndBuildChecker,
@@ -82,18 +80,6 @@ const checkerLabels: Record<BuildInCheckerNames, string> = {
   svelteCheck: 'svelte-check',
 }
 
-// TODO: remove with the legacy runtime once the new overlay consumes `EVENT_*`
-const legacyCheckerIds: Record<BuildInCheckerNames, string> = {
-  typescript: 'typescript',
-  vueTsc: 'vue-tsc',
-  eslint: 'eslint',
-  stylelint: 'stylelint',
-  biome: 'biome',
-  oxlint: 'oxlint',
-  svelteCheck: 'svelte-check',
-}
-const LEGACY_EVENT = 'vite-plugin-checker'
-
 async function createCheckers(
   userConfig: UserPluginConfig,
   env: ConfigEnv,
@@ -121,10 +107,14 @@ async function createCheckers(
 
 export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
   const enableBuild = userConfig?.enableBuild ?? true
-  const enableOverlay = userConfig?.overlay !== false
   const enableTerminal = userConfig?.terminal !== false
-  const { editorUrl, ...overlayConfig } =
-    typeof userConfig?.overlay === 'object' ? userConfig.overlay : {}
+  const {
+    editorUrl,
+    badge = 'auto',
+    position = 'bl',
+    initialIsOpen = true,
+  } = typeof userConfig?.overlay === 'object' ? userConfig.overlay : {}
+  const enableOverlay = userConfig?.overlay !== false && badge !== false
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
@@ -135,12 +125,13 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
   const store = createCheckerStore()
   const indicatorClaims = new Set<symbol>()
   const snapshotBroadcasters = new Set<() => void>()
-  const legacyBroadcasters = new Set<
-    (payload: ClientDiagnosticPayload) => void
-  >()
-  let latestOverlayErrors = new Map<number, ClientDiagnosticPayload>()
   let uiUrl = uiUrlFor('/')
-  let baseWithOrigin: string
+  let overlayOptions: OverlayOptions = {
+    uiUrl,
+    badge,
+    position,
+    initialIsOpen,
+  }
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
   let logger: Logger | null = null
@@ -179,7 +170,7 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
   const startWorkers = (root: string, watch: LintWatchOptions | undefined) => {
     const context = { root, editorUrl }
 
-    checkers.forEach((checker, index) => {
+    for (const checker of checkers) {
       const name = checker.name!
       const { worker } = checker.serve
       store.register(name, checkerLabels[name])
@@ -191,17 +182,6 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
               name,
               toDiagnostics(name, action.payload, context),
             )
-            if (!enableOverlay) break
-            const payload = withOverlayFileLinks(
-              toClientPayload(
-                legacyCheckerIds[name],
-                toLegacyDiagnostics(action.payload),
-              ),
-              root,
-              editorUrl,
-            )
-            latestOverlayErrors.set(index, payload)
-            for (const broadcast of legacyBroadcasters) broadcast(payload)
             break
           }
           case ACTION_TYPES.status:
@@ -227,7 +207,7 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
 
       checker.serve.configureServer({ root, watch })
       store.setStatus(name, 'checking')
-    })
+    }
   }
 
   return {
@@ -278,9 +258,7 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     configResolved(config) {
       logger = config.logger
       uiUrl = uiUrlFor(config.base)
-      baseWithOrigin = config.server.origin
-        ? config.server.origin + config.base
-        : config.base
+      overlayOptions = { ...overlayOptions, uiUrl }
       buildWatch = !!config.build.watch
       resolvedRoot = config.root
     },
@@ -307,7 +285,6 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
       if (serverCount === 0) {
         const terminated = checkers
         checkers = []
-        latestOverlayErrors = new Map()
         store.clear()
         checkersPromise = null
         workersConfigured = false
@@ -318,15 +295,10 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     },
     resolveId: {
       filter: {
-        id: new RegExp(
-          `^(?:${RUNTIME_CLIENT_RUNTIME_PATH}|${RUNTIME_CLIENT_ENTRY_PATH})$`,
-        ),
+        id: new RegExp(`^(?:${OVERLAY_PATH}|${OVERLAY_ENTRY_PATH})$`),
       },
       handler(id) {
-        if (
-          id === RUNTIME_CLIENT_RUNTIME_PATH ||
-          id === RUNTIME_CLIENT_ENTRY_PATH
-        ) {
+        if (id === OVERLAY_PATH || id === OVERLAY_ENTRY_PATH) {
           return wrapVirtualPrefix(id)
         }
 
@@ -336,16 +308,16 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     load: {
       filter: {
         id: new RegExp(
-          `^(?:${wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)}|${wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)})$`,
+          `^(?:${wrapVirtualPrefix(OVERLAY_PATH)}|${wrapVirtualPrefix(OVERLAY_ENTRY_PATH)})$`,
         ),
       },
       handler(id) {
-        if (id === wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)) {
-          return runtimeCode
+        if (id === wrapVirtualPrefix(OVERLAY_PATH)) {
+          return readOverlayCode()
         }
 
-        if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
-          return composePreambleCode({ baseWithOrigin, overlayConfig })
+        if (id === wrapVirtualPrefix(OVERLAY_ENTRY_PATH)) {
+          return composeOverlayEntryCode(overlayOptions)
         }
 
         return
@@ -403,14 +375,10 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
         }
       })
       const broadcastSnapshot = () => server.ws.send(EVENT_SNAPSHOT, snapshot())
-      const broadcastLegacy = (payload: ClientDiagnosticPayload) =>
-        server.ws.send(LEGACY_EVENT, payload)
       snapshotBroadcasters.add(broadcastSnapshot)
-      legacyBroadcasters.add(broadcastLegacy)
       serverCleanups.set(server.config, () => {
         unsubscribe()
         snapshotBroadcasters.delete(broadcastSnapshot)
-        legacyBroadcasters.delete(broadcastLegacy)
       })
 
       server.middlewares.use(
@@ -419,17 +387,6 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
 
       server.ws.on(EVENT_HELLO, (_data, client) => {
         client.send(EVENT_SNAPSHOT, snapshot())
-      })
-
-      server.ws.on(LEGACY_EVENT, (data) => {
-        if (data.event === 'runtime-loaded') {
-          server.ws.send(LEGACY_EVENT, {
-            event: WS_CHECKER_RECONNECT_EVENT,
-            data: [...latestOverlayErrors]
-              .sort(([a], [b]) => a - b)
-              .map(([, payload]) => payload),
-          })
-        }
       })
     },
   }

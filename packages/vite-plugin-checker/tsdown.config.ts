@@ -7,7 +7,7 @@ export function createConfig(
   return defineConfig({
     format: ['esm'],
     outDir: 'dist',
-    entry: ['src/**/*.ts', '!src/@runtime/**'],
+    entry: ['src/**/*.ts'],
     // Each checker entry doubles as its own worker_threads entry (spawned via
     // `new Worker(import.meta.url)`), so the per-file layout must be preserved
     // instead of being merged into a single bundle.

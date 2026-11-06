@@ -5,6 +5,7 @@ import CheckerPill from './components/CheckerPill.vue'
 import CopyButton from './components/CopyButton.vue'
 import DiagnosticGroup from './components/DiagnosticGroup.vue'
 import { connect } from './connection'
+import { CLOSE_MESSAGE, EMBED_PARAM } from './embed'
 import { diagnosticsToMarkdown } from './markdown'
 import { loadPreferences, savePreferences } from './preferences'
 import { createState, diagnosticsOf } from './state'
@@ -65,6 +66,12 @@ function toggleGroup(key: string) {
   else preferences.collapsed.splice(index, 1)
 }
 
+function clearQuery(event: KeyboardEvent) {
+  if (!filters.query) return
+  event.preventDefault()
+  filters.query = ''
+}
+
 function resetFilters() {
   const { groupBy } = filters
   Object.assign(filters, defaultFilters(), { groupBy })
@@ -73,7 +80,13 @@ function resetFilters() {
 
 const hasHiddenInfo = computed(() => !filters.levels.info && totals.value.info > 0)
 
+const embedded = window.parent !== window && new URLSearchParams(location.search).has(EMBED_PARAM)
+
 function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && embedded && !event.defaultPrevented) {
+    window.parent.postMessage({ type: CLOSE_MESSAGE }, '*')
+    return
+  }
   if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return
   const target = event.target as HTMLElement | null
   if (target?.closest('input, textarea, [contenteditable]')) return
@@ -86,7 +99,7 @@ onScopeDispose(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
-  <div class="app">
+  <div :class="['app', { embedded }]">
     <header class="header">
       <div class="title-row">
         <h1 class="title">
@@ -127,7 +140,7 @@ onScopeDispose(() => window.removeEventListener('keydown', onKeydown))
           <path d="M10.5 10.5l3 3" />
         </svg>
         <span class="visually-hidden">Filter diagnostics</span>
-        <input ref="search" v-model="filters.query" type="search" placeholder="Filter" @keydown.esc="filters.query = ''" />
+        <input ref="search" v-model="filters.query" type="search" placeholder="Filter" @keydown.esc="clearQuery" />
         <kbd v-if="!filters.query" aria-hidden="true">/</kbd>
       </label>
       <div class="segmented" role="group" aria-label="Levels">
@@ -409,5 +422,31 @@ kbd {
 }
 .link:hover {
   text-decoration: underline;
+}
+
+.embedded .header {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 8px 16px;
+}
+.embedded .title-row {
+  display: contents;
+}
+.embedded .title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.embedded .title-actions {
+  grid-column: 2;
+}
+.embedded .checkers {
+  grid-area: 1 / 1;
+}
+.embedded .toolbar {
+  padding: 8px 16px;
 }
 </style>

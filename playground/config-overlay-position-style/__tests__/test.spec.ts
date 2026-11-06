@@ -1,36 +1,34 @@
-import { sleepForServerReady, getHmrOverlay, isServe } from '../../testUtils'
 import { describe, expect, it } from 'vitest'
+import { getOverlayBadge, getOverlayPage, isServe, page, sleepForServerReady } from '../../testUtils'
 
 describe('config-overlay-position-style', () => {
   describe.runIf(isServe)('serve', () => {
-    it('find badge in right top corner and customized by badgeStyle', async () => {
+    it('opens the drawer along the top edge and themes it with `--mb-*` properties', async () => {
       await sleepForServerReady()
-      const shadowRoot = await getHmrOverlay()
-      const badge = await shadowRoot!.$('.badge-base')
+      await getOverlayPage().locator('.diagnostic').first().waitFor({ timeout: 10_000 })
+      const drawer = page.locator('vite-plugin-checker-overlay .drawer')
 
-      const { bgColor, top, right } = await badge!.evaluate((el) => {
-        const bgColor = window.getComputedStyle(el).getPropertyValue('background-color')
-        const top = window.getComputedStyle(el).getPropertyValue('top')
-        const right = window.getComputedStyle(el).getPropertyValue('right')
-        return { bgColor, top, right }
+      const { top, bgColor } = await drawer.evaluate((el) => {
+        const style = window.getComputedStyle(el)
+        return { top: style.top, bgColor: style.backgroundColor }
       })
-
-      expect(bgColor).toBe('rgb(231, 153, 176)')
-      expect(top).toBe('0px')
-      expect(right).toBe('0px')
+      expect(top).toBe('12px')
+      expect(bgColor).toBe('rgb(164, 193, 255)')
     })
 
-    it('panel be customized by panelStyle', async () => {
+    it('puts the badge in the top right corner and lets `::part(badge)` restyle it', async () => {
       await sleepForServerReady()
-      const shadowRoot = await getHmrOverlay()
-      const panel = await shadowRoot!.$('.window')
+      await page.locator('vite-plugin-checker-overlay .close').click()
+      const badge = getOverlayBadge()
+      await badge.waitFor()
 
-      const { bgColor } = await panel!.evaluate((el) => {
-        const bgColor = window.getComputedStyle(el).getPropertyValue('background-color')
-        return { bgColor }
+      const { top, right, bgColor } = await badge.evaluate((el) => {
+        const style = window.getComputedStyle(el)
+        return { top: style.top, right: style.right, bgColor: style.backgroundColor }
       })
-
-      expect(bgColor).toBe('rgb(164, 193, 255)')
+      expect(top).toBe('12px')
+      expect(right).toBe('12px')
+      expect(bgColor).toBe('rgb(231, 153, 176)')
     })
   })
 })

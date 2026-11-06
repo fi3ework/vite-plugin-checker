@@ -2,10 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import {
   editFile,
-  getHmrOverlay,
   getHmrOverlayText,
   isServe,
-  pollingUntil,
   sleepForEdit,
   sleepForServerReady,
   waitForNoOverlay,
@@ -23,7 +21,6 @@ describe('config-overlay-changes', () => {
       console.log('-- overlay update after edit --')
       editFile('src/main.ts', (code) => code.replace('Hello', 'Hello1'))
       await sleepForEdit()
-      await pollingUntil(getHmrOverlay, (dom) => !!dom)
       const [, , frame2] = await getHmrOverlayText()
       expect(frame2).toMatchSnapshot()
 

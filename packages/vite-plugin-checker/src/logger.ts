@@ -5,7 +5,6 @@ import { stripVTControlCharacters as strip } from 'node:util'
 import { parentPort } from 'node:worker_threads'
 import { hyperlink, link } from 'clickable-path'
 
-import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
 import {
   createFrame,
   createSnippet,
@@ -17,12 +16,9 @@ import { colorize } from './colors.js'
 import type { Snippet } from './protocol.js'
 import {
   ACTION_TYPES,
-  type ClientDiagnosticPayload,
   DiagnosticLevel,
   type DiagnosticRecord,
   type DiagnosticsAction,
-  type DiagnosticToRuntime,
-  type EditorLocation,
   type StatusAction,
 } from './types.js'
 import { isMainThread } from './utils.js'
@@ -203,7 +199,7 @@ export function diagnosticToRuntimeError(
     : [diagnostics]
 
   const results: DiagnosticRecord[] = diagnosticsArray.map((d) => {
-    let loc: DiagnosticToRuntime['loc']
+    let loc: DiagnosticRecord['loc']
     if (d.loc) {
       loc = {
         file: d.id ?? '',
@@ -262,46 +258,6 @@ export function reportStatus(status: 'checking' | 'failed', error?: unknown) {
         : { status },
   }
   parentPort?.postMessage(action)
-}
-
-export function toClientPayload(
-  id: string,
-  diagnostics: DiagnosticToRuntime[],
-): ClientDiagnosticPayload {
-  return {
-    event: WS_CHECKER_ERROR_EVENT,
-    data: {
-      checkerId: id,
-      diagnostics,
-    },
-  }
-}
-
-export function withOverlayFileLinks(
-  payload: ClientDiagnosticPayload,
-  root: string,
-  editorUrl?: (location: EditorLocation) => string | undefined,
-): ClientDiagnosticPayload {
-  return {
-    ...payload,
-    data: {
-      ...payload.data,
-      diagnostics: payload.data.diagnostics.map((d) => {
-        const file = (d.loc?.file || d.id)?.split('?')[0]
-        if (!file || !path.isAbsolute(file)) return d
-
-        return {
-          ...d,
-          relativeFile: path.relative(root, file).split(path.sep).join('/'),
-          editorUrl: editorUrl?.({
-            file,
-            line: d.loc?.line || 1,
-            column: d.loc?.column || 1,
-          }),
-        }
-      }),
-    },
-  }
 }
 
 export function wrapCheckerSummary(

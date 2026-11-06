@@ -3,8 +3,8 @@ import path from 'node:path'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
-  RUNTIME_CLIENT_ENTRY_PATH,
-  RUNTIME_CLIENT_RUNTIME_PATH,
+  OVERLAY_ENTRY_PATH,
+  OVERLAY_PATH,
   wrapVirtualPrefix,
 } from '../src/client'
 import { checker } from '../src/main'
@@ -61,15 +61,13 @@ function getHook(name: 'resolveId' | 'load') {
   return checker({})[name] as unknown as FilteredHook
 }
 
-const runtimeIds = [
-  RUNTIME_CLIENT_RUNTIME_PATH,
-  RUNTIME_CLIENT_ENTRY_PATH,
-] as const
+const runtimeIds = [OVERLAY_PATH, OVERLAY_ENTRY_PATH] as const
 
 const unrelatedIds = [
   '/src/main.js',
-  `${RUNTIME_CLIENT_RUNTIME_PATH}?import`,
-  `/foo${RUNTIME_CLIENT_ENTRY_PATH}.js`,
+  `${OVERLAY_PATH}?import`,
+  `/foo${OVERLAY_ENTRY_PATH}.js`,
+  '/@vite-plugin-checker-runtime-entry',
 ]
 
 describe('resolveId', () => {
@@ -101,6 +99,32 @@ describe('load', () => {
       expect(hook.filter.id.test(id)).toBe(false)
       expect(hook.handler(id)).toBeUndefined()
     }
+  })
+
+  it('mounts the overlay with the resolved options', async () => {
+    const plugin = checker({
+      overlay: { position: 'tr', initialIsOpen: 'error' },
+    }) as any
+    await plugin.config({}, { command: 'serve', mode: 'development' })
+    plugin.configResolved({
+      root: '/project',
+      base: '/app/',
+      command: 'serve',
+      logger: {},
+      server: {},
+      build: { watch: null },
+    })
+
+    expect(
+      plugin.load.handler(wrapVirtualPrefix(OVERLAY_ENTRY_PATH)),
+    ).toContain(
+      JSON.stringify({
+        uiUrl: '/app/__checker/',
+        badge: 'auto',
+        position: 'tr',
+        initialIsOpen: 'error',
+      }),
+    )
   })
 })
 
@@ -195,7 +219,7 @@ describe('serve mode with NODE_ENV=production', () => {
     expect(execMock).not.toHaveBeenCalled()
 
     const code = plugin.transform.handler('', clientEntry)
-    expect(code).toContain(`import("${RUNTIME_CLIENT_ENTRY_PATH}")`)
+    expect(code).toContain(`import("${OVERLAY_ENTRY_PATH}")`)
   })
 })
 
@@ -217,7 +241,7 @@ describe('transform', () => {
       expect(plugin.transform.filter.id.test(id)).toBe(true)
       const code = plugin.transform.handler('client();', id)
       expect(code).toMatch(/^client\(\);\n/)
-      expect(code).toContain(`import("${RUNTIME_CLIENT_ENTRY_PATH}")`)
+      expect(code).toContain(`import("${OVERLAY_ENTRY_PATH}")`)
       expect(code).toContain('typeof document !== "undefined"')
       expect(code).toContain('!globalThis.__VITE_PLUGIN_CHECKER_PAGE__')
     }
@@ -352,9 +376,6 @@ describe('dev server state', () => {
       checkerId: 'typescript',
       status: 'idle',
     })
-    expect(sent(ws, 'vite-plugin-checker')).toEqual([
-      expect.objectContaining({ event: 'vite-plugin-checker:error' }),
-    ])
   })
 
   it('answers a client hello with a snapshot', async () => {
@@ -420,7 +441,7 @@ describe('dev server state', () => {
     expect(middlewares.use).toHaveBeenCalledOnce()
   })
 
-  it('keeps the api working when the overlay is disabled', async () => {
+  it('keeps the api and the diagnostics page working when the overlay is disabled', async () => {
     const { api, ws, worker } = await serve({
       typescript: true,
       overlay: false,
@@ -431,7 +452,7 @@ describe('dev server state', () => {
     })
 
     expect(api.getState()[0]!.diagnostics).toHaveLength(1)
-    expect(sent(ws, 'vite-plugin-checker')).toEqual([])
+    expect(sent(ws, EVENT_UPDATE)).toHaveLength(1)
   })
 })
 

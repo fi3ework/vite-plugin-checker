@@ -69,17 +69,5 @@
         "noDelete": "off"
       }
     }
-  },
-  "overrides": [
-    {
-      "includes": ["packages/runtime/src/vite-env.d.ts"],
-      "linter": {
-        "rules": {
-          "style": {
-            "useFilenamingConvention": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }

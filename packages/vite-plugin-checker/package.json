@@ -26,9 +26,8 @@
     "!dist/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
-    "build": "tsdown && pnpm run build:runtime && pnpm run build:ui",
-    "build:runtime": "pnpm --filter @vite-plugin-checker/runtime run build",
-    "build:test": "tsdown --config tsdown.test.config.ts && pnpm run build:runtime && pnpm run build:ui",
+    "build": "tsdown && pnpm run build:ui",
+    "build:test": "tsdown --config tsdown.test.config.ts && pnpm run build:ui",
     "build:ui": "pnpm --filter @vite-plugin-checker/ui run build",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "dev": "tsdown --watch",

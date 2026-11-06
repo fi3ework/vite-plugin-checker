@@ -24,7 +24,7 @@ describe.runIf(isServe)('ui-page', () => {
       ),
     ])
     expect(
-      await page.locator('vite-plugin-checker-error-overlay').count(),
+      await page.locator('vite-plugin-checker-overlay').count(),
     ).toBe(0)
   })
 

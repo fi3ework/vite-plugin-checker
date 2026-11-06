@@ -57,11 +57,17 @@ Biome also ignores `--reporter` and `--reporter-file` in dev mode flags now, bec
 
 **Migration:** none, unless you relied on the override applying only at startup.
 
-## The overlay loads through the Vite client
+## The overlay is a badge that opens a diagnostics page
 
-The overlay runtime used to be injected into `index.html`. It now loads through the Vite client, so it also appears on pages that SSR frameworks render, such as Nuxt, SvelteKit, and TanStack Start.
+The overlay used to render every diagnostic inside the page. The dev server now serves a diagnostics page at `{base}__checker/`, and pages show a badge that opens it in a drawer. The badge and drawer load through the Vite client, so they also appear on pages that SSR frameworks render, such as Nuxt, SvelteKit, and TanStack Start. See [Overlay and terminal](/guide/overlay).
 
-**Migration:** if you added the `/@vite-plugin-checker-runtime-entry` script manually to a page that also loads `/@vite/client`, you can remove it. Keeping it is harmless; the overlay is only added once.
+This affects you if you styled the overlay, or loaded its runtime yourself:
+
+- `overlay.badgeStyle` and `overlay.panelStyle` are removed. Style the `<vite-plugin-checker-overlay>` element with `--mb-*` custom properties, or with `::part(badge)` and `::part(drawer)`. To hide the badge, set `overlay.badge` to `false`.
+- The `/@vite-plugin-checker-runtime-entry` module is removed. Pages that don't load the Vite client should load `/@vite/client` instead; see [Backend integration and SSR](/recipes/backend-integration).
+- The `DiagnosticToRuntime`, `ClientDiagnosticPayload` and `ClientPayload` types and the `vite-plugin-checker` HMR events are removed. Read diagnostics from the plugin's `api` instead, typed as `CheckerApi`.
+
+**Migration:** replace `badgeStyle` and `panelStyle` with CSS, and replace any manual runtime script with `/@vite/client`.
 
 ## Next steps
 

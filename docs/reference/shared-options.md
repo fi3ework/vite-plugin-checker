@@ -25,39 +25,34 @@ For the options of each checker, see the [checker pages](/checkers/overview).
 - **Type:** `boolean | OverlayOptions`
 - **Default:** `true`
 
-Shows diagnostics in a browser overlay in dev mode. Set `false` to disable the overlay, or pass an object to customize it. For a guide with examples, see [Overlay and terminal](/guide/overlay).
+Shows diagnostics in the browser in dev mode: a badge on every page that opens the diagnostics page in a drawer. Set `false` to add nothing to your pages, or pass an object to customize the overlay. For a guide with examples, see [Overlay and terminal](/guide/overlay).
 
 ### `overlay.initialIsOpen`
 
 - **Type:** `boolean | 'error'`
 - **Default:** `true`
 
-Whether the panel opens when there are diagnostics. `true` opens it for errors and warnings, `'error'` opens it for errors only, and `false` starts with the panel collapsed to the badge.
+Whether the drawer opens when there are diagnostics. `true` opens it for errors and warnings, `'error'` opens it for errors only, and `false` starts with the drawer closed.
+
+### `overlay.badge`
+
+- **Type:** `boolean | 'auto'`
+- **Default:** `'auto'`
+
+Whether to show the badge. `'auto'` hides it while an integration such as Nuxt shows the diagnostics in its own indicator. `false` adds nothing to your pages; the diagnostics page stays available.
 
 ### `overlay.position`
 
 - **Type:** `'tl' | 'tr' | 'bl' | 'br'`
 - **Default:** `'bl'`
 
-The corner of the page the badge appears in: top left, top right, bottom left, or bottom right.
-
-### `overlay.badgeStyle`
-
-- **Type:** `string`
-
-Inline CSS added to the badge, in the format of the [`style` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/style). For example, `'display: none;'` hides the badge.
-
-### `overlay.panelStyle`
-
-- **Type:** `string`
-
-Inline CSS added to the diagnostics panel, in the format of the [`style` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/style).
+The corner of the page the badge appears in: top left, top right, bottom left, or bottom right. The drawer opens along the same edge. To restyle the badge or the drawer, see [Move or restyle the badge](/guide/overlay#move-or-restyle-the-badge).
 
 ### `overlay.editorUrl`
 
 - **Type:** `(location: { file: string; line: number; column: number }) => string | undefined`
 
-Builds the URL that opens when you click a file path in the overlay. `file` is the absolute path as the checker reports it, and `line` and `column` are 1-based. Return `undefined` to open the file with Vite's `/__open-in-editor` endpoint.
+Builds the URL that opens when you click a file path on the diagnostics page. `file` is the absolute path as the checker reports it, and `line` and `column` are 1-based. Return `undefined` to open the file with Vite's `/__open-in-editor` endpoint.
 
 The function runs on the dev server. For an example that maps container paths to the host, see [Open files from the overlay](/guide/overlay#open-files-from-the-overlay).
 
@@ -66,7 +61,7 @@ The function runs on the dev server. For an example that maps container paths to
 - **Type:** `boolean`
 - **Default:** `true`
 
-Prints diagnostics in the terminal that runs the dev server. Build mode output isn't affected; it always goes to the terminal.
+Prints diagnostics in the terminal that runs the dev server. Build mode output isn't affected; it always goes to the terminal. Set `false` to report only in the browser.
 
 ## `enableBuild`
 

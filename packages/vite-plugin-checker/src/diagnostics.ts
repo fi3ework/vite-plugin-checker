@@ -5,7 +5,6 @@ import type { Diagnostic, DiagnosticSeverity } from './protocol.js'
 import {
   DiagnosticLevel,
   type DiagnosticRecord,
-  type DiagnosticToRuntime,
   type EditorLocation,
 } from './types.js'
 
@@ -85,18 +84,4 @@ export function toDiagnostics(
 
     return [diagnostic]
   })
-}
-
-export function toLegacyDiagnostics(
-  records: DiagnosticRecord[],
-): DiagnosticToRuntime[] {
-  return records.map(
-    ({
-      code: _code,
-      endLine: _endLine,
-      endColumn: _endColumn,
-      snippet: _snippet,
-      ...legacy
-    }) => legacy,
-  )
 }

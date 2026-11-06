@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-import { toDiagnostics, toLegacyDiagnostics } from '../src/diagnostics'
+import { toDiagnostics } from '../src/diagnostics'
 import { DiagnosticLevel, type DiagnosticRecord } from '../src/types'
 
 const root = path.resolve('/project')
@@ -106,16 +106,5 @@ describe('toDiagnostics', () => {
     )
     expect(diagnostic).not.toHaveProperty('file')
     expect(diagnostic).not.toHaveProperty('line')
-  })
-})
-
-describe('toLegacyDiagnostics', () => {
-  it('drops the fields the legacy runtime does not know', () => {
-    const [legacy] = toLegacyDiagnostics([record({ code: 'X' })])
-    expect(legacy).not.toHaveProperty('code')
-    expect(legacy).not.toHaveProperty('endLine')
-    expect(legacy).not.toHaveProperty('endColumn')
-    expect(legacy).not.toHaveProperty('snippet')
-    expect(legacy).toMatchObject({ rule: 'no-var', checkerId: 'ESLint' })
   })
 })

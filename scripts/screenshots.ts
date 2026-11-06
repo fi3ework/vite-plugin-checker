@@ -1,7 +1,7 @@
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { chromium, type Page } from 'playwright-chromium'
+import { chromium, type Frame, type Page } from 'playwright-chromium'
 import { createServer } from 'vite'
 
 const fixture = fileURLToPath(
@@ -15,10 +15,11 @@ interface Shot {
   name: string
   path: string
   viewport: { width: number; height: number }
+  fullPage?: boolean
   ready(page: Page): Promise<void>
 }
 
-async function checkersIdle(page: Page) {
+async function checkersIdle(page: Page | Frame) {
   await page.locator('.groups').waitFor()
   await page.waitForFunction(
     () =>
@@ -32,7 +33,20 @@ const shots: Shot[] = [
     name: 'diagnostics-page',
     path: '__checker/',
     viewport: { width: 1000, height: 600 },
+    fullPage: true,
     ready: checkersIdle,
+  },
+  {
+    name: 'overlay-drawer',
+    path: '',
+    viewport: { width: 1000, height: 640 },
+    async ready(page) {
+      const iframe = page.locator(
+        'vite-plugin-checker-overlay .drawer:not([hidden]) iframe',
+      )
+      const frame = await (await iframe.elementHandle())!.contentFrame()
+      await checkersIdle(frame!)
+    },
   },
 ]
 
@@ -64,7 +78,7 @@ try {
       const file = path.join(outDir, `${shot.name}-${colorScheme}.png`)
       await page.screenshot({
         path: file,
-        fullPage: true,
+        fullPage: shot.fullPage ?? false,
         animations: 'disabled',
         caret: 'hide',
       })

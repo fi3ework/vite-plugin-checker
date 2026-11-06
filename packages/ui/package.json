@@ -5,8 +5,10 @@
   "description": "Diagnostics page for vite-plugin-checker",
   "type": "module",
   "scripts": {
-    "build": "vue-tsc --noEmit && vite build",
-    "dev": "vite build --watch"
+    "build": "vue-tsc --noEmit && vite build && vite build --config vite.overlay.config.ts",
+    "dev": "pnpm run \"/^dev:/\"",
+    "dev:overlay": "vite build --watch --config vite.overlay.config.ts",
+    "dev:page": "vite build --watch"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",

@@ -1,20 +1,24 @@
 import { describe, expect, it } from 'vitest'
 
-import { getHmrOverlayText, isServe, sleepForServerReady } from '../../testUtils'
+import {
+  getHmrOverlayText,
+  getOverlayBadge,
+  getOverlayFrame,
+  isServe,
+  sleepForServerReady,
+} from '../../testUtils'
 
 describe('config-initialIsOpen-false', () => {
   describe.runIf(isServe)('serve', () => {
-    it('should not find overlay', async () => {
-      if (isServe) {
-        await sleepForServerReady()
-        try {
-          await getHmrOverlayText()
-        } catch (e) {
-          expect((e as any).toString()).toContain(
-            '.message-body is expected in shadow root'
-          )
-        }
-      }
+    it('shows only the badge until it is clicked', async () => {
+      await sleepForServerReady()
+      const badge = getOverlayBadge()
+      await badge.waitFor()
+      expect(await getOverlayFrame()).toBeNull()
+
+      await badge.click()
+      const [message] = await getHmrOverlayText()
+      expect(message).toContain('Unexpected var')
     })
   })
 })

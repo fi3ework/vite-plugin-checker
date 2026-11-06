@@ -109,6 +109,5 @@ dist
 #
 lib/
 playground-temp/
-packages/runtime/public/build/bundle.js
 docs/.vitepress/cache
 packages/vite-plugin-checker/README.md

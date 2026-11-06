@@ -11,6 +11,5 @@
     "moduleResolution": "bundler",
     "exactOptionalPropertyTypes": false
   },
-  "include": ["src", "__tests__"],
-  "exclude": ["src/@runtime"]
+  "include": ["src", "__tests__"]
 }

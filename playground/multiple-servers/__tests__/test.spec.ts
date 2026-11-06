@@ -1,15 +1,18 @@
 import path from 'node:path'
 import { createServer, type ViteDevServer } from 'vite'
 import { afterAll, describe, expect, it } from 'vitest'
-import { isServe, page, pollingUntil, sleepForServerReady, testDir } from '../../testUtils'
+import { isServe, page, sleepForServerReady, testDir } from '../../testUtils'
 
 async function getOverlayMessages() {
-  return page.evaluate(() =>
-    [...document.body.children]
-      .filter((el) => el.tagName.toLowerCase().startsWith('vite-plugin-checker-error-overlay'))
-      .map((el) => el.shadowRoot?.querySelector('.message-body')?.textContent ?? '')
-      .sort()
-  )
+  const hosts = page.locator('vite-plugin-checker-overlay')
+  const messages: string[] = []
+  for (const host of await hosts.all()) {
+    const badge = host.locator('.badge')
+    if (await badge.isVisible()) await badge.dispatchEvent('click')
+    const message = host.frameLocator('iframe').locator('.diagnostic .message').first()
+    messages.push(await message.innerText({ timeout: 10_000 }))
+  }
+  return messages.sort()
 }
 
 describe('multiple-servers', () => {
@@ -28,13 +31,10 @@ describe('multiple-servers', () => {
       await widgetServer.listen()
 
       const widgetOrigin = `http://localhost:${widgetServer.config.server.port}`
-      await page.addScriptTag({
-        type: 'module',
-        url: `${widgetOrigin}/@vite-plugin-checker-runtime-entry`,
-      })
+      await page.addScriptTag({ type: 'module', url: `${widgetOrigin}/@vite/client` })
 
       await sleepForServerReady()
-      await pollingUntil(getOverlayMessages, (messages) => messages.filter(Boolean).length === 2)
+      await expect.poll(() => page.locator('vite-plugin-checker-overlay').count()).toBe(2)
 
       const messages = await getOverlayMessages()
       expect(messages).toHaveLength(2)
