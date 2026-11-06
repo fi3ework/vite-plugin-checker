@@ -20,6 +20,7 @@ import {
 } from './client/index.js'
 import type { OverlayOptions } from './client/options.js'
 import { colorize, supportsTerminalColors } from './colors.js'
+import { DOCK_ID, setupDevTools } from './devtools.js'
 import { toDiagnostics } from './diagnostics.js'
 import {
   type CheckerApi,
@@ -53,6 +54,7 @@ export type {
   DiagnosticSeverity,
   Snippet,
 } from './protocol.js'
+export { DOCK_ID }
 
 const VITE_CLIENT_ENTRY_RE =
   /[\\/](?:rolldown-)?vite[\\/]dist[\\/]client[\\/]client\.mjs(?:\?.*)?$/
@@ -111,10 +113,12 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
   const {
     editorUrl,
     badge = 'auto',
-    position = 'bl',
+    position,
     initialIsOpen = true,
+    devtools = true,
   } = typeof userConfig?.overlay === 'object' ? userConfig.overlay : {}
   const enableOverlay = userConfig?.overlay !== false && badge !== false
+  const enableDevTools = userConfig?.overlay !== false && devtools
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
@@ -126,10 +130,10 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
   const indicatorClaims = new Set<symbol>()
   const snapshotBroadcasters = new Set<() => void>()
   let uiUrl = uiUrlFor('/')
-  let overlayOptions: OverlayOptions = {
+  let devToolsRegistered = false
+  let overlayOptions: Omit<OverlayOptions, 'position'> = {
     uiUrl,
     badge,
-    position,
     initialIsOpen,
   }
   let viteMode: ConfigEnv['command'] | undefined
@@ -214,6 +218,14 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     name: 'vite-plugin-checker',
     enforce: 'pre',
     api,
+    devtools: {
+      setup(ctx) {
+        if (ctx.mode !== 'dev' || !enableDevTools) return
+        devToolsRegistered = true
+        const dispose = setupDevTools(ctx, api)
+        ctx.viteServer?.httpServer?.once('close', dispose)
+      },
+    },
     // @ts-expect-error
     __internal__checker: Checker,
     config: async (_config, env) => {
@@ -317,7 +329,10 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
         }
 
         if (id === wrapVirtualPrefix(OVERLAY_ENTRY_PATH)) {
-          return composeOverlayEntryCode(overlayOptions)
+          return composeOverlayEntryCode({
+            ...overlayOptions,
+            position: position ?? (devToolsRegistered ? 'br' : 'bl'),
+          })
         }
 
         return

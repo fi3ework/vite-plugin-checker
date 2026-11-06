@@ -85,6 +85,29 @@ checker({
 
 `editorUrl` runs on the dev server. It receives the absolute file path as the checker reports it, and 1-based `line` and `column` numbers. Return `undefined` to fall back to `/__open-in-editor` for that file.
 
+### Vite DevTools
+
+When [Vite DevTools](https://devtools.vite.dev) is installed, vite-plugin-checker also adds a Checker panel to its dock. The dock icon shows the number of errors and warnings, each checker with problems adds an entry to the Messages panel, and a toast appears when a checker starts reporting errors. The badge moves to the bottom right so it doesn't overlap the dock.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="/screenshots/devtools-panel-dark.png">
+    <img alt="The Checker panel open in the Vite DevTools dock" src="/screenshots/devtools-panel-light.png">
+  </picture>
+</p>
+
+```ts
+import { DevTools } from '@vitejs/devtools'
+import { defineConfig } from 'vite'
+import checker from 'vite-plugin-checker'
+
+export default defineConfig({
+  plugins: [DevTools(), checker({ typescript: true })],
+})
+```
+
+Set `overlay.devtools` to `false` to leave Vite DevTools alone, or `overlay.badge` to `false` to rely on the Checker panel alone.
+
 ### Disable the overlay
 
 Set `overlay: false` to report only in the terminal. Nothing is added to your pages; the diagnostics page stays available at `{base}__checker/`.

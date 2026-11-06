@@ -19,6 +19,7 @@ export function createConfig(
     // of `.mjs`; the exports map and the worker entries reference `.js` paths.
     fixedExtension: false,
     dts: true,
+    deps: { neverBundle: ['@vitejs/devtools-kit'] },
     async onSuccess() {
       await copyFile(
         'src/checkers/vueTsc/languagePlugins.cjs',

@@ -44,9 +44,16 @@ Whether to show the badge. `'auto'` hides it while an integration such as Nuxt s
 ### `overlay.position`
 
 - **Type:** `'tl' | 'tr' | 'bl' | 'br'`
-- **Default:** `'bl'`
+- **Default:** `'bl'`, or `'br'` when the Vite DevTools dock is shown
 
 The corner of the page the badge appears in: top left, top right, bottom left, or bottom right. The drawer opens along the same edge. To restyle the badge or the drawer, see [Move or restyle the badge](/guide/overlay#move-or-restyle-the-badge).
+
+### `overlay.devtools`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Adds a Checker panel and per-checker messages to [Vite DevTools](https://devtools.vite.dev) when it is installed. See [Vite DevTools](/guide/overlay#vite-devtools).
 
 ### `overlay.editorUrl`
 

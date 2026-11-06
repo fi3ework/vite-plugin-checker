@@ -37,6 +37,14 @@ describe('npm pack', () => {
     expect(tarballFiles).toContain('package/dist/@runtime/main.js')
   })
 
+  it('does not publish files from other packages', () => {
+    expect(
+      tarballFiles.filter((file) =>
+        /node_modules|pnpm-virtual-store/.test(file),
+      ),
+    ).toEqual([])
+  })
+
   it('publishes the diagnostics page with its assets', () => {
     expect(tarballFiles).toContain('package/dist/@ui/index.html')
     expect(

@@ -268,6 +268,12 @@ export interface SharedConfig {
          */
         badge?: boolean | 'auto'
         /**
+         * Add a Checker panel and messages to
+         * [Vite DevTools](https://devtools.vite.dev) when it is installed.
+         * @defaultValue `true`
+         */
+        devtools?: boolean
+        /**
          * Whether the drawer opens by itself when there are diagnostics, until
          * it is opened or closed by hand.
          * - `true`: open when there are errors or warnings
@@ -278,7 +284,7 @@ export interface SharedConfig {
         initialIsOpen?: boolean | 'error'
         /**
          * Corner of the badge. The drawer opens along the same edge.
-         * @defaultValue `'bl'`
+         * @defaultValue `'bl'`, or `'br'` when the Vite DevTools dock is shown
          */
         position?: 'tl' | 'tr' | 'bl' | 'br'
         /**

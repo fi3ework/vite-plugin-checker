@@ -7,6 +7,7 @@
     "dev": "vite"
   },
   "devDependencies": {
+    "@vitejs/devtools": "^0.8.2",
     "eslint": "^10.2.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.58.2",

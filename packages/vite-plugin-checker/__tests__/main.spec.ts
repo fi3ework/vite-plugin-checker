@@ -121,10 +121,52 @@ describe('load', () => {
       JSON.stringify({
         uiUrl: '/app/__checker/',
         badge: 'auto',
-        position: 'tr',
         initialIsOpen: 'error',
+        position: 'tr',
       }),
     )
+  })
+})
+
+describe('devtools', () => {
+  function setupDevTools(userConfig: UserPluginConfig, mode = 'dev') {
+    const ctx = {
+      mode,
+      docks: { register: vi.fn(() => ({ update: vi.fn() })) },
+      messages: { add: vi.fn(), update: vi.fn(), remove: vi.fn() },
+    }
+    const plugin = checker(userConfig) as any
+    plugin.devtools.setup(ctx)
+    return { register: ctx.docks.register, plugin }
+  }
+
+  const entryPosition = (plugin: any) =>
+    JSON.parse(
+      plugin.load
+        .handler(wrapVirtualPrefix(OVERLAY_ENTRY_PATH))
+        .match(/const options = (.*);/)[1],
+    ).position
+
+  it('registers the Checker dock in dev', () => {
+    expect(setupDevTools({}).register).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'vite-plugin-checker', type: 'iframe' }),
+    )
+  })
+
+  it('moves the badge to the bottom right unless a position is set', () => {
+    expect(entryPosition(checker({}))).toBe('bl')
+    expect(entryPosition(setupDevTools({}).plugin)).toBe('br')
+    expect(
+      entryPosition(setupDevTools({ overlay: { position: 'tl' } }).plugin),
+    ).toBe('tl')
+  })
+
+  it('does not register the dock in build mode or when disabled', () => {
+    expect(setupDevTools({}, 'build').register).not.toHaveBeenCalled()
+    expect(
+      setupDevTools({ overlay: { devtools: false } }).register,
+    ).not.toHaveBeenCalled()
+    expect(setupDevTools({ overlay: false }).register).not.toHaveBeenCalled()
   })
 })
 

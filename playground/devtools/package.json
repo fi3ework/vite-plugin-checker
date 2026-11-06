@@ -1,0 +1,16 @@
+{
+  "name": "@playground/devtools",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "@vitejs/devtools": "^0.8.2",
+    "typescript": "^5.8.3",
+    "vite": "^8.0.9",
+    "vite-plugin-checker": "workspace:*"
+  }
+}

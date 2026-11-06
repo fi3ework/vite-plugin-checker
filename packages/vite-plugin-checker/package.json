@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@types/picomatch": "^4.0.3",
+    "@vitejs/devtools-kit": "^0.8.2",
     "@vue/language-core": "~3.3.0",
     "meow": "^14.0.0",
     "modern-tar": "^0.8.0",
