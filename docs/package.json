@@ -7,6 +7,7 @@
     "dev": "vitepress dev"
   },
   "dependencies": {
+    "simple-icons": "^16.36.0",
     "vitepress": "^1.6.4"
   }
 }
