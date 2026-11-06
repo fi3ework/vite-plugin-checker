@@ -51,6 +51,7 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       const baseConfig = {
         cwd: root,
         ...translatedOptions,
+        ...pluginConfig.stylelint.dev?.overrideConfig,
       } as const
 
       const logLevel = (() => {
@@ -117,10 +118,8 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
       })
 
       // initial lint
-      const { results: diagnostics, ruleMetadata } = await stylelint.lint({
-        ...baseConfig,
-        ...pluginConfig.stylelint.dev?.overrideConfig,
-      })
+      const { results: diagnostics, ruleMetadata } =
+        await stylelint.lint(baseConfig)
 
       manager.initWith(
         diagnostics.flatMap((p) =>
