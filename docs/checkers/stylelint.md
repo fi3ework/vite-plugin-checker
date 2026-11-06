@@ -1,61 +1,86 @@
 # Stylelint
 
-## Installation
+The Stylelint checker reports CSS problems using [Stylelint](https://stylelint.io) and your project's Stylelint configuration.
 
-1. Make sure [stylelint](https://www.npmjs.com/package/stylelint) and related plugins for your `stylelintrc` are installed as peer dependencies.
+## Set up
 
-   ::: warning
-   **(Optional but highly recommended)** Install `meow@^9.0.0` with your package manager. It's needed because of Stylelint dependents on it. It's probably working fine even it's not installed as it's accessed as a phantom dependency. But when you set `hoist=false` of pnpm. It won't be accessible anymore without explicit installation.
-   :::
+1. Install Stylelint (version 16.26.1 or later), `meow`, and the configs and plugins your Stylelint config uses. The checker uses `meow` to parse `lintCommand`:
 
-2. Add `stylelint` field to plugin config and `options.stylelint.lintCommand` is required. The `lintCommand` is the same as the lint command of your project. The default root of the command uses Vite's [root](https://vitejs.dev/config/#root).
+   ::: code-group
 
-   :::tip
-   Do not add `--fix` to the lint command since the plugin is only aiming at check issues.
-   :::
-
-   ```js
-   // e.g.
-   export default {
-     plugins: [
-       checker({
-         stylelint: {
-           // for example, lint .css and .vue
-           lintCommand: 'stylelint ./src/**/*.{css,vue}',
-         },
-       }),
-     ],
-   }
+   ```bash [pnpm]
+   pnpm add -D stylelint meow
    ```
 
-### Performance Optimization
+   ```bash [npm]
+   npm install -D stylelint meow
+   ```
 
-If you're experiencing `EMFILE: too many open files` errors or want to improve performance, you can use the `watchPath` option to limit file watching to specific directories:
+   ```bash [yarn]
+   yarn add -D stylelint meow
+   ```
 
-```js
-export default {
-  plugins: [
-    checker({
-      stylelint: {
-        lintCommand: 'stylelint ./src/**/*.{css,vue}',
-        // Single directory
-        watchPath: './src',
+   ```bash [bun]
+   bun add -d stylelint meow
+   ```
 
-        // Multiple directories
-        // watchPath: ['./src', './components'],
-      },
-    }),
-  ],
-}
+   :::
+
+2. Enable the checker with a `lintCommand`. Use the same command you'd run in your terminal or CI:
+
+   ```ts
+   checker({
+     stylelint: {
+       lintCommand: 'stylelint "./src/**/*.{css,vue}"',
+     },
+   })
+   ```
+
+## How `lintCommand` is used
+
+- **In build mode**, the checker runs `lintCommand` as a Stylelint CLI command from the Vite root. The first word must be `stylelint`; it runs the `stylelint` binary installed in your project.
+- **In dev mode**, the checker translates the CLI flags in `lintCommand` to [Stylelint Node.js API options](https://stylelint.io/user-guide/options), and lints the files that match its first file pattern. When a file changes, only that file is linted again.
+
+Don't add `--fix` to `lintCommand`; Stylelint would modify your files while the dev server or build runs.
+
+## Watch fewer files
+
+By default, dev mode watches the whole Vite root, excluding `node_modules` and `.git`. In large projects, this can be slow or fail with `EMFILE: too many open files`. Set `watchPath` to watch only the directories you lint:
+
+```ts
+checker({
+  stylelint: {
+    lintCommand: 'stylelint "./src/**/*.{css,vue}"',
+    watchPath: './src',
+  },
+})
 ```
 
-## Configuration
+## Override dev mode options
 
-Advanced object configuration table of `options.stylelint`
+`dev.overrideConfig` takes [Stylelint options](https://stylelint.io/user-guide/options) that override the ones translated from `lintCommand`, in dev mode only:
 
-| field              | Type                                                                                                     | Default value          | Description                                                                                                                                                                                                       |
-| :----------------- | -------------------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| lintCommand        | `string`                                                                                                 | This value is required | `lintCommand` will be executed at build mode, and will also be used as default config for dev mode when `stylelint.dev.stylelint` is nullable.                                                                    |
-| watchPath          | `string \| string[]`                                                                                     | `undefined`            | **(Only in dev mode)** Configure path to watch files for Stylelint. If not specified, will watch the entire project root. Use this to improve performance and avoid `EMFILE: too many open files` errors.         |
-| dev.overrideConfig | [`Stylelint.LinterOptions`](https://github.com/stylelint/stylelint/blob/main/types/stylelint/index.d.ts) | `undefined`            | **(Only in dev mode)** You can override the options of the translated from `lintCommand`. Config priority: `stylelint.lint({ cwd: root, ...translatedOptions, ...pluginConfig.stylelint.dev?.overrideConfig, })`. |
-| dev.logLevel       | `('error' \| 'warning')[]`                                                                               | `['error', 'warning']` | **(Only in dev mode)** Which level of Stylelint should be emitted to terminal and overlay in dev mode                                                                                                             |
+```ts
+checker({
+  stylelint: {
+    lintCommand: 'stylelint "./src/**/*.css"',
+    dev: {
+      overrideConfig: {
+        cache: true,
+      },
+    },
+  },
+})
+```
+
+The final options are `{ cwd: root, ...translatedOptions, ...dev.overrideConfig }`.
+
+## Options
+
+| Option               | Type                                                                 | Default                | Description                                                                                                 |
+| -------------------- | -------------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `lintCommand`        | `string`                                                             | Required               | Stylelint CLI command. See [How `lintCommand` is used](#how-lintcommand-is-used).                           |
+| `watchPath`          | `string \| string[]`                                                 | The Vite root          | Paths to watch in dev mode, relative to the root.                                                           |
+| `dev.overrideConfig` | [`Stylelint.LinterOptions`](https://stylelint.io/user-guide/options) | `undefined`            | Options that override the ones translated from `lintCommand` in dev mode.                                   |
+| `dev.logLevel`       | `('error' \| 'warning')[]`                                           | `['error', 'warning']` | Diagnostic levels to report in dev mode.                                                                    |
+| `dev.debounceMs`     | `number`                                                             | `300`                  | Time in milliseconds to wait after a change before linting. Changes within this window are linted together. |

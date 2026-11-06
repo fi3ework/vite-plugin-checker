@@ -1,22 +1,13 @@
 # @vite-plugin-checker/runtime
 
-Runtime code for vite-plugin-checker, this package will be directly bundled into the vite-plugin-checker package in building process and hasn't be released to NPM for now.
+The browser overlay for vite-plugin-checker. This package isn't published to npm. Its build output is written to `../vite-plugin-checker/dist/@runtime/main.js` and ships inside the `vite-plugin-checker` package.
 
 ## Development
 
-### local
-
-Watch and compile code with mock diagnostics and html without vite-plugin-checker.
-
-```bash
-pnpm dev-local
-pnpm preview
-```
-
-### with vite-plugin-checker
-
-Watch and compile bundled JS to `../vite-plugin-checker/dist/@runtime/main.js`. Run `pnpm dev` in monorepo root will invoke below scripts.
+Rebuild the overlay on change:
 
 ```bash
 pnpm dev
 ```
+
+Running `pnpm dev` in the repository root also runs this script.

@@ -1,48 +1,95 @@
 # oxlint
 
-## Installation
+The oxlint checker reports lint problems using [oxlint](https://oxc.rs/docs/guide/usage/linter) and your project's oxlint configuration.
 
-1. Make sure [oxlint](https://www.npmjs.com/package/oxlint) is installed as a dependency.
+## Set up
 
-2. Add `oxlint` field to plugin config. Valid options are either `true` or a configuration object.
+1. Install oxlint:
 
-   ```js
-   // e.g.
-   export default defineConfig({
-     plugins: [
-       checker({
-         oxlint: true,
-         // or
-         oxlint: {
-           lintCommand: "oxlint -D correctness",
-         },
-       }),
-     ],
-   });
+   ::: code-group
+
+   ```bash [pnpm]
+   pnpm add -D oxlint
    ```
 
-### Hiding warnings
+   ```bash [npm]
+   npm install -D oxlint
+   ```
 
-Add `--quiet` to `lintCommand` to report errors only. `lintCommand` is also used in dev mode, so to hide warnings in build mode only, set it based on the command:
+   ```bash [yarn]
+   yarn add -D oxlint
+   ```
 
-```js
+   ```bash [bun]
+   bun add -d oxlint
+   ```
+
+   :::
+
+2. Enable the checker:
+
+   ```ts
+   checker({
+     oxlint: true,
+   })
+   ```
+
+With `oxlint: true`, the checker runs `oxlint` from the Vite root in both dev and build mode.
+
+## Customize the command
+
+Set `lintCommand` to pass [oxlint CLI flags](https://oxc.rs/docs/guide/usage/linter/cli). The same command runs in both modes:
+
+```ts
+checker({
+  oxlint: {
+    lintCommand: 'oxlint -D correctness ./src',
+  },
+})
+```
+
+In dev mode, the checker reads oxlint's JSON output, so it replaces any `--format` or `-f` flag with `--format json` and prints a warning.
+
+Don't pass `--fix`; oxlint would modify your files while the dev server or build runs.
+
+## Hide warnings
+
+Add `--quiet` to `lintCommand` to report errors only. Because `lintCommand` also runs in dev mode, this hides warnings in both modes. To hide them only in build mode, choose the command based on Vite's `command`:
+
+```ts
+import { defineConfig } from 'vite'
+import checker from 'vite-plugin-checker'
+
 export default defineConfig(({ command }) => ({
   plugins: [
     checker({
       oxlint: {
-        lintCommand: command === "build" ? "oxlint --quiet" : "oxlint",
+        lintCommand: command === 'build' ? 'oxlint --quiet' : 'oxlint',
       },
     }),
   ],
-}));
+}))
 ```
 
-## Configuration
+## How dev mode works
 
-Advanced object configuration table of `options.oxlint`
+When any watched file changes, the checker runs `lintCommand` on the whole project again. This keeps the results of cross-file rules, such as `import/no-cycle`, accurate.
 
-| field        | Type                       | Default value          | Description                                                                                                            |
-| :----------- | -------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| lintCommand  | `string`                   | `oxlint`               | `lintCommand` will be executed at build mode, and will also be used in dev mode.                                       |
-| watchPath    | `string \| string[]`       | `undefined`            | **(Only in dev mode)** Configure path to watch files for oxlint. If not specified, will watch the entire project root. |
-| dev.logLevel | `('error' \| 'warning')[]` | `['error', 'warning']` | **(Only in dev mode)** Which level of oxlint should be emitted to terminal and overlay in dev mode.                    |
+To watch fewer files, set `watchPath`:
+
+```ts
+checker({
+  oxlint: {
+    watchPath: './src',
+  },
+})
+```
+
+## Options
+
+| Option           | Type                       | Default                | Description                                                                                                 |
+| ---------------- | -------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `lintCommand`    | `string`                   | `'oxlint'`             | oxlint CLI command, used in both dev and build mode.                                                        |
+| `watchPath`      | `string \| string[]`       | The Vite root          | Paths to watch in dev mode, relative to the root.                                                           |
+| `dev.logLevel`   | `('error' \| 'warning')[]` | `['error', 'warning']` | Diagnostic levels to report in dev mode.                                                                    |
+| `dev.debounceMs` | `number`                   | `300`                  | Time in milliseconds to wait after a change before linting. Changes within this window are linted together. |
