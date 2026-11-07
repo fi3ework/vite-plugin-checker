@@ -33,7 +33,7 @@ function setup() {
     getState: () => store.getState(),
     subscribe: (listener) => store.subscribe(listener),
     claimIndicator: vi.fn(() => () => {}),
-    uiUrl: '/app/__checker/',
+    getUiUrl: () => '/app/__checker/',
   }
   const dock = { update: vi.fn() }
   const ctx = {

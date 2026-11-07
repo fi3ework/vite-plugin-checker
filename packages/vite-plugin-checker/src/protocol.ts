@@ -68,6 +68,7 @@ export type CheckerEvent =
   | {
       type: 'status'
       checkerId: string
+      label: string
       status: CheckerStatus
       error?: string
       lastRun?: CheckerRun
@@ -82,6 +83,11 @@ export type CheckerEvent =
       files: Record<string, Diagnostic[]>
     }
 
+/**
+ * Every vite-plugin-checker instance in one Vite config shares the same
+ * checkers, diagnostics page and indicator claims, so any instance's `api`
+ * reports all of them.
+ */
 export interface CheckerApi {
   readonly protocol: typeof PROTOCOL_VERSION
   getState(): CheckerState[]
@@ -93,7 +99,7 @@ export interface CheckerApi {
    */
   claimIndicator(owner: string): () => void
   /** Root-relative URL of the diagnostics page, including Vite's `base`. */
-  readonly uiUrl: string
+  getUiUrl(): string
 }
 
 export interface HelloPayload {

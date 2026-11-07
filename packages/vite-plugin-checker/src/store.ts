@@ -7,12 +7,14 @@ import type {
 
 export interface CheckerStore {
   register(id: string, label: string): void
+  has(id: string): boolean
+  /** Forget checkers without notifying subscribers. */
+  remove(ids: string[]): void
   setStatus(id: string, status: CheckerStatus, error?: string): void
   /** Replace every diagnostic of a checker and record a finished run. */
   setDiagnostics(id: string, diagnostics: Diagnostic[]): void
   getState(): CheckerState[]
   subscribe(listener: (event: CheckerEvent) => void): () => void
-  clear(): void
 }
 
 export function createCheckerStore(now = Date.now): CheckerStore {
@@ -73,6 +75,7 @@ export function createCheckerStore(now = Date.now): CheckerStore {
     emit({
       type: 'status',
       checkerId: id,
+      label: state.label,
       status,
       ...(nextError === undefined ? {} : { error: nextError }),
       ...(state.lastRun ? { lastRun: { ...state.lastRun } } : {}),
@@ -84,6 +87,15 @@ export function createCheckerStore(now = Date.now): CheckerStore {
       if (checkers.has(id)) return
       checkers.set(id, { id, label, status: 'starting', diagnostics: [] })
       filesByChecker.set(id, new Map())
+    },
+
+    has: (id) => checkers.has(id),
+
+    remove(ids) {
+      for (const id of ids) {
+        checkers.delete(id)
+        filesByChecker.delete(id)
+      }
     },
 
     setStatus: (id, status, error) => setStatus(id, status, error),
@@ -134,11 +146,6 @@ export function createCheckerStore(now = Date.now): CheckerStore {
       return () => {
         listeners.delete(listener)
       }
-    },
-
-    clear() {
-      checkers.clear()
-      filesByChecker.clear()
     },
   }
 }

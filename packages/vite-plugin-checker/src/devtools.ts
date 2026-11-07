@@ -56,7 +56,7 @@ export function setupDevTools(
     description: 'Type and lint diagnostics from vite-plugin-checker',
     icon: { light: icon('#3a3f47'), dark: icon('#d6dae0') },
     category: 'app',
-    url: `${api.uiUrl}?embed`,
+    url: `${api.getUiUrl()}?embed`,
   })
   const open = {
     id: 'open',

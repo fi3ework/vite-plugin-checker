@@ -51,18 +51,21 @@ describe('createCheckerStore', () => {
       {
         type: 'status',
         checkerId: 'eslint',
+        label: 'ESLint',
         status: 'starting',
         lastRun: { startedAt: 1000 },
       },
       {
         type: 'status',
         checkerId: 'eslint',
+        label: 'ESLint',
         status: 'idle',
         lastRun: { startedAt: 1000, finishedAt: 1250 },
       },
       {
         type: 'status',
         checkerId: 'eslint',
+        label: 'ESLint',
         status: 'checking',
         lastRun: { startedAt: 2250 },
       },
@@ -104,6 +107,7 @@ describe('createCheckerStore', () => {
       {
         type: 'status',
         checkerId: 'eslint',
+        label: 'ESLint',
         status: 'idle',
         lastRun: { startedAt: 1500, finishedAt: 1500 },
       },

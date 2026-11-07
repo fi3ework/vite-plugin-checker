@@ -380,7 +380,7 @@ describe('dev server state', () => {
 
     expect(api!.protocol).toBe(1)
     expect(api!.getState()).toEqual([])
-    expect(api!.uiUrl).toBe('/__checker/')
+    expect(api!.getUiUrl()).toBe('/__checker/')
   })
 
   it('publishes worker diagnostics through the api and the HMR channel', async () => {
@@ -475,7 +475,109 @@ describe('dev server state', () => {
 
   it('includes the Vite base in the UI URL', async () => {
     const { api } = await serve()
-    expect(api.uiUrl).toBe('/app/__checker/')
+    expect(api.getUiUrl()).toBe('/app/__checker/')
+  })
+
+  it('keeps a copy of the api working', async () => {
+    const plugin = checker({ typescript: true }) as any
+    const copy = { ...plugin.api } as import('../src/protocol').CheckerApi
+    await plugin.config({}, { command: 'serve', mode: 'development' })
+    plugin.configResolved({
+      root,
+      base: '/app/',
+      logger: {},
+      server: {},
+      build: { watch: null },
+    })
+
+    expect(copy.getUiUrl()).toBe('/app/__checker/')
+  })
+
+  async function serveShared(count: number) {
+    const config = {
+      root,
+      base: '/app/',
+      logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
+      server: {},
+      build: { watch: null },
+    }
+    const handlers = new Map<string, (...args: any[]) => void>()
+    const ws = {
+      on: vi.fn((event: string, handler: (...args: any[]) => void) => {
+        handlers.set(event, handler)
+      }),
+      send: vi.fn(),
+    }
+    const middlewares = { use: vi.fn() }
+    const server = { watcher: new EventEmitter(), ws, middlewares, config }
+    const plugins = Array.from(
+      { length: count },
+      () => checker({ typescript: true }) as any,
+    )
+    const events: unknown[] = []
+    plugins.at(-1).api.subscribe((event: unknown) => events.push(event))
+    for (const plugin of plugins) {
+      await plugin.config({}, { command: 'serve', mode: 'development' })
+    }
+    for (const plugin of plugins) plugin.configResolved(config)
+    for (const plugin of plugins) plugin.configureServer(server)
+    return {
+      plugins,
+      ws,
+      handlers,
+      middlewares,
+      events,
+      workers: workers.slice(-count),
+    }
+  }
+
+  it('shares checkers, the page and the overlay between instances', async () => {
+    const { plugins, ws, handlers, middlewares, events, workers } =
+      await serveShared(2)
+    const [first, second] = plugins
+
+    for (const plugin of plugins) {
+      expect(
+        plugin.api
+          .getState()
+          .map((c: { id: string; label: string }) => [c.id, c.label]),
+      ).toEqual([
+        ['typescript', 'TypeScript'],
+        ['typescript-2', 'TypeScript (2)'],
+      ])
+    }
+    expect(middlewares.use).toHaveBeenCalledOnce()
+    expect(ws.on).toHaveBeenCalledOnce()
+
+    workers[0]!.emit('message', {
+      type: ACTION_TYPES.diagnostics,
+      payload: [record],
+    })
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: 'update', checkerId: 'typescript' }),
+    )
+    expect(sent(ws, EVENT_UPDATE)).toHaveLength(1)
+
+    const client = '/node_modules/vite/dist/client/client.mjs'
+    expect(first.transform.handler('', client)).toBeTypeOf('string')
+    expect(second.transform.handler('', client)).toBeUndefined()
+    const entry = wrapVirtualPrefix(OVERLAY_ENTRY_PATH)
+    expect(first.load.handler(entry)).toBeTypeOf('string')
+    expect(second.load.handler(entry)).toBeUndefined()
+
+    second.api.claimIndicator('host')
+    const reply = { send: vi.fn() }
+    handlers.get(EVENT_HELLO)!({}, reply)
+    expect(reply.send).toHaveBeenCalledWith(
+      EVENT_SNAPSHOT,
+      expect.objectContaining({
+        indicatorClaimed: true,
+        checkers: [
+          expect.objectContaining({ id: 'typescript' }),
+          expect.objectContaining({ id: 'typescript-2' }),
+        ],
+      }),
+    )
   })
 
   it('serves the diagnostics page from the dev server', async () => {

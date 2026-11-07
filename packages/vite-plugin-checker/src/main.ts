@@ -18,20 +18,19 @@ import {
   readOverlayCode,
   wrapVirtualPrefix,
 } from './client/index.js'
-import type { OverlayOptions } from './client/options.js'
 import { colorize, supportsTerminalColors } from './colors.js'
 import { DOCK_ID, setupDevTools } from './devtools.js'
 import { toDiagnostics } from './diagnostics.js'
+import { broadcastSnapshot, createHub, shareHub, snapshotOf } from './hub.js'
 import {
   type CheckerApi,
+  type CheckerEvent,
   EVENT_HELLO,
   EVENT_SNAPSHOT,
   EVENT_STATUS,
   EVENT_UPDATE,
   PROTOCOL_VERSION,
-  type SnapshotPayload,
 } from './protocol.js'
-import { createCheckerStore } from './store.js'
 import {
   ACTION_TYPES,
   type Action,
@@ -126,70 +125,84 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
   let serverCount = 0
   let workersConfigured = false
   const serverCleanups = new WeakMap<ResolvedConfig, () => void>()
-  const store = createCheckerStore()
-  const indicatorClaims = new Set<symbol>()
-  const snapshotBroadcasters = new Set<() => void>()
-  let uiUrl = uiUrlFor('/')
-  let devToolsRegistered = false
-  let overlayOptions: Omit<OverlayOptions, 'position'> = {
-    uiUrl,
-    badge,
-    initialIsOpen,
-  }
+  const self = {}
+  let hub = createHub(uiUrlFor('/'))
+  let joined = false
+  let ownIds: string[] = []
+  const subscriptions = new Set<{
+    listener: (event: CheckerEvent) => void
+    unsubscribe: () => void
+  }>()
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
   let logger: Logger | null = null
   let checkerPromise: Promise<void> | null = null
   let resolvedRoot = process.cwd()
 
-  const snapshot = (): SnapshotPayload => ({
-    protocol: PROTOCOL_VERSION,
-    checkers: store.getState(),
-    indicatorClaimed: indicatorClaims.size > 0,
-  })
-
-  const broadcastSnapshot = () => {
-    for (const broadcast of snapshotBroadcasters) broadcast()
-  }
-
   const api: CheckerApi = {
     protocol: PROTOCOL_VERSION,
-    getState: () => store.getState(),
-    subscribe: (listener) => store.subscribe(listener),
+    getState: () => hub.store.getState(),
+    subscribe(listener) {
+      const subscription = {
+        listener,
+        unsubscribe: hub.store.subscribe(listener),
+      }
+      subscriptions.add(subscription)
+      return () => {
+        subscription.unsubscribe()
+        subscriptions.delete(subscription)
+      }
+    },
     claimIndicator(owner) {
       const claim = Symbol(owner)
-      indicatorClaims.add(claim)
-      if (indicatorClaims.size === 1) broadcastSnapshot()
+      hub.claims.add(claim)
+      if (hub.claims.size === 1) broadcastSnapshot(hub)
       return () => {
-        if (indicatorClaims.delete(claim) && indicatorClaims.size === 0) {
-          broadcastSnapshot()
+        if (hub.claims.delete(claim) && hub.claims.size === 0) {
+          broadcastSnapshot(hub)
         }
       }
     },
-    get uiUrl() {
-      return uiUrl
-    },
+    getUiUrl: () => hub.uiUrl,
+  }
+
+  const joinHub = (config: ResolvedConfig) => {
+    if (joined) return
+    joined = true
+    const shared = shareHub(config, hub)
+    if (shared === hub) return
+    for (const claim of hub.claims) shared.claims.add(claim)
+    for (const subscription of subscriptions) {
+      subscription.unsubscribe()
+      subscription.unsubscribe = shared.store.subscribe(subscription.listener)
+    }
+    hub = shared
   }
 
   const startWorkers = (root: string, watch: LintWatchOptions | undefined) => {
     const context = { root, editorUrl }
+    const { store } = hub
 
     for (const checker of checkers) {
       const name = checker.name!
       const { worker } = checker.serve
-      store.register(name, checkerLabels[name])
+      let id: string = name
+      let label = checkerLabels[name]
+      for (let n = 2; store.has(id); n++) {
+        id = `${name}-${n}`
+        label = `${checkerLabels[name]} (${n})`
+      }
+      ownIds.push(id)
+      store.register(id, label)
 
       worker.on('message', (action: Action) => {
         switch (action.type) {
           case ACTION_TYPES.diagnostics: {
-            store.setDiagnostics(
-              name,
-              toDiagnostics(name, action.payload, context),
-            )
+            store.setDiagnostics(id, toDiagnostics(id, action.payload, context))
             break
           }
           case ACTION_TYPES.status:
-            store.setStatus(name, action.payload.status, action.payload.error)
+            store.setStatus(id, action.payload.status, action.payload.error)
             break
           case ACTION_TYPES.console:
             if (Checker.logger.length) {
@@ -203,14 +216,12 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
       })
 
       worker.on('error', (error: Error) => {
-        store.setStatus(name, 'failed', error.message)
-        logger?.error(
-          colorize('red', `[${checkerLabels[name]}] ${error.stack ?? error}`),
-        )
+        store.setStatus(id, 'failed', error.message)
+        logger?.error(colorize('red', `[${label}] ${error.stack ?? error}`))
       })
 
       checker.serve.configureServer({ root, watch })
-      store.setStatus(name, 'checking')
+      store.setStatus(id, 'checking')
     }
   }
 
@@ -220,10 +231,14 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     api,
     devtools: {
       setup(ctx) {
-        if (ctx.mode !== 'dev' || !enableDevTools) return
-        devToolsRegistered = true
+        if (ctx.mode !== 'dev' || !enableDevTools || hub.devtools) return
+        const owner = hub
+        owner.devtools = true
         const dispose = setupDevTools(ctx, api)
-        ctx.viteServer?.httpServer?.once('close', dispose)
+        ctx.viteServer?.httpServer?.once('close', () => {
+          owner.devtools = false
+          dispose()
+        })
       },
     },
     // @ts-expect-error
@@ -269,8 +284,9 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     },
     configResolved(config) {
       logger = config.logger
-      uiUrl = uiUrlFor(config.base)
-      overlayOptions = { ...overlayOptions, uiUrl }
+      joinHub(config)
+      hub.uiUrl = uiUrlFor(config.base)
+      if (viteMode === 'serve' && enableOverlay) hub.overlayOwner ??= self
       buildWatch = !!config.build.watch
       resolvedRoot = config.root
     },
@@ -297,7 +313,8 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
       if (serverCount === 0) {
         const terminated = checkers
         checkers = []
-        store.clear()
+        hub.store.remove(ownIds)
+        ownIds = []
         checkersPromise = null
         workersConfigured = false
         await Promise.all(
@@ -329,9 +346,12 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
         }
 
         if (id === wrapVirtualPrefix(OVERLAY_ENTRY_PATH)) {
+          if (hub.overlayOwner && hub.overlayOwner !== self) return
           return composeOverlayEntryCode({
-            ...overlayOptions,
-            position: position ?? (devToolsRegistered ? 'br' : 'bl'),
+            uiUrl: hub.uiUrl,
+            badge,
+            initialIsOpen,
+            position: position ?? (hub.devtools ? 'br' : 'bl'),
           })
         }
 
@@ -342,6 +362,7 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
       filter: { id: VITE_CLIENT_ENTRY_RE },
       handler(code, id) {
         if (viteMode !== 'serve' || !enableOverlay) return
+        if (hub.overlayOwner && hub.overlayOwner !== self) return
         if (!VITE_CLIENT_ENTRY_RE.test(id)) return
 
         return `${code}\n${composeClientInjectionCode()}`
@@ -380,7 +401,14 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
         )
       }
 
-      const unsubscribe = store.subscribe((event) => {
+      if (hub.servers.has(server)) {
+        serverCleanups.set(server.config, () => {})
+        return
+      }
+      hub.servers.add(server)
+
+      const owner = hub
+      const unsubscribe = owner.store.subscribe((event) => {
         if (event.type === 'update') {
           const { type: _, ...payload } = event
           server.ws.send(EVENT_UPDATE, payload)
@@ -389,11 +417,13 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
           server.ws.send(EVENT_STATUS, payload)
         }
       })
-      const broadcastSnapshot = () => server.ws.send(EVENT_SNAPSHOT, snapshot())
-      snapshotBroadcasters.add(broadcastSnapshot)
+      const sendSnapshot = () =>
+        server.ws.send(EVENT_SNAPSHOT, snapshotOf(owner))
+      owner.broadcasters.add(sendSnapshot)
       serverCleanups.set(server.config, () => {
         unsubscribe()
-        snapshotBroadcasters.delete(broadcastSnapshot)
+        owner.broadcasters.delete(sendSnapshot)
+        owner.servers.delete(server)
       })
 
       server.middlewares.use(
@@ -401,7 +431,7 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
       )
 
       server.ws.on(EVENT_HELLO, (_data, client) => {
-        client.send(EVENT_SNAPSHOT, snapshot())
+        client.send(EVENT_SNAPSHOT, snapshotOf(owner))
       })
     },
   }
