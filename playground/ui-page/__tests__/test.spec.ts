@@ -17,7 +17,7 @@ describe.runIf(isServe)('ui-page', () => {
     await expect
       .poll(() => page.locator('.checkers').innerText())
       .toMatch(/TypeScript[\s\S]*ESLint/)
-    expect(await diagnostics().allInnerTexts()).toEqual([
+    expect(await diagnostics().allTextContents()).toEqual([
       expect.stringContaining('Unexpected var, use let or const instead.'),
       expect.stringContaining(
         "Type 'string' is not assignable to type 'number'.",
@@ -49,7 +49,7 @@ describe.runIf(isServe)('ui-page', () => {
     await page.keyboard.press('/')
     await page.keyboard.type('TS2322')
 
-    expect(await diagnostics().allInnerTexts()).toEqual([
+    expect(await diagnostics().allTextContents()).toEqual([
       expect.stringContaining('TS2322'),
     ])
   })
@@ -62,7 +62,7 @@ describe.runIf(isServe)('ui-page', () => {
       .toHaveLength(2)
     await expect.poll(() => page.locator('.checkers .pill.hidden').innerText()).toContain('TypeScript')
     await expect.poll(() => diagnostics().count()).toBe(1)
-    expect(await diagnostics().innerText()).toContain('no-var')
+    expect(await diagnostics().textContent()).toContain('no-var')
     expect(await page.locator('.summary').innerText()).toBe('1 error')
 
     await openPage()
@@ -73,7 +73,7 @@ describe.runIf(isServe)('ui-page', () => {
 
     editFile('src/main.ts', (code) => code.replace("'one'", '1'))
     await expect.poll(() => diagnostics().count(), { timeout: 15_000 }).toBe(1)
-    expect(await diagnostics().innerText()).toContain('no-var')
+    expect(await diagnostics().textContent()).toContain('no-var')
 
     editFile('src/main.ts', (code) => code.replace('var ', 'const '))
     await page

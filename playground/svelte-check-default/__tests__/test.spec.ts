@@ -28,7 +28,9 @@ describe('svelte-check-default', () => {
           .replace('</button>', '</div>'),
       )
       // svelte-check reports a transient TS7016 for the edited component before its real diagnostics
-      await waitForDiagnostics({ quietMs: 4_000 })
+      await waitForDiagnostics({
+        until: (all) => all.some((d) => d.displayFile === 'src/App.svelte'),
+      })
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })

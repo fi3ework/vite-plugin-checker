@@ -29,7 +29,7 @@ describe('config-default', () => {
       await waitForServerReady()
       const link = getOverlayPage().locator('.diagnostic a.code').first()
 
-      expect(await link.innerText({ timeout: 10_000 })).toBe('no-var')
+      expect(await link.textContent({ timeout: 10_000 })).toBe('no-var')
       expect(await link.getAttribute('href')).toBe('https://eslint.org/docs/latest/rules/no-var')
     })
 

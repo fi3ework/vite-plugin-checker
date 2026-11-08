@@ -7,7 +7,7 @@ describe('config-overlay-editor-url', () => {
       await waitForServerReady()
       const link = getOverlayPage().locator('.diagnostic a.location').first()
 
-      expect(await link.innerText({ timeout: 10_000 })).toBe('3:1')
+      expect(await link.textContent({ timeout: 10_000 })).toBe('3:1')
       expect(await link.getAttribute('href')).toBe('vscode://file/host/project/src/main.ts:3:1')
     })
   })

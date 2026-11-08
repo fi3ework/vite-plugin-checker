@@ -5,6 +5,7 @@ import { expect } from 'vitest'
 import { checkerApi, diagnostics, getDiagnosticsEmitCount, page, testDir } from './vitestSetup'
 
 import type { ElementHandle, Frame, FrameLocator } from 'playwright-chromium'
+import type { Diagnostic } from '../packages/vite-plugin-checker/src/protocol'
 
 export const OVERLAY = 'vite-plugin-checker-overlay'
 const OPEN_DRAWER_FRAME = `${OVERLAY} .drawer:not([hidden]) iframe`
@@ -155,6 +156,8 @@ export interface WaitForDiagnosticsOptions {
    * edit cannot let the quiet window elapse on stale diagnostics.
    */
   minEmits?: number
+  /** Also require the current diagnostics to satisfy this before resolving. */
+  until?: (diagnostics: Diagnostic[]) => boolean
 }
 
 /**
@@ -176,6 +179,7 @@ export async function waitForDiagnostics(options: WaitForDiagnosticsOptions = {}
     timeout = process.env.CI ? 30_000 : 10_000,
     quietMs = 2_000,
     minEmits = 1,
+    until = () => true,
   } = options
 
   const start = Date.now()
@@ -191,7 +195,11 @@ export async function waitForDiagnostics(options: WaitForDiagnosticsOptions = {}
       lastChangeAt = Date.now()
       continue
     }
-    if (current - baseline >= minEmits && Date.now() - lastChangeAt >= quietMs) {
+    if (
+      current - baseline >= minEmits &&
+      Date.now() - lastChangeAt >= quietMs &&
+      until(diagnostics)
+    ) {
       return
     }
   }
