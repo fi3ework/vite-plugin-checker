@@ -41,7 +41,7 @@ describe.runIf(isServe)('ui-page', () => {
 
     const url = await requested
     expect(url.pathname).toBe('/my-app/__open-in-editor')
-    expect(url.searchParams.get('file')).toMatch(/src\/main\.ts:1:1$/)
+    expect(url.searchParams.get('file')).toMatch(/src[\\/]main\.ts:1:1$/)
   })
 
   it('filters by text', async () => {
