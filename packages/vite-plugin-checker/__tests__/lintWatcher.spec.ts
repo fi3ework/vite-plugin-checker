@@ -35,12 +35,22 @@ describe('watchLintTargets', () => {
       onUnlink: (p) => unlinked.push(p),
     })
     await new Promise<void>((resolve) => watcher!.on('ready', resolve))
+    await drainFixtureEvents(changed, unlinked)
     return { changed, unlinked }
+  }
+
+  async function drainFixtureEvents(changed: string[], unlinked: string[]) {
+    const sentinel = path.join(root, 'sentinel.js')
+    fs.writeFileSync(sentinel, '')
+    await vi.waitFor(() => expect(changed).toContain(sentinel))
+    fs.rmSync(sentinel)
+    await vi.waitFor(() => expect(unlinked).toContain(sentinel))
+    changed.length = 0
+    unlinked.length = 0
   }
 
   it('reports added, changed and removed files with absolute paths', async () => {
     const { changed, unlinked } = await startWatching()
-    expect(changed).toEqual([])
 
     const added = path.join(root, 'src', 'added.js')
     const existing = path.join(root, 'src', 'existing.js')
@@ -95,6 +105,7 @@ describe('watchLintTargets', () => {
     expect(watch).toHaveBeenCalledWith(
       root,
       expect.objectContaining({
+        ignoreInitial: true,
         usePolling: true,
         interval: 100,
         binaryInterval: 300,
