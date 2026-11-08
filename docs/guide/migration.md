@@ -65,7 +65,7 @@ This affects you if you styled the overlay, or loaded its runtime yourself:
 
 - `overlay.badgeStyle` and `overlay.panelStyle` are removed. Style the `<vite-plugin-checker-overlay>` element with `--mb-*` custom properties, or with `::part(badge)` and `::part(drawer)`. To hide the badge, set `overlay.badge` to `false`.
 - The `/@vite-plugin-checker-runtime-entry` module is removed. Pages that don't load the Vite client should load `/@vite/client` instead; see [Backend integration and SSR](/recipes/backend-integration).
-- The `DiagnosticToRuntime`, `ClientDiagnosticPayload` and `ClientPayload` types and the `vite-plugin-checker` HMR events are removed. Read diagnostics from the plugin's `api` instead, typed as `CheckerApi`.
+- The `DiagnosticToRuntime`, `ClientDiagnosticPayload` and `ClientPayload` types and the `vite-plugin-checker` HMR events are removed. Read diagnostics from the [plugin API](/reference/plugin-api) instead.
 
 **Migration:** replace `badgeStyle` and `panelStyle` with CSS, and replace any manual runtime script with `/@vite/client`.
 

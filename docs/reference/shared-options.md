@@ -39,7 +39,7 @@ Whether the drawer opens when there are diagnostics. `true` opens it for errors 
 - **Type:** `boolean | 'auto'`
 - **Default:** `'auto'`
 
-Whether to show the badge. `'auto'` hides it while an integration such as Nuxt shows the diagnostics in its own indicator. `false` adds nothing to your pages; the diagnostics page stays available.
+Whether to show the badge. `'auto'` hides it while an integration such as Nuxt shows the diagnostics in its own indicator (see [`claimIndicator`](/reference/plugin-api#claimindicator-owner)). `false` adds nothing to your pages; the diagnostics page stays available.
 
 ### `overlay.position`
 
