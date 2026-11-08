@@ -5,7 +5,7 @@ import CheckerPill from './components/CheckerPill.vue'
 import CopyButton from './components/CopyButton.vue'
 import DiagnosticGroup from './components/DiagnosticGroup.vue'
 import { connect } from './connection'
-import { CLOSE_MESSAGE, EMBED_PARAM } from './embed'
+import { CHECKER_PARAM, CLOSE_MESSAGE, EMBED_PARAM } from './embed'
 import { diagnosticsToMarkdown } from './markdown'
 import { loadPreferences, savePreferences } from './preferences'
 import { createState, diagnosticsOf } from './state'
@@ -17,22 +17,47 @@ import {
   type Group,
   type GroupBy,
   groupDiagnostics,
+  hiddenCheckersFor,
   windowGroups,
 } from './view'
 
 const PAGE_SIZE = 200
 
+const params = new URLSearchParams(location.search)
 const state = reactive(createState())
 const preferences = reactive(loadPreferences())
 const filters = preferences.filters
 const now = useNow()
 const search = ref<HTMLInputElement>()
 
-watch(preferences, savePreferences, { deep: true })
+const selectedCheckers = params.getAll(CHECKER_PARAM)
+const storedHiddenCheckers = filters.hiddenCheckers
+if (selectedCheckers.length) {
+  watch(
+    () => state.checkers.map((c) => c.id).join('\n'),
+    (ids) => {
+      filters.hiddenCheckers = hiddenCheckersFor(ids.split('\n'), selectedCheckers)
+    },
+    { immediate: true },
+  )
+}
+
+watch(
+  preferences,
+  () =>
+    savePreferences(
+      selectedCheckers.length
+        ? { ...preferences, filters: { ...filters, hiddenCheckers: storedHiddenCheckers } }
+        : preferences,
+    ),
+  { deep: true },
+)
 onMounted(() => connect(state))
 
 const all = computed(() => state.checkers.flatMap(diagnosticsOf))
-const totals = computed(() => countLevels(all.value))
+const totals = computed(() =>
+  countLevels(all.value.filter((d) => !filters.hiddenCheckers.includes(d.checkerId))),
+)
 const visible = computed(() => filterDiagnostics(state.checkers, filters))
 const groups = computed(() => groupDiagnostics(visible.value, state.checkers, filters.groupBy))
 const limit = ref(PAGE_SIZE)
@@ -122,7 +147,7 @@ function resetFilters() {
 
 const hasHiddenInfo = computed(() => !filters.levels.info && totals.value.info > 0)
 
-const embedded = window.parent !== window && new URLSearchParams(location.search).has(EMBED_PARAM)
+const embedded = window.parent !== window && params.has(EMBED_PARAM)
 
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape' && embedded && !event.defaultPrevented) {

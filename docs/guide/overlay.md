@@ -4,7 +4,7 @@ In dev mode, vite-plugin-checker reports diagnostics in three places: the termin
 
 ## Diagnostics page
 
-The dev server serves a diagnostics page at `{base}__checker/`, for example `http://localhost:5173/__checker/`. It lists the problems from every checker, grouped by file or by checker, and updates as you edit. Use it on its own in a second tab or window, or through the badge.
+The dev server serves a diagnostics page at `{base}__checker/`, for example `http://localhost:5173/__checker/`. It lists the problems from every checker, grouped by file or by checker, and updates as you edit. Use it on its own in a second tab or window, or through the badge. Add `?checker=<id>` to the URL, such as `/__checker/?checker=eslint`, to open it with a single checker selected.
 
 <p align="center">
   <picture>

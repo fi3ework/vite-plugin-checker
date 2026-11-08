@@ -54,6 +54,20 @@ describe.runIf(isServe)('ui-page', () => {
     ])
   })
 
+  it('shows only the checkers named in the url, without remembering it', async () => {
+    await page.goto(`${viteTestUrl}__checker/?checker=eslint`)
+    await page.locator('.groups').waitFor()
+    await expect
+      .poll(() => page.locator('.checkers .pill[aria-pressed]').allInnerTexts(), { timeout: 20_000 })
+      .toHaveLength(2)
+    await expect.poll(() => page.locator('.checkers .pill.hidden').innerText()).toContain('TypeScript')
+    await expect.poll(() => diagnostics().count()).toBe(1)
+    expect(await diagnostics().innerText()).toContain('no-var')
+    expect(await page.locator('.summary').innerText()).toBe('1 error')
+
+    await openPage()
+  })
+
   it('updates when a file changes', async () => {
     await openPage()
 

@@ -5,6 +5,7 @@ import {
   defaultFilters,
   filterDiagnostics,
   groupDiagnostics,
+  hiddenCheckersFor,
   windowGroups,
 } from '../src/view'
 import { diagnostic } from './fixtures'
@@ -81,6 +82,16 @@ describe('filterDiagnostics', () => {
     filters.hiddenCheckers = []
     filters.query = 'src/b'
     expect(ids(filterDiagnostics(checkers, filters))).toEqual(['t1', 't2'])
+  })
+
+  it('hides every checker but the selected ones', () => {
+    expect(hiddenCheckersFor(['eslint', 'typescript'], ['eslint'])).toEqual([
+      'typescript',
+    ])
+    expect(hiddenCheckersFor(['eslint', 'typescript'], ['missing'])).toEqual([
+      'eslint',
+      'typescript',
+    ])
   })
 })
 

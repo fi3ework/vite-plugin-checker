@@ -58,6 +58,14 @@ function compareDiagnostics(a: Diagnostic, b: Diagnostic) {
   )
 }
 
+/** Ids to hide so that only `selected` checkers remain. */
+export function hiddenCheckersFor(
+  checkerIds: string[],
+  selected: string[],
+): string[] {
+  return checkerIds.filter((id) => !selected.includes(id))
+}
+
 export function filterDiagnostics(
   checkers: CheckerView[],
   filters: Filters,

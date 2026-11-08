@@ -63,7 +63,14 @@ Hides the badge and drawer on every page because `owner` shows its own indicator
 
 - **Returns:** `string`
 
-Root-relative URL of the diagnostics page, including Vite's `base`, such as `/my-app/__checker/`. Append `?embed` when you show the page in a frame of your own; it then renders a compact header that fits a drawer or panel.
+Root-relative URL of the diagnostics page, including Vite's `base`, such as `/my-app/__checker/`. The page accepts two query parameters:
+
+| Parameter      | Effect                                                                                                         |
+| -------------- | -------------------------------------------------------------------------------------------------------------- |
+| `embed`        | Renders a compact header that fits a frame, drawer, or panel of your own                                       |
+| `checker=<id>` | Shows only that checker's diagnostics. Repeat it to show several. The selection isn't remembered across visits |
+
+For example, `${api.getUiUrl()}?embed&checker=eslint` shows the ESLint diagnostics in a frame.
 
 ## `DOCK_ID`
 
