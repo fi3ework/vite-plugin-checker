@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { expect } from 'vitest'
 
-import { diagnostics, getDiagnosticsEmitCount, page, testDir } from './vitestSetup'
+import { checkerApi, diagnostics, getDiagnosticsEmitCount, page, testDir } from './vitestSetup'
 
 import type { ElementHandle, Frame, FrameLocator } from 'playwright-chromium'
 
@@ -56,8 +56,22 @@ export async function sleep(millisecond: number, callback?: Function) {
   }).then(() => callback?.())
 }
 
-export async function sleepForServerReady(ratio = 1) {
-  await sleep(process.env.CI ? 10e3 * ratio : 8e3 * ratio)
+/**
+ * Wait until every checker has finished its first run, then a little longer
+ * for the page and the terminal log to catch up.
+ */
+export async function waitForServerReady() {
+  const timeout = process.env.CI ? 60_000 : 30_000
+  const start = Date.now()
+  while (Date.now() - start < timeout) {
+    const states = checkerApi.getState()
+    if (states.length && states.every((s) => s.status === 'idle' || s.status === 'failed')) {
+      await sleep(process.env.CI ? 1_000 : 500)
+      return
+    }
+    await sleep(50)
+  }
+  console.log(`waitForServerReady timed out after ${timeout}ms`)
 }
 
 export async function getHmrOverlay(): Promise<ElementHandle | null> {

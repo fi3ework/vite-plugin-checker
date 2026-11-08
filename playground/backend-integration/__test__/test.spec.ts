@@ -7,14 +7,14 @@ import {
   isBuild,
   isServe,
   log,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
 } from '../../testUtils'
 
 describe('backend-integration', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
 
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()

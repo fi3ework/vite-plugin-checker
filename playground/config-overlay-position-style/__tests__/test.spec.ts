@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { getOverlayBadge, getOverlayPage, isServe, page, sleepForServerReady } from '../../testUtils'
+import { getOverlayBadge, getOverlayPage, isServe, page, waitForServerReady } from '../../testUtils'
 
 describe('config-overlay-position-style', () => {
   describe.runIf(isServe)('serve', () => {
     it('opens the drawer along the top edge and themes it with `--mb-*` properties', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       await getOverlayPage().locator('.diagnostic').first().waitFor({ timeout: 10_000 })
       const drawer = page.locator('vite-plugin-checker-overlay .drawer')
 
@@ -17,7 +17,7 @@ describe('config-overlay-position-style', () => {
     })
 
     it('puts the badge in the top right corner and lets `::part(badge)` restyle it', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       await page.locator('vite-plugin-checker-overlay .close').click()
       const badge = getOverlayBadge()
       await badge.waitFor()

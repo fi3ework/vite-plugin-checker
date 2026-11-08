@@ -11,7 +11,7 @@ import {
   removeFile,
   log,
   resetReceivedLog,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   waitForDiagnostics,
 } from '../../testUtils'
@@ -19,7 +19,7 @@ import {
 describe('stylelint', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
@@ -32,7 +32,7 @@ describe('stylelint', () => {
     })
 
     it('lints added files and clears removed ones', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
 
       editFileTo('src/added.css', 'a {\n}\n')
       await waitForDiagnostics()

@@ -5,13 +5,13 @@ import {
   getOverlayBadge,
   getOverlayFrame,
   isServe,
-  sleepForServerReady,
+  waitForServerReady,
 } from '../../testUtils'
 
 describe('config-initialIsOpen-false', () => {
   describe.runIf(isServe)('serve', () => {
     it('shows only the badge until it is clicked', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       const badge = getOverlayBadge()
       await badge.waitFor()
       expect(await getOverlayFrame()).toBeNull()

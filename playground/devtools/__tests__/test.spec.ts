@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { getHmrOverlayText, isServe, page, sleepForServerReady } from '../../testUtils'
+import { getHmrOverlayText, isServe, page, waitForServerReady } from '../../testUtils'
 
 describe.runIf(isServe)('devtools', () => {
   it('shows diagnostics in a Vite DevTools dock alongside the overlay', async () => {
-    await sleepForServerReady()
+    await waitForServerReady()
     const [message] = await getHmrOverlayText()
     expect(message).toBe("Type 'string' is not assignable to type 'number'.")
 

@@ -11,7 +11,7 @@ import {
   log,
   OVERLAY,
   page,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   viteServer,
 } from '../../testUtils'
@@ -19,14 +19,14 @@ import {
 describe('config-default', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
 
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
 
     it('links the rule to its docs', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       const link = getOverlayPage().locator('.diagnostic a.code').first()
 
       expect(await link.innerText({ timeout: 10_000 })).toBe('no-var')
@@ -34,7 +34,7 @@ describe('config-default', () => {
     })
 
     it('hides the overlay while an integration claims the indicator', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       const shown = page.locator(`${OVERLAY} .badge:not([hidden]), ${OVERLAY} .drawer:not([hidden])`)
       await expect.poll(() => shown.count()).toBe(1)
 
@@ -54,7 +54,7 @@ describe('config-default', () => {
     })
 
     it('opens the file through `__open-in-editor` when clicked', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       const requested = new Promise<URL>((resolve) => {
         page.route('**/__open-in-editor*', (route) => {
           resolve(new URL(route.request().url()))

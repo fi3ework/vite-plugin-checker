@@ -5,14 +5,14 @@ import {
   hasDiagnosticFor,
   isServe,
   resetDiagnostics,
-  sleepForServerReady,
+  waitForServerReady,
   waitForDiagnostics,
 } from '../../testUtils'
 
 describe('oxlint-import-cycle', () => {
   describe.runIf(isServe)('serve', () => {
     it('updates diagnostics in files affected by a change to another file', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(diagnostics).toHaveLength(0)
 
       editFileTo('src/b.ts', "import { a } from './a'\n\nexport const b = a\n")

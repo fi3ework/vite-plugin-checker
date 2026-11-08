@@ -8,7 +8,7 @@ import {
   isServe,
   log,
   resetReceivedLog,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   waitForDiagnostics,
 } from '../../testUtils'
@@ -16,7 +16,7 @@ import {
 describe('svelte-check-default', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
@@ -27,7 +27,8 @@ describe('svelte-check-default', () => {
           .replace('<button', '<div')
           .replace('</button>', '</div>'),
       )
-      await waitForDiagnostics()
+      // svelte-check reports a transient TS7016 for the edited component before its real diagnostics
+      await waitForDiagnostics({ quietMs: 4_000 })
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })

@@ -34,6 +34,7 @@ let server: ViteDevServer | http.Server
  * Vite Dev Server when testing serve
  */
 export let viteServer: ViteDevServer
+export let checkerApi: CheckerApi
 /**
  * Root of the Vite fixture
  */
@@ -207,6 +208,7 @@ export async function startDefaultServe({
     setCheckerLoggerForTest(checker.__internal__checker)
 
     const api = checker.api as CheckerApi
+    checkerApi = api
     const sync = () => {
       diagnostics = api.getState().flatMap((state) => state.diagnostics)
     }

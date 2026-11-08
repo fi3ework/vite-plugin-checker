@@ -5,14 +5,14 @@ import {
   getHmrOverlayText,
   isServe,
   sleepForEdit,
-  sleepForServerReady,
+  waitForServerReady,
   waitForNoOverlay,
 } from '../../testUtils'
 
 describe('config-overlay-changes', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error from overlay and overlay error content changes on modifying', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       const [message1, file1, frame1] = await getHmrOverlayText()
       expect(message1).toMatchSnapshot()
       expect(file1).toMatchSnapshot()

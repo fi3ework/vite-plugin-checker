@@ -7,13 +7,13 @@ import {
   getOverlayFrame,
   isServe,
   sleepForEdit,
-  sleepForServerReady,
+  waitForServerReady,
 } from '../../testUtils'
 
 describe('config-initialIsOpen-error-warnings', () => {
   describe.runIf(isServe)('serve', () => {
     it('should not open the drawer when only warning exists', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       await getOverlayBadge().waitFor()
       expect(await getOverlayFrame()).toBeNull()
 

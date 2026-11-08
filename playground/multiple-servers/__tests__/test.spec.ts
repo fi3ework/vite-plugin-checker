@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { createServer, type ViteDevServer } from 'vite'
 import { afterAll, describe, expect, it } from 'vitest'
-import { isServe, page, sleepForServerReady, testDir } from '../../testUtils'
+import { isServe, page, waitForServerReady, testDir } from '../../testUtils'
 
 async function getOverlayMessages() {
   const hosts = page.locator('vite-plugin-checker-overlay')
@@ -10,7 +10,8 @@ async function getOverlayMessages() {
     const badge = host.locator('.badge')
     if (await badge.isVisible()) await badge.dispatchEvent('click')
     const message = host.frameLocator('iframe').locator('.diagnostic .message').first()
-    messages.push(await message.innerText({ timeout: 10_000 }))
+    await expect.poll(() => message.textContent(), { timeout: 10_000 }).toBeTruthy()
+    messages.push((await message.textContent())!)
   }
   return messages.sort()
 }
@@ -33,7 +34,7 @@ describe('multiple-servers', () => {
       const widgetOrigin = `http://localhost:${widgetServer.config.server.port}`
       await page.addScriptTag({ type: 'module', url: `${widgetOrigin}/@vite/client` })
 
-      await sleepForServerReady()
+      await waitForServerReady()
       await expect.poll(() => page.locator('vite-plugin-checker-overlay').count()).toBe(2)
 
       const messages = await getOverlayMessages()

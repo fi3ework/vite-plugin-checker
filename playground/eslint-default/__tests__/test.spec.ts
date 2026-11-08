@@ -11,7 +11,7 @@ import {
   log,
   removeFile,
   resetReceivedLog,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   waitForDiagnostics,
 } from '../../testUtils'
@@ -19,7 +19,7 @@ import {
 describe('eslint-default', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
@@ -39,7 +39,7 @@ describe('eslint-default', () => {
     })
 
     it('lints added files and clears removed ones', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
 
       editFileTo('src/added.ts', 'export var added = 1\n')
       await waitForDiagnostics()
