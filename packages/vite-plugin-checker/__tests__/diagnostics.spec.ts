@@ -71,6 +71,24 @@ describe('toDiagnostics', () => {
     expect(diagnostic!.message).toBe(stripped)
   })
 
+  it('gives the same id whatever the line endings and path separators', () => {
+    const [unix] = toDiagnostics('x', [record({ message: 'a\n  b' })], { root })
+    const [windows] = toDiagnostics('x', [record({ message: 'a\r\n  b' })], {
+      root,
+    })
+    expect(windows!.message).toBe('a\n  b')
+    expect(windows!.id).toBe(unix!.id)
+
+    const dotted = path.join(root, 'src', '..', 'src', 'main.ts')
+    const [normalized] = toDiagnostics(
+      'x',
+      [record({ id: dotted, loc: { file: dotted, line: 3, column: 1 } })],
+      { root },
+    )
+    expect(normalized!.file).toBe(file)
+    expect(normalized!.id).toBe(toDiagnostics('x', [record()], { root })[0]!.id)
+  })
+
   it.each([
     [DiagnosticLevel.Warning, 'warning'],
     [DiagnosticLevel.Suggestion, 'info'],

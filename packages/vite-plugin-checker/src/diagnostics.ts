@@ -40,9 +40,12 @@ export function toDiagnostics(
 
   return records.flatMap((record) => {
     const code = record.code ?? record.rule
-    const message = stripCode(record.message, code)
+    const message = stripCode(record.message, code).replace(/\r\n?/g, '\n')
     const rawFile = (record.loc?.file || record.id)?.split('?')[0]
-    const file = rawFile && path.isAbsolute(rawFile) ? rawFile : undefined
+    const file =
+      rawFile && path.isAbsolute(rawFile)
+        ? path.normalize(rawFile).split(path.sep).join('/')
+        : undefined
     const line = record.loc?.line || undefined
     const column = line ? record.loc?.column || 1 : undefined
     const displayFile = file
