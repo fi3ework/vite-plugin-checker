@@ -14,11 +14,21 @@ export * from './vitestSetup'
 
 export const WORKER_CLEAN_TIMEOUT = process.env.CI ? 6000 : 3000
 
-export function editFile(filename: string, replacer: (str: string) => string): void {
+export function editFile(
+  filename: string,
+  replacer: (str: string) => string,
+  { atomic = false } = {},
+): void {
   const filePath = path.resolve(testDir, filename)
   const content = fs.readFileSync(filePath, 'utf-8')
   const modified = replacer(content)
-  fs.writeFileSync(filePath, modified)
+  if (atomic) {
+    const tempPath = `${filePath}.${process.pid}.tmp`
+    fs.writeFileSync(tempPath, modified)
+    fs.renameSync(tempPath, filePath)
+  } else {
+    fs.writeFileSync(filePath, modified)
+  }
 }
 
 export function editFileTo(filename: string, content: string): void {
