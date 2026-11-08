@@ -1,3 +1,7 @@
+<script setup>
+import OverlayDemo from '../.vitepress/components/OverlayDemo.vue'
+</script>
+
 # Overlay and terminal
 
 In dev mode, vite-plugin-checker reports diagnostics in three places: the terminal that runs the dev server, a diagnostics page served by the dev server, and a badge in the browser that opens that page in a drawer. This page shows how to customize them. For the full option types, see [Shared options](/reference/shared-options).
@@ -23,6 +27,8 @@ Pages loaded from the dev server show a badge in a corner with the error and war
     <img alt="The vite-plugin-checker drawer open along the bottom of an app page" src="/screenshots/overlay-drawer-light.png">
   </picture>
 </p>
+
+<OverlayDemo />
 
 The overlay is loaded by the Vite client, so it works on any page that loads `/@vite/client`, including pages rendered by SSR frameworks. If your page doesn't load the Vite client, see [Backend integration and SSR](/recipes/backend-integration).
 

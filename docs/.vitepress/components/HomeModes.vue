@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { withBase } from 'vitepress'
+import { onMounted } from 'vue'
+import { useOverlayDemo } from '../demo'
+
+const { start } = useOverlayDemo({ initialIsOpen: false })
+onMounted(start)
 </script>
 
 <template>
@@ -15,7 +20,8 @@ import { withBase } from 'vitepress'
           </li>
           <li>
             <strong>Shows problems where you're looking.</strong> Diagnostics appear in the terminal
-            and in an overlay in the browser, including on pages rendered by SSR frameworks.
+            and in an overlay in the browser, including on pages rendered by SSR frameworks. Click
+            the badge in the corner of this page to try it.
           </li>
           <li>
             <strong>Takes you to the fix.</strong> Click a location to open it in your editor, or a

@@ -11,7 +11,7 @@ import {
 } from '../../vite-plugin-checker/src/protocol'
 import { applySnapshot, applyStatus, applyUpdate, type State } from './state'
 
-interface HotContext {
+export interface HotContext {
   on(event: string, listener: (data: any) => void): void
   send(event: string, data?: unknown): void
 }
@@ -31,7 +31,13 @@ export async function connect(state: State, timeout = 10_000) {
     state.connection = 'failed'
     return
   }
+  listen(state, hot, timeout)
+}
 
+/**
+ * Apply the events received on `hot` to `state`.
+ */
+export function listen(state: State, hot: HotContext, timeout = 10_000) {
   hot.on(EVENT_SNAPSHOT, (payload: SnapshotPayload) =>
     applySnapshot(state, payload),
   )
