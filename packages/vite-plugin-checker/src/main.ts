@@ -234,7 +234,7 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
         if (ctx.mode !== 'dev' || !enableDevTools || hub.devtools) return
         const owner = hub
         owner.devtools = true
-        const dispose = setupDevTools(ctx, api)
+        const dispose = setupDevTools(ctx, api, () => hub.claims.size > 0)
         ctx.viteServer?.httpServer?.once('close', () => {
           owner.devtools = false
           dispose()

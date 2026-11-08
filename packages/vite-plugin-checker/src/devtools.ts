@@ -43,11 +43,14 @@ function describe(diagnostics: Diagnostic[]) {
 
 /**
  * Register the Checker dock, its badge and one message per checker with
- * problems in a Vite DevTools context. Returns a function that removes them.
+ * problems in a Vite DevTools context. Messages notify when a checker starts
+ * reporting errors unless `indicatorClaimed()` is true, in which case the
+ * claimant is expected to announce. Returns a function that removes them.
  */
 export function setupDevTools(
   ctx: DevToolsContext,
   api: CheckerApi,
+  indicatorClaimed: () => boolean = () => false,
 ): () => void {
   const dock = ctx.docks.register<DevToolsViewIframe>({
     id: DOCK_ID,
@@ -81,6 +84,7 @@ export function setupDevTools(
     const hadErrors = erroring.has(checker.id)
     if (errors || checker.status === 'failed') erroring.add(checker.id)
     else erroring.delete(checker.id)
+    const announce = !hadErrors && !indicatorClaimed()
 
     let entry: DevToolsMessageEntryInput | undefined
     if (checker.status === 'failed') {
@@ -89,7 +93,7 @@ export function setupDevTools(
         level: 'error',
         message: `${checker.label} failed`,
         description: checker.error,
-        notify: !hadErrors,
+        notify: announce,
       }
     } else if (errors || warnings) {
       const parts = [
@@ -108,7 +112,7 @@ export function setupDevTools(
           ? { file: first.file, line: first.line, column: first.column }
           : undefined,
         status: busy ? 'loading' : 'idle',
-        notify: errors > 0 && !hadErrors,
+        notify: errors > 0 && announce,
       }
     } else if (busy && shownMessages.has(id)) {
       ctx.messages.update(id, { status: 'loading' }).catch(ignore)

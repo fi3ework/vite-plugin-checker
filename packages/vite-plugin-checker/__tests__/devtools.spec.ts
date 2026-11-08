@@ -25,7 +25,11 @@ function diagnostic(
   }
 }
 
-function setup() {
+function setup({
+  indicatorClaimed = () => false,
+}: {
+  indicatorClaimed?: () => boolean
+} = {}) {
   const store = createCheckerStore()
   store.register('typescript', 'TypeScript')
   const api: CheckerApi = {
@@ -44,7 +48,7 @@ function setup() {
       remove: vi.fn(async () => {}),
     },
   }
-  const dispose = setupDevTools(ctx as any, api)
+  const dispose = setupDevTools(ctx as any, api, indicatorClaimed)
   const flush = () => new Promise<void>((resolve) => queueMicrotask(resolve))
   return { store, api, dock, ctx, dispose, flush }
 }
@@ -118,6 +122,29 @@ describe('setupDevTools', () => {
     await flush()
 
     expect(notified()).toEqual([false, true, false, true])
+  })
+
+  it('does not notify while an integration claims the indicator', async () => {
+    let claimed = true
+    const { store, ctx, dock, flush } = setup({
+      indicatorClaimed: () => claimed,
+    })
+
+    store.setDiagnostics('typescript', [diagnostic('error', 'a')])
+    await flush()
+    store.setDiagnostics('typescript', [])
+    await flush()
+    claimed = false
+    store.setDiagnostics('typescript', [diagnostic('error', 'b')])
+    await flush()
+
+    expect(
+      ctx.messages.add.mock.calls.map(([entry]: any) => entry.notify),
+    ).toEqual([false, true])
+    expect(dock.update).toHaveBeenLastCalledWith({
+      badge: '1',
+      badgeVariant: 'danger',
+    })
   })
 
   it('marks the message as loading during a re-check and removes it once clean', async () => {
