@@ -129,10 +129,6 @@ export async function getHmrOverlayText(): Promise<[string, string, string]> {
   })
 }
 
-export async function sleepForEdit(ratio = 1) {
-  await sleep(process.env.CI ? 4e3 * ratio : 2e3 * ratio)
-}
-
 export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T) => boolean) {
   const maxTries = process.env.CI ? 1000 : 200 // 50s / 10s
   for (let tries = 0; tries <= maxTries; tries++) {
@@ -173,9 +169,7 @@ export interface WaitForDiagnosticsOptions {
 /**
  * Wait for the diagnostics ws stream to settle after an `editFile` call.
  *
- * Replaces the `await sleepForEdit()` pattern that was racing against slow
- * lint round-trips on CI. We poll the emit counter exposed by
- * `vitestSetup.ts` instead of sleeping for a fixed time, so the wait scales
+ * Polls the emit counter exposed by `vitestSetup.ts`, so the wait scales
  * with how long the checker actually takes.
  *
  * The baseline is captured at call time, so tests do not need to

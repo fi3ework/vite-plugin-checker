@@ -6,7 +6,7 @@ import {
   getOverlayBadge,
   getOverlayFrame,
   isServe,
-  sleepForEdit,
+  waitForDiagnostics,
   waitForServerReady,
 } from '../../testUtils'
 
@@ -19,7 +19,7 @@ describe('config-initialIsOpen-error-warnings', () => {
 
       console.log('-- overlay appears after introduce an error --')
       editFile('src/main.ts', (code) => code.replace('const rootDom', 'var rootDom'))
-      await sleepForEdit()
+      await waitForDiagnostics()
       const [, , frame] = await getHmrOverlayText()
       expect(frame).toMatchSnapshot()
     })

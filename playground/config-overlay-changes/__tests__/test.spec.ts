@@ -4,7 +4,7 @@ import {
   editFile,
   getHmrOverlayText,
   isServe,
-  sleepForEdit,
+  waitForDiagnostics,
   waitForServerReady,
   waitForNoOverlay,
 } from '../../testUtils'
@@ -20,7 +20,7 @@ describe('config-overlay-changes', () => {
 
       console.log('-- overlay update after edit --')
       editFile('src/main.ts', (code) => code.replace('Hello', 'Hello1'))
-      await sleepForEdit()
+      await waitForDiagnostics()
       const [, , frame2] = await getHmrOverlayText()
       expect(frame2).toMatchSnapshot()
 
