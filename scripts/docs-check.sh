@@ -1,6 +1,6 @@
 echo "prev commit: $CACHED_COMMIT_REF"
 echo "current commit: $COMMIT_REF"
-git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF docs package.json pnpm-lock.yaml netlify.toml scripts/docs-check.sh
+git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF docs packages/ui packages/vite-plugin-checker/src/protocol.ts package.json pnpm-lock.yaml netlify.toml scripts/docs-check.sh
 has_diff=$?
 git describe --exact-match --tags $(git log -n1 --pretty='%h')
 has_tag=$?

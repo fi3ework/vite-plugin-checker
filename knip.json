@@ -11,6 +11,9 @@
     "docs": {
       "entry": [".vitepress/components/*.vue"]
     },
+    "packages/ui": {
+      "entry": ["src/demo/{connection,editor,overlay}.ts"]
+    },
     "packages/vite-plugin-checker": {
       "entry": [
         "src/**/*.ts",

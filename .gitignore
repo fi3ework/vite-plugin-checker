@@ -110,4 +110,5 @@ dist
 lib/
 playground-temp/
 docs/.vitepress/cache
+docs/public/demo
 packages/vite-plugin-checker/README.md

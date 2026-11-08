@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "vue-tsc --noEmit && vite build && vite build --config vite.overlay.config.ts",
+    "build:demo": "vite build --config vite.demo.config.ts",
     "dev": "pnpm run \"/^dev:/\"",
     "dev:overlay": "vite build --watch --config vite.overlay.config.ts",
     "dev:page": "vite build --watch"

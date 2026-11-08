@@ -18,6 +18,7 @@
     "src/**/*.ts",
     "src/**/*.vue",
     "vite.config.ts",
-    "vite.overlay.config.ts"
+    "vite.overlay.config.ts",
+    "vite.demo.config.ts"
   ]
 }
