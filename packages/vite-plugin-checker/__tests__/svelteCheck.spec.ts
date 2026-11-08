@@ -141,6 +141,29 @@ describe('svelte-check machine output parser', () => {
     })
   })
 
+  it('prefixes TypeScript codes with TS whatever the diagnostic source', async () => {
+    const { parser, runs, nextRun } = collect()
+
+    const done = nextRun()
+    for (const line of [
+      `1 START ${JSON.stringify(root)}`,
+      `2 {"type":"ERROR","filename":"src/main.ts","start":{"line":1,"character":16},"end":{"line":1,"character":30},"message":"Could not find a declaration file for module './App.svelte'.","code":7016}`,
+      `3 {"type":"ERROR","filename":"src/Js.svelte","start":{"line":1,"character":6},"end":{"line":1,"character":11},"message":"Type 'string' is not assignable to type 'number'.","code":2322,"source":"js"}`,
+      '4 COMPLETED 2 FILES 2 ERRORS 0 WARNINGS 2 FILES_WITH_PROBLEMS',
+    ]) {
+      parser.push(line)
+    }
+    await done
+
+    expect(runs[0]!.map((d) => [d.code, d.message])).toEqual([
+      [
+        'TS7016',
+        "Could not find a declaration file for module './App.svelte'. (TS7016)",
+      ],
+      ['TS2322', "Type 'string' is not assignable to type 'number'. (TS2322)"],
+    ])
+  })
+
   it('reports failures and ignores unrelated output', () => {
     const { parser, runs, failures } = collect()
     parser.push('Loading svelte-check in workspace')
