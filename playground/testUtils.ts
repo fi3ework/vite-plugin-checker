@@ -12,8 +12,6 @@ const OPEN_DRAWER_FRAME = `${OVERLAY} .drawer:not([hidden]) iframe`
 
 export * from './vitestSetup'
 
-export const WORKER_CLEAN_TIMEOUT = process.env.CI ? 6000 : 3000
-
 export function editFile(
   filename: string,
   replacer: (str: string) => string,
@@ -53,18 +51,8 @@ export function expectStderrContains(str: string | string[], expectedErrorMsg: s
   })
 }
 
-export function expectStdoutNotContains(str: string, unexpectedErrorMsg: string | string[]) {
-  expect.objectContaining({
-    stdout: expect(str).not.toContain(unexpectedErrorMsg),
-  })
-}
-
-export async function sleep(millisecond: number, callback?: Function) {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve()
-    }, millisecond)
-  }).then(() => callback?.())
+function sleep(millisecond: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, millisecond))
 }
 
 /**
@@ -127,21 +115,6 @@ export async function getHmrOverlayText(): Promise<[string, string, string]> {
     })
     return [message, location ? `${title}:${location}` : title, rows.join('\n')]
   })
-}
-
-export async function pollingUntil<T>(poll: () => Promise<T>, until: (actual: T) => boolean) {
-  const maxTries = process.env.CI ? 1000 : 200 // 50s / 10s
-  for (let tries = 0; tries <= maxTries; tries++) {
-    const actual = await poll()
-    if (until(actual)) {
-      break
-    } else {
-      await sleep(50)
-      if (tries === maxTries) {
-        console.log('reach max polling tries')
-      }
-    }
-  }
 }
 
 export interface WaitForDiagnosticsOptions {
