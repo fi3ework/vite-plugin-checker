@@ -12,7 +12,7 @@ import {
   log,
   resetDiagnostics,
   resetReceivedLog,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   waitForDiagnostics,
 } from '../../testUtils'
@@ -20,14 +20,14 @@ import {
 describe('oxlint-default', () => {
   describe.runIf(isServe)('serve', () => {
     it('should display initial errors', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
 
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
     })
 
     it('should react to project file change', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
 
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
@@ -45,7 +45,7 @@ describe('oxlint-default', () => {
     })
 
     it('should react to oxlint config file change', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
 
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
@@ -63,7 +63,7 @@ describe('oxlint-default', () => {
     })
 
     it('lints added files and clears removed ones', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
 
       editFileTo('src/added.ts', 'debugger;\n')
       await waitForDiagnostics()

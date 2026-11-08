@@ -26,9 +26,9 @@
     "!dist/checkers/vueTsc/typescript-vue-tsc"
   ],
   "scripts": {
-    "build": "tsdown && pnpm run build:runtime",
-    "build:runtime": "pnpm --filter @vite-plugin-checker/runtime run build",
-    "build:test": "tsdown --config tsdown.test.config.ts && pnpm run build:runtime",
+    "build": "tsdown && pnpm run build:ui",
+    "build:test": "tsdown --config tsdown.test.config.ts && pnpm run build:ui",
+    "build:ui": "pnpm --filter @vite-plugin-checker/ui run build",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "dev": "tsdown --watch",
     "prepack": "node -e \"require('fs').copyFileSync('../../README.md', 'README.md')\" && pnpm run build"
@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@types/picomatch": "^4.0.3",
+    "@vitejs/devtools-kit": "^0.8.2",
     "@vue/language-core": "~3.3.0",
     "meow": "^14.0.0",
     "modern-tar": "^0.8.0",

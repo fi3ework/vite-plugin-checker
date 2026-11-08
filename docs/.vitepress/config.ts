@@ -45,7 +45,10 @@ export default defineConfig({
       },
       {
         text: 'Reference',
-        items: [{ text: 'Shared options', link: '/reference/shared-options' }],
+        items: [
+          { text: 'Shared options', link: '/reference/shared-options' },
+          { text: 'Plugin API', link: '/reference/plugin-api' },
+        ],
       },
       {
         text: 'Recipes',

@@ -10,7 +10,7 @@ import {
   isServe,
   log,
   resetReceivedLog,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   testDir,
   waitForDiagnostics,
@@ -19,7 +19,7 @@ import {
 describe('typescript-7', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 

@@ -1,6 +1,10 @@
 import { stripVTControlCharacters as strip } from 'node:util'
 import { x } from 'tinyexec'
-import { createFrame, offsetRangeToBabelLocation } from '../../codeFrame.js'
+import {
+  createFrame,
+  createSnippet,
+  offsetRangeToBabelLocation,
+} from '../../codeFrame.js'
 import { colorize } from '../../colors.js'
 import { consoleLog, type NormalizedDiagnostic } from '../../logger.js'
 import { normalizePath, readSources } from '../../sources.js'
@@ -146,6 +150,7 @@ function buildDiagnostics(entries: Entry[], sources: Map<string, string>) {
         id: entry.file,
         codeFrame,
         stripedCodeFrame: codeFrame && strip(codeFrame),
+        snippet: createSnippet(source, loc, entry.file),
         loc,
       },
     ] as NormalizedDiagnostic[]

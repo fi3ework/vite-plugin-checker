@@ -1,11 +1,13 @@
-import assert from 'assert'
 import fs from 'fs'
 import path from 'path'
 import { expect } from 'vitest'
 
-import { diagnostics, getDiagnosticsEmitCount, page, testDir } from './vitestSetup'
+import { checkerApi, diagnostics, getDiagnosticsEmitCount, page, testDir } from './vitestSetup'
 
-import type { ElementHandle } from 'playwright-chromium'
+import type { ElementHandle, Frame, FrameLocator } from 'playwright-chromium'
+
+export const OVERLAY = 'vite-plugin-checker-overlay'
+const OPEN_DRAWER_FRAME = `${OVERLAY} .drawer:not([hidden]) iframe`
 
 export * from './vitestSetup'
 
@@ -28,7 +30,7 @@ export function removeFile(filename: string): void {
 }
 
 export function hasDiagnosticFor(filename: string): boolean {
-  return diagnostics.some((d) => d.id?.replace(/\\/g, '/').endsWith(filename))
+  return diagnostics.some((d) => d.file?.replace(/\\/g, '/').endsWith(filename))
 }
 
 export function expectStderrContains(str: string | string[], expectedErrorMsg: string | string[]) {
@@ -54,47 +56,66 @@ export async function sleep(millisecond: number, callback?: Function) {
   }).then(() => callback?.())
 }
 
-export async function sleepForServerReady(ratio = 1) {
-  await sleep(process.env.CI ? 10e3 * ratio : 8e3 * ratio)
+/**
+ * Wait until every checker has finished its first run, then a little longer
+ * for the page and the terminal log to catch up.
+ */
+export async function waitForServerReady() {
+  const timeout = process.env.CI ? 60_000 : 30_000
+  const start = Date.now()
+  while (Date.now() - start < timeout) {
+    const states = checkerApi.getState()
+    if (states.length && states.every((s) => s.status === 'idle' || s.status === 'failed')) {
+      await sleep(process.env.CI ? 1_000 : 500)
+      return
+    }
+    await sleep(50)
+  }
+  console.log(`waitForServerReady timed out after ${timeout}ms`)
 }
 
-export async function getHmrOverlay(): Promise<ElementHandle<'vite-plugin-checker-error-overlay'> | null> {
-  const dom = await page.$('vite-plugin-checker-error-overlay')
-  if (dom) console.log('found vite-plugin-checker-error-overlay')
-  return dom as any
+export async function getHmrOverlay(): Promise<ElementHandle | null> {
+  return page.$(OVERLAY)
 }
 
-export async function getHmrOverlayText(
-  element?: ElementHandle<'vite-plugin-checker-error-overlay'> | null
-) {
-  let shadowRoot: ElementHandle<'vite-plugin-checker-error-overlay'> | undefined | null
-  if (element) {
-    shadowRoot = element
-  } else {
-    shadowRoot = await getHmrOverlay()
-    assert(
-      shadowRoot,
-      `<vite-plugin-checker-error-overlay> shadow dom is expected to be found, but got ${shadowRoot}`
-    )
-  }
+export function getOverlayBadge() {
+  return page.locator(`${OVERLAY} .badge`)
+}
 
-  if (!shadowRoot) {
-    throw Error(`shadowRoot should exists, but got ${shadowRoot}`)
-  }
+/** Diagnostics page inside the open drawer, waiting for the drawer to open */
+export function getOverlayPage(): FrameLocator {
+  return page.frameLocator(OPEN_DRAWER_FRAME)
+}
 
-  const messageBody = await shadowRoot.$('.message-body')
-  assert(messageBody, '.message-body is expected in shadow root')
-  const message = await messageBody.innerText()
+/** Diagnostics page inside the open drawer, or `null` when no drawer is open */
+export async function getOverlayFrame(): Promise<Frame | null> {
+  const iframe = await page.$(OPEN_DRAWER_FRAME)
+  return (await iframe?.contentFrame()) ?? null
+}
 
-  const fileDom = await shadowRoot.$('.file-link')
-  assert(fileDom, '.file-link is expected in shadow root')
-  const file = await fileDom.innerText()
+/**
+ * Message, `file:line:column` and snippet of the first diagnostic in the open
+ * drawer. Snippet rows are rendered as `> 3 | code`, with the marked range in
+ * `«»`.
+ */
+export async function getHmrOverlayText(): Promise<[string, string, string]> {
+  const item = getOverlayPage().locator('.diagnostic').first()
+  await item.waitFor({ timeout: process.env.CI ? 20_000 : 10_000 })
 
-  const frameDom = await shadowRoot.$('.frame')
-  assert(frameDom, '.frame is expected in shadow root')
-  const frame = await frameDom.innerText()
-
-  return [message, file, frame]
+  return item.evaluate((el) => {
+    const title = el.closest('.group')!.querySelector('.title')!.textContent!.trim()
+    const location = el.querySelector('.location')?.textContent?.trim()
+    const message = el.querySelector('.message')!.textContent!
+    const rows = [...el.querySelectorAll('.snippet .row')].map((row) => {
+      const number = row.querySelector('.number')!.textContent!
+      const text = [...row.querySelector('.text')!.childNodes]
+        .map((node) => (node.nodeName === 'MARK' ? `«${node.textContent}»` : node.textContent))
+        .join('')
+      const marker = row.classList.contains('active') ? '>' : ' '
+      return `${marker} ${number.padStart(3)} | ${text}`.trimEnd()
+    })
+    return [message, location ? `${title}:${location}` : title, rows.join('\n')]
+  })
 }
 
 export async function sleepForEdit(ratio = 1) {
@@ -186,34 +207,21 @@ export interface WaitForNoOverlayOptions {
 }
 
 /**
- * Wait until `<vite-plugin-checker-error-overlay>` reports no diagnostics and
- * stays empty for `quietMs`. Replaces the `await sleep(6000)` +
- * `rejects.toThrow(...)` pattern, which was racing two back-to-back edits
- * whose lint cycles hadn't both completed within the fixed sleep.
- *
- * The overlay custom element stays in the DOM for the lifetime of the page
- * (see `packages/runtime/src/main.ts`); when there are no diagnostics, its
- * inner `<template v-if="shouldRender">` is not rendered, so we detect a
- * dismissed overlay by the absence of `.message-body` inside its shadow root.
+ * Wait until neither the badge nor the drawer of
+ * `<vite-plugin-checker-overlay>` is shown, and they stay hidden for
+ * `quietMs`.
  */
 export async function waitForNoOverlay(options: WaitForNoOverlayOptions = {}): Promise<void> {
   const { timeout = process.env.CI ? 20_000 : 8_000, quietMs = 500 } = options
+  const shown = page.locator(`${OVERLAY} .badge:not([hidden]), ${OVERLAY} .drawer:not([hidden])`)
 
   const start = Date.now()
   let goneSince: number | null = null
 
   while (Date.now() - start < timeout) {
-    let messageBody: Awaited<ReturnType<(typeof page)['$']>> = null
-    try {
-      const dom = await page.$('vite-plugin-checker-error-overlay')
-      messageBody = dom ? await dom.$('.message-body') : null
-    } catch {
-      // Page is mid-reload (vite triggers a full reload after each edit in
-      // playgrounds without HMR). Playwright throws
-      // "Unable to adopt element handle from a different document" on the
-      // navigation boundary; treat as transient and re-poll.
-    }
-    if (messageBody) {
+    // a page mid-reload counts as shown until the overlay mounts again
+    const visible = await shown.count().catch(() => 1)
+    if (visible) {
       goneSince = null
     } else if (goneSince === null) {
       goneSince = Date.now()

@@ -1,6 +1,6 @@
 import { stripVTControlCharacters as strip } from 'node:util'
 import { x } from 'tinyexec'
-import { createFrame } from '../../codeFrame.js'
+import { createFrame, createSnippet } from '../../codeFrame.js'
 import { colorize } from '../../colors.js'
 import { consoleLog, type NormalizedDiagnostic } from '../../logger.js'
 import { normalizePath, readSources } from '../../sources.js'
@@ -165,6 +165,7 @@ function buildDiagnostics(
         id: entry.file,
         codeFrame,
         stripedCodeFrame: codeFrame && strip(codeFrame),
+        snippet: createSnippet(source, loc, entry.file),
         loc,
       },
     ]

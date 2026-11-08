@@ -22,6 +22,9 @@
     "playground/backend-integration": {
       "entry": ["src/*.{js,ts,tsx}", "__test__/serve.js"]
     },
+    "playground/docs-screenshot": {
+      "entry": ["vite.devtools.config.js"]
+    },
     "playground/multiple-servers": {
       "entry": ["widget/vite.config.js", "widget/src/*.ts"]
     }

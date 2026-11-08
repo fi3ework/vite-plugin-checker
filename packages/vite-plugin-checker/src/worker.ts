@@ -1,7 +1,7 @@
 import { parentPort, Worker, workerData } from 'node:worker_threads'
 import type { ConfigEnv } from 'vite'
-import { setTerminalColors } from './colors.js'
-import { setTerminalHyperlinks } from './logger.js'
+import { colorize, setTerminalColors } from './colors.js'
+import { consoleLog, reportStatus, setTerminalHyperlinks } from './logger.js'
 import type {
   BuildCheckBin,
   BuildInCheckers,
@@ -102,13 +102,28 @@ export function createScript<T extends Partial<BuildInCheckers>>({
               diagnostic.config(action.payload)
               break
             }
-            case ACTION_TYPES.configureServer:
+            case ACTION_TYPES.configureServer: {
               if (!diagnostic)
                 throw Error(
                   'diagnostic should be initialized in `config` hook of Vite',
                 )
-              diagnostic.configureServer(action.payload)
+              const target = diagnostic
+              ;(async () => target.configureServer(action.payload))().catch(
+                (error) => {
+                  consoleLog(
+                    colorize(
+                      'red',
+                      error instanceof Error
+                        ? (error.stack ?? error.message)
+                        : String(error),
+                    ),
+                    'error',
+                  )
+                  reportStatus('failed', error)
+                },
+              )
               break
+            }
           }
         },
       )

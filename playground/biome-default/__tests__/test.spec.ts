@@ -11,7 +11,7 @@ import {
   removeFile,
   resetDiagnostics,
   resetReceivedLog,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   waitForDiagnostics,
 } from '../../testUtils'
@@ -19,7 +19,7 @@ import {
 describe('biome', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 
@@ -35,7 +35,7 @@ describe('biome', () => {
     })
 
     it('lints added files and clears removed ones', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
 
       editFileTo('src/added.js', 'debugger\n')
       await waitForDiagnostics()

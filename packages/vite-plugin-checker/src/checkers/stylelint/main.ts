@@ -1,6 +1,5 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parentPort } from 'node:worker_threads'
 import stylelint from 'stylelint'
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
@@ -9,13 +8,13 @@ import {
   composeCheckerSummary,
   consoleLog,
   diagnosticToConsoleLevel,
-  diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
   normalizeStylelintDiagnostic,
-  toClientPayload,
+  reportDiagnostics,
+  reportStatus,
 } from '../../logger.js'
-import { ACTION_TYPES, DiagnosticLevel } from '../../types.js'
+import { DiagnosticLevel } from '../../types.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
 import {
   createLintScheduler,
@@ -34,12 +33,10 @@ import { parseArgsStringToArgv } from './argv.js'
 const __filename = fileURLToPath(import.meta.url)
 
 const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
-  let overlay = true
   let terminal = true
 
   return {
-    config: async ({ enableOverlay, enableTerminal }) => {
-      overlay = enableOverlay
+    config: async ({ enableTerminal }) => {
       terminal = enableTerminal
     },
     async configureServer({ root, watch }) {
@@ -90,29 +87,27 @@ const createDiagnostic: CreateDiagnostic<'stylelint'> = (pluginConfig) => {
           )
         }
 
-        if (overlay) {
-          parentPort?.postMessage({
-            type: ACTION_TYPES.overlayError,
-            payload: toClientPayload(
-              'stylelint',
-              diagnostics.map((d) => diagnosticToRuntimeError(d)),
-            ),
-          })
-        }
+        reportDiagnostics(diagnostics)
       }
 
       const scheduler = createLintScheduler({
         debounceMs:
           pluginConfig.stylelint.dev?.debounceMs ?? DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
-          const { results, ruleMetadata } = await stylelint.lint({
-            ...baseConfig,
-            files,
-          })
-          const newDiagnostics = results.flatMap((d) =>
-            normalizeStylelintDiagnostic(d, ruleMetadata),
-          )
-          applyBatchedDiagnostics(manager, files, newDiagnostics, root)
+          reportStatus('checking')
+          try {
+            const { results, ruleMetadata } = await stylelint.lint({
+              ...baseConfig,
+              files,
+            })
+            const newDiagnostics = results.flatMap((d) =>
+              normalizeStylelintDiagnostic(d, ruleMetadata),
+            )
+            applyBatchedDiagnostics(manager, files, newDiagnostics, root)
+          } catch (error) {
+            reportStatus('failed', error)
+            throw error
+          }
           dispatchDiagnostics()
         },
       })

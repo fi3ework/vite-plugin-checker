@@ -1,8 +1,10 @@
 import os from 'node:os'
+import path from 'node:path'
 
 import { codeFrameColumns } from '@babel/code-frame'
 
 import { supportsTerminalColors } from './colors.js'
+import type { Snippet } from './protocol.js'
 
 interface Position {
   line: number
@@ -35,6 +37,42 @@ export function createFrame(source: string, location: SourceLocation): string {
     .split('\n')
     .map((line) => `  ${line}`)
     .join(os.EOL)
+}
+
+const SNIPPET_LINES_ABOVE = 2
+const SNIPPET_LINES_BELOW = 3
+const SNIPPET_MAX_RANGE_LINES = 10
+
+/**
+ * Extract the source lines around a 1-based location.
+ */
+export function createSnippet(
+  source: string,
+  location: SourceLocation,
+  file?: string,
+): Snippet | undefined {
+  const lines = source.split(/\r?\n/)
+  const line = location.start.line
+  if (!(line >= 1 && line <= lines.length)) return undefined
+
+  const endLine = Math.min(
+    Math.max(location.end?.line || line, line),
+    line + SNIPPET_MAX_RANGE_LINES,
+  )
+  const lastLine =
+    lines.length > 1 && lines.at(-1) === '' ? lines.length - 1 : lines.length
+  const start = Math.max(1, line - SNIPPET_LINES_ABOVE)
+  const end = Math.min(
+    Math.max(lastLine, endLine),
+    endLine + SNIPPET_LINES_BELOW,
+  )
+  const lang = file ? path.extname(file.split('?')[0]!).slice(1) : ''
+
+  return {
+    start,
+    lines: lines.slice(start - 1, end),
+    ...(lang ? { lang } : {}),
+  }
 }
 
 export function tsLikeLocToBabelLoc(

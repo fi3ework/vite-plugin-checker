@@ -11,7 +11,7 @@ import {
   resetDiagnostics,
   resetReceivedLog,
   log,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   waitForDiagnostics,
 } from '../../testUtils'
@@ -19,7 +19,7 @@ import {
 describe('multiple-reload', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(stringify(stable(diagnostics))).toMatchSnapshot()
       expect(stable(stripedLog)).toMatchSnapshot()
 

@@ -12,27 +12,48 @@ import type {
 import { Checker } from './Checker.js'
 import {
   composeClientInjectionCode,
-  composePreambleCode,
-  RUNTIME_CLIENT_ENTRY_PATH,
-  RUNTIME_CLIENT_RUNTIME_PATH,
-  runtimeCode,
-  WS_CHECKER_RECONNECT_EVENT,
+  composeOverlayEntryCode,
+  OVERLAY_ENTRY_PATH,
+  OVERLAY_PATH,
+  readOverlayCode,
   wrapVirtualPrefix,
 } from './client/index.js'
 import { colorize, supportsTerminalColors } from './colors.js'
-import { withOverlayFileLinks } from './logger.js'
+import { DOCK_ID, setupDevTools } from './devtools.js'
+import { toDiagnostics } from './diagnostics.js'
+import { broadcastSnapshot, createHub, shareHub, snapshotOf } from './hub.js'
+import {
+  type CheckerApi,
+  type CheckerEvent,
+  EVENT_HELLO,
+  EVENT_SNAPSHOT,
+  EVENT_STATUS,
+  EVENT_UPDATE,
+  PROTOCOL_VERSION,
+} from './protocol.js'
 import {
   ACTION_TYPES,
   type Action,
   type BuildCheckBinStr,
   type BuildInCheckerNames,
-  type ClientDiagnosticPayload,
-  type ClientReconnectPayload,
   type LintWatchOptions,
   type PluginConfig,
   type ServeAndBuildChecker,
   type UserPluginConfig,
 } from './types.js'
+import { createUiMiddleware, uiDir, uiUrlFor } from './uiServer.js'
+
+export type {
+  CheckerApi,
+  CheckerEvent,
+  CheckerRun,
+  CheckerState,
+  CheckerStatus,
+  Diagnostic,
+  DiagnosticSeverity,
+  Snippet,
+} from './protocol.js'
+export { DOCK_ID }
 
 const VITE_CLIENT_ENTRY_RE =
   /[\\/](?:rolldown-)?vite[\\/]dist[\\/]client[\\/]client\.mjs(?:\?.*)?$/
@@ -50,6 +71,16 @@ const buildInCheckerLoaders: Record<
   svelteCheck: () => import('./checkers/svelteCheck/main.js'),
 }
 
+const checkerLabels: Record<BuildInCheckerNames, string> = {
+  typescript: 'TypeScript',
+  vueTsc: 'vue-tsc',
+  eslint: 'ESLint',
+  stylelint: 'Stylelint',
+  biome: 'Biome',
+  oxlint: 'oxlint',
+  svelteCheck: 'svelte-check',
+}
+
 async function createCheckers(
   userConfig: UserPluginConfig,
   env: ConfigEnv,
@@ -63,41 +94,153 @@ async function createCheckers(
   ) as BuildInCheckerNames[]) {
     if (!userConfig[name]) continue
     const { createServeAndBuild } = await buildInCheckerLoaders[name]()
-    serveAndBuildCheckers.push(
-      createServeAndBuild({ [name]: userConfig[name], ...sharedConfig }, env),
-    )
+    serveAndBuildCheckers.push({
+      ...createServeAndBuild(
+        { [name]: userConfig[name], ...sharedConfig },
+        env,
+      ),
+      name,
+    })
   }
 
   return serveAndBuildCheckers
 }
 
-export function checker(userConfig: UserPluginConfig): Plugin {
+export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
   const enableBuild = userConfig?.enableBuild ?? true
-  const enableOverlay = userConfig?.overlay !== false
   const enableTerminal = userConfig?.terminal !== false
-  const { editorUrl, ...overlayConfig } =
-    typeof userConfig?.overlay === 'object' ? userConfig.overlay : {}
+  const {
+    editorUrl,
+    badge = 'auto',
+    position,
+    initialIsOpen = true,
+    devtools = true,
+  } = typeof userConfig?.overlay === 'object' ? userConfig.overlay : {}
+  const enableOverlay = userConfig?.overlay !== false && badge !== false
+  const enableDevTools = userConfig?.overlay !== false && devtools
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
-  let latestOverlayErrors: ClientReconnectPayload['data'] = []
   let checkersPromise: Promise<ServeAndBuildChecker[]> | null = null
   let serverCount = 0
   let workersConfigured = false
-  const serverListeners = new WeakMap<
-    ResolvedConfig,
-    ((action: Action) => void)[]
-  >()
-  let baseWithOrigin: string
+  const serverCleanups = new WeakMap<ResolvedConfig, () => void>()
+  const self = {}
+  let hub = createHub(uiUrlFor('/'))
+  let joined = false
+  let ownIds: string[] = []
+  const subscriptions = new Set<{
+    listener: (event: CheckerEvent) => void
+    unsubscribe: () => void
+  }>()
   let viteMode: ConfigEnv['command'] | undefined
   let buildWatch = false
   let logger: Logger | null = null
   let checkerPromise: Promise<void> | null = null
   let resolvedRoot = process.cwd()
 
+  const api: CheckerApi = {
+    protocol: PROTOCOL_VERSION,
+    getState: () => hub.store.getState(),
+    subscribe(listener) {
+      const subscription = {
+        listener,
+        unsubscribe: hub.store.subscribe(listener),
+      }
+      subscriptions.add(subscription)
+      return () => {
+        subscription.unsubscribe()
+        subscriptions.delete(subscription)
+      }
+    },
+    claimIndicator(owner) {
+      const claim = Symbol(owner)
+      hub.claims.add(claim)
+      if (hub.claims.size === 1) broadcastSnapshot(hub)
+      return () => {
+        if (hub.claims.delete(claim) && hub.claims.size === 0) {
+          broadcastSnapshot(hub)
+        }
+      }
+    },
+    getUiUrl: () => hub.uiUrl,
+  }
+
+  const joinHub = (config: ResolvedConfig) => {
+    if (joined) return
+    joined = true
+    const shared = shareHub(config, hub)
+    if (shared === hub) return
+    for (const claim of hub.claims) shared.claims.add(claim)
+    for (const subscription of subscriptions) {
+      subscription.unsubscribe()
+      subscription.unsubscribe = shared.store.subscribe(subscription.listener)
+    }
+    hub = shared
+  }
+
+  const startWorkers = (root: string, watch: LintWatchOptions | undefined) => {
+    const context = { root, editorUrl }
+    const { store } = hub
+
+    for (const checker of checkers) {
+      const name = checker.name!
+      const { worker } = checker.serve
+      let id: string = name
+      let label = checkerLabels[name]
+      for (let n = 2; store.has(id); n++) {
+        id = `${name}-${n}`
+        label = `${checkerLabels[name]} (${n})`
+      }
+      ownIds.push(id)
+      store.register(id, label)
+
+      worker.on('message', (action: Action) => {
+        switch (action.type) {
+          case ACTION_TYPES.diagnostics: {
+            store.setDiagnostics(id, toDiagnostics(id, action.payload, context))
+            break
+          }
+          case ACTION_TYPES.status:
+            store.setStatus(id, action.payload.status, action.payload.error)
+            break
+          case ACTION_TYPES.console:
+            if (Checker.logger.length) {
+              // for test injection and customize logger in the future
+              Checker.log(action)
+            } else {
+              logger![action.level](action.payload)
+            }
+            break
+        }
+      })
+
+      worker.on('error', (error: Error) => {
+        store.setStatus(id, 'failed', error.message)
+        logger?.error(colorize('red', `[${label}] ${error.stack ?? error}`))
+      })
+
+      checker.serve.configureServer({ root, watch })
+      store.setStatus(id, 'checking')
+    }
+  }
+
   return {
     name: 'vite-plugin-checker',
     enforce: 'pre',
+    api,
+    devtools: {
+      setup(ctx) {
+        if (ctx.mode !== 'dev' || !enableDevTools || hub.devtools) return
+        const owner = hub
+        owner.devtools = true
+        const dispose = setupDevTools(ctx, api)
+        ctx.viteServer?.httpServer?.once('close', () => {
+          owner.devtools = false
+          dispose()
+        })
+      },
+    },
     // @ts-expect-error
     __internal__checker: Checker,
     config: async (_config, env) => {
@@ -124,7 +267,6 @@ export function checker(userConfig: UserPluginConfig): Plugin {
             checkers = created
             for (const checker of checkers) {
               checker.serve.config({
-                enableOverlay,
                 enableTerminal,
                 terminalColors: supportsTerminalColors(),
                 terminalHyperlinks:
@@ -142,9 +284,9 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     configResolved(config) {
       logger = config.logger
-      baseWithOrigin = config.server.origin
-        ? config.server.origin + config.base
-        : config.base
+      joinHub(config)
+      hub.uiUrl = uiUrlFor(config.base)
+      if (viteMode === 'serve' && enableOverlay) hub.overlayOwner ??= self
       buildWatch = !!config.build.watch
       resolvedRoot = config.root
     },
@@ -161,19 +303,18 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       const config =
         environment?.getTopLevelConfig() ?? (this as any)._container?.config
 
-      const listeners = serverListeners.get(config)
-      if (!listeners) return
-      serverListeners.delete(config)
+      const cleanup = serverCleanups.get(config)
+      if (!cleanup) return
+      serverCleanups.delete(config)
+      cleanup()
 
       serverCount--
-      checkers.forEach((checker, index) => {
-        checker.serve.worker.off('message', listeners[index]!)
-      })
 
       if (serverCount === 0) {
         const terminated = checkers
         checkers = []
-        latestOverlayErrors = []
+        hub.store.remove(ownIds)
+        ownIds = []
         checkersPromise = null
         workersConfigured = false
         await Promise.all(
@@ -183,15 +324,10 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     resolveId: {
       filter: {
-        id: new RegExp(
-          `^(?:${RUNTIME_CLIENT_RUNTIME_PATH}|${RUNTIME_CLIENT_ENTRY_PATH})$`,
-        ),
+        id: new RegExp(`^(?:${OVERLAY_PATH}|${OVERLAY_ENTRY_PATH})$`),
       },
       handler(id) {
-        if (
-          id === RUNTIME_CLIENT_RUNTIME_PATH ||
-          id === RUNTIME_CLIENT_ENTRY_PATH
-        ) {
+        if (id === OVERLAY_PATH || id === OVERLAY_ENTRY_PATH) {
           return wrapVirtualPrefix(id)
         }
 
@@ -201,16 +337,22 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     load: {
       filter: {
         id: new RegExp(
-          `^(?:${wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)}|${wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)})$`,
+          `^(?:${wrapVirtualPrefix(OVERLAY_PATH)}|${wrapVirtualPrefix(OVERLAY_ENTRY_PATH)})$`,
         ),
       },
       handler(id) {
-        if (id === wrapVirtualPrefix(RUNTIME_CLIENT_RUNTIME_PATH)) {
-          return runtimeCode
+        if (id === wrapVirtualPrefix(OVERLAY_PATH)) {
+          return readOverlayCode()
         }
 
-        if (id === wrapVirtualPrefix(RUNTIME_CLIENT_ENTRY_PATH)) {
-          return composePreambleCode({ baseWithOrigin, overlayConfig })
+        if (id === wrapVirtualPrefix(OVERLAY_ENTRY_PATH)) {
+          if (hub.overlayOwner && hub.overlayOwner !== self) return
+          return composeOverlayEntryCode({
+            uiUrl: hub.uiUrl,
+            badge,
+            initialIsOpen,
+            position: position ?? (hub.devtools ? 'br' : 'bl'),
+          })
         }
 
         return
@@ -220,6 +362,7 @@ export function checker(userConfig: UserPluginConfig): Plugin {
       filter: { id: VITE_CLIENT_ENTRY_RE },
       handler(code, id) {
         if (viteMode !== 'serve' || !enableOverlay) return
+        if (hub.overlayOwner && hub.overlayOwner !== self) return
         if (!VITE_CLIENT_ENTRY_RE.test(id)) return
 
         return `${code}\n${composeClientInjectionCode()}`
@@ -249,62 +392,46 @@ export function checker(userConfig: UserPluginConfig): Plugin {
     },
     configureServer(server) {
       serverCount++
-      if (latestOverlayErrors.length !== checkers.length) {
-        latestOverlayErrors = new Array(checkers.length)
-      }
-      const listeners: ((action: Action) => void)[] = []
-      serverListeners.set(server.config, listeners)
-      const root = userConfig.root || server.config.root
 
       if (!workersConfigured) {
         workersConfigured = true
-        const watch = toLintWatchOptions(server.config.server?.watch)
-        checkers.forEach((checker) => {
-          checker.serve.configureServer({
-            root,
-            watch,
-          })
-        })
+        startWorkers(
+          userConfig.root || server.config.root,
+          toLintWatchOptions(server.config.server?.watch),
+        )
       }
 
-      // for dev mode (2/2)
-      // Get the server instance and keep reference in a closure
-      checkers.forEach((checker, index) => {
-        const { worker } = checker.serve
-        const listener = (action: Action) => {
-          if (action.type === ACTION_TYPES.overlayError) {
-            const payload =
-              action.payload &&
-              withOverlayFileLinks(
-                action.payload as ClientDiagnosticPayload,
-                root,
-                editorUrl,
-              )
-            latestOverlayErrors[index] = payload as ClientDiagnosticPayload
-            if (payload) {
-              server.ws.send('vite-plugin-checker', payload)
-            }
-          } else if (action.type === ACTION_TYPES.console) {
-            if (Checker.logger.length) {
-              // for test injection and customize logger in the future
-              Checker.log(action)
-            } else {
-              logger![action.level](action.payload)
-            }
-          }
+      if (hub.servers.has(server)) {
+        serverCleanups.set(server.config, () => {})
+        return
+      }
+      hub.servers.add(server)
+
+      const owner = hub
+      const unsubscribe = owner.store.subscribe((event) => {
+        if (event.type === 'update') {
+          const { type: _, ...payload } = event
+          server.ws.send(EVENT_UPDATE, payload)
+        } else {
+          const { type: _, ...payload } = event
+          server.ws.send(EVENT_STATUS, payload)
         }
-        listeners.push(listener)
-        worker.on('message', listener)
+      })
+      const sendSnapshot = () =>
+        server.ws.send(EVENT_SNAPSHOT, snapshotOf(owner))
+      owner.broadcasters.add(sendSnapshot)
+      serverCleanups.set(server.config, () => {
+        unsubscribe()
+        owner.broadcasters.delete(sendSnapshot)
+        owner.servers.delete(server)
       })
 
-      server.ws.on('vite-plugin-checker', (data) => {
-        // NOTE: sync modification with packages /packages/runtime/src/ws.js
-        if (data.event === 'runtime-loaded') {
-          server.ws.send('vite-plugin-checker', {
-            event: WS_CHECKER_RECONNECT_EVENT,
-            data: latestOverlayErrors.filter(Boolean),
-          })
-        }
+      server.middlewares.use(
+        createUiMiddleware({ base: server.config.base, dir: uiDir }),
+      )
+
+      server.ws.on(EVENT_HELLO, (_data, client) => {
+        client.send(EVENT_SNAPSHOT, snapshotOf(owner))
       })
     },
   }

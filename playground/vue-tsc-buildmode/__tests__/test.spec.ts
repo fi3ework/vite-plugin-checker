@@ -9,7 +9,7 @@ import {
   isServe,
   log,
   resetReceivedLog,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   waitForDiagnostics,
 } from '../../testUtils'
@@ -17,7 +17,7 @@ import {
 describe('vue-tsc-build-mode', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error and subsequent error', async () => {
-      await sleepForServerReady(2)
+      await waitForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 

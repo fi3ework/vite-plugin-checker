@@ -2,19 +2,17 @@ import { describe, expect, it } from 'vitest'
 
 import {
   editFile,
-  getHmrOverlay,
   getHmrOverlayText,
   isServe,
-  pollingUntil,
   sleepForEdit,
-  sleepForServerReady,
+  waitForServerReady,
   waitForNoOverlay,
 } from '../../testUtils'
 
 describe('config-overlay-changes', () => {
   describe.runIf(isServe)('serve', () => {
     it('get initial error from overlay and overlay error content changes on modifying', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       const [message1, file1, frame1] = await getHmrOverlayText()
       expect(message1).toMatchSnapshot()
       expect(file1).toMatchSnapshot()
@@ -23,7 +21,6 @@ describe('config-overlay-changes', () => {
       console.log('-- overlay update after edit --')
       editFile('src/main.ts', (code) => code.replace('Hello', 'Hello1'))
       await sleepForEdit()
-      await pollingUntil(getHmrOverlay, (dom) => !!dom)
       const [, , frame2] = await getHmrOverlayText()
       expect(frame2).toMatchSnapshot()
 

@@ -6,24 +6,19 @@ import { parentPort } from 'node:worker_threads'
 import type * as typescript from 'typescript'
 
 import { Checker } from '../../Checker.js'
-import { createFrame } from '../../codeFrame.js'
+import { createFrame, createSnippet } from '../../codeFrame.js'
 import { colorize } from '../../colors.js'
 import {
   consoleLog,
-  diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   ensureCall,
   type NormalizedDiagnostic,
   normalizeTsDiagnostic,
-  toClientPayload,
+  reportDiagnostics,
+  reportStatus,
   wrapCheckerSummary,
 } from '../../logger.js'
-import {
-  ACTION_TYPES,
-  type CreateDiagnostic,
-  DiagnosticLevel,
-  type DiagnosticToRuntime,
-} from '../../types.js'
+import { type CreateDiagnostic, DiagnosticLevel } from '../../types.js'
 import {
   forceNoEmitOnSolutionBuilderHost,
   getTscBuildArgs,
@@ -34,13 +29,11 @@ const __filename = fileURLToPath(import.meta.url)
 let createServeAndBuild: any
 
 const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
-  let overlay = true
   let terminal = true
-  let currDiagnostics: DiagnosticToRuntime[] = []
+  let currDiagnostics: NormalizedDiagnostic[] = []
 
   return {
-    config: async ({ enableOverlay, enableTerminal }) => {
-      overlay = enableOverlay
+    config: async ({ enableTerminal }) => {
       terminal = enableTerminal
     },
     async configureServer({ root }) {
@@ -150,7 +143,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
 
         const flushPendingDiag = () => {
           if (!pendingDiag) return
-          currDiagnostics.push(diagnosticToRuntimeError(pendingDiag))
+          currDiagnostics.push(pendingDiag)
           logChunk +=
             os.EOL + diagnosticToTerminalLog(pendingDiag, 'TypeScript')
           pendingDiag = null
@@ -179,28 +172,29 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             // resolve to absolute so readFileSync works in the worker thread
             const absFile = path.resolve(finalConfig.root, file!)
 
+            const loc = { start: { line: lineNum, column: colNum } }
             let codeFrame: string | undefined
             let stripedCodeFrame: string | undefined
+            let snippet: NormalizedDiagnostic['snippet']
             if (existsSync(absFile)) {
               try {
                 const source = readFileSync(absFile, 'utf-8')
-                codeFrame = createFrame(source, {
-                  start: { line: lineNum, column: colNum },
-                })
+                codeFrame = createFrame(source, loc)
                 stripedCodeFrame = strip(codeFrame)
+                snippet = createSnippet(source, loc, absFile)
               } catch {}
             }
 
             pendingDiag = {
               message: `TS${tsCode}: ${message}`,
+              code: `TS${tsCode}`,
               conclusion: '',
               id: absFile,
               checker: 'TypeScript',
               codeFrame,
               stripedCodeFrame,
-              loc: {
-                start: { line: lineNum, column: colNum },
-              },
+              snippet,
+              loc,
               level:
                 severity === 'warning'
                   ? DiagnosticLevel.Warning
@@ -210,16 +204,16 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           }
 
           // Parse: "Found X errors." or "Found X errors. Watching for file changes."
+          if (/File change detected/.test(line)) {
+            reportStatus('checking')
+            return
+          }
+
           const summaryMatch = line.match(/Found (\d+) errors?\./)
           if (summaryMatch) {
             flushPendingDiag()
             const errorCount = +summaryMatch[1]!
-            if (overlay) {
-              parentPort?.postMessage({
-                type: ACTION_TYPES.overlayError,
-                payload: toClientPayload('typescript', currDiagnostics),
-              })
-            }
+            reportDiagnostics(currDiagnostics)
             // Capture logChunk before resetting; ensureCall defers via setTimeout
             const capturedLogChunk = logChunk
             ensureCall(() => {
@@ -276,6 +270,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             colorize('red', `TypeScript checker failed: ${err.message}`),
             'error',
           )
+          reportStatus('failed', err)
         })
 
         const killTsc = () => {
@@ -309,7 +304,7 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
           return
         }
 
-        currDiagnostics.push(diagnosticToRuntimeError(normalizedDiagnostic))
+        currDiagnostics.push(normalizedDiagnostic)
         logChunk +=
           os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'TypeScript')
       }
@@ -331,15 +326,11 @@ const createDiagnostic: CreateDiagnostic<'typescript'> = (pluginConfig) => {
             logChunk = ''
             // currErr = null
             currDiagnostics = []
+            reportStatus('checking')
             return
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
-            if (overlay) {
-              parentPort?.postMessage({
-                type: ACTION_TYPES.overlayError,
-                payload: toClientPayload('typescript', currDiagnostics),
-              })
-            }
+            reportDiagnostics(currDiagnostics)
         }
 
         ensureCall(() => {

@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`vue-tsc-solution > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"vue-tsc","frame":"    1 | <script setup lang=/"ts/">/n  > 2 | const count: number = 'not a number'/n      |       ^^^^^/n    3 | </script>/n    4 |/n    5 | <template>","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","line":2},"message":"Type 'string' is not assignable to type 'number'.","relativeFile":"src/App.vue","stack":""}]"`;
+exports[`vue-tsc-solution > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"vueTsc","code":"TS2322","column":7,"displayFile":"src/App.vue","endColumn":12,"endLine":2,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","id":"cc562c1ee8ed35ce","level":"error","line":2,"message":"Type 'string' is not assignable to type 'number'.","snippet":{"lang":"vue","lines":["<script setup lang=/"ts/">","const count: number = 'not a number'","</script>","","<template>"],"start":1}}]"`;
 
 exports[`vue-tsc-solution > serve > get initial error and subsequent error 2`] = `
 [
@@ -19,7 +19,7 @@ exports[`vue-tsc-solution > serve > get initial error and subsequent error 2`] =
 ]
 `;
 
-exports[`vue-tsc-solution > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"vue-tsc","frame":"    1 | <script setup lang=/"ts/">/n  > 2 | const count: number = 'still not a number'/n      |       ^^^^^/n    3 | </script>/n    4 |/n    5 | <template>","id":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","line":2},"message":"Type 'string' is not assignable to type 'number'.","relativeFile":"src/App.vue","stack":""}]"`;
+exports[`vue-tsc-solution > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"vueTsc","code":"TS2322","column":7,"displayFile":"src/App.vue","endColumn":12,"endLine":2,"file":"<PROJECT_ROOT>/playground-temp/vue-tsc-solution/src/App.vue","id":"cc562c1ee8ed35ce","level":"error","line":2,"message":"Type 'string' is not assignable to type 'number'.","snippet":{"lang":"vue","lines":["<script setup lang=/"ts/">","const count: number = 'still not a number'","</script>","","<template>"],"start":1}}]"`;
 
 exports[`vue-tsc-solution > serve > get initial error and subsequent error 4`] = `
 [

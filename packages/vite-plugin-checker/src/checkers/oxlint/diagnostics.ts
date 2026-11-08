@@ -1,56 +1,47 @@
-import { parentPort } from 'node:worker_threads'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
   composeCheckerSummary,
   consoleLog,
   diagnosticToConsoleLevel,
-  diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   type NormalizedDiagnostic,
-  toClientPayload,
+  reportDiagnostics,
 } from '../../logger.js'
-import {
-  ACTION_TYPES,
-  type CreateDiagnostic,
-  DiagnosticLevel,
-} from '../../types.js'
+import { type CreateDiagnostic, DiagnosticLevel } from '../../types.js'
 import { resolveOptions } from './options.js'
 import { setupDevServer } from './server.js'
-import type { DisplayTarget } from './types'
+
+export interface DisplayOptions {
+  terminal: boolean
+}
 
 export const createDiagnostic: CreateDiagnostic<'oxlint'> = (pluginConfig) => {
   const manager = new FileDiagnosticManager()
 
   const oxlintConfig = pluginConfig.oxlint
-  const displayTargets = new Set<DisplayTarget>()
+  const display: DisplayOptions = { terminal: true }
 
   return {
-    config: async ({ enableOverlay, enableTerminal }) => {
-      displayTargets.clear()
-      if (enableOverlay) displayTargets.add('overlay')
-      if (enableTerminal) displayTargets.add('terminal')
+    config: async ({ enableTerminal }) => {
+      display.terminal = enableTerminal
     },
     async configureServer({ root, watch }) {
       if (!oxlintConfig) return
 
       const options = resolveOptions(root, oxlintConfig)
-      await setupDevServer(root, options, manager, displayTargets, watch)
+      await setupDevServer(root, options, manager, display, watch)
     },
   }
 }
 
 export function dispatchDiagnostics(
   diagnostics: NormalizedDiagnostic[],
-  targets: Set<DisplayTarget>,
+  display: DisplayOptions,
 ) {
-  if (targets.size === 0) return
-
-  if (targets.has('terminal')) {
+  if (display.terminal) {
     dispatchTerminalDiagnostics(diagnostics)
   }
-  if (targets.has('overlay')) {
-    dispatchOverlayDiagnostics(diagnostics)
-  }
+  reportDiagnostics(diagnostics)
 }
 
 function dispatchTerminalDiagnostics(diagnostics: NormalizedDiagnostic[]) {
@@ -71,14 +62,4 @@ function dispatchTerminalDiagnostics(diagnostics: NormalizedDiagnostic[]) {
     composeCheckerSummary('oxlint', errorCount, warningCount),
     errorCount ? 'error' : warningCount ? 'warn' : 'info',
   )
-}
-
-function dispatchOverlayDiagnostics(diagnostics: NormalizedDiagnostic[]) {
-  parentPort?.postMessage({
-    type: ACTION_TYPES.overlayError,
-    payload: toClientPayload(
-      'oxlint',
-      diagnostics.map((d) => diagnosticToRuntimeError(d)),
-    ),
-  })
 }

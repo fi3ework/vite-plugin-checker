@@ -3,24 +3,20 @@ import { createRequire } from 'node:module'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parentPort } from 'node:worker_threads'
 import type ts from 'typescript'
 
 import { Checker } from '../../Checker.js'
 import {
   consoleLog,
-  diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   ensureCall,
+  type NormalizedDiagnostic,
   normalizeVueTscDiagnostic,
-  toClientPayload,
+  reportDiagnostics,
+  reportStatus,
   wrapCheckerSummary,
 } from '../../logger.js'
-import {
-  ACTION_TYPES,
-  type CreateDiagnostic,
-  type DiagnosticToRuntime,
-} from '../../types.js'
+import type { CreateDiagnostic } from '../../types.js'
 import {
   forceNoEmitOnSolutionBuilderHost,
   getTscBuildArgs,
@@ -34,13 +30,11 @@ const __filename = fileURLToPath(import.meta.url)
 let createServeAndBuild: any
 
 const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
-  let overlay = true
   let terminal = true
-  let currDiagnostics: DiagnosticToRuntime[] = []
+  let currDiagnostics: NormalizedDiagnostic[] = []
 
   return {
-    config: ({ enableOverlay, enableTerminal }) => {
-      overlay = enableOverlay
+    config: ({ enableTerminal }) => {
       terminal = enableTerminal
     },
     async configureServer({ root }) {
@@ -79,7 +73,7 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
           return
         }
 
-        currDiagnostics.push(diagnosticToRuntimeError(normalizedDiagnostic))
+        currDiagnostics.push(normalizedDiagnostic)
         logChunk +=
           os.EOL + diagnosticToTerminalLog(normalizedDiagnostic, 'vue-tsc')
       }
@@ -101,15 +95,11 @@ const createDiagnostic: CreateDiagnostic<'vueTsc'> = (pluginConfig) => {
             logChunk = ''
             // currErr = null
             currDiagnostics = []
+            reportStatus('checking')
             return
           case 6193: // 1 Error
           case 6194: // 0 errors or 2+ errors
-            if (overlay) {
-              parentPort?.postMessage({
-                type: ACTION_TYPES.overlayError,
-                payload: toClientPayload('vue-tsc', currDiagnostics),
-              })
-            }
+            reportDiagnostics(currDiagnostics)
         }
 
         ensureCall(() => {

@@ -37,15 +37,37 @@ describe('npm pack', () => {
     expect(tarballFiles).toContain('package/dist/@runtime/main.js')
   })
 
-  it('bundles Vue in production mode', () => {
-    const runtimeEntry = archive.find(
-      (entry) => entry.header.name === 'package/dist/@runtime/main.js',
-    )
-    assert(runtimeEntry?.data, 'runtime bundle is expected in the tarball')
-    const code = new TextDecoder().decode(runtimeEntry.data)
-
-    expect(code).not.toContain('process.env.NODE_ENV')
-    expect(code).not.toContain('__VUE_HMR_RUNTIME__')
-    expect(code).not.toContain('devtoolsInitApp')
+  it('does not publish files from other packages', () => {
+    expect(
+      tarballFiles.filter((file) =>
+        /node_modules|pnpm-virtual-store/.test(file),
+      ),
+    ).toEqual([])
   })
+
+  it('publishes the diagnostics page with its assets', () => {
+    expect(tarballFiles).toContain('package/dist/@ui/index.html')
+    expect(
+      tarballFiles.filter((file) =>
+        /^package\/dist\/@ui\/assets\/index-[\w-]+\.(?:js|css)$/.test(file),
+      ),
+    ).toHaveLength(2)
+  })
+
+  it.each(['package/dist/@runtime/main.js', 'package/dist/@ui/assets/index-'])(
+    'bundles Vue in production mode in %s',
+    (prefix) => {
+      const entry = archive.find(
+        (entry) =>
+          entry.header.name.startsWith(prefix) &&
+          entry.header.name.endsWith('.js'),
+      )
+      assert(entry?.data, `${prefix} is expected in the tarball`)
+      const code = new TextDecoder().decode(entry.data)
+
+      expect(code).not.toContain('process.env.NODE_ENV')
+      expect(code).not.toContain('__VUE_HMR_RUNTIME__')
+      expect(code).not.toContain('devtoolsInitApp')
+    },
+  )
 })

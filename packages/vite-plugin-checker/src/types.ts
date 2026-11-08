@@ -2,6 +2,7 @@ import type { Worker } from 'node:worker_threads'
 import type { ESLint } from 'eslint'
 import type * as Stylelint from 'stylelint'
 import type { ConfigEnv, ErrorPayload } from 'vite'
+import type { CheckerStatus, Snippet } from './protocol.js'
 
 /* ----------------------------- userland plugin options ----------------------------- */
 
@@ -217,17 +218,20 @@ export enum DiagnosticLevel {
 }
 
 type ErrorPayloadErr = ErrorPayload['err']
-export interface DiagnosticToRuntime extends ErrorPayloadErr {
+
+/** Diagnostic posted from a checker worker to the main thread */
+export interface DiagnosticRecord extends ErrorPayloadErr {
   checkerId: string
   level?: DiagnosticLevel
-  /** file path shown in the overlay, relative to the project root */
-  relativeFile?: string
-  /** URL opened when the file is clicked in the overlay, from `overlay.editorUrl` */
-  editorUrl?: string
   /** rule that reported the diagnostic, as it appears in `message` */
   rule?: string
   /** documentation URL for `rule` */
   ruleUrl?: string
+  /** error code, when it is not the `rule` */
+  code?: string
+  endLine?: number
+  endColumn?: number
+  snippet?: Snippet
 }
 
 /** Location passed to `overlay.editorUrl` */
@@ -240,28 +244,14 @@ export interface EditorLocation {
   column: number
 }
 
-export interface ClientDiagnosticPayload {
-  event: 'vite-plugin-checker:error'
-  data: {
-    checkerId: string
-    diagnostics: DiagnosticToRuntime[]
-  }
-}
-
-export interface ClientReconnectPayload {
-  event: 'vite-plugin-checker:reconnect'
-  data: ClientDiagnosticPayload[]
-}
-
-export type ClientPayload = ClientDiagnosticPayload | ClientReconnectPayload
-
 /** checkers shared configuration */
 export interface SharedConfig {
   /**
-   * Show overlay on UI view when there are errors or warnings in dev mode.
-   * - Set `true` to show overlay
-   * - Set `false` to disable overlay
-   * - Set with a object to customize overlay
+   * Show a badge and a diagnostics drawer on pages served by the dev server.
+   * The same diagnostics are always available at `{base}__checker/`.
+   * - Set `true` to show the overlay
+   * - Set `false` to disable the overlay
+   * - Set with a object to customize the overlay
    *
    * @defaultValue `true`
    */
@@ -269,35 +259,34 @@ export interface SharedConfig {
     | boolean
     | {
         /**
-         * Whether the panel starts open when there are diagnostics.
+         * Show the in-page badge and drawer.
+         * - `'auto'`: show unless another integration, such as Nuxt, displays the
+         *   diagnostics itself
+         * - `true`: always show
+         * - `false`: never show; diagnostics stay available at `{base}__checker/`
+         * @defaultValue `'auto'`
+         */
+        badge?: boolean | 'auto'
+        /**
+         * Add a Checker panel and messages to
+         * [Vite DevTools](https://devtools.vite.dev) when it is installed.
+         * @defaultValue `true`
+         */
+        devtools?: boolean
+        /**
+         * Whether the drawer opens by itself when there are diagnostics, until
+         * it is opened or closed by hand.
          * - `true`: open when there are errors or warnings
          * - `'error'`: open only when there are errors
-         * - `false`: start collapsed to the badge
+         * - `false`: stay closed until the badge is clicked
          * @defaultValue `true`
          */
         initialIsOpen?: boolean | 'error'
         /**
-         * The position of the vite-plugin-checker badge to open and close
-         * the diagnostics panel
-         * @default `bl`
+         * Corner of the badge. The drawer opens along the same edge.
+         * @defaultValue `'bl'`, or `'br'` when the Vite DevTools dock is shown
          */
         position?: 'tl' | 'tr' | 'bl' | 'br'
-        /**
-         * Use this to add extra style string to the badge button, the string format is
-         * [HTML element's style property](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
-         * For example, if you want to hide the badge,
-         * you can pass `display: none;` to the badgeStyle property
-         * @default no default value
-         */
-        badgeStyle?: string
-        /**
-         * Use this to add extra style string to the diagnostic panel, the string format is
-         * [HTML element's style property](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
-         * For example, if you want to change the opacity of the panel,
-         * you can pass `opacity: 0.8;` to the panelStyle property
-         * @default no default value
-         */
-        panelStyle?: string
         /**
          * Build the URL opened when a file path is clicked in the overlay, such as
          * `vscode://file/...`. Return `undefined` to open the file with Vite's
@@ -355,7 +344,8 @@ export type UserPluginConfig = Partial<PluginConfig>
 export enum ACTION_TYPES {
   config = 'config',
   configureServer = 'configureServer',
-  overlayError = 'overlayError',
+  diagnostics = 'diagnostics',
+  status = 'status',
   console = 'console',
 }
 
@@ -364,13 +354,18 @@ interface AbstractAction {
   payload: unknown
 }
 
-export interface OverlayErrorAction extends AbstractAction {
-  type: ACTION_TYPES.overlayError
-  /**
-   * send `ClientPayload` to raise error overlay
-   * send `null` to clear overlay for current checker
-   */
-  payload: ClientPayload
+/** Every current diagnostic of the checker, replacing the previous set */
+export interface DiagnosticsAction extends AbstractAction {
+  type: ACTION_TYPES.diagnostics
+  payload: DiagnosticRecord[]
+}
+
+export interface StatusAction extends AbstractAction {
+  type: ACTION_TYPES.status
+  payload: {
+    status: Extract<CheckerStatus, 'checking' | 'failed'>
+    error?: string
+  }
 }
 
 export interface ConfigAction extends AbstractAction {
@@ -400,7 +395,6 @@ export interface ConsoleAction extends AbstractAction {
 }
 
 interface ConfigActionPayload {
-  enableOverlay: boolean
   enableTerminal: boolean
   terminalColors: boolean
   terminalHyperlinks: boolean
@@ -411,7 +405,8 @@ export type Action =
   | ConfigAction
   | ConfigureServerAction
   | ConsoleAction
-  | OverlayErrorAction
+  | DiagnosticsAction
+  | StatusAction
 
 /* ----------------------------- internal types ----------------------------- */
 
@@ -431,6 +426,7 @@ export interface ConfigureServeChecker {
 }
 
 export interface ServeAndBuildChecker {
+  name?: BuildInCheckerNames
   serve: ConfigureServeChecker
   build: { buildBin: BuildCheckBin; buildFile?: string }
 }

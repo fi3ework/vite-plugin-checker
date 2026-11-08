@@ -55,6 +55,18 @@ exports[`logger > normalizeEslintDiagnostic > get multiple diagnostics 1`] = `
     "message": "Unexpected var, use let or const instead. (no-var)",
     "rule": "no-var",
     "ruleUrl": undefined,
+    "snippet": {
+      "lang": "ts",
+      "lines": [
+        "import { text } from './text'",
+        "",
+        "var hello = 'Hello'",
+        "var hello1 = 'Hello1'",
+        "",
+        "const rootDom = document.querySelector('#root')!",
+      ],
+      "start": 1,
+    },
     "stripedCodeFrame": "    1 | import { text } from './text'
     2 |
   > 3 | var hello = 'Hello'
@@ -88,6 +100,18 @@ exports[`logger > normalizeEslintDiagnostic > get multiple diagnostics 1`] = `
     "message": "Unexpected var, use let or const instead. (no-var)",
     "rule": "no-var",
     "ruleUrl": undefined,
+    "snippet": {
+      "lang": "ts",
+      "lines": [
+        "",
+        "var hello = 'Hello'",
+        "var hello1 = 'Hello1'",
+        "",
+        "const rootDom = document.querySelector('#root')!",
+        "rootDom.innerHTML = hello + text",
+      ],
+      "start": 2,
+    },
     "stripedCodeFrame": "    2 |
     3 | var hello = 'Hello'
   > 4 | var hello1 = 'Hello1'

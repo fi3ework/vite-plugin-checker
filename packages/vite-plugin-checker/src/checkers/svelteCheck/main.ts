@@ -1,23 +1,19 @@
 import readline from 'node:readline'
 import { fileURLToPath } from 'node:url'
-import { parentPort, Worker } from 'node:worker_threads'
+import { Worker } from 'node:worker_threads'
 import { Checker } from '../../Checker.js'
 import { colorize } from '../../colors.js'
 import {
   composeCheckerSummary,
   consoleLog,
   diagnosticToConsoleLevel,
-  diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
   type NormalizedDiagnostic,
-  toClientPayload,
+  reportDiagnostics,
+  reportStatus,
 } from '../../logger.js'
-import {
-  ACTION_TYPES,
-  type CreateDiagnostic,
-  DiagnosticLevel,
-} from '../../types.js'
+import { type CreateDiagnostic, DiagnosticLevel } from '../../types.js'
 import { parseArgsStringToArgv } from '../stylelint/argv.js'
 import {
   createMachineOutputParser,
@@ -34,12 +30,10 @@ const severityMap = {
 
 const createDiagnostic: CreateDiagnostic<'svelteCheck'> = (pluginConfig) => {
   const svelteCheckConfig = pluginConfig.svelteCheck
-  let overlay = true
   let terminal = true
 
   return {
-    config: async ({ enableOverlay, enableTerminal }) => {
-      overlay = enableOverlay
+    config: async ({ enableTerminal }) => {
       terminal = enableTerminal
     },
     configureServer({ root }) {
@@ -72,28 +66,16 @@ const createDiagnostic: CreateDiagnostic<'svelteCheck'> = (pluginConfig) => {
           )
         }
 
-        if (overlay) {
-          parentPort?.postMessage({
-            type: ACTION_TYPES.overlayError,
-            payload: toClientPayload(
-              'svelte-check',
-              diagnostics.map((d) => diagnosticToRuntimeError(d)),
-            ),
-          })
-        }
+        reportDiagnostics(diagnostics)
       }
 
       let bin: string
       try {
         bin = resolveSvelteCheckBin(root)
       } catch {
-        consoleLog(
-          colorize(
-            'yellow',
-            `[svelte-check] could not resolve svelte-check from ${root}. Make sure it is installed.`,
-          ),
-          'warn',
-        )
+        const message = `could not resolve svelte-check from ${root}. Make sure it is installed.`
+        consoleLog(colorize('yellow', `[svelte-check] ${message}`), 'warn')
+        reportStatus('failed', message)
         return
       }
 
@@ -105,9 +87,11 @@ const createDiagnostic: CreateDiagnostic<'svelteCheck'> = (pluginConfig) => {
       })
 
       const parser = createMachineOutputParser({
+        onStart: () => reportStatus('checking'),
         onComplete: dispatchDiagnostics,
         onFailure: (message) => {
           consoleLog(colorize('red', `[svelte-check] ${message}`), 'error')
+          reportStatus('failed', message)
         },
       })
 
@@ -117,6 +101,7 @@ const createDiagnostic: CreateDiagnostic<'svelteCheck'> = (pluginConfig) => {
 
       worker.on('error', (error) => {
         consoleLog(colorize('red', `[svelte-check] ${error}`), 'error')
+        reportStatus('failed', error)
       })
     },
   }

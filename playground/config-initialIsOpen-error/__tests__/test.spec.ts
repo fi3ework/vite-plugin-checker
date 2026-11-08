@@ -4,7 +4,7 @@ import {
   editFile,
   getHmrOverlayText,
   isServe,
-  sleepForServerReady,
+  waitForServerReady,
   waitForDiagnostics,
   waitForNoOverlay,
 } from '../../testUtils'
@@ -12,7 +12,7 @@ import {
 describe('config-initialIsOpen-error', () => {
   describe.runIf(isServe)('serve', () => {
     it('-- should find overlay with error --', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       const [message1, file1, frame1] = await getHmrOverlayText()
       expect(message1).toMatchSnapshot()
       expect(file1).toMatchSnapshot()

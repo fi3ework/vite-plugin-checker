@@ -1,22 +1,17 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parentPort } from 'node:worker_threads'
 import { Checker } from '../../Checker.js'
 import { FileDiagnosticManager } from '../../FileDiagnosticManager.js'
 import {
   composeCheckerSummary,
   consoleLog,
   diagnosticToConsoleLevel,
-  diagnosticToRuntimeError,
   diagnosticToTerminalLog,
   filterLogLevel,
-  toClientPayload,
+  reportDiagnostics,
+  reportStatus,
 } from '../../logger.js'
-import {
-  ACTION_TYPES,
-  type CreateDiagnostic,
-  DiagnosticLevel,
-} from '../../types.js'
+import { type CreateDiagnostic, DiagnosticLevel } from '../../types.js'
 import { applyBatchedDiagnostics } from '../_shared/applyBatchedDiagnostics.js'
 import {
   createLintScheduler,
@@ -39,7 +34,6 @@ let createServeAndBuild: any
 
 const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
   const biomeConfig = pluginConfig.biome
-  let overlay = true
   let terminal = true
 
   let command = 'lint'
@@ -51,8 +45,7 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
   }
 
   return {
-    config: async ({ enableOverlay, enableTerminal }) => {
-      overlay = enableOverlay
+    config: async ({ enableTerminal }) => {
       terminal = enableTerminal
     },
     async configureServer({ root, watch }) {
@@ -92,15 +85,7 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
           )
         }
 
-        if (overlay) {
-          parentPort?.postMessage({
-            type: ACTION_TYPES.overlayError,
-            payload: toClientPayload(
-              'biome',
-              diagnostics.map((d) => diagnosticToRuntimeError(d)),
-            ),
-          })
-        }
+        reportDiagnostics(diagnostics)
       }
 
       const scheduler = createLintScheduler({
@@ -109,6 +94,7 @@ const createDiagnostic: CreateDiagnostic<'biome'> = (pluginConfig) => {
             ? biomeConfig.dev?.debounceMs
             : undefined) ?? DEFAULT_DEBOUNCE_MS,
         onBatch: async (files) => {
+          reportStatus('checking')
           const hasConfigChange = files.some(
             (f) => path.basename(f) === 'biome.json',
           )

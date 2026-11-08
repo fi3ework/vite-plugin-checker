@@ -5,20 +5,21 @@ import { stripVTControlCharacters as strip } from 'node:util'
 import { parentPort } from 'node:worker_threads'
 import { hyperlink, link } from 'clickable-path'
 
-import { WS_CHECKER_ERROR_EVENT } from './client/index.js'
 import {
   createFrame,
+  createSnippet,
   lineColLocToBabelLoc,
   type SourceLocation,
   tsLikeLocToBabelLoc,
 } from './codeFrame.js'
 import { colorize } from './colors.js'
+import type { Snippet } from './protocol.js'
 import {
   ACTION_TYPES,
-  type ClientDiagnosticPayload,
   DiagnosticLevel,
-  type DiagnosticToRuntime,
-  type EditorLocation,
+  type DiagnosticRecord,
+  type DiagnosticsAction,
+  type StatusAction,
 } from './types.js'
 import { isMainThread } from './utils.js'
 
@@ -38,6 +39,8 @@ export interface NormalizedDiagnostic {
   rule?: string
   /** documentation URL for `rule` */
   ruleUrl?: string
+  /** error code, when it is not the `rule` */
+  code?: string
   /** error conclusion */
   conclusion?: string
   /** error stack */
@@ -50,6 +53,8 @@ export interface NormalizedDiagnostic {
   codeFrame?: string
   /** code frame, but striped */
   stripedCodeFrame?: string
+  /** source lines around `loc` */
+  snippet?: Snippet
   /** error code location */
   loc?: SourceLocation
   /** error level */
@@ -182,19 +187,19 @@ export function diagnosticToConsoleLevel(d: NormalizedDiagnostic) {
 
 export function diagnosticToRuntimeError(
   d: NormalizedDiagnostic,
-): DiagnosticToRuntime
+): DiagnosticRecord
 export function diagnosticToRuntimeError(
   d: NormalizedDiagnostic[],
-): DiagnosticToRuntime[]
+): DiagnosticRecord[]
 export function diagnosticToRuntimeError(
   diagnostics: NormalizedDiagnostic | NormalizedDiagnostic[],
-): DiagnosticToRuntime | DiagnosticToRuntime[] {
+): DiagnosticRecord | DiagnosticRecord[] {
   const diagnosticsArray = Array.isArray(diagnostics)
     ? diagnostics
     : [diagnostics]
 
-  const results: DiagnosticToRuntime[] = diagnosticsArray.map((d) => {
-    let loc: DiagnosticToRuntime['loc']
+  const results: DiagnosticRecord[] = diagnosticsArray.map((d) => {
+    let loc: DiagnosticRecord['loc']
     if (d.loc) {
       loc = {
         file: d.id ?? '',
@@ -218,50 +223,41 @@ export function diagnosticToRuntimeError(
       loc,
       rule: d.rule,
       ruleUrl: d.ruleUrl,
+      code: d.code,
+      endLine: d.loc?.end?.line || undefined,
+      endColumn: d.loc?.end?.line ? d.loc.end.column : undefined,
+      snippet: d.snippet,
     }
   })
 
   return Array.isArray(diagnostics) ? results : results[0]!
 }
 
-export function toClientPayload(
-  id: string,
-  diagnostics: DiagnosticToRuntime[],
-): ClientDiagnosticPayload {
-  return {
-    event: WS_CHECKER_ERROR_EVENT,
-    data: {
-      checkerId: id,
-      diagnostics,
-    },
+/**
+ * Post every current diagnostic of the checker to the main thread.
+ */
+export function reportDiagnostics(diagnostics: NormalizedDiagnostic[]) {
+  const action: DiagnosticsAction = {
+    type: ACTION_TYPES.diagnostics,
+    payload: diagnosticToRuntimeError(diagnostics),
   }
+  parentPort?.postMessage(action)
 }
 
-export function withOverlayFileLinks(
-  payload: ClientDiagnosticPayload,
-  root: string,
-  editorUrl?: (location: EditorLocation) => string | undefined,
-): ClientDiagnosticPayload {
-  return {
-    ...payload,
-    data: {
-      ...payload.data,
-      diagnostics: payload.data.diagnostics.map((d) => {
-        const file = (d.loc?.file || d.id)?.split('?')[0]
-        if (!file || !path.isAbsolute(file)) return d
-
-        return {
-          ...d,
-          relativeFile: path.relative(root, file).split(path.sep).join('/'),
-          editorUrl: editorUrl?.({
-            file,
-            line: d.loc?.line || 1,
-            column: d.loc?.column || 1,
-          }),
-        }
-      }),
-    },
+export function reportStatus(status: 'checking'): void
+export function reportStatus(status: 'failed', error: unknown): void
+export function reportStatus(status: 'checking' | 'failed', error?: unknown) {
+  const action: StatusAction = {
+    type: ACTION_TYPES.status,
+    payload:
+      status === 'failed'
+        ? {
+            status,
+            error: error instanceof Error ? error.message : String(error),
+          }
+        : { status },
   }
+  parentPort?.postMessage(action)
 }
 
 export function wrapCheckerSummary(
@@ -316,15 +312,19 @@ export function normalizeTsDiagnostic(d: TsDiagnostic): NormalizedDiagnostic {
   }
 
   let codeFrame: string | undefined
+  let snippet: Snippet | undefined
   if (loc) {
     codeFrame = createFrame(d.file!.text, loc)
+    snippet = createSnippet(d.file!.text, loc, fileName)
   }
 
   return {
     message,
+    code: `TS${d.code}`,
     conclusion: '',
     codeFrame,
     stripedCodeFrame: codeFrame && strip(codeFrame),
+    snippet,
     id: fileName,
     checker: 'TypeScript',
     loc,
@@ -380,6 +380,9 @@ export function normalizeEslintDiagnostic(
         conclusion: '',
         codeFrame,
         stripedCodeFrame: codeFrame && strip(codeFrame),
+        snippet: diagnostic.source
+          ? createSnippet(diagnostic.source, loc, diagnostic.filePath)
+          : undefined,
         id: diagnostic.filePath,
         checker: 'ESLint',
         loc,
@@ -412,7 +415,8 @@ export function normalizeStylelintDiagnostic(
 
       const loc = lineColLocToBabelLoc(d)
 
-      const codeFrame = createFrame(diagnostic._postcssResult?.css ?? '', loc)
+      const source = diagnostic._postcssResult?.css
+      const codeFrame = createFrame(source ?? '', loc)
 
       return {
         message: d.text.endsWith(`(${d.rule})`)
@@ -423,6 +427,9 @@ export function normalizeStylelintDiagnostic(
         conclusion: '',
         codeFrame,
         stripedCodeFrame: codeFrame && strip(codeFrame),
+        snippet: source
+          ? createSnippet(source, loc, diagnostic.source)
+          : undefined,
         id: diagnostic.source,
         checker: 'Stylelint',
         loc,

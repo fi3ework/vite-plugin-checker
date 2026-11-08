@@ -6,7 +6,7 @@ import {
   editFile,
   isServe,
   resetReceivedLog,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   waitForDiagnostics,
 } from '../../testUtils'
@@ -14,7 +14,7 @@ import {
 describe('eslint-config-log-level', () => {
   describe.runIf(isServe)('serve', () => {
     it('should only emit warning logs', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(stringify(diagnostics)).toMatchSnapshot()
       expect(stripedLog).toMatchSnapshot()
 

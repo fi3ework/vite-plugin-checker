@@ -6,8 +6,6 @@ export default defineConfig({
     checker({
       overlay: {
         position: 'tr',
-        badgeStyle: 'background-color: #E799B0',
-        panelStyle: 'background-color: #A4C1FF;',
       },
       eslint: {
         lintCommand: 'eslint "./src/**/*.ts"',

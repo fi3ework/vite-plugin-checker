@@ -1,19 +1,34 @@
 # Overlay and terminal
 
-In dev mode, vite-plugin-checker reports diagnostics in two places: the terminal that runs the dev server, and an overlay in the browser. This page shows how to customize both. For the full option types, see [Shared options](/reference/shared-options).
+In dev mode, vite-plugin-checker reports diagnostics in three places: the terminal that runs the dev server, a diagnostics page served by the dev server, and a badge in the browser that opens that page in a drawer. This page shows how to customize them. For the full option types, see [Shared options](/reference/shared-options).
+
+## Diagnostics page
+
+The dev server serves a diagnostics page at `{base}__checker/`, for example `http://localhost:5173/__checker/`. It lists the problems from every checker, grouped by file or by checker, and updates as you edit. Use it on its own in a second tab or window, or through the badge. Add `?checker=<id>` to the URL, such as `/__checker/?checker=eslint`, to open it with a single checker selected.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="/screenshots/diagnostics-page-dark.png">
+    <img alt="The vite-plugin-checker diagnostics page listing TypeScript and ESLint problems grouped by file" src="/screenshots/diagnostics-page-light.png">
+  </picture>
+</p>
 
 ## Browser overlay
 
-The overlay appears when any checker reports a diagnostic. It has two parts:
+Pages loaded from the dev server show a badge in a corner with the error and warning counts, and a spinner while the first check is still running. Clicking it opens the diagnostics page in a drawer along the same edge of the window. Press <kbd>Escape</kbd> to close the drawer, and drag its edge to resize it.
 
-- **The panel** lists each diagnostic with its message, a code frame, the file location, and the rule that reported it.
-- **The badge** sits in a corner of the page and shows the number of errors and warnings. Click it to open or close the panel.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="/screenshots/overlay-drawer-dark.png">
+    <img alt="The vite-plugin-checker drawer open along the bottom of an app page" src="/screenshots/overlay-drawer-light.png">
+  </picture>
+</p>
 
 The overlay is loaded by the Vite client, so it works on any page that loads `/@vite/client`, including pages rendered by SSR frameworks. If your page doesn't load the Vite client, see [Backend integration and SSR](/recipes/backend-integration).
 
-### Choose when the panel opens
+### Choose when the drawer opens
 
-By default, the panel opens whenever there are diagnostics. Use `overlay.initialIsOpen` to change this:
+By default, the drawer opens whenever there are diagnostics. Use `overlay.initialIsOpen` to change this:
 
 ```ts
 checker({
@@ -25,34 +40,36 @@ checker({
 })
 ```
 
-| Value              | Behavior                                     |
-| ------------------ | -------------------------------------------- |
-| `true` _(default)_ | Opens when there are errors or warnings      |
-| `'error'`          | Opens when there are errors                  |
-| `false`            | Starts collapsed; click the badge to open it |
+| Value              | Behavior                                  |
+| ------------------ | ----------------------------------------- |
+| `true` _(default)_ | Opens when there are errors or warnings   |
+| `'error'`          | Opens when there are errors               |
+| `false`            | Starts closed; click the badge to open it |
 
 ### Move or restyle the badge
 
-Use `overlay.position` to move the badge to another corner: `'tl'` (top left), `'tr'` (top right), `'bl'` (bottom left, the default), or `'br'` (bottom right).
+Use `overlay.position` to move the badge to another corner: `'tl'` (top left), `'tr'` (top right), `'bl'` (bottom left, the default), or `'br'` (bottom right). The drawer opens along the same edge.
 
-`overlay.badgeStyle` and `overlay.panelStyle` add inline CSS to the badge and the panel:
+The overlay is a `<vite-plugin-checker-overlay>` element. Restyle it with `--mb-*` custom properties, or with `::part(badge)` and `::part(drawer)`:
 
-```ts
-checker({
-  overlay: {
-    position: 'tr',
-    badgeStyle: 'font-size: 12px;',
-    panelStyle: 'opacity: 0.9;',
-  },
-  typescript: true,
-})
+```css
+vite-plugin-checker-overlay {
+  --mb-bg: #101418;
+  --mb-fg: #f0f3f6;
+  --mb-accent: #ff9e64;
+  --mb-radius: 4px;
+}
+
+vite-plugin-checker-overlay::part(badge) {
+  opacity: 0.8;
+}
 ```
 
-To hide the badge but keep the panel, set `badgeStyle: 'display: none;'`.
+To hide the badge and the drawer but keep the diagnostics page, set `overlay.badge` to `false`.
 
 ### Open files from the overlay
 
-Click a file path in the panel to open the file at the reported line and column. By default, this uses Vite's `/__open-in-editor` endpoint, which launches an editor on the machine that runs the dev server. To choose the editor, set the `LAUNCH_EDITOR` environment variable; see [launch-editor](https://github.com/yyx990803/launch-editor#supported-editors) for supported values.
+Click a file path to open the file at the reported line and column. By default, this uses Vite's `/__open-in-editor` endpoint, which launches an editor on the machine that runs the dev server. To choose the editor, set the `LAUNCH_EDITOR` environment variable; see [launch-editor](https://github.com/yyx990803/launch-editor#supported-editors) for supported values.
 
 When the dev server runs somewhere else, such as a container or a remote machine, the editor can't be launched that way. Set `overlay.editorUrl` to build a URL that your browser opens instead. This example maps a container path to the host and opens VS Code:
 
@@ -68,15 +85,38 @@ checker({
 
 `editorUrl` runs on the dev server. It receives the absolute file path as the checker reports it, and 1-based `line` and `column` numbers. Return `undefined` to fall back to `/__open-in-editor` for that file.
 
+### Vite DevTools
+
+When [Vite DevTools](https://devtools.vite.dev) is installed, vite-plugin-checker also adds a Checker panel to its dock. The dock icon shows the number of errors and warnings, each checker with problems adds an entry to the Messages panel, and a toast appears when a checker starts reporting errors. The badge moves to the bottom right so it doesn't overlap the dock.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="/screenshots/devtools-panel-dark.png">
+    <img alt="The Checker panel open in the Vite DevTools dock" src="/screenshots/devtools-panel-light.png">
+  </picture>
+</p>
+
+```ts
+import { DevTools } from '@vitejs/devtools'
+import { defineConfig } from 'vite'
+import checker from 'vite-plugin-checker'
+
+export default defineConfig({
+  plugins: [DevTools(), checker({ typescript: true })],
+})
+```
+
+Set `overlay.devtools` to `false` to leave Vite DevTools alone, or `overlay.badge` to `false` to rely on the Checker panel alone.
+
 ### Disable the overlay
 
-Set `overlay: false` to report only in the terminal. The overlay runtime isn't loaded at all.
+Set `overlay: false` to report only in the terminal. Nothing is added to your pages; the diagnostics page stays available at `{base}__checker/`.
 
 ## Terminal output
 
 Each checker prints its diagnostics and a summary line to the terminal that runs the dev server. File paths are relative to the current working directory. In [terminals that support hyperlinks](https://github.com/danielroe/clickable-path#terminal-support), they link to the file.
 
-Set `terminal: false` to report only in the overlay.
+Set `terminal: false` to report only in the browser.
 
 ## Next steps
 

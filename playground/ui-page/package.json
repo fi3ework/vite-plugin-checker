@@ -1,0 +1,17 @@
+{
+  "name": "@playground/ui-page",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "eslint": "^10.2.1",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.58.2",
+    "vite": "^8.0.9",
+    "vite-plugin-checker": "workspace:*"
+  }
+}

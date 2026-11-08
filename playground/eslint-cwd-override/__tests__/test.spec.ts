@@ -4,7 +4,7 @@ import {
   editFile,
   isServe,
   resetReceivedLog,
-  sleepForServerReady,
+  waitForServerReady,
   stripedLog,
   waitForDiagnostics,
 } from '../../testUtils'
@@ -12,7 +12,7 @@ import {
 describe('eslint-cwd-override', () => {
   describe.runIf(isServe)('serve', () => {
     it('lints changed files when eslint cwd differs from vite root', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(diagnostics).toHaveLength(1)
       expect(stripedLog.join('\n')).toContain('Missing semicolon')
 

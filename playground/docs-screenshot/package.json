@@ -1,0 +1,17 @@
+{
+  "name": "@playground/docs-screenshot",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "@vitejs/devtools": "^0.8.2",
+    "eslint": "^10.2.1",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.58.2",
+    "vite": "^8.0.9",
+    "vite-plugin-checker": "workspace:*"
+  }
+}

@@ -4,14 +4,14 @@ import {
   editFile,
   isServe,
   resetDiagnostics,
-  sleepForServerReady,
+  waitForServerReady,
   waitForDiagnostics,
 } from '../../testUtils'
 
 describe('eslint-suppressions', () => {
   describe.runIf(isServe)('serve', () => {
     it('does not report errors that are suppressed', async () => {
-      await sleepForServerReady()
+      await waitForServerReady()
       expect(diagnostics).toHaveLength(0)
 
       resetDiagnostics()

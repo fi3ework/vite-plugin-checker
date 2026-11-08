@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`typescript-7 > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"TypeScript","frame":"    3 | }/n    4 |/n  > 5 | const count: number = 'not a number'/n      |       ^/n    6 |/n    7 | document.querySelector('#app')!.textContent = greet('Vite') + count/n    8 |","id":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","line":5},"message":"TS2322: Type 'string' is not assignable to type 'number'.","relativeFile":"src/main.ts","stack":""}]"`;
+exports[`typescript-7 > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"typescript","code":"TS2322","column":7,"displayFile":"src/main.ts","file":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","id":"95f5b21a3ff3e448","level":"error","line":5,"message":"Type 'string' is not assignable to type 'number'.","snippet":{"lang":"ts","lines":["}","","const count: number = 'not a number'","","document.querySelector('#app')!.textContent = greet('Vite') + count"],"start":3}}]"`;
 
 exports[`typescript-7 > serve > get initial error and subsequent error 2`] = `
 [
@@ -20,7 +20,7 @@ exports[`typescript-7 > serve > get initial error and subsequent error 2`] = `
 ]
 `;
 
-exports[`typescript-7 > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"TypeScript","frame":"    3 | }/n    4 |/n  > 5 | const count: number = 'still not a number'/n      |       ^/n    6 |/n    7 | document.querySelector('#app')!.textContent = greet('Vite') + count/n    8 |","id":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","level":1,"loc":{"column":7,"file":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","line":5},"message":"TS2322: Type 'string' is not assignable to type 'number'.","relativeFile":"src/main.ts","stack":""}]"`;
+exports[`typescript-7 > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"typescript","code":"TS2322","column":7,"displayFile":"src/main.ts","file":"<PROJECT_ROOT>/playground-temp/typescript-7/src/main.ts","id":"95f5b21a3ff3e448","level":"error","line":5,"message":"Type 'string' is not assignable to type 'number'.","snippet":{"lang":"ts","lines":["}","","const count: number = 'still not a number'","","document.querySelector('#app')!.textContent = greet('Vite') + count"],"start":3}}]"`;
 
 exports[`typescript-7 > serve > get initial error and subsequent error 4`] = `
 [
