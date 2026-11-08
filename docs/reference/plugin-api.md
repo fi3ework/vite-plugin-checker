@@ -57,7 +57,7 @@ Calls `listener` for every change after the current state. Read `getState()` fir
 
 - **Returns:** `() => void`, which releases the claim
 
-Hides the badge and drawer on every page because `owner` shows its own indicator. Claims are counted, so the badge returns once every owner has released, and releasing twice has no effect. The claim applies while [`overlay.badge`](/reference/shared-options#overlay-badge) is `'auto'`, which is the default.
+Hides the badge and drawer on every page because `owner` shows its own indicator. While a claim is held, the Vite DevTools messages also stop raising a toast when a checker starts reporting errors; the Checker dock and the messages themselves stay. Claims are counted, so the badge returns once every owner has released, and releasing twice has no effect. The claim applies while [`overlay.badge`](/reference/shared-options#overlay-badge) is `'auto'`, which is the default.
 
 ## `getUiUrl()`
 
