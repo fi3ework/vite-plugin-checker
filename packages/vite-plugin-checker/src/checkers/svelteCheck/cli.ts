@@ -137,7 +137,12 @@ async function normalizeDiagnostics(
 
 function formatCode(d: MachineDiagnostic): string | undefined {
   if (d.code === undefined || d.code === '') return undefined
-  return d.source === 'ts' ? `TS${d.code}` : String(d.code)
+  return isTypeScriptDiagnostic(d) ? `TS${d.code}` : String(d.code)
+}
+
+function isTypeScriptDiagnostic(d: MachineDiagnostic): boolean {
+  if (d.source === 'ts' || d.source === 'js') return true
+  return d.source === undefined && typeof d.code === 'number'
 }
 
 function formatMessage(d: MachineDiagnostic): string {
