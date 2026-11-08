@@ -21,13 +21,15 @@ describe('svelte-check-default', () => {
       expect(stripedLog).toMatchSnapshot()
 
       resetReceivedLog()
-      editFile('src/App.svelte', (code) =>
-        code
-          .replace(`'hello'`, '1')
-          .replace('<button', '<div')
-          .replace('</button>', '</div>'),
+      editFile(
+        'src/App.svelte',
+        (code) =>
+          code
+            .replace(`'hello'`, '1')
+            .replace('<button', '<div')
+            .replace('</button>', '</div>'),
+        { atomic: true },
       )
-      // svelte-check reports a transient TS7016 for the edited component before its real diagnostics
       await waitForDiagnostics({
         until: (all) => all.some((d) => d.displayFile === 'src/App.svelte'),
       })
