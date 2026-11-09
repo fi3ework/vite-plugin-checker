@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitest/config'
 
 const timeout = process.env.CI ? 80000 : 40000
+const svAddonTimeout = 180000
 
 const playgroundProject = {
   pool: 'forks' as const,
@@ -30,8 +31,25 @@ export default defineConfig({
             '**/dist/**',
             './playground/**/*.*',
             './playground-temp/**/*.*',
+            './packages/vite-plugin-checker/__tests__/sv/**',
+            './packages/vite-plugin-checker/.test-output/**',
+            './packages/vite-plugin-checker/demo/**',
           ],
           testTimeout: 20000,
+        },
+      },
+      {
+        test: {
+          name: 'sv',
+          include: ['./packages/vite-plugin-checker/__tests__/sv/*.spec.ts'],
+          globalSetup: [
+            './packages/vite-plugin-checker/__tests__/sv/globalSetup.ts',
+          ],
+          testTimeout: svAddonTimeout,
+          hookTimeout: svAddonTimeout,
+          expect: {
+            requireAssertions: true,
+          },
         },
       },
       {

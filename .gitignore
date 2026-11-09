@@ -113,3 +113,5 @@ docs/.vitepress/cache
 docs/public/demo
 packages/vite-plugin-checker/README.md
 playground/*/.svelte-kit/
+packages/vite-plugin-checker/demo/
+packages/vite-plugin-checker/.test-output/
