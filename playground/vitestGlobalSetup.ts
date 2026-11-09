@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { rmSync } from 'node:fs'
+import { existsSync, readdirSync, rmSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
@@ -10,7 +10,24 @@ const DIR = path.join(os.tmpdir(), 'vitest_playwright_global_setup')
 
 let browserServer: BrowserServer | undefined
 
+/**
+ * SvelteKit fixtures extend `$app/tsconfig`, which `svelte-kit sync` generates
+ * inside node_modules, and Vitest needs it to compile their specs. It can't run
+ * at install time because it loads the built plugin through `vite.config.js`.
+ */
+function syncSvelteKitFixtures(): void {
+  for (const name of readdirSync(__dirname)) {
+    const cwd = path.join(__dirname, name)
+    const bin = path.join(cwd, 'node_modules/@sveltejs/kit/svelte-kit.js')
+    if (existsSync(bin)) {
+      execFileSync(process.execPath, [bin, 'sync'], { cwd, stdio: 'pipe' })
+    }
+  }
+}
+
 export async function setup(): Promise<void> {
+  syncSvelteKitFixtures()
+
   browserServer = await chromium.launchServer({
     headless: !process.env.VITE_DEBUG_SERVE,
     args: process.env.CI ? ['--no-sandbox', '--disable-setuid-sandbox'] : undefined,

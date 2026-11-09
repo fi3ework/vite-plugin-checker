@@ -45,7 +45,7 @@ export function createScript<T extends Partial<BuildInCheckers>>({
       ): ConfigureServeChecker => {
         const isBuild = env.command === 'build'
         const worker = new Worker(absFilename, {
-          workerData: { env, checkerConfig },
+          workerData: { env, checkerConfig, isCheckerWorker: true },
         })
 
         if (!isBuild) {

@@ -1,10 +1,17 @@
-import { isMainThread as _isMainThread, threadId } from 'node:worker_threads'
+import {
+  isMainThread as _isMainThread,
+  threadId,
+  workerData,
+} from 'node:worker_threads'
 
 // since vitest run all cases in worker thread, we should compatible with it to pass E2E tests
 
 // @ts-expect-error use Vitest
 export const isInVitestEntryThread = threadId === 0 && process.env.VITEST
-export const isMainThread = _isMainThread || isInVitestEntryThread
+// Other tools, like SvelteKit and svelte-check, load the Vite config in workers
+// of their own, so a non-main thread is only ours if `worker.ts` marked it.
+export const isMainThread =
+  _isMainThread || isInVitestEntryThread || !workerData?.isCheckerWorker
 
 // Filesystem errors that are expected during watching: editors commonly save
 // via an atomic rename (write temp file, then replace), and branch switches or
