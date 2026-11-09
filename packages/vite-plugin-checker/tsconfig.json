@@ -5,11 +5,13 @@
   ],
   "compilerOptions": {
     "allowJs": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "noUnusedParameters": false,
     "module": "preserve",
     "moduleResolution": "bundler",
     "exactOptionalPropertyTypes": false
   },
-  "include": ["src", "__tests__"]
+  "include": ["src", "__tests__", "tsdown.config.ts", "tsdown.test.config.ts"]
 }

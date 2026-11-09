@@ -17,7 +17,6 @@ export default defineConfig({
   test: {
     cache: false,
     maxWorkers: 4,
-    minWorkers: 1,
     onConsoleLog(log) {
       if (log.match(/experimental|jit engine|emitted file|tailwind/i))
         return false
@@ -51,8 +50,5 @@ export default defineConfig({
         },
       },
     ],
-  },
-  esbuild: {
-    target: 'node14',
   },
 })
