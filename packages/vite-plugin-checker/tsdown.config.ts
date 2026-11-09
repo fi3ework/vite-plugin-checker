@@ -1,8 +1,8 @@
 import { copyFile } from 'node:fs/promises'
-import { defineConfig, type Options } from 'tsdown'
+import { defineConfig, type UserConfig } from 'tsdown'
 
 export function createConfig(
-  overrides: Partial<Options> = {},
+  overrides: Partial<UserConfig> = {},
 ): ReturnType<typeof defineConfig> {
   return defineConfig({
     format: ['esm'],
