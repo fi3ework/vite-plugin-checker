@@ -1,0 +1,45 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`svelte-check-kit-default > serve > get initial error and subsequent error 1`] = `"[{"checkerId":"svelteCheck","code":"TS2322","column":7,"displayFile":"src/routes/+page.svelte","endColumn":12,"endLine":2,"file":"<PROJECT_ROOT>/src/routes/+page.svelte","id":"567eb1d87fbc5686","level":"error","line":2,"message":"Type 'string' is not assignable to type 'number'.","snippet":{"lang":"svelte","lines":["<script lang=/"ts/">","  let count: number = 'hello'","</script>","","<button onclick={() => count++}>count is {count}</button>"],"start":1}}]"`;
+
+exports[`svelte-check-kit-default > serve > get initial error and subsequent error 2`] = `
+[
+  " ERROR(svelte-check)  Type 'string' is not assignable to type 'number'. (TS2322)
+ FILE  src/routes/+page.svelte:2:7
+
+    1 | <script lang="ts">
+  > 2 |   let count: number = 'hello'
+      |       ^^^^^
+    3 | </script>
+    4 |
+    5 | <button onclick={() => count++}>count is {count}</button>
+",
+  "[svelte-check] Found 1 error and 0 warnings",
+]
+`;
+
+exports[`svelte-check-kit-default > serve > get initial error and subsequent error 3`] = `"[{"checkerId":"svelteCheck","code":"a11y_click_events_have_key_events","column":1,"displayFile":"src/routes/+page.svelte","docsUrl":"https://svelte.dev/docs/svelte/compiler-warnings#a11y_click_events_have_key_events","endColumn":52,"endLine":5,"file":"<PROJECT_ROOT>/src/routes/+page.svelte","id":"e58d58b20d6b14c8","level":"warning","line":5,"message":"Visible, non-interactive element \`<div>\` with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as \`<button type=/"button/">\` or \`<a>\` might be more appropriate","snippet":{"lang":"svelte","lines":["</script>","","<div onclick={() => count++}>count is {count}</div>"],"start":3}},{"checkerId":"svelteCheck","code":"a11y_no_static_element_interactions","column":1,"displayFile":"src/routes/+page.svelte","docsUrl":"https://svelte.dev/docs/svelte/compiler-warnings#a11y_no_static_element_interactions","endColumn":52,"endLine":5,"file":"<PROJECT_ROOT>/src/routes/+page.svelte","id":"2431e6dc4729b7fc","level":"warning","line":5,"message":"\`<div>\` with a click handler must have an ARIA role","snippet":{"lang":"svelte","lines":["</script>","","<div onclick={() => count++}>count is {count}</div>"],"start":3}}]"`;
+
+exports[`svelte-check-kit-default > serve > get initial error and subsequent error 4`] = `
+[
+  " WARNING(svelte-check)  Visible, non-interactive element \`<div>\` with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as \`<button type="button">\` or \`<a>\` might be more appropriate (a11y_click_events_have_key_events)
+ FILE  src/routes/+page.svelte:5:1
+
+    3 | </script>
+    4 |
+  > 5 | <div onclick={() => count++}>count is {count}</div>
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    6 |
+",
+  " WARNING(svelte-check)  \`<div>\` with a click handler must have an ARIA role (a11y_no_static_element_interactions)
+ FILE  src/routes/+page.svelte:5:1
+
+    3 | </script>
+    4 |
+  > 5 | <div onclick={() => count++}>count is {count}</div>
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    6 |
+",
+  "[svelte-check] Found 0 errors and 2 warnings",
+]
+`;
