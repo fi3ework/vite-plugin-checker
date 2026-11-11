@@ -21,7 +21,13 @@ import {
 import { colorize, supportsTerminalColors } from './colors.js'
 import { DOCK_ID, setupDevTools } from './devtools.js'
 import { toDiagnostics } from './diagnostics.js'
-import { broadcastSnapshot, createHub, shareHub, snapshotOf } from './hub.js'
+import {
+  broadcastSnapshot,
+  createHub,
+  notifyDevToolsClaim,
+  shareHub,
+  snapshotOf,
+} from './hub.js'
 import {
   type CheckerApi,
   type CheckerEvent,
@@ -114,10 +120,10 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     badge = 'auto',
     position,
     initialIsOpen = true,
-    devtools = true,
+    devtools = 'auto',
   } = typeof userConfig?.overlay === 'object' ? userConfig.overlay : {}
   const enableOverlay = userConfig?.overlay !== false && badge !== false
-  const enableDevTools = userConfig?.overlay !== false && devtools
+  const enableDevTools = userConfig?.overlay !== false && devtools !== false
   let initialized = false
   let initializeCounter = 0
   let checkers: ServeAndBuildChecker[] = []
@@ -163,6 +169,16 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
         }
       }
     },
+    claimDevTools(owner) {
+      const claim = Symbol(owner)
+      hub.devtoolsClaims.add(claim)
+      if (hub.devtoolsClaims.size === 1) notifyDevToolsClaim(hub)
+      return () => {
+        if (hub.devtoolsClaims.delete(claim) && hub.devtoolsClaims.size === 0) {
+          notifyDevToolsClaim(hub)
+        }
+      }
+    },
     getUiUrl: () => hub.uiUrl,
   }
 
@@ -172,6 +188,7 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
     const shared = shareHub(config, hub)
     if (shared === hub) return
     for (const claim of hub.claims) shared.claims.add(claim)
+    for (const claim of hub.devtoolsClaims) shared.devtoolsClaims.add(claim)
     for (const subscription of subscriptions) {
       subscription.unsubscribe()
       subscription.unsubscribe = shared.store.subscribe(subscription.listener)
@@ -234,7 +251,14 @@ export function checker(userConfig: UserPluginConfig): Plugin<CheckerApi> {
         if (ctx.mode !== 'dev' || !enableDevTools || hub.devtools) return
         const owner = hub
         owner.devtools = true
-        const dispose = setupDevTools(ctx, api, () => hub.claims.size > 0)
+        const dispose = setupDevTools(ctx, api, {
+          indicator: () => owner.claims.size > 0,
+          devtools: () => devtools === 'auto' && owner.devtoolsClaims.size > 0,
+          subscribe(listener) {
+            owner.devtoolsClaimListeners.add(listener)
+            return () => owner.devtoolsClaimListeners.delete(listener)
+          },
+        })
         ctx.viteServer?.httpServer?.once('close', () => {
           owner.devtools = false
           dispose()
