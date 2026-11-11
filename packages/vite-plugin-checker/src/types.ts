@@ -270,9 +270,13 @@ export interface SharedConfig {
         /**
          * Add a Checker panel and messages to
          * [Vite DevTools](https://devtools.vite.dev) when it is installed.
-         * @defaultValue `true`
+         * - `'auto'`: show unless another integration, such as Nuxt, displays the
+         *   diagnostics in Vite DevTools itself
+         * - `true`: always show
+         * - `false`: never show
+         * @defaultValue `'auto'`
          */
-        devtools?: boolean
+        devtools?: boolean | 'auto'
         /**
          * Whether the drawer opens by itself when there are diagnostics, until
          * it is opened or closed by hand.

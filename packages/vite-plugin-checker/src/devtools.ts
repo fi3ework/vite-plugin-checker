@@ -10,6 +10,15 @@ const MESSAGE_LIMIT = 3
 
 type DevToolsContext = Pick<ViteDevToolsNodeContext, 'docks' | 'messages'>
 
+interface DevToolsClaims {
+  /** whether an integration shows its own in-page indicator */
+  indicator(): boolean
+  /** whether an integration shows the diagnostics in Vite DevTools itself */
+  devtools(): boolean
+  /** calls `listener` when `devtools()` may have changed */
+  subscribe(listener: () => void): () => void
+}
+
 const icon = (color: string) =>
   `data:image/svg+xml,${encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.75l7.5 3v5.5c0 4.6-3.1 8.4-7.5 10-4.4-1.6-7.5-5.4-7.5-10v-5.5z"/><path d="M8.5 12.25l2.5 2.5 4.5-5"/></svg>`,
@@ -44,14 +53,16 @@ function describe(diagnostics: Diagnostic[]) {
 /**
  * Register the Checker dock, its badge and one message per checker with
  * problems in a Vite DevTools context. Messages notify when a checker starts
- * reporting errors unless `indicatorClaimed()` is true, in which case the
- * claimant is expected to announce. Returns a function that removes them.
+ * reporting errors unless the indicator is claimed, in which case the
+ * claimant is expected to announce. While DevTools is claimed, the dock is
+ * hidden and no messages are posted. Returns a function that removes them.
  */
 export function setupDevTools(
   ctx: DevToolsContext,
   api: CheckerApi,
-  indicatorClaimed: () => boolean = () => false,
+  claims: DevToolsClaims,
 ): () => void {
+  let hidden = claims.devtools()
   const dock = ctx.docks.register<DevToolsViewIframe>({
     id: DOCK_ID,
     type: 'iframe',
@@ -60,6 +71,7 @@ export function setupDevTools(
     icon: { light: icon('#3a3f47'), dark: icon('#d6dae0') },
     category: 'app',
     url: `${api.getUiUrl()}?embed`,
+    ...(hidden ? { when: 'false' } : {}),
   })
   const open = {
     id: 'open',
@@ -84,7 +96,8 @@ export function setupDevTools(
     const hadErrors = erroring.has(checker.id)
     if (errors || checker.status === 'failed') erroring.add(checker.id)
     else erroring.delete(checker.id)
-    const announce = !hadErrors && !indicatorClaimed()
+    if (hidden) return
+    const announce = !hadErrors && !claims.indicator()
 
     let entry: DevToolsMessageEntryInput | undefined
     if (checker.status === 'failed') {
@@ -153,14 +166,29 @@ export function setupDevTools(
     queueMicrotask(flush)
   }
 
+  function removeMessages() {
+    for (const id of shownMessages) ctx.messages.remove(id).catch(ignore)
+    shownMessages.clear()
+  }
+
+  function syncClaim() {
+    if (claims.devtools() === hidden) return
+    if (hidden) for (const checker of api.getState()) syncChecker(checker)
+    hidden = !hidden
+    dock.update({ when: hidden ? 'false' : undefined })
+    if (hidden) removeMessages()
+    else for (const checker of api.getState()) schedule(checker.id)
+  }
+
   for (const checker of api.getState()) schedule(checker.id)
   const unsubscribe = api.subscribe((event) => schedule(event.checkerId))
+  const unsubscribeClaims = claims.subscribe(syncClaim)
 
   return () => {
     if (disposed) return
     disposed = true
     unsubscribe()
-    for (const id of shownMessages) ctx.messages.remove(id).catch(ignore)
-    shownMessages.clear()
+    unsubscribeClaims()
+    removeMessages()
   }
 }
