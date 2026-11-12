@@ -4,6 +4,14 @@ The svelte-check checker runs [svelte-check](https://github.com/sveltejs/languag
 
 ## Set up
 
+In a Svelte or SvelteKit project, the [Svelte CLI](https://svelte.dev/docs/cli/overview) can do this for you. It installs the dependencies and adds the plugin to your Vite config:
+
+```bash
+npx sv add vite-plugin-checker
+```
+
+To set it up by hand:
+
 1. Install `svelte-check` (version 4 or later) and TypeScript:
 
    ::: code-group

@@ -37,6 +37,10 @@ describe('npm pack', () => {
     expect(tarballFiles).toContain('package/dist/@runtime/main.js')
   })
 
+  it('publishes the sv add-on entry', () => {
+    expect(tarballFiles).toContain('package/dist/sv.js')
+  })
+
   it('does not publish files from other packages', () => {
     expect(
       tarballFiles.filter((file) =>
