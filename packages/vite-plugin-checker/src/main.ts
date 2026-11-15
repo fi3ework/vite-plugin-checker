@@ -19,7 +19,7 @@ import {
   wrapVirtualPrefix,
 } from './client/index.js'
 import { colorize, supportsTerminalColors } from './colors.js'
-import { DOCK_ID, setupDevTools } from './devtools.js'
+import { setupDevTools } from './devtools.js'
 import { toDiagnostics } from './diagnostics.js'
 import {
   broadcastSnapshot,
@@ -31,6 +31,7 @@ import {
 import {
   type CheckerApi,
   type CheckerEvent,
+  DOCK_ID,
   EVENT_HELLO,
   EVENT_SNAPSHOT,
   EVENT_STATUS,

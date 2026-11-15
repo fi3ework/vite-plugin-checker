@@ -3,9 +3,13 @@ import type {
   DevToolsViewIframe,
   ViteDevToolsNodeContext,
 } from '@vitejs/devtools-kit'
-import type { CheckerApi, CheckerState, Diagnostic } from './protocol.js'
+import {
+  type CheckerApi,
+  type CheckerState,
+  type Diagnostic,
+  DOCK_ID,
+} from './protocol.js'
 
-export const DOCK_ID = 'vite-plugin-checker'
 const MESSAGE_LIMIT = 3
 
 type DevToolsContext = Pick<ViteDevToolsNodeContext, 'docks' | 'messages'>

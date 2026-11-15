@@ -1,10 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { DOCK_ID, setupDevTools } from '../src/devtools'
-import type {
-  CheckerApi,
-  Diagnostic,
-  DiagnosticSeverity,
+import { setupDevTools } from '../src/devtools'
+import {
+  type CheckerApi,
+  type Diagnostic,
+  type DiagnosticSeverity,
+  DOCK_ID,
 } from '../src/protocol'
 import { createCheckerStore } from '../src/store'
 
