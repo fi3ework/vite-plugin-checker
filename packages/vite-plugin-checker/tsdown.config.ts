@@ -30,7 +30,7 @@ export function createConfig(
       ...overrides,
     },
     // `sv add` installs the package inside sv's own node_modules without its
-    // dependencies, so only `sv` and its `@sveltejs/sv-utils` dep resolve.
+    // dependencies, so only the `sv` and `@sveltejs/sv-utils` peers resolve.
     {
       format: ['esm'],
       outDir: 'dist',
@@ -38,7 +38,6 @@ export function createConfig(
       clean: false,
       platform: 'node',
       fixedExtension: false,
-      deps: { neverBundle: ['@sveltejs/sv-utils'] },
     },
   ])
 }
