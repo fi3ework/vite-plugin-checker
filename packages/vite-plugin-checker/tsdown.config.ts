@@ -29,8 +29,8 @@ export function createConfig(
       },
       ...overrides,
     },
-    // `sv add` installs the package without its dependencies, so the add-on
-    // has to be a single file that only imports the `sv` peer dependency.
+    // `sv add` installs the package inside sv's own node_modules without its
+    // dependencies, so only `sv` and its `@sveltejs/sv-utils` dep resolve.
     {
       format: ['esm'],
       outDir: 'dist',
@@ -38,7 +38,7 @@ export function createConfig(
       clean: false,
       platform: 'node',
       fixedExtension: false,
-      deps: { alwaysBundle: ['@sveltejs/sv-utils'] },
+      deps: { neverBundle: ['@sveltejs/sv-utils'] },
     },
   ])
 }
