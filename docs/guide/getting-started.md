@@ -7,6 +7,10 @@ This guide adds TypeScript type checking to an existing Vite project. The steps 
 - A Vite project that meets the [requirements](/guide/introduction#requirements)
 - A `tsconfig.json` in the project root
 
+::: tip Using Svelte?
+In a Svelte or SvelteKit project, run `npx sv add vite-plugin-checker` instead. The [Svelte CLI](https://svelte.dev/docs/cli/overview) installs the plugin and enables the svelte-check checker for you. See [svelte-check](/checkers/svelte-check#set-up) for details.
+:::
+
 ## Install and configure
 
 1. Install vite-plugin-checker and TypeScript as dev dependencies:
