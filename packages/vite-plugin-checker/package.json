@@ -62,6 +62,7 @@
   },
   "peerDependencies": {
     "@biomejs/biome": ">=2.4.12",
+    "@sveltejs/sv-utils": "^1.1.0",
     "eslint": ">=9.39.4",
     "meow": "^13.2.0 || ^14.0.0",
     "optionator": "^0.9.4",
@@ -75,6 +76,9 @@
   },
   "peerDependenciesMeta": {
     "@biomejs/biome": {
+      "optional": true
+    },
+    "@sveltejs/sv-utils": {
       "optional": true
     },
     "eslint": {

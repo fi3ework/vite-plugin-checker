@@ -28,7 +28,7 @@ The playground tests need Chromium. Install it once with `pnpm exec playwright i
 
 `npx sv add vite-plugin-checker` runs the [community add-on](https://svelte.dev/docs/cli/sv-add) in `packages/vite-plugin-checker/src/sv.ts`, published as the package's `./sv` export. The [official add-ons](https://github.com/sveltejs/cli/tree/main/packages/sv/src/addons) are useful references.
 
-`sv` installs the package without its `dependencies`, so `dist/sv.js` bundles everything except the `sv` peer dependency.
+`sv` installs the package inside its own `node_modules` without the package's `dependencies`, so `dist/sv.js` may only import its `sv` and `@sveltejs/sv-utils` peers (`sv` ships `sv-utils`).
 
 ```bash
 cd packages/vite-plugin-checker
