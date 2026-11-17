@@ -33,6 +33,12 @@ export default defineConfig({
 })
 ```
 
+In a Svelte or SvelteKit project, the [Svelte CLI](https://svelte.dev/docs/cli/overview) can install the plugin and set up the svelte-check checker for you:
+
+```bash
+npx sv add vite-plugin-checker
+```
+
 ## Documentation
 
 See the [documentation](https://vite-plugin-checker.netlify.app) for every checker, the overlay options, and recipes for Nuxt, Vitest, and backend integrations. Upgrading from 0.x? Read [Migrating to v1](https://vite-plugin-checker.netlify.app/guide/migration).
