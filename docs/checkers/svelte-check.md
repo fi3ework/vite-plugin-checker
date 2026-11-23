@@ -4,37 +4,6 @@ The svelte-check checker runs [svelte-check](https://github.com/sveltejs/languag
 
 ## Set up
 
-In a Svelte or SvelteKit project, the [Svelte CLI](https://svelte.dev/docs/cli/overview) can do this for you. It installs the dependencies and adds the plugin to your Vite config:
-
-::: code-group
-
-```bash [pnpm]
-pnpm dlx sv add vite-plugin-checker
-```
-
-```bash [npm]
-npx sv add vite-plugin-checker
-```
-
-```bash [yarn]
-yarn dlx sv add vite-plugin-checker
-```
-
-```bash [bun]
-bunx sv add vite-plugin-checker
-```
-
-:::
-
-The add-on:
-
-- Adds `vite-plugin-checker`, `svelte-check` and `typescript` as dev dependencies if your project doesn't have them yet. Versions you already have are left alone.
-- Imports `checker` in `vite.config.ts` or `vite.config.js` and adds it to `plugins` with `svelteCheck` enabled. If the config already references `vite-plugin-checker`, or has another file extension, the add-on leaves it unchanged and you enable `svelteCheck` by hand.
-- Points svelte-check at `tsconfig.app.json` with `--tsconfig` when that file exists, as it does in projects created with `create-vite`.
-- Sets `enableBuild: false` if the project didn't have `svelte-check` before, so errors nobody has seen yet don't break `vite build`. Remove it once the project is clean to have the build fail on errors. See [`enableBuild`](/reference/shared-options#enablebuild).
-
-To set it up by hand:
-
 1. Install `svelte-check` (version 4 or later) and TypeScript:
 
    ::: code-group
@@ -66,6 +35,21 @@ To set it up by hand:
    ```
 
 In dev mode, the checker runs `svelte-check --watch` from the Vite root. In build mode, it runs `svelte-check`.
+
+## Set up with the Svelte CLI
+
+The [Svelte CLI](https://svelte.dev/docs/cli/overview) can do the steps above for you:
+
+```bash
+npx sv add vite-plugin-checker
+```
+
+The add-on:
+
+- Adds `vite-plugin-checker`, `svelte-check` and `typescript` as dev dependencies if your project doesn't have them yet. Versions you already have are left alone.
+- Imports `checker` in `vite.config.ts` or `vite.config.js` and adds it to `plugins` with `svelteCheck` enabled. If the config already references `vite-plugin-checker`, or has another file extension, the add-on leaves it unchanged and you enable `svelteCheck` by hand.
+- Points svelte-check at `tsconfig.app.json` with `--tsconfig` when that file exists, as it does in projects created with `create-vite`.
+- Sets `enableBuild: false` if the project didn't have `svelte-check` before, so errors nobody has seen yet don't break `vite build`. Remove it once the project is clean to have the build fail on errors. See [`enableBuild`](/reference/shared-options#enablebuild).
 
 ## Pass flags to svelte-check
 
