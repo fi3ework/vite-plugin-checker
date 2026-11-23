@@ -28,9 +28,9 @@ bunx sv add vite-plugin-checker
 
 The add-on:
 
-- Adds `vite-plugin-checker` as a dev dependency, plus `svelte-check` and `typescript` if your project doesn't have them yet. Versions you already have are left alone.
-- Imports `checker` in your Vite config and adds it to `plugins` with `svelteCheck` enabled. If the Vite config already references `vite-plugin-checker`, the add-on leaves it unchanged.
-- Points svelte-check at `tsconfig.app.json` with `--tsconfig` when that file exists, as it does in the Vite template of `sv create`.
+- Adds `vite-plugin-checker`, `svelte-check` and `typescript` as dev dependencies if your project doesn't have them yet. Versions you already have are left alone.
+- Imports `checker` in `vite.config.ts` or `vite.config.js` and adds it to `plugins` with `svelteCheck` enabled. If the config already references `vite-plugin-checker`, or has another file extension, the add-on leaves it unchanged and you enable `svelteCheck` by hand.
+- Points svelte-check at `tsconfig.app.json` with `--tsconfig` when that file exists, as it does in projects created with `create-vite`.
 - Sets `enableBuild: false` if the project didn't have `svelte-check` before, so errors nobody has seen yet don't break `vite build`. Remove it once the project is clean to have the build fail on errors. See [`enableBuild`](/reference/shared-options#enablebuild).
 
 To set it up by hand:
