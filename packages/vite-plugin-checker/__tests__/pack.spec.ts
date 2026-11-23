@@ -37,6 +37,30 @@ describe('npm pack', () => {
     expect(tarballFiles).toContain('package/dist/@runtime/main.js')
   })
 
+  it('publishes an sv add-on entry that only imports what sv provides', () => {
+    const entry = archive.find(
+      (entry) => entry.header.name === 'package/dist/sv.js',
+    )
+    assert(entry?.data, 'package/dist/sv.js is expected in the tarball')
+    const code = new TextDecoder().decode(entry.data)
+    const imports = Array.from(
+      code.matchAll(/\b(?:from|import)\s*["']([^"']+)["']/g),
+      (match) => match[1]!,
+    )
+
+    expect(imports).toEqual(
+      expect.arrayContaining(['sv', '@sveltejs/sv-utils']),
+    )
+    expect(
+      imports.filter(
+        (specifier) =>
+          !specifier.startsWith('node:') &&
+          !['sv', '@sveltejs/sv-utils'].includes(specifier),
+      ),
+    ).toEqual([])
+    expect(code).not.toMatch(/\bimport\s*\(/)
+  })
+
   it('does not publish files from other packages', () => {
     expect(
       tarballFiles.filter((file) =>

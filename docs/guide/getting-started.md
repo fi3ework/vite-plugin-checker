@@ -9,6 +9,14 @@ This guide adds TypeScript type checking to an existing Vite project. The steps 
 
 ## Install and configure
 
+::: tip Using Nuxt?
+In a Nuxt project, type checking is built in, and the [Nuxt recipe](/recipes/nuxt) shows how to add other checkers.
+:::
+
+::: tip Using Svelte?
+In a Svelte or SvelteKit project, the [Svelte CLI](/checkers/svelte-check#set-up-with-the-svelte-cli) can install the plugin and set up the svelte-check checker for you.
+:::
+
 1. Install vite-plugin-checker and TypeScript as dev dependencies:
 
    ::: code-group
