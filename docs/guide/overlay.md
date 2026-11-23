@@ -112,7 +112,7 @@ export default defineConfig({
 })
 ```
 
-Set `overlay.devtools` to `false` to leave Vite DevTools alone, or `overlay.badge` to `false` to rely on the Checker panel alone.
+The panel and messages are hidden while an integration such as Nuxt shows the diagnostics in Vite DevTools itself. Set `overlay.devtools` to `false` to leave Vite DevTools alone, or `overlay.badge` to `false` to rely on the Checker panel alone.
 
 ### Disable the overlay
 

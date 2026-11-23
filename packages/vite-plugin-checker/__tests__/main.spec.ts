@@ -7,6 +7,7 @@ import {
   OVERLAY_PATH,
   wrapVirtualPrefix,
 } from '../src/client'
+import { createHub } from '../src/hub'
 import { checker } from '../src/main'
 import {
   EVENT_HELLO,
@@ -130,14 +131,15 @@ describe('load', () => {
 
 describe('devtools', () => {
   function setupDevTools(userConfig: UserPluginConfig, mode = 'dev') {
+    const dock = { update: vi.fn() }
     const ctx = {
       mode,
-      docks: { register: vi.fn(() => ({ update: vi.fn() })) },
+      docks: { register: vi.fn(() => dock) },
       messages: { add: vi.fn(), update: vi.fn(), remove: vi.fn() },
     }
     const plugin = checker(userConfig) as any
     plugin.devtools.setup(ctx)
-    return { register: ctx.docks.register, plugin }
+    return { register: ctx.docks.register, dock, plugin }
   }
 
   const entryPosition = (plugin: any) =>
@@ -167,6 +169,38 @@ describe('devtools', () => {
       setupDevTools({ overlay: { devtools: false } }).register,
     ).not.toHaveBeenCalled()
     expect(setupDevTools({ overlay: false }).register).not.toHaveBeenCalled()
+  })
+
+  it('hides the dock while an integration claims DevTools', () => {
+    const { dock, plugin } = setupDevTools({})
+
+    const releaseA = plugin.api.claimDevTools('nuxt')
+    const releaseB = plugin.api.claimDevTools('nuxt')
+    releaseA()
+    releaseA()
+    expect(dock.update.mock.calls).toEqual([[{ when: 'false' }]])
+
+    releaseB()
+    expect(dock.update).toHaveBeenLastCalledWith({ when: undefined })
+  })
+
+  it('keeps the dock when DevTools is enabled explicitly', () => {
+    const { dock, plugin } = setupDevTools({ overlay: { devtools: true } })
+    plugin.api.claimDevTools('nuxt')
+    expect(dock.update).not.toHaveBeenCalled()
+  })
+
+  it('keeps indicator and DevTools claims independent', () => {
+    const { dock, plugin } = setupDevTools({})
+    const releaseIndicator = plugin.api.claimIndicator('nuxt')
+    expect(dock.update).not.toHaveBeenCalled()
+
+    const releaseDevTools = plugin.api.claimDevTools('nuxt')
+    releaseIndicator()
+    expect(dock.update.mock.calls).toEqual([[{ when: 'false' }]])
+
+    releaseDevTools()
+    expect(dock.update).toHaveBeenLastCalledWith({ when: undefined })
   })
 })
 
@@ -493,7 +527,42 @@ describe('dev server state', () => {
     expect(copy.getUiUrl()).toBe('/app/__checker/')
   })
 
-  async function serveShared(count: number) {
+  it('adds DevTools claims to a hub registered by 1.0.0', async () => {
+    const config = {
+      root,
+      base: '/',
+      logger: {},
+      server: {},
+      build: { watch: null },
+    }
+    const registry = Symbol.for('vite-plugin-checker:hubs:1')
+    const scope = globalThis as any
+    scope[registry] ??= new WeakMap()
+    const legacy: any = createHub('/__checker/')
+    delete legacy.devtoolsClaims
+    delete legacy.devtoolsClaimListeners
+    scope[registry].set(config, legacy)
+
+    const plugin = checker({ typescript: true }) as any
+    await plugin.config({}, { command: 'serve', mode: 'development' })
+    plugin.api.claimDevTools('nuxt')
+    plugin.configResolved(config)
+    const register = vi.fn(() => ({ update: vi.fn() }))
+    plugin.devtools.setup({
+      mode: 'dev',
+      docks: { register },
+      messages: { add: vi.fn(), update: vi.fn(), remove: vi.fn() },
+    })
+
+    expect(register).toHaveBeenCalledWith(
+      expect.objectContaining({ when: 'false' }),
+    )
+  })
+
+  async function serveShared(
+    count: number,
+    beforeResolve: (plugins: any[]) => void = () => {},
+  ) {
     const config = {
       root,
       base: '/app/',
@@ -519,6 +588,7 @@ describe('dev server state', () => {
     for (const plugin of plugins) {
       await plugin.config({}, { command: 'serve', mode: 'development' })
     }
+    beforeResolve(plugins)
     for (const plugin of plugins) plugin.configResolved(config)
     for (const plugin of plugins) plugin.configureServer(server)
     return {
@@ -577,6 +647,22 @@ describe('dev server state', () => {
           expect.objectContaining({ id: 'typescript-2' }),
         ],
       }),
+    )
+  })
+
+  it('keeps a DevTools claim made before the instances share state', async () => {
+    const { plugins } = await serveShared(2, ([, second]) => {
+      second.api.claimDevTools('host')
+    })
+    const register = vi.fn(() => ({ update: vi.fn() }))
+    plugins[0].devtools.setup({
+      mode: 'dev',
+      docks: { register },
+      messages: { add: vi.fn(), update: vi.fn(), remove: vi.fn() },
+    })
+
+    expect(register).toHaveBeenCalledWith(
+      expect.objectContaining({ when: 'false' }),
     )
   })
 

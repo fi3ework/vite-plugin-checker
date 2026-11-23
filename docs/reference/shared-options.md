@@ -50,10 +50,10 @@ The corner of the page the badge appears in: top left, top right, bottom left, o
 
 ### `overlay.devtools`
 
-- **Type:** `boolean`
-- **Default:** `true`
+- **Type:** `boolean | 'auto'`
+- **Default:** `'auto'`
 
-Adds a Checker panel and per-checker messages to [Vite DevTools](https://devtools.vite.dev) when it is installed. See [Vite DevTools](/guide/overlay#vite-devtools).
+Adds a Checker panel and per-checker messages to [Vite DevTools](https://devtools.vite.dev) when it is installed. `'auto'` hides them while an integration such as Nuxt shows the diagnostics in Vite DevTools itself (see [`claimDevTools`](/reference/plugin-api#claimdevtools-owner)). `false` leaves Vite DevTools alone. See [Vite DevTools](/guide/overlay#vite-devtools).
 
 ### `overlay.editorUrl`
 

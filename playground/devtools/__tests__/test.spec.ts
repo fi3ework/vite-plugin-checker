@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { getHmrOverlayText, isServe, page, waitForServerReady } from '../../testUtils'
+import {
+  checkerApi,
+  getHmrOverlayText,
+  isServe,
+  page,
+  waitForServerReady,
+} from '../../testUtils'
 
 describe.runIf(isServe)('devtools', () => {
   it('shows diagnostics in a Vite DevTools dock alongside the overlay', async () => {
@@ -20,5 +26,17 @@ describe.runIf(isServe)('devtools', () => {
     await expect
       .poll(() => panelMessage.textContent(), { timeout: 20_000 })
       .toBe(message)
+  })
+
+  it('hides the dock while an integration claims DevTools', async () => {
+    await waitForServerReady()
+    const entry = page.locator('devframes-dock-embedded button[aria-label="Checker"]')
+    await expect.poll(() => entry.count(), { timeout: 20_000 }).toBe(1)
+
+    const release = checkerApi.claimDevTools('test')
+    await expect.poll(() => entry.count(), { timeout: 20_000 }).toBe(0)
+
+    release()
+    await expect.poll(() => entry.count(), { timeout: 20_000 }).toBe(1)
   })
 })

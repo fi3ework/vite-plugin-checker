@@ -85,7 +85,7 @@ export type CheckerEvent =
 
 /**
  * Every vite-plugin-checker instance in one Vite config shares the same
- * checkers, diagnostics page and indicator claims, so any instance's `api`
+ * checkers, diagnostics page and claims, so any instance's `api`
  * reports all of them.
  */
 export interface CheckerApi {
@@ -98,6 +98,12 @@ export interface CheckerApi {
    * Claims are reference-counted; the returned release function is idempotent.
    */
   claimIndicator(owner: string): () => void
+  /**
+   * Hide the Checker dock and messages in Vite DevTools because `owner`
+   * displays the diagnostics there itself. Claims are reference-counted; the
+   * returned release function is idempotent.
+   */
+  claimDevTools(owner: string): () => void
   /** Root-relative URL of the diagnostics page, including Vite's `base`. */
   getUiUrl(): string
 }

@@ -5,6 +5,9 @@ import { type CheckerStore, createCheckerStore } from './store.js'
 export interface CheckerHub {
   readonly store: CheckerStore
   readonly claims: Set<symbol>
+  devtoolsClaims: Set<symbol>
+  /** called when `devtoolsClaims` becomes empty or non-empty */
+  devtoolsClaimListeners: Set<() => void>
   /** dev servers whose HMR channel and middleware are wired */
   readonly servers: WeakSet<object>
   readonly broadcasters: Set<() => void>
@@ -20,6 +23,8 @@ export function createHub(uiUrl: string): CheckerHub {
   return {
     store: createCheckerStore(),
     claims: new Set(),
+    devtoolsClaims: new Set(),
+    devtoolsClaimListeners: new Set(),
     servers: new WeakSet(),
     broadcasters: new Set(),
     uiUrl,
@@ -33,7 +38,12 @@ export function shareHub(key: object, hub: CheckerHub): CheckerHub {
   scope[REGISTRY] ??= new WeakMap()
   const hubs = scope[REGISTRY]
   const existing = hubs.get(key)
-  if (existing) return existing
+  if (existing) {
+    // hubs registered by 1.0.0, which shares this protocol version
+    existing.devtoolsClaims ??= new Set()
+    existing.devtoolsClaimListeners ??= new Set()
+    return existing
+  }
   hubs.set(key, hub)
   return hub
 }
@@ -48,4 +58,8 @@ export function snapshotOf(hub: CheckerHub): SnapshotPayload {
 
 export function broadcastSnapshot(hub: CheckerHub) {
   for (const broadcast of hub.broadcasters) broadcast()
+}
+
+export function notifyDevToolsClaim(hub: CheckerHub) {
+  for (const listener of hub.devtoolsClaimListeners) listener()
 }

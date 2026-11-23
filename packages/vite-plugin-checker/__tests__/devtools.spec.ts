@@ -27,8 +27,10 @@ function diagnostic(
 
 function setup({
   indicatorClaimed = () => false,
+  devtoolsClaimed = () => false,
 }: {
   indicatorClaimed?: () => boolean
+  devtoolsClaimed?: () => boolean
 } = {}) {
   const store = createCheckerStore()
   store.register('typescript', 'TypeScript')
@@ -37,6 +39,7 @@ function setup({
     getState: () => store.getState(),
     subscribe: (listener) => store.subscribe(listener),
     claimIndicator: vi.fn(() => () => {}),
+    claimDevTools: vi.fn(() => () => {}),
     getUiUrl: () => '/app/__checker/',
   }
   const dock = { update: vi.fn() }
@@ -48,9 +51,20 @@ function setup({
       remove: vi.fn(async () => {}),
     },
   }
-  const dispose = setupDevTools(ctx as any, api, indicatorClaimed)
+  const listeners = new Set<() => void>()
+  const dispose = setupDevTools(ctx as any, api, {
+    indicator: indicatorClaimed,
+    devtools: devtoolsClaimed,
+    subscribe(listener) {
+      listeners.add(listener)
+      return () => listeners.delete(listener)
+    },
+  })
   const flush = () => new Promise<void>((resolve) => queueMicrotask(resolve))
-  return { store, api, dock, ctx, dispose, flush }
+  const claimsChanged = () => {
+    for (const listener of listeners) listener()
+  }
+  return { store, api, dock, ctx, dispose, flush, claimsChanged }
 }
 
 describe('setupDevTools', () => {
@@ -145,6 +159,78 @@ describe('setupDevTools', () => {
       badge: '1',
       badgeVariant: 'danger',
     })
+  })
+
+  it('hides the dock and posts no messages while an integration claims DevTools', async () => {
+    const { store, ctx, flush } = setup({ devtoolsClaimed: () => true })
+
+    expect(ctx.docks.register).toHaveBeenCalledWith(
+      expect.objectContaining({ id: DOCK_ID, when: 'false' }),
+    )
+    store.setDiagnostics('typescript', [diagnostic('error', 'a')])
+    await flush()
+
+    expect(ctx.messages.add).not.toHaveBeenCalled()
+  })
+
+  it('follows a DevTools claim made or released after setup', async () => {
+    let claimed = false
+    const { store, ctx, dock, flush, claimsChanged } = setup({
+      devtoolsClaimed: () => claimed,
+    })
+    store.setDiagnostics('typescript', [diagnostic('error', 'a')])
+    await flush()
+    expect(ctx.messages.add).toHaveBeenCalledTimes(1)
+
+    claimed = true
+    claimsChanged()
+    expect(dock.update).toHaveBeenLastCalledWith({ when: 'false' })
+    expect(ctx.messages.remove).toHaveBeenCalledWith(`${DOCK_ID}:typescript`)
+
+    store.setDiagnostics('typescript', [diagnostic('error', 'b')])
+    await flush()
+    expect(ctx.messages.add).toHaveBeenCalledTimes(1)
+
+    claimed = false
+    claimsChanged()
+    expect(dock.update).toHaveBeenCalledWith({ when: undefined })
+    await flush()
+    expect(ctx.messages.add).toHaveBeenCalledTimes(2)
+    expect(ctx.messages.add).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        message: 'TypeScript: 1 error',
+        description: 'src/main.ts:1:3: b',
+        notify: false,
+      }),
+    )
+  })
+
+  it('restores messages without notifying when released before a pending update', async () => {
+    let claimed = true
+    const { store, ctx, flush, claimsChanged } = setup({
+      devtoolsClaimed: () => claimed,
+    })
+    store.setDiagnostics('typescript', [diagnostic('error', 'a')])
+    claimed = false
+    claimsChanged()
+    await flush()
+
+    expect(ctx.messages.add).toHaveBeenCalledTimes(1)
+    expect(ctx.messages.add).toHaveBeenLastCalledWith(
+      expect.objectContaining({ notify: false }),
+    )
+  })
+
+  it('stops following DevTools claims when disposed', () => {
+    let claimed = false
+    const { dock, dispose, claimsChanged } = setup({
+      devtoolsClaimed: () => claimed,
+    })
+
+    dispose()
+    claimed = true
+    claimsChanged()
+    expect(dock.update).not.toHaveBeenCalled()
   })
 
   it('marks the message as loading during a re-check and removes it once clean', async () => {

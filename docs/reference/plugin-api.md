@@ -1,6 +1,6 @@
 # Plugin API
 
-In dev mode, the plugin object returned by `checker()` exposes an `api` that other plugins and frameworks use to read diagnostics, follow runs as they happen, and show their own indicator in place of the badge. The API is typed as `CheckerApi`:
+In dev mode, the plugin object returned by `checker()` exposes an `api` that other plugins and frameworks use to read diagnostics, follow runs as they happen, and show their own indicator or Vite DevTools panel in place of the checker's. The API is typed as `CheckerApi`:
 
 ```ts
 import type { CheckerApi } from 'vite-plugin-checker'
@@ -13,7 +13,7 @@ const plugin = server.config.plugins.find(
 const api = plugin?.api
 ```
 
-Every `checker()` instance in one Vite config shares the same checkers, diagnostics page, and indicator claims, so the `api` of any instance reports all of them. Separate dev servers (Vitest projects, for example) stay separate.
+Every `checker()` instance in one Vite config shares the same checkers, diagnostics page, and claims, so the `api` of any instance reports all of them. Separate dev servers (Vitest projects, for example) stay separate.
 
 ## `protocol`
 
@@ -57,7 +57,15 @@ Calls `listener` for every change after the current state. Read `getState()` fir
 
 - **Returns:** `() => void`, which releases the claim
 
-Hides the badge and drawer on every page because `owner` shows its own indicator. While a claim is held, the Vite DevTools messages also stop raising a toast when a checker starts reporting errors; the Checker dock and the messages themselves stay. Claims are counted, so the badge returns once every owner has released, and releasing twice has no effect. The claim applies while [`overlay.badge`](/reference/shared-options#overlay-badge) is `'auto'`, which is the default.
+Hides the badge and drawer on every page because `owner` shows its own indicator. While a claim is held, the Vite DevTools messages also stop raising a toast when a checker starts reporting errors; the Checker dock and the messages themselves stay (see [`claimDevTools`](#claimdevtools-owner)). Claims are counted, so the badge returns once every owner has released, and releasing twice has no effect. The claim applies while [`overlay.badge`](/reference/shared-options#overlay-badge) is `'auto'`, which is the default.
+
+## `claimDevTools(owner)`
+
+- **Returns:** `() => void`, which releases the claim
+
+Hides the Checker dock and removes its messages from [Vite DevTools](https://devtools.vite.dev) because `owner` shows the diagnostics there itself. A claim can be made before or after Vite DevTools has set up the dock. Claims are counted like indicator claims; once every owner has released, the dock returns and the messages are posted again, without a toast. The claim applies while [`overlay.devtools`](/reference/shared-options#overlay-devtools) is `'auto'`, which is the default.
+
+An integration that replaces both the badge and the dock makes both claims.
 
 ## `getUiUrl()`
 
