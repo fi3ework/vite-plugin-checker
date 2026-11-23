@@ -33,7 +33,6 @@
     "build:ui": "pnpm --filter @vite-plugin-checker/ui run build",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "demo-add": "pnpm build && sv add file:../ --cwd demo --no-git-check --no-install",
-    "demo-add:ci": "pnpm build && sv add file:../ --cwd demo --no-git-check --no-download-check --no-install",
     "demo-create": "sv create demo --types ts --template minimal --no-add-ons --no-install",
     "dev": "tsdown --watch",
     "prepack": "node -e \"require('fs').copyFileSync('../../README.md', 'README.md')\" && pnpm run build"
