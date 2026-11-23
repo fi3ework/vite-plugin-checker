@@ -6,9 +6,7 @@
     "vite",
     "vite-plugin",
     "typescript",
-    "sv-add",
-    "svelte",
-    "sveltekit"
+    "sv-add"
   ],
   "homepage": "https://github.com/fi3ework/vite-plugin-checker",
   "bugs": "https://github.com/fi3ework/vite-plugin-checker/issues",
