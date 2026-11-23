@@ -44,11 +44,13 @@ describe('npm pack', () => {
     assert(entry?.data, 'package/dist/sv.js is expected in the tarball')
     const code = new TextDecoder().decode(entry.data)
     const imports = Array.from(
-      code.matchAll(/\bfrom\s*["']([^"']+)["']/g),
+      code.matchAll(/\b(?:from|import)\s*["']([^"']+)["']/g),
       (match) => match[1]!,
     )
 
-    expect(imports).toContain('sv')
+    expect(imports).toEqual(
+      expect.arrayContaining(['sv', '@sveltejs/sv-utils']),
+    )
     expect(
       imports.filter(
         (specifier) =>
