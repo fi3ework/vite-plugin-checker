@@ -33,6 +33,55 @@ describe('config-default', () => {
       expect(await link.getAttribute('href')).toBe('https://eslint.org/docs/latest/rules/no-var')
     })
 
+    it('does not make the page taller than the viewport', async () => {
+      await waitForServerReady()
+      await page.locator(OVERLAY).waitFor({ state: 'attached' })
+      const style = await page.addStyleTag({
+        content: 'body { margin: 0 } body > :not(vite-plugin-checker-overlay) { display: none } body::before { content: ""; display: block; height: 100vh }',
+      })
+
+      const { scrollHeight, innerHeight } = await page.evaluate(() => ({
+        scrollHeight: document.scrollingElement!.scrollHeight,
+        innerHeight: window.innerHeight,
+      }))
+      await style.evaluate((el) => el.remove())
+      expect(scrollHeight).toBe(innerHeight)
+    })
+
+    it('is not laid out as an item of a flex body', async () => {
+      await waitForServerReady()
+      await page.locator(OVERLAY).waitFor({ state: 'attached' })
+      const style = await page.addStyleTag({
+        content:
+          'body { margin: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; height: 100vh }',
+      })
+
+      const { bottom, innerHeight } = await page.evaluate(() => ({
+        bottom: document.getElementById('root')!.getBoundingClientRect().bottom,
+        innerHeight: window.innerHeight,
+      }))
+      await style.evaluate((el) => el.remove())
+      expect(bottom).toBe(innerHeight)
+    })
+
+    it('keeps the overlay above positioned page content', async () => {
+      await waitForServerReady()
+      const onTop = await page.evaluate((overlay) => {
+        const cover = document.createElement('div')
+        cover.style.cssText = 'position: fixed; inset: 0; z-index: 1000'
+        document.body.append(cover)
+        try {
+          const host = document.querySelector(overlay)!
+          const target = host.shadowRoot!.querySelector<HTMLElement>('.badge:not([hidden]), .drawer:not([hidden])')!
+          const { x, y, width, height } = target.getBoundingClientRect()
+          return document.elementFromPoint(x + width / 2, y + height / 2) === host
+        } finally {
+          cover.remove()
+        }
+      }, OVERLAY)
+      expect(onTop).toBe(true)
+    })
+
     it('hides the overlay while an integration claims the indicator', async () => {
       await waitForServerReady()
       const shown = page.locator(`${OVERLAY} .badge:not([hidden]), ${OVERLAY} .drawer:not([hidden])`)
