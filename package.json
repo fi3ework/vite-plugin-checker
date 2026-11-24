@@ -13,14 +13,14 @@
     "postinstall": "simple-git-hooks install",
     "lint": "biome check . --diagnostic-level=warn",
     "publint": "pnpm build && pnpm -r --filter='vite-plugin-checker' exec publint",
-    "sort-package-json": "npx sort-package-json \"packages/*/package.json\"",
+    "sort-package-json": "sort-package-json \"packages/*/package.json\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test-knip": "knip",
     "type-check": "pnpm -r --parallel --filter \"vite-plugin-checker\" exec tsc --noEmit"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
+    "pre-commit": "pnpm exec lint-staged"
   },
   "lint-staged": {
     "package.json": "sort-package-json",
