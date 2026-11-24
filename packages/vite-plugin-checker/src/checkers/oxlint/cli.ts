@@ -1,5 +1,4 @@
 import { stripVTControlCharacters as strip } from 'node:util'
-import { x } from 'tinyexec'
 import {
   createFrame,
   createSnippet,
@@ -9,6 +8,7 @@ import { colorize } from '../../colors.js'
 import { consoleLog, type NormalizedDiagnostic } from '../../logger.js'
 import { normalizePath, readSources } from '../../sources.js'
 import { DiagnosticLevel } from '../../types.js'
+import { runCommand } from '../_shared/runCommand.js'
 import { parseArgsStringToArgv } from '../stylelint/argv.js'
 
 const severityMap = {
@@ -48,7 +48,7 @@ export async function runOxlint(
 ): Promise<NormalizedDiagnostic[]> {
   let stdout: string
   try {
-    stdout = (await x(argv[0]!, argv.slice(1), { nodeOptions: { cwd } })).stdout
+    stdout = await runCommand(argv, cwd)
   } catch (error) {
     logSpawnError(error)
     return []
