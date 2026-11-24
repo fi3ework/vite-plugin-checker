@@ -10,7 +10,7 @@ const holdStdoutOpenScript = `
 const holder = require('node:child_process').spawn(
   process.execPath,
   ['-e', 'setTimeout(() => {}, 10000)'],
-  { stdio: ['ignore', 'inherit', 'ignore'] },
+  { stdio: ['ignore', 'inherit', 'ignore'], detached: true },
 )
 holder.unref()
 process.stdout.write(holder.pid + '\\n' + 'x'.repeat(${PAYLOAD_LENGTH}))
