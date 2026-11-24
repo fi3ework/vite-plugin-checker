@@ -35,6 +35,7 @@ describe('config-default', () => {
 
     it('does not make the page taller than the viewport', async () => {
       await waitForServerReady()
+      await page.locator(OVERLAY).waitFor({ state: 'attached' })
       const style = await page.addStyleTag({
         content: 'body { margin: 0 } body > :not(vite-plugin-checker-overlay) { display: none } body::before { content: ""; display: block; height: 100vh }',
       })
@@ -49,20 +50,18 @@ describe('config-default', () => {
 
     it('keeps the overlay above positioned page content', async () => {
       await waitForServerReady()
-      await page.evaluate(() => {
+      const onTop = await page.evaluate((overlay) => {
         const cover = document.createElement('div')
-        cover.id = 'cover'
         cover.style.cssText = 'position: fixed; inset: 0; z-index: 1000'
         document.body.append(cover)
-      })
-
-      const onTop = await page.evaluate((overlay) => {
-        const host = document.querySelector(overlay)!
-        const target = host.shadowRoot!.querySelector<HTMLElement>('.badge:not([hidden]), .drawer:not([hidden])')!
-        const { x, y, width, height } = target.getBoundingClientRect()
-        const hit = document.elementFromPoint(x + width / 2, y + height / 2)
-        document.getElementById('cover')!.remove()
-        return hit === host
+        try {
+          const host = document.querySelector(overlay)!
+          const target = host.shadowRoot!.querySelector<HTMLElement>('.badge:not([hidden]), .drawer:not([hidden])')!
+          const { x, y, width, height } = target.getBoundingClientRect()
+          return document.elementFromPoint(x + width / 2, y + height / 2) === host
+        } finally {
+          cover.remove()
+        }
       }, OVERLAY)
       expect(onTop).toBe(true)
     })
