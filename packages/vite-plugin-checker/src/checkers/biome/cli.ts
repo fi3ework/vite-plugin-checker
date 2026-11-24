@@ -1,10 +1,10 @@
 import { stripVTControlCharacters as strip } from 'node:util'
-import { x } from 'tinyexec'
 import { createFrame, createSnippet } from '../../codeFrame.js'
 import { colorize } from '../../colors.js'
 import { consoleLog, type NormalizedDiagnostic } from '../../logger.js'
 import { normalizePath, readSources } from '../../sources.js'
 import { DiagnosticLevel } from '../../types.js'
+import { runCommand } from '../_shared/runCommand.js'
 import { parseArgsStringToArgv } from '../stylelint/argv.js'
 import type {
   BiomeOutput,
@@ -56,10 +56,7 @@ export async function runBiome(
   cwd: string,
 ): Promise<NormalizedDiagnostic[]> {
   try {
-    const { stdout } = await x(argv[0]!, argv.slice(1), {
-      nodeOptions: { cwd },
-    })
-    return await parseBiomeOutput(stdout, cwd)
+    return await parseBiomeOutput(await runCommand(argv, cwd), cwd)
   } catch {
     return []
   }
