@@ -16,6 +16,7 @@ export const styles = /* css */ `
   --_offset: calc(var(--_stack, 0) * 44px);
 
   all: initial;
+  display: contents;
   color-scheme: dark;
 }
 

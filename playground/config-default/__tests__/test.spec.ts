@@ -48,6 +48,22 @@ describe('config-default', () => {
       expect(scrollHeight).toBe(innerHeight)
     })
 
+    it('is not laid out as an item of a flex body', async () => {
+      await waitForServerReady()
+      await page.locator(OVERLAY).waitFor({ state: 'attached' })
+      const style = await page.addStyleTag({
+        content:
+          'body { margin: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; height: 100vh }',
+      })
+
+      const { bottom, innerHeight } = await page.evaluate(() => ({
+        bottom: document.getElementById('root')!.getBoundingClientRect().bottom,
+        innerHeight: window.innerHeight,
+      }))
+      await style.evaluate((el) => el.remove())
+      expect(bottom).toBe(innerHeight)
+    })
+
     it('keeps the overlay above positioned page content', async () => {
       await waitForServerReady()
       const onTop = await page.evaluate((overlay) => {
