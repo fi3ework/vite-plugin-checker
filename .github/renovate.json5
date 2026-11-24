@@ -70,6 +70,13 @@
       ],
     },
     {
+      groupName: 'stylelint',
+      matchManagers: ['npm'],
+      matchDepTypes: ['dependencies', 'devDependencies'],
+      matchUpdateTypes: ['major'],
+      matchPackageNames: ['stylelint', 'stylelint-config-standard'],
+    },
+    {
       groupName: 'runtime dependencies',
       matchFileNames: ['packages/vite-plugin-checker/package.json'],
       matchDepTypes: ['dependencies'],
