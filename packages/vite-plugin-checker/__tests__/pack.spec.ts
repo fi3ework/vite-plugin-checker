@@ -61,6 +61,39 @@ describe('npm pack', () => {
     expect(code).not.toMatch(/\bimport\s*\(/)
   })
 
+  it('exports the dock ID without loading DevTools implementation types', () => {
+    const read = (name: string) => {
+      const entry = archive.find((entry) => entry.header.name === name)
+      assert(entry?.data, `${name} is expected in the tarball`)
+      return new TextDecoder().decode(entry.data)
+    }
+
+    expect(read('package/dist/main.d.ts')).toContain('DOCK_ID')
+
+    const visited = new Set<string>()
+    const external = new Set<string>()
+    const queue = ['package/dist/main.d.ts']
+    for (const name of queue) {
+      if (visited.has(name)) continue
+      visited.add(name)
+      for (const [, specifier] of read(name).matchAll(
+        /\b(?:from|import)\s*\(?\s*["']([^"']+)["']/g,
+      )) {
+        if (specifier!.startsWith('.')) {
+          queue.push(
+            path.posix
+              .join(path.posix.dirname(name), specifier!)
+              .replace(/\.js$/, '.d.ts'),
+          )
+        } else {
+          external.add(specifier!)
+        }
+      }
+    }
+
+    expect(external).not.toContain('@vitejs/devtools-kit')
+  })
+
   it('does not publish files from other packages', () => {
     expect(
       tarballFiles.filter((file) =>

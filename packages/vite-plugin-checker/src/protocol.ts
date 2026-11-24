@@ -1,4 +1,5 @@
 export const PROTOCOL_VERSION = 1
+export const DOCK_ID = 'vite-plugin-checker'
 
 export const EVENT_HELLO = 'vite-plugin-checker:hello'
 export const EVENT_SNAPSHOT = 'vite-plugin-checker:snapshot'
