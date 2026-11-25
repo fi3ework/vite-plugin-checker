@@ -116,8 +116,11 @@ export function offsetRangeToBabelLocation(
     return { start: { ...defaultPos }, end: { ...defaultPos } }
   }
 
-  const startIndex = offset
-  const endIndex = offset + length
+  const startIndex = Math.max(0, Math.min(offset, source.length))
+  const endIndex = Math.max(
+    startIndex,
+    Math.min(offset + Math.max(0, length), source.length),
+  )
 
   let line = 1
   let column = 1
@@ -128,8 +131,22 @@ export function offsetRangeToBabelLocation(
     if (i === startIndex) {
       start = { line, column }
     }
-    // '\n' charCode is 10
-    if (source[i] === '\n') {
+    const ch = source[i]
+    if (ch === '\r' && source[i + 1] === '\n') {
+      if (i + 1 === startIndex) {
+        start = { line, column }
+      }
+      if (i + 1 < endIndex) {
+        i++
+        line++
+        column = 1
+      }
+    } else if (
+      ch === '\n' ||
+      ch === '\r' ||
+      ch === '\u2028' ||
+      ch === '\u2029'
+    ) {
       line++
       column = 1
     } else {
