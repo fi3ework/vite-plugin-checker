@@ -127,17 +127,74 @@ function getUniqueFiles(entries: Entry[]) {
   return [...new Set(entries.map((e) => e.file))]
 }
 
+/**
+ * Convert a UTF-8 byte [offset, length] range (as emitted by oxlint) into
+ * UTF-16 string code-unit indices for `source`.
+ */
+function utf8ByteRangeToCharRange(
+  source: string,
+  byteOffset: number,
+  byteLength: number,
+): { offset: number; length: number } {
+  const startByte = Math.max(0, byteOffset)
+  const endByte = startByte + Math.max(0, byteLength)
+
+  let i = 0
+  let bytes = 0
+
+  const step = () => {
+    const code = source.charCodeAt(i)
+    if (code <= 0x7f) {
+      bytes += 1
+      i += 1
+    } else if (code <= 0x7ff) {
+      bytes += 2
+      i += 1
+    } else if (code >= 0xd800 && code <= 0xdbff && i + 1 < source.length) {
+      const next = source.charCodeAt(i + 1)
+      if (next >= 0xdc00 && next <= 0xdfff) {
+        bytes += 4
+        i += 2
+      } else {
+        bytes += 3
+        i += 1
+      }
+    } else {
+      bytes += 3
+      i += 1
+    }
+  }
+
+  while (i < source.length && bytes < startByte) {
+    step()
+  }
+  const charStart = i
+
+  while (i < source.length && bytes < endByte) {
+    step()
+  }
+  const charEnd = i
+
+  return { offset: charStart, length: charEnd - charStart }
+}
+
 function buildDiagnostics(entries: Entry[], sources: Map<string, string>) {
   return entries.flatMap((entry) => {
     const source = sources.get(entry.file)
     if (!source) return []
 
-    const loc = offsetRangeToBabelLocation(
+    const { offset, length } = utf8ByteRangeToCharRange(
       source,
       entry.span.offset,
       entry.span.length,
     )
-    const codeFrame = createFrame(source, loc)
+    const loc = offsetRangeToBabelLocation(source, offset, length)
+    let codeFrame = ''
+    try {
+      codeFrame = createFrame(source, loc)
+    } catch {
+      // Fall back to empty frame so one failing diagnostic cannot discard the run
+    }
 
     return [
       {

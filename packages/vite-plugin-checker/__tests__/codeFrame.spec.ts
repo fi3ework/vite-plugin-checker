@@ -4,6 +4,7 @@ import {
   createFrame,
   createSnippet,
   lineColLocToBabelLoc,
+  offsetRangeToBabelLocation,
   tsLikeLocToBabelLoc,
 } from '../src/codeFrame'
 import { setTerminalColors } from '../src/colors'
@@ -99,5 +100,35 @@ describe('code frame', () => {
       start: { line: 1, column: 2 },
       end: { line: 3, column: 4 },
     })
+  })
+
+  it('treats CRLF as a single line break in offsetRangeToBabelLocation', () => {
+    const source = 'foo\r\nbar\r\nbaz'
+
+    // Span starting on the '\n' of '\r\n' should stay within line 1's bounds
+    const locOnLf = offsetRangeToBabelLocation(source, 4, 3)
+    expect(locOnLf).toEqual({
+      start: { line: 1, column: 4 },
+      end: { line: 2, column: 3 },
+    })
+    expect(() => createFrame(source, locOnLf)).not.toThrow()
+
+    // Multiline span across CRLF
+    const multiLoc = offsetRangeToBabelLocation(source, 1, 6)
+    expect(multiLoc).toEqual({
+      start: { line: 1, column: 2 },
+      end: { line: 2, column: 3 },
+    })
+    expect(() => createFrame(source, multiLoc)).not.toThrow()
+  })
+
+  it('clamps out-of-bounds offsets in offsetRangeToBabelLocation', () => {
+    const source = 'abc\r\ndef'
+    const loc = offsetRangeToBabelLocation(source, 50, 10)
+    expect(loc).toEqual({
+      start: { line: 2, column: 4 },
+      end: { line: 2, column: 4 },
+    })
+    expect(() => createFrame(source, loc)).not.toThrow()
   })
 })
